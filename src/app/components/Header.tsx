@@ -25,7 +25,7 @@ export default function Header() {
             />
           </Col>
           <Col xs={12} md={9}>
-            <h1 className="display-5 text-primary mb-0">Steven Vallejo Ortiz</h1>
+            <h1 className="display-5  mb-0">Steven Vallejo Ortiz</h1>
             <h2 className="h4 text-secondary">Desarrollador de Software</h2>
             <ContactInfo />
           </Col>

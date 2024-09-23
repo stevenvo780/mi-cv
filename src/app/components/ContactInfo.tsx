@@ -11,7 +11,7 @@ export default function ContactInfo() {
         <Col key={index} xs={12} md={6} lg={4}>
           <ListGroup variant="flush">
             <ListGroup.Item className="d-flex align-items-center">
-              <FontAwesomeIcon icon={contact.icon} className="me-2 text-primary" />
+              <FontAwesomeIcon icon={contact.icon} className="me-2 " />
               <a
                 href={contact.url}
                 target={contact.type === 'linkedin' ? '_blank' : undefined}

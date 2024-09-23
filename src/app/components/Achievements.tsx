@@ -15,6 +15,9 @@ interface AchievementItem {
   image?: StaticImageData | string;
   tier: 'gold' | 'platinum' | 'silver';
   isCustom?: boolean;
+  imageWidth?: number;
+  imageHeight?: number;
+  backgroundColor?: string;
 }
 
 const achievements: AchievementItem[] = [
@@ -24,6 +27,9 @@ const achievements: AchievementItem[] = [
     link: 'https://www.humanizar.co/',
     image: humanizarImg,
     tier: 'gold',
+    imageWidth: 300,
+    imageHeight: 200,
+    backgroundColor: 'transparent', // Fondo transparente
   },
   {
     name: 'Tertulia Literaria Demo',
@@ -31,6 +37,9 @@ const achievements: AchievementItem[] = [
     link: 'https://www.tertulia-literaria.com/',
     image: tertuliaImg,
     tier: 'platinum',
+    imageWidth: 300,
+    imageHeight: 200,
+    backgroundColor: 'transparent',
   },
   {
     name: 'Total Pedido - Demo',
@@ -38,6 +47,9 @@ const achievements: AchievementItem[] = [
     link: 'https://total-pedidos-front.vercel.app/',
     image: totalPedidoImg,
     tier: 'silver',
+    imageWidth: 300,
+    imageHeight: 200,
+    backgroundColor: 'transparent',
   },
   {
     name: 'Mera Vuelta',
@@ -45,6 +57,9 @@ const achievements: AchievementItem[] = [
     link: 'https://www.meravuelta.com/',
     image: meraVueltaImg,
     tier: 'silver',
+    imageWidth: 300,
+    imageHeight: 200,
+    backgroundColor: 'transparent',
   },
   {
     name: 'EMW',
@@ -52,6 +67,9 @@ const achievements: AchievementItem[] = [
     link: 'https://emw.humanizar.cloud/',
     image: emwImg,
     tier: 'silver',
+    imageWidth: 300,
+    imageHeight: 200,
+    backgroundColor: 'transparent',
   },
   {
     name: 'Proyecto JARVIS',
@@ -59,12 +77,13 @@ const achievements: AchievementItem[] = [
     link: 'https://github.com/stevenvo780/jarvisIA',
     tier: 'silver',
     isCustom: true,
+    backgroundColor: 'transparent',
   },
 ];
 
 const tierColors: { [key in AchievementItem['tier']]: string } = {
   gold: '#FFD700',
-  platinum: '#E5E4E2',
+  platinum: '#a51a41',
   silver: '#C0C0C0',
 };
 
@@ -72,31 +91,59 @@ export default function Achievements() {
   return (
     <section className="mb-5">
       <Container>
-        <h3 className="text-primary border-bottom pb-2 mb-4">Proyectos Destacados</h3>
+        <h3 className="border-bottom pb-2 mb-4">Proyectos</h3>
         <Row>
           {achievements.map((item, index) => (
             <Col key={index} md={4} className="mb-4">
-              <Card style={{ borderColor: tierColors[item.tier], borderWidth: '2px', height: '100%' }}>
-                {item.isCustom ? (
-                  <Jarvis />
-                ) : (
-                  <Card.Img
-                    variant="top"
-                    src={typeof item.image === 'string' ? item.image : item.image?.src}
-                    alt={item.name}
-                    width="100%"
-                    height={200}
-                    style={{ height: '200px', objectFit: 'cover', width: '100%' }}
-                  />
-                )}
-                <Card.Body style={{ minHeight: '150px' }}> {/* Estandarizar la altura del contenido */}
-                  <Card.Title>{item.name}</Card.Title>
-                  <Card.Text>{item.description}</Card.Text>
-                  <a href={item.link} target="_blank" rel="noreferrer" className="btn btn-outline-primary">
-                    Ver más
-                  </a>
-                </Card.Body>
-              </Card>
+              <a href={item.link} target="_blank" rel="noreferrer" style={{ textDecoration: 'none' }}>
+                <Card
+                  style={{
+                    borderColor: tierColors[item.tier],
+                    borderWidth: '2px',
+                    height: '100%',
+                    backgroundColor: 'transparent',
+                  }}
+                >
+                  {item.isCustom ? (
+                    <Jarvis />
+                  ) : (
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        backgroundColor: item.backgroundColor || 'transparent',
+                        height: item.imageHeight || '200px',
+                        width: '100%',
+                      }}
+                    >
+                      <Card.Img
+                        variant="top"
+                        src={typeof item.image === 'string' ? item.image : item.image?.src}
+                        alt={item.name}
+                        style={{
+                          objectFit: 'contain',
+                          maxWidth: item.imageWidth || '100%',
+                          maxHeight: item.imageHeight || '200px',
+                        }}
+                      />
+                    </div>
+                  )}
+                  <Card.Body style={{ minHeight: '150px', position: 'relative' }}>
+                    <Card.Title>{item.name}</Card.Title>
+                    <Card.Text>{item.description}</Card.Text>
+                    <a
+                      href={item.link}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="btn btn-outline-primary"
+                      style={{ position: 'absolute', bottom: '10px', left: '10px' }}
+                    >
+                      Ver más
+                    </a>
+                  </Card.Body>
+                </Card>
+              </a>
             </Col>
           ))}
         </Row>

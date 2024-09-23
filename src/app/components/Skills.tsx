@@ -4,7 +4,7 @@ export default function Skills() {
   return (
     <section className="mb-5">
       <Container>
-        <h3 className="text-primary border-bottom pb-2 mb-4">Aptitudes y Habilidades</h3>
+        <h3 className=" border-bottom pb-2 mb-4">Aptitudes y Habilidades</h3>
         <ul>
           <li>Desarrollo Full Stack: Node.js, React, TypeScript</li>
           <li>Infraestructura: AWS, Docker, CI/CD</li>

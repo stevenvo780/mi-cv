@@ -11,7 +11,7 @@ export default function Portfolio() {
   return (
     <section className="mb-5">
       <Container>
-        <h3 className="text-primary border-bottom pb-2 mb-4">Portafolio</h3>
+        <h3 className=" border-bottom pb-2 mb-4">Portafolio</h3>
         <Row className="mb-5">
           <Col md={6}>
             <p className="mb-4">
@@ -63,7 +63,7 @@ export default function Portfolio() {
                       <Card className="h-100 shadow-sm">
                         <Card.Body>
                           {project.icon && (
-                            <FontAwesomeIcon icon={project.icon} size="2x" className="mb-3 text-primary" />
+                            <FontAwesomeIcon icon={project.icon} size="2x" className="mb-3 " />
                           )}
                           <Card.Title>{project.name}</Card.Title>
                           <Card.Text>{project.description}</Card.Text>

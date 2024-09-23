@@ -14,7 +14,7 @@ export default function Tools() {
   return (
     <section className="mb-5">
       <Container>
-        <h3 className="text-primary border-bottom pb-2 mb-4">Herramientas</h3>
+        <h3 className=" border-bottom pb-2 mb-4">Herramientas</h3>
         <Row>
           {tools.map((tool, index) => (
             <Col md={4} key={index} className="mb-4">
@@ -25,7 +25,7 @@ export default function Tools() {
                     <div className="d-flex align-items-center justify-content-between">
                       <div className="d-flex align-items-center">
                         {item.icon && (
-                          <FontAwesomeIcon icon={item.icon} className="me-2 text-primary" />
+                          <FontAwesomeIcon icon={item.icon} className="me-2 " />
                         )}
                         <span>{item.name}</span>
                       </div>

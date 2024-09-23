@@ -1,57 +1,58 @@
 
 :root {
-  --font-color: #3A3A3A;
-  --bg-color: #ECEAE8;
+  --font-color: #311D39; /* Color principal de texto */
+  --bg-color: #F4F4F4; /* Fondo por defecto */
   --white-color: #FFFFFF;
-  --border-color: #d7ccc83d;
+  --border-color: #9B8E7E; /* Color de los bordes */
 
-  --primary-color: #6D4C41;
-  --primary-hover: #5D4037;
-  --primary-border: #6D4C41;
-  --primary-text: #FFFFFF;
+  --primary-color: #311D39; /* Color principal */
+  --primary-hover: #67434F; /* Hover para el color principal */
+  --primary-border: #311D39; /* Borde primario */
+  --primary-text: #FFFFFF; /* Texto primario en botones */
 
-  --secondary-color: #BBB6AE;
-  --secondary-hover: #a49d93;
-  --secondary-border: #BBB6AE;
-  --secondary-text: #3A3A3A;
+  --secondary-color: #9B8E7E; /* Color secundario */
+  --secondary-hover: #67434F; /* Hover secundario */
+  --secondary-border: #9B8E7E; /* Borde secundario */
+  --secondary-text: #311D39; /* Texto para secundarios */
 
-  --info-color: #0582c5;
-  --info-hover: #05679f;
-  --info-border: #05679f;
-  --info-text: #FFFFFF;
+  --info-color: #C3CCAF; /* Color de info */
+  --info-hover: #9B8E7E; /* Hover de info */
+  --info-border: #C3CCAF; /* Borde de info */
+  --info-text: #311D39; /* Texto de info */
 
-  --success-color: #66b032;
+  --success-color: #66b032; /* Color de éxito (sin cambio en la imagen) */
   --success-hover: #4d8c24;
   --success-border: #66b032;
   --success-text: #FFFFFF;
 
-  --warning-color: #D09F00;
+  --warning-color: #D09F00; /* Color de advertencia (sin cambio en la imagen) */
   --warning-hover: #89590A;
   --warning-border: #D09F00;
   --warning-text: #FFFFFF;
 
-  --danger-color: #D61200;
-  --danger-hover: #B01304;
-  --danger-border: #D61200;
+  --danger-color: #A51A41; /* Usé este color como peligro/danger */
+  --danger-hover: #67434F; /* Hover de danger basado en la paleta */
+  --danger-border: #A51A41;
   --danger-text: #FFFFFF;
 
-  --link-color: #6D4C41;
-  --link-hover: #5D4037;
-  --link-border: #5D4037;
+  --link-color: #A51A41;
+  --link-hover: #67434F;
+  --link-border: #67434F;
   --link-text: #FFFFFF;
 
   --outline-color: var(--secondary-color);
 
   --card-color: #FFFFFF;
   --card-hover: #F0F2F5;
-  --card-border: #d7ccc83d;
-  --card-text: #3A3A3A;
+  --card-border: #9B8E7E;
+  --card-text: #311D39;
 
-  --discord-color: #5865F0;
+  --discord-color: #5865F0; /* Color de Discord (sin cambio) */
   --discord-text: #FFFFFF;
 
-  --online-color: #15FF00;
+  --online-color: #15FF00; /* Color para online (sin cambio) */
 }
+
 
 body {
   margin: 0;
@@ -452,17 +453,3 @@ body {
   background-color: #f4f4f4;
   color: #333;
 }
-
-h1, h2, h3 {
-  color: #311d39;
-}
-
-a {
-  color: #a51a41;
-  text-decoration: none;
-}
-
-a:hover {
-  text-decoration: underline;
-}
-
