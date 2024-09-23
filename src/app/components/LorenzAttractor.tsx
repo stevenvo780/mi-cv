@@ -17,16 +17,16 @@ export default function LorenzAttractorInteractive() {
     let z = 0;
     const dt = 0.01;
     const points: { x: number; y: number; z: number }[] = [];
+    
+    let minZ = Infinity;
+    let maxZ = -Infinity;
 
     ctx.clearRect(0, 0, width, height);
 
-    // Amplitud del atractor (rango aproximado de los valores x, y, z)
+    // Escala y centrado dinámico
     const maxRange = 40;
-    
-    // Ajustamos la escala dinámica y el centrado
-    const scale = Math.min(width, height) / (maxRange * 2); // Multiplicamos para ajustarlo mejor al tamaño del canvas
+    const scale = Math.min(width, height) / (maxRange * 2);
     const centerX = width / 2;
-    const centerY = height / 2;
 
     const animate = () => {
       for (let i = 0; i < 5; i++) {
@@ -37,11 +37,17 @@ export default function LorenzAttractorInteractive() {
         y += dy;
         z += dz;
         points.push({ x, y, z });
+
+        // Actualizamos los valores de z mínimo y máximo
+        if (z < minZ) minZ = z;
+        if (z > maxZ) maxZ = z;
       }
 
       if (points.length > 1) {
         const p1 = points[points.length - 2];
         const p2 = points[points.length - 1];
+        const centerY = height / 2 - ((maxZ + minZ) / 2) * scale; // Centramos en el eje vertical
+
         ctx.strokeStyle = `hsl(${(points.length / 5000) * 360}, 100%, 50%)`;
         ctx.beginPath();
         ctx.moveTo(centerX + p1.x * scale, centerY + p1.z * scale);
@@ -84,7 +90,7 @@ export default function LorenzAttractorInteractive() {
   return (
     <div>
       <p>
-        σ = {params.sigma.toFixed(2)}, ρ = {params.rho.toFixed(2)}, β = {params.beta.toFixed(2)}
+         σ = {params.sigma.toFixed(2)}, ρ = {params.rho.toFixed(2)}, β = {params.beta.toFixed(2)}
       </p>
       <canvas
         ref={canvasRef}
