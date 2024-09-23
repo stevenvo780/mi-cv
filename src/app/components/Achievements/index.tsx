@@ -9,7 +9,7 @@ export default function Achievements() {
   return (
     <section className="mb-5">
       <Container>
-        <h3 className="border-bottom pb-2 mb-4">Proyectos Destacados</h3>
+        <h3 className="border-bottom pb-2 mb-4">Proyectos</h3>
         <Row>
           {achievements.map((item, index) => (
             <Col key={index} md={4} className="mb-4">

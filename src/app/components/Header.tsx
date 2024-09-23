@@ -27,7 +27,7 @@ export default function Header() {
           <Col xs={12} md={9}>
             <div className="text-center text-md-start bg-white rounded p-3">
               <h1 className="display-5 mb-0">Steven Vallejo Ortiz</h1>
-              <h2 className="h4 text-secondary">Desarrollador de Software</h2>
+              <h2 className="h4 text-secondary">Informático y filosofo</h2>
             </div>
             <ContactInfo />
           </Col>

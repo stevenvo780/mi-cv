@@ -9,6 +9,7 @@ import {
   faCode,
 } from '@fortawesome/free-solid-svg-icons';
 import { PortfolioCategory } from './types';
+import { faGamepad } from '@fortawesome/free-solid-svg-icons/faGamepad';
 
 
 export const portfolioCategories: PortfolioCategory[] = [
@@ -76,6 +77,13 @@ export const portfolioCategories: PortfolioCategory[] = [
         important: true,
       },
       {
+        name: 'Mi CV',
+        link: 'https://github.com/stevenvo780/mi-cv',
+        description: 'Este proyecto de CV en NextJs tambien es open source .',
+        icon: faReact,
+        important: true,
+      },
+      {
         name: 'Neutrino Sugar',
         link: 'https://github.com/stevenvo780/NeutrinoSugar',
         description: 'Utilidades y herramientas para proyectos Neutrino.',
@@ -86,6 +94,20 @@ export const portfolioCategories: PortfolioCategory[] = [
         link: 'https://github.com/stevenvo780/SuenoDorado',
         description: 'Proyecto de esquema ponzi.',
         important: false,
+      },
+      {
+        name: 'Hardware para Programadores',
+        link: 'https://github.com/stevenvo780/hardwareParaProgramadores',
+        description: 'Guía y recomendaciones de hardware para programadores.',
+        icon: faPython,
+        important: false,
+      },
+      {
+        name: 'Neuronal Learning',
+        link: 'https://github.com/stevenvo780/neuronalLearning',
+        description: 'Proyecto de aprendizaje neuronal y redes neuronales.',
+        icon: faReact,
+        important: true,
       },
     ],
   },
@@ -188,6 +210,40 @@ export const portfolioCategories: PortfolioCategory[] = [
         description:
           'Estudios de fenómenos emergentes relacionados con temperatura.',
         important: false,
+      },
+      {
+        name: 'Entropía del Vacío',
+        link: 'https://github.com/stevenvo780/entropia-vacio',
+        description: 'Estudio sobre la entropía en sistemas de vacío cuántico.',
+        icon: faPython,
+        important: false,
+      },
+    ],
+  },
+  {
+    name: 'Juegos',
+    icon: faGamepad,
+    projects: [
+      {
+        name: 'Roblox game',
+        link: 'https://www.roblox.com/es/games/13343028059/ILS-TEST',
+        description: 'Juego de prueba en la plataforma Roblox.',
+        icon: faGamepad,
+        important: true,
+      },
+      {
+        name: 'Cashel: Resurgir de los Imperios',
+        link: 'https://www.cashelresurgirdelosimperios.org/',
+        description: 'Juego de estrategia económica y construcción de imperios.',
+        icon: faGamepad,
+        important: true,
+      },
+      {
+        name: 'Escape Room ILS',
+        link: 'https://www.roblox.com/es/games/13109815288/escape-room-ILS',
+        description: 'Juego simple de buscar salida en la plataforma Roblox.',
+        icon: faGamepad,
+        important: true,
       },
     ],
   },

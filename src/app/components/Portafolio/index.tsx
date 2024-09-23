@@ -22,7 +22,7 @@ export default function Portfolio() {
             </p>
             <Row className="mb-5">
               <Col md={6}>
-                <a href="https://github.com/tu-usuario" target="_blank" rel="noreferrer" className="text-decoration-none">
+                <a href="https://github.com/stevenvo780" target="_blank" rel="noreferrer" className="text-decoration-none">
                   <Card className="h-100 text-center shadow-sm">
                     <Card.Body>
                       <FontAwesomeIcon icon={faGithub} size="3x" className="mb-3 text-dark" />
@@ -35,7 +35,7 @@ export default function Portfolio() {
                 </a>
               </Col>
               <Col md={6}>
-                <a href="https://mega.nz/tu-galeria" target="_blank" rel="noreferrer" className="text-decoration-none">
+                <a href="https://mega.nz/folder/dLZwHCAL#A4xL0DJDmbkOej5uDP96xg" target="_blank" rel="noreferrer" className="text-decoration-none">
                   <Card className="h-100 text-center shadow-sm">
                     <Card.Body>
                       <FontAwesomeIcon icon={faCloud} size="3x" className="mb-3 text-dark" />

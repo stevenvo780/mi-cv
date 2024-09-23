@@ -11,9 +11,9 @@ export default function Home() {
       <div style={{ paddingBottom: '7rem' }}>
         <Header />
       </div >
-      <Tools />
       <Achievements />
       <Portfolio />
+      <Tools />
       <Skills />
       <ContactMe />
     </>
