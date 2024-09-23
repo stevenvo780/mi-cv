@@ -1,29 +1,29 @@
 'use client';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEnvelope } from '@fortawesome/free-solid-svg-icons';
-import { faLinkedin } from '@fortawesome/free-brands-svg-icons';
-import { ListGroup } from 'react-bootstrap';
+import { Row, Col, ListGroup } from 'react-bootstrap';
+import { contacts } from '@/utils/common';
+
 
 export default function ContactInfo() {
   return (
-    <ListGroup variant="flush" className="mt-3">
-      <ListGroup.Item className="d-flex align-items-center">
-        <FontAwesomeIcon icon={faEnvelope} className="me-2 text-primary" />
-        <a href="mailto:stevenvallejo780@gmail.com" className="text-decoration-none">
-          stevenvallejo780@gmail.com
-        </a>
-      </ListGroup.Item>
-      <ListGroup.Item className="d-flex align-items-center">
-        <FontAwesomeIcon icon={faLinkedin} className="me-2 text-primary" />
-        <a
-          href="https://www.linkedin.com/in/steven-vallejo/"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-decoration-none"
-        >
-          LinkedIn
-        </a>
-      </ListGroup.Item>
-    </ListGroup>
+    <Row className="mt-3">
+      {contacts.map((contact, index) => (
+        <Col key={index} xs={12} md={6} lg={4}>
+          <ListGroup variant="flush">
+            <ListGroup.Item className="d-flex align-items-center">
+              <FontAwesomeIcon icon={contact.icon} className="me-2 text-primary" />
+              <a
+                href={contact.url}
+                target={contact.type === 'linkedin' ? '_blank' : undefined}
+                rel="noopener noreferrer"
+                className="text-decoration-none"
+              >
+                {contact.value}
+              </a>
+            </ListGroup.Item>
+          </ListGroup>
+        </Col>
+      ))}
+    </Row>
   );
 }

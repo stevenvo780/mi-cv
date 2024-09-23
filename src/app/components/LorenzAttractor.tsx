@@ -20,6 +20,14 @@ export default function LorenzAttractorInteractive() {
 
     ctx.clearRect(0, 0, width, height);
 
+    // Amplitud del atractor (rango aproximado de los valores x, y, z)
+    const maxRange = 40;
+    
+    // Ajustamos la escala dinámica y el centrado
+    const scale = Math.min(width, height) / (maxRange * 2); // Multiplicamos para ajustarlo mejor al tamaño del canvas
+    const centerX = width / 2;
+    const centerY = height / 2;
+
     const animate = () => {
       for (let i = 0; i < 5; i++) {
         const dx = params.sigma * (y - x) * dt;
@@ -36,8 +44,8 @@ export default function LorenzAttractorInteractive() {
         const p2 = points[points.length - 1];
         ctx.strokeStyle = `hsl(${(points.length / 5000) * 360}, 100%, 50%)`;
         ctx.beginPath();
-        ctx.moveTo(width / 2 + p1.x * 8, height / 2 + p1.z * 8);
-        ctx.lineTo(width / 2 + p2.x * 8, height / 2 + p2.z * 8);
+        ctx.moveTo(centerX + p1.x * scale, centerY + p1.z * scale);
+        ctx.lineTo(centerX + p2.x * scale, centerY + p2.z * scale);
         ctx.stroke();
       }
 
@@ -76,7 +84,7 @@ export default function LorenzAttractorInteractive() {
   return (
     <div>
       <p>
-         σ = {params.sigma.toFixed(2)}, ρ = {params.rho.toFixed(2)}, β = {params.beta.toFixed(2)}
+        σ = {params.sigma.toFixed(2)}, ρ = {params.rho.toFixed(2)}, β = {params.beta.toFixed(2)}
       </p>
       <canvas
         ref={canvasRef}

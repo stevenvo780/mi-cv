@@ -1,3 +1,4 @@
+import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import {
   faPhp,
   faNodeJs,
@@ -11,6 +12,7 @@ import {
   faAws,
   faGithub,
   faUnity,
+  faLinkedin,
 } from '@fortawesome/free-brands-svg-icons';
 import {
   faDatabase,
@@ -25,7 +27,9 @@ import {
   faImage,
   faCloud,
   faBook,
-  faLightbulb, // Íconos adicionales para proyectos
+  faLightbulb,
+  faEnvelope,
+  faLink, // Íconos adicionales para proyectos
 } from '@fortawesome/free-solid-svg-icons';
 import { ToolCategory } from './types';
 
@@ -131,4 +135,45 @@ export const tools: ToolCategory[] = [
       { url: 'https://games-docs.com', icon: faBook },
     ],
   },
+];
+
+
+export type Contact = {
+  type: 'email' | 'linkedin' | 'portfolio';
+  value: string;
+  icon: IconDefinition;
+  url: string;
+};
+
+export const contacts: Contact[] = [
+  {
+    type: 'email',
+    value: 'stevenvallejo780@gmail.com',
+    icon: faEnvelope,
+    url: 'mailto:stevenvallejo780@gmail.com'
+  },
+  {
+    type: 'linkedin',
+    value: 'LinkedIn',
+    icon: faLinkedin,
+    url: 'https://www.linkedin.com/in/steven-vallejo/'
+  },
+  {
+    type: 'portfolio',
+    value: 'GitHub',
+    icon: faGithub,
+    url: 'https://github.com/stevenvo780'
+  },
+  {
+    type: 'portfolio',
+    value: 'CodeRank',
+    icon: faLink,
+    url: 'https://profile.codersrank.io/user/stevenvo780'
+  },
+  {
+    type: 'portfolio',
+    value: 'Videojuegos',
+    icon: faGamepad,
+    url: 'https://mega.nz/folder/dLZwHCAL#A4xL0DJDmbkOej5uDP96xg'
+  }
 ];
