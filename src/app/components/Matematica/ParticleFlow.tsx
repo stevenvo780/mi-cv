@@ -72,6 +72,6 @@ export default function ParticleFlow() {
   }, []);
 
   return (
-    <canvas ref={canvasRef} width={540} height={400} />
+    <canvas ref={canvasRef} width={540} height={500} />
   );
 }

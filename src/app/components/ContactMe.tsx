@@ -1,7 +1,7 @@
 'use client';
 import React, { useRef, useState } from 'react';
 import { Container, Row, Col, Form, Button } from 'react-bootstrap';
-import ParticleFlow from './ParticleFlow'; // Asumo que el componente ParticleFlow está en la misma carpeta
+import ParticleFlow from '@/app/components/Matematica/ParticleFlow';
 import emailjs from 'emailjs-com';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEnvelope, faPaperPlane } from '@fortawesome/free-solid-svg-icons';
@@ -64,26 +64,21 @@ export default function ContactMe() {
               </Form>
             )}
 
-            {/* Correo preescrito y botón de WhatsApp */}
-            <div className="mt-4">
-              <h6>Otras formas de contactarme:</h6>
-              <ul>
-                <li>
-                  <a href="mailto:stevenvallejo780@gmail.com?subject=Contacto&body=Hola Steven, me gustaría ponerme en contacto contigo">
-                    <FontAwesomeIcon icon={faEnvelope} /> Enviar correo preescrito
-                  </a>
-                </li>
-                <li className="mt-2">
-                  <a
-                    href="https://wa.me/1234567890" // Sustituir por tu número de WhatsApp
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="btn btn-success"
-                  >
-                    <FontAwesomeIcon icon={faWhatsapp} /> Enviar mensaje por WhatsApp
-                  </a>
-                </li>
-              </ul>
+            <div className="mt-4 d-flex justify-content-around">
+              <a
+                href="mailto:stevenvallejo780@gmail.com?subject=Contacto&body=Hola Steven, me gustaría ponerme en contacto contigo"
+                style={{ fontSize: '48px', color: '#000' }} // Estilo del icono de correo
+              >
+                <FontAwesomeIcon icon={faEnvelope} />
+              </a>
+              <a
+                href="https://wa.me/1234567890" // Sustituir por tu número de WhatsApp
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ fontSize: '48px', color: '#25D366' }} // Estilo del icono de WhatsApp
+              >
+                <FontAwesomeIcon icon={faWhatsapp} />
+              </a>
             </div>
           </Col>
         </Row>

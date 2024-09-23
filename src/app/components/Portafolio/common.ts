@@ -17,6 +17,22 @@ export const portfolioCategories: PortfolioCategory[] = [
     icon: faCode,
     projects: [
       {
+        name: 'Tertulia Literaria Frontend',
+        link: 'https://github.com/stevenvo780/tertulialiteraria-frond',
+        description:
+          'Plataforma web para fomentar el diálogo y el aprendizaje en literatura, filosofía y más.',
+        icon: faReact,
+        important: true,
+      },
+      {
+        name: 'Tertulia Literaria API',
+        link: 'https://github.com/stevenvo780/tertulialiteraria-api',
+        description:
+          'API construida con NestJS para la comunidad de Tertulia Literaria.',
+        icon: faNodeJs,
+        important: true,
+      },
+      {
         name: 'PLACETOPAY',
         link: 'https://github.com/stevenvo780/tienda',
         description:
@@ -180,19 +196,11 @@ export const portfolioCategories: PortfolioCategory[] = [
     icon: faBook,
     projects: [
       {
-        name: 'Tertulia Literaria Frontend',
-        link: 'https://github.com/stevenvo780/tertulialiteraria-frond',
+        name: 'Tertulia Literaria',
+        link: 'https://www.tertulia-literaria.com/',
         description:
-          'Plataforma web para fomentar el diálogo y el aprendizaje en literatura, filosofía y más.',
-        icon: faReact,
-        important: true,
-      },
-      {
-        name: 'Tertulia Literaria API',
-        link: 'https://github.com/stevenvo780/tertulialiteraria-api',
-        description:
-          'API construida con NestJS para la comunidad de Tertulia Literaria.',
-        icon: faNodeJs,
+          'Proyecto de filosofía, ciencias, literatura y arte',
+        icon: faBook,
         important: true,
       },
       {

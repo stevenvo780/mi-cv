@@ -1,7 +1,7 @@
 // components/Header.js
 'use client';
 import Image from 'next/image';
-import ContactInfo from './ContactInfo';
+import ContactInfo from '@/app/components/ContactInfo';
 import { Container, Row, Col } from 'react-bootstrap';
 import profileImage from '/public/profile.jpg';
 

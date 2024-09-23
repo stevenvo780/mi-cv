@@ -1,5 +1,5 @@
 import { Container, Row, Col } from 'react-bootstrap';
-import MandelbrotSet from './MandelbrotSet'; // Asumo que el componente MandelbrotSet está en la misma carpeta
+import MandelbrotSet from '@/app/components/Matematica/MandelbrotSet';
 
 export default function Skills() {
   return (

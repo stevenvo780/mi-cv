@@ -4,7 +4,7 @@ import { Container, Card, Row, Col } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGithub } from '@fortawesome/free-brands-svg-icons/faGithub';
 import { faCloud } from '@fortawesome/free-solid-svg-icons';
-import LorenzAttractor from '../LorenzAttractor';
+import LorenzAttractor from '@/app/components/Matematica/LorenzAttractor';
 import { portfolioCategories } from './common';
 
 export default function Portfolio() {

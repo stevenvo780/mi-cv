@@ -1,7 +1,7 @@
 'use client';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Row, Col, ListGroup } from 'react-bootstrap';
-import { contacts } from '@/utils/common';
+import { contacts } from './common';
 
 
 export default function ContactInfo() {
