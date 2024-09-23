@@ -8,7 +8,6 @@ export default function Skills() {
         <h3 className="border-bottom pb-2 mb-4">Que habita mi mente</h3>
         <Row>
           <Col md={6}>
-            <h5>Mi Perspectiva Filosófica</h5>
             <p>
               En cuanto a la <strong>mente</strong>, me inclino por una postura <strong>emergentista</strong>, donde las propiedades mentales surgen de la complejidad del cerebro y no pueden reducirse a las partes. Sobre el <strong>ser</strong>, sigo las ideas de <strong>Alain Badiou</strong>, viendo el ser como un proceso en constante cambio, siempre en relación con el evento.
             </p>

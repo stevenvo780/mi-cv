@@ -6,9 +6,10 @@ import {
   faCss3Alt,
   faJsSquare,
   faReact,
+  faAngular,
+  faVuejs,
   faLaravel,
   faDocker,
-  faAws,
   faGithub,
   faUnity,
 } from '@fortawesome/free-brands-svg-icons';
@@ -24,53 +25,92 @@ import {
   faNetworkWired,
   faImage,
   faCloud,
-  faBook,
-  faLightbulb,
 } from '@fortawesome/free-solid-svg-icons';
 import { ToolCategory } from './types';
 
 export const tools: ToolCategory[] = [
   {
-    category: 'FrontEnd',
+    category: 'Desarrollo Front-End',
     items: [
       { name: 'HTML', icon: faHtml5, level: 95 },
-      { name: 'ReactJS (Redux y sagas), Angular, Vue (Vuex)', icon: faReact, level: 88 },
-      { name: 'JavaScript y SASS', icon: faJsSquare, level: 85 },
-      { name: 'React Native, Next.js', icon: faReact, level: 85 },
       { name: 'CSS3 (Bootstrap, MaterialUI, Bulma)', icon: faCss3Alt, level: 80 },
+      { name: 'JavaScript y SASS', icon: faJsSquare, level: 85 },
+      { name: 'ReactJS (Redux y sagas)', icon: faReact, level: 88 },
+      { name: 'Next.js', icon: faReact, level: 85 },
+      { name: 'React Native', icon: faReact, level: 75 },
       { name: 'Laravel (Blade), Symfony (Twig)', icon: faLaravel, level: 70 },
+      { name: 'Vue (Vuex)', icon: faVuejs, level: 60 },
+      { name: 'Angular', icon: faAngular, level: 40 },
     ].sort((a, b) => b.level - a.level),
     links: [
-      { url: 'https://proyecto-frontend.com', icon: faLightbulb },
-      { url: 'https://frontend-docs.com', icon: faBook },
+      {
+        url: 'https://github.com/stevenvo780/tertulialiteraria-frond',
+        icon: faReact,
+      },
+      {
+        url: 'https://github.com/stevenvo780/TemplateReactBigAPP',
+        icon: faReact,
+      },
     ],
   },
   {
-    category: 'DevOps',
+    category: 'Desarrollo Back-End',
     items: [
-      { name: 'Git, GitHub, BitBucket, GitLab', icon: faGithub, level: 95 },
-      { name: 'Google Cloud avanzado, AWS Cloud', icon: faAws, level: 90 },
+      { name: 'Node.js (TypeScript, Express, Hapi, NestJS)', icon: faNodeJs, level: 90 },
+      { name: 'PHP (SLIM, Laravel, Symfony)', icon: faPhp, level: 85 },
+      { name: 'Python', icon: faPython, level: 75 },
+      { name: 'Bash', icon: faCode, level: 65 },
+      { name: '.NET', icon: faCode, level: 45 },
+    ].sort((a, b) => b.level - a.level),
+    links: [
+      {
+        url: 'https://github.com/stevenvo780/tertulialiteraria-api',
+        icon: faNodeJs,
+      },
+      {
+        url: 'https://github.com/stevenvo780/api-node-mongodb',
+        icon: faNodeJs,
+      },
+    ],
+  },
+  {
+    category: 'Bases de Datos',
+    items: [
+      { name: 'Relacionales (MariaDB, SQL Server, PostgreSQL)', icon: faDatabase, level: 85 },
+      { name: 'NoSQL (MongoDB, Firebase)', icon: faDatabase, level: 85 },
+      { name: 'Grafos (Neo4j)', icon: faDatabase, level: 80 },
+    ].sort((a, b) => b.level - a.level),
+    links: [],
+  },
+  {
+    category: 'DevOps y Cloud',
+    items: [
+      { name: 'Git, GitHub, BitBucket, GitLab', icon: faGithub, level:95 },
+      { name: 'Google Cloud avanzado, AWS Cloud', icon: faCloud, level: 90 },
       { name: 'Docker', icon: faDocker, level: 85 },
       { name: 'CI/CD Pipelines, GitHub Actions', icon: faCogs, level: 85 },
       { name: 'Hosting tradicional, Vercel', icon: faServer, level: 75 },
       { name: 'RabbitMQ, Apache Kafka', icon: faServer, level: 65 },
     ].sort((a, b) => b.level - a.level),
-    links: [
-      { url: 'https://proyecto-devops.com', icon: faCloud },
-      { url: 'https://devops-tutorials.com', icon: faBook },
-    ],
+    links: [],
   },
   {
-    category: 'BackEnd',
+    category: 'Inteligencia Artificial y Machine Learning',
     items: [
-      { name: 'Node.js (TypeScript, Express, Hapi, NestJS)', icon: faNodeJs, level: 90 },
-      { name: 'PHP (SLIM, Laravel, Symfony)', icon: faPhp, level: 85 },
-      { name: 'Python', icon: faPython, level: 75 },
-      { name: '.NET y Bash', icon: faCode, level: 65 },
+      { name: 'Numpy, Wolfram Alpha, PNL', icon: faBrain, level: 75 },
+      { name: 'TensorFlow, PyTorch', icon: faBrain, level: 60 },
+      { name: 'Hugging Face (LLAMA, GPT-2 y GPT-3)', icon: faNetworkWired, level: 65 },
+      { name: 'Stable Diffusion avanzado', icon: faImage, level: 60 },
     ].sort((a, b) => b.level - a.level),
     links: [
-      { url: 'https://proyecto-backend.com', icon: faLightbulb },
-      { url: 'https://backend-docs.com', icon: faBook },
+      {
+        url: 'https://github.com/stevenvo780/emergentismo-tesis',
+        icon: faPython,
+      },
+      {
+        url: 'https://github.com/stevenvo780/emergencia-juego-de-conwey',
+        icon: faPython,
+      },
     ],
   },
   {
@@ -78,57 +118,28 @@ export const tools: ToolCategory[] = [
     items: [
       { name: 'ChatGPT', icon: faBrain, level: 90 },
       { name: 'GitHub Copilot, TabNine', icon: faGithub, level: 85 },
-      { name: 'Stable Diffusion avanzado', icon: faImage, level: 60 },
-      { name: 'Hugging Face (LLAMA, GPT-2 y GPT-3)', icon: faNetworkWired, level: 65 },
     ].sort((a, b) => b.level - a.level),
-    links: [
-      { url: 'https://proyecto-ai.com', icon: faLightbulb },
-      { url: 'https://ai-docs.com', icon: faBook },
-    ],
+    links: [],
   },
   {
-    category: 'Planeación',
+    category: 'Planeación y Gestión de Proyectos',
     items: [
       { name: 'Trello, JIRA, ClickUp', icon: faProjectDiagram, level: 90 },
       { name: 'SCRUM, KANBAN, LEAN', icon: faPencilRuler, level: 85 },
       { name: 'TDD, UML', icon: faPencilRuler, level: 70 },
     ].sort((a, b) => b.level - a.level),
-    links: [
-      { url: 'https://proyecto-plan.com', icon: faLightbulb },
-      { url: 'https://plan-docs.com', icon: faBook },
-    ],
+    links: [],
   },
   {
-    category: 'Bases de datos',
-    items: [
-      { name: 'MongoDB, MariaDB', icon: faDatabase, level: 85 },
-      { name: 'SQL Server, Neo4j, PostgreSQL, Firebase', icon: faDatabase, level: 80 },
-    ].sort((a, b) => b.level - a.level),
-    links: [
-      { url: 'https://proyecto-db.com', icon: faLightbulb },
-      { url: 'https://db-docs.com', icon: faBook },
-    ],
-  },
-  {
-    category: 'Inteligencia Artificial',
-    items: [
-      { name: 'Numpy, Wolfram Alpha, PNL', icon: faCode, level: 75 },
-      { name: 'TensorFlow, PyTorch', icon: faBrain, level: 60 },
-    ].sort((a, b) => b.level - a.level),
-    links: [
-      { url: 'https://proyecto-ai-2.com', icon: faLightbulb },
-      { url: 'https://ai2-docs.com', icon: faBook },
-    ],
-  },
-  {
-    category: 'Videojuegos',
+    category: 'Desarrollo de Videojuegos',
     items: [
       { name: 'C# Unity 3D', icon: faUnity, level: 80 },
-      { name: 'Realidad virtual con Oculus HTC VIVE, realidad aumentada con Vuforia', icon: faGamepad, level: 70 },
+      {
+        name: 'Realidad virtual (Oculus, HTC VIVE) y aumentada (Vuforia)',
+        icon: faGamepad,
+        level: 70,
+      },
     ].sort((a, b) => b.level - a.level),
-    links: [
-      { url: 'https://proyecto-games.com', icon: faLightbulb },
-      { url: 'https://games-docs.com', icon: faBook },
-    ],
+    links: [],
   },
 ];

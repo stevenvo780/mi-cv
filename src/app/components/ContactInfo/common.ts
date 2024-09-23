@@ -1,11 +1,9 @@
 
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import {
-  faGithub,
   faLinkedin,
 } from '@fortawesome/free-brands-svg-icons';
 import {
-  faGamepad,
   faEnvelope,
   faLink,
 } from '@fortawesome/free-solid-svg-icons';
@@ -32,20 +30,8 @@ export const contacts: Contact[] = [
   },
   {
     type: 'portfolio',
-    value: 'GitHub',
-    icon: faGithub,
-    url: 'https://github.com/stevenvo780'
-  },
-  {
-    type: 'portfolio',
     value: 'CodeRank',
     icon: faLink,
     url: 'https://profile.codersrank.io/user/stevenvo780'
   },
-  {
-    type: 'portfolio',
-    value: 'Videojuegos',
-    icon: faGamepad,
-    url: 'https://mega.nz/folder/dLZwHCAL#A4xL0DJDmbkOej5uDP96xg'
-  }
 ];

@@ -8,7 +8,7 @@ import GameOfLife from '@/app/components/Matematica/GameOfLife';
 
 export default function Header() {
   return (
-    <header className="mb-5 border-bottom pb-3">
+    <header className="mb-5 pb-3">
       <div style={{ position: 'absolute', top: 0, left: 0, zIndex: -1 }}>
         <GameOfLife />
       </div>

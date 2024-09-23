@@ -3,7 +3,7 @@ import React from 'react';
 import { Container, Card, Row, Col } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGithub } from '@fortawesome/free-brands-svg-icons/faGithub';
-import { faCloud } from '@fortawesome/free-solid-svg-icons';
+import { faCloud, faArrowRight } from '@fortawesome/free-solid-svg-icons';
 import LorenzAttractor from '@/app/components/Matematica/LorenzAttractor';
 import { portfolioCategories } from './common';
 
@@ -17,6 +17,9 @@ export default function Portfolio() {
             <p className="mb-4">
               Te muestro mis proyectos a lo largo de mi vida. Soy polifacético y me gustan mucho más las ciencias, la filosofía y la tecnología, así que he realizado proyectos de todo tipo. Espero que te puedan servir o al menos que puedas conocerme a través de ellos.
             </p>
+            <p className="mb-4" style={{ textAlign: 'justify', }}>
+              <strong>Todos estos proyectos son OpenSource</strong> por lo cual puedes disponer de estos y están abiertos a mejoras por la comunidad de desarrolladores.
+            </p>
             <Row className="mb-5">
               <Col md={6}>
                 <a href="https://github.com/tu-usuario" target="_blank" rel="noreferrer" className="text-decoration-none">
@@ -25,8 +28,8 @@ export default function Portfolio() {
                       <FontAwesomeIcon icon={faGithub} size="3x" className="mb-3 text-dark" />
                       <Card.Title>GitHub</Card.Title>
                     </Card.Body>
-                    <Card.Footer>
-                      Ver proyectos en GitHub
+                    <Card.Footer className="d-flex justify-content-end">
+                      <FontAwesomeIcon icon={faArrowRight} />
                     </Card.Footer>
                   </Card>
                 </a>
@@ -38,8 +41,8 @@ export default function Portfolio() {
                       <FontAwesomeIcon icon={faCloud} size="3x" className="mb-3 text-dark" />
                       <Card.Title>Mega</Card.Title>
                     </Card.Body>
-                    <Card.Footer>
-                      Ver proyectos en Mega
+                    <Card.Footer className="d-flex justify-content-end">
+                      <FontAwesomeIcon icon={faArrowRight} />
                     </Card.Footer>
                   </Card>
                 </a>
@@ -68,7 +71,9 @@ export default function Portfolio() {
                           <Card.Title>{project.name}</Card.Title>
                           <Card.Text>{project.description}</Card.Text>
                         </Card.Body>
-                        <Card.Footer>Ver proyecto</Card.Footer>
+                        <Card.Footer className="d-flex justify-content-end">
+                          <FontAwesomeIcon icon={faArrowRight} />
+                        </Card.Footer>
                       </Card>
                     </a>
                   </Col>
