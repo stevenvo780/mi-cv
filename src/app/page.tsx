@@ -1,6 +1,6 @@
 import Header from './components/Header';
 import Tools from './components/Tools';
-import Portfolio from './components/Portfolio';
+import Portfolio from './components/Portafolio';
 import Skills from './components/Skills';
 import Achievements from './components/Achievements';
 import GameOfLife from './components/GameOfLife';

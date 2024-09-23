@@ -7,7 +7,6 @@ import meraVueltaImg from '@/public/MeraVuelta.png';
 import emwImg from '@/public/EMW.webp';
 import { StaticImageData } from 'next/image';
 
-
 // Componente personalizado para el proyecto JARVIS
 function CustomJarvisImage() {
   return (
@@ -32,7 +31,7 @@ interface AchievementItem {
   link: string;
   image?: StaticImageData | string;
   tier: 'gold' | 'platinum' | 'silver';
-  isCustom?: boolean; // Añadimos un flag para indicar si debe usar componente personalizado
+  isCustom?: boolean;
 }
 
 const achievements: AchievementItem[] = [
@@ -76,7 +75,7 @@ const achievements: AchievementItem[] = [
     description: 'Asistente virtual basado en IA',
     link: 'https://github.com/stevenvo780/jarvisIA',
     tier: 'silver',
-    isCustom: true, // Indicar que este proyecto usará el componente personalizado
+    isCustom: true,
   },
 ];
 
@@ -94,13 +93,18 @@ export default function Achievements() {
         <Row>
           {achievements.map((item, index) => (
             <Col key={index} md={4} className="mb-4">
-              <Card style={{ borderColor: tierColors[item.tier], borderWidth: '2px' }}>
+              <Card style={{ borderColor: tierColors[item.tier], borderWidth: '2px', height: '100%' }}>
                 {item.isCustom ? (
                   <CustomJarvisImage />
                 ) : (
-                  <Card.Img variant="top" src={typeof item.image === 'string' ? item.image : item.image?.src} alt={item.name} />
+                  <Card.Img
+                    variant="top"
+                    src={typeof item.image === 'string' ? item.image : item.image?.src}
+                    alt={item.name}
+                    style={{ height: '200px', objectFit: 'cover', width: '100%' }} // Estandarizar tamaño de imagen
+                  />
                 )}
-                <Card.Body>
+                <Card.Body style={{ minHeight: '150px' }}> {/* Estandarizar la altura del contenido */}
                   <Card.Title>{item.name}</Card.Title>
                   <Card.Text>{item.description}</Card.Text>
                   <a href={item.link} target="_blank" rel="noreferrer" className="btn btn-outline-primary">
