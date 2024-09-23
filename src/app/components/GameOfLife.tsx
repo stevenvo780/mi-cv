@@ -88,7 +88,7 @@ export default function GameOfLifeHeader() {
                 style={{
                   width: 13,
                   height: 13,
-                  backgroundColor: grid[i][j] ? '#0d6efd' : undefined,
+                  backgroundColor: grid[i][j] ? '#a51a41' : undefined,
                   border: 'solid 1px #dee2e6',
                 }}
               />

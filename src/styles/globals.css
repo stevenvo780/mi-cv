@@ -7,14 +7,15 @@ body {
 }
 
 h1, h2, h3 {
-  color: #2980b9;
+  color: #311d39;
 }
 
 a {
-  color: #2980b9;
+  color: #a51a41;
   text-decoration: none;
 }
 
 a:hover {
   text-decoration: underline;
 }
+

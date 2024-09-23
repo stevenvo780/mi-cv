@@ -17,7 +17,7 @@ export default function LorenzAttractorInteractive() {
     let z = 0;
     const dt = 0.01;
     const points: { x: number; y: number; z: number }[] = [];
-    
+
     let minZ = Infinity;
     let maxZ = -Infinity;
 
@@ -59,8 +59,16 @@ export default function LorenzAttractorInteractive() {
         const id = requestAnimationFrame(animate);
         setAnimationId(id);
       } else {
-        cancelAnimationFrame(animationId!);
+        resetAnimation(); // Reinicia la animación
       }
+    };
+
+    const resetAnimation = () => {
+      setParams({
+        sigma: Math.random() * 20 + 5,
+        rho: Math.random() * 35 + 15,
+        beta: Math.random() * 3 + 2,
+      });
     };
 
     animate();
@@ -70,11 +78,7 @@ export default function LorenzAttractorInteractive() {
         cancelAnimationFrame(animationId);
       }
 
-      const newSigma = Math.random() * 20 + 5;
-      const newRho = Math.random() * 35 + 15;
-      const newBeta = Math.random() * 3 + 2;
-
-      setParams({ sigma: newSigma, rho: newRho, beta: newBeta });
+      resetAnimation();
     };
 
     canvas.addEventListener('click', handleClick);
@@ -88,16 +92,11 @@ export default function LorenzAttractorInteractive() {
   }, [params]);
 
   return (
-    <div>
-      <p>
-         σ = {params.sigma.toFixed(2)}, ρ = {params.rho.toFixed(2)}, β = {params.beta.toFixed(2)}
-      </p>
-      <canvas
-        ref={canvasRef}
-        width={600}
-        height={400}
-        style={{ border: '1px solid #dee2e6', backgroundColor: '#f8f9fa' }}
-      />
-    </div>
+    <canvas
+      ref={canvasRef}
+      width={600}
+      height={400}
+      style={{ border: '1px solid #dee2e6', backgroundColor: '#f8f9fa' }}
+    />
   );
 }

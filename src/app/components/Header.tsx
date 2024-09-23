@@ -3,10 +3,16 @@ import Image from 'next/image';
 import ContactInfo from './ContactInfo';
 import { Container, Row, Col } from 'react-bootstrap';
 import profileImage from '@/public/profile.jpeg';
+import GameOfLife from '../components/GameOfLife';
+
 
 export default function Header() {
   return (
     <header className="mb-5 border-bottom pb-3">
+      <div style={{ position: 'absolute', top: 0, left: 0, zIndex: -1 }}>
+        <GameOfLife />
+      </div>
+      <br/>
       <Container>
         <Row className="align-items-center">
           <Col xs={12} md={3} className="text-center mb-3 mb-md-0">
