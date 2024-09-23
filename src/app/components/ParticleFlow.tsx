@@ -72,9 +72,6 @@ export default function ParticleFlow() {
   }, []);
 
   return (
-    <div>
-      <h3>Visualización de Flujos de Partículas</h3>
-      <canvas ref={canvasRef} width={600} height={400} />
-    </div>
+    <canvas ref={canvasRef} width={540} height={400} />
   );
 }

@@ -3,8 +3,7 @@ import Tools from './components/Tools';
 import Portfolio from './components/Portafolio';
 import Skills from './components/Skills';
 import Achievements from './components/Achievements';
-import MandelbrotSet from './components/MandelbrotSet';
-import ParticleFlow from './components/ParticleFlow';
+import ContactMe from './components/ContactMe';
 
 export default function Home() {
   return (
@@ -15,9 +14,8 @@ export default function Home() {
       <Tools />
       <Achievements />
       <Portfolio />
-      <ParticleFlow />
       <Skills />
-      <MandelbrotSet />
+      <ContactMe />
     </>
   );
 }

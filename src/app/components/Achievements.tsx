@@ -7,6 +7,8 @@ import meraVueltaImg from '@/public/MeraVuelta.png';
 import emwImg from '@/public/EMW.png';
 import { StaticImageData } from 'next/image';
 import Jarvis from './Jarvis';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
 
 interface AchievementItem {
   name: string;
@@ -29,7 +31,7 @@ const achievements: AchievementItem[] = [
     tier: 'gold',
     imageWidth: 300,
     imageHeight: 200,
-    backgroundColor: 'transparent', // Fondo transparente
+    backgroundColor: 'transparent',
   },
   {
     name: 'Tertulia Literaria Demo',
@@ -91,7 +93,7 @@ export default function Achievements() {
   return (
     <section className="mb-5">
       <Container>
-        <h3 className="border-bottom pb-2 mb-4">Proyectos</h3>
+        <h3 className="border-bottom pb-2 mb-4">Proyectos Destacados</h3>
         <Row>
           {achievements.map((item, index) => (
             <Col key={index} md={4} className="mb-4">
@@ -132,15 +134,17 @@ export default function Achievements() {
                   <Card.Body style={{ minHeight: '150px', position: 'relative' }}>
                     <Card.Title>{item.name}</Card.Title>
                     <Card.Text>{item.description}</Card.Text>
-                    <a
-                      href={item.link}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="btn btn-outline-primary"
-                      style={{ position: 'absolute', bottom: '10px', left: '10px' }}
+                    <div
+                      style={{
+                        position: 'absolute',
+                        bottom: '10px',
+                        right: '10px',
+                        fontSize: '24px',
+                        color: '#6c757d',
+                      }}
                     >
-                      Ver más
-                    </a>
+                      <FontAwesomeIcon icon={faArrowRight} />
+                    </div>
                   </Card.Body>
                 </Card>
               </a>

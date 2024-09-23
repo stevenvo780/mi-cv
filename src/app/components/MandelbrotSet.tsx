@@ -64,9 +64,6 @@ export default function MandelbrotSet() {
   }, []);
 
   return (
-    <div>
-      <h3>Conjunto de Mandelbrot Interactivo</h3>
-      <canvas ref={canvasRef} width={600} height={400} />
-    </div>
+    <canvas ref={canvasRef} width={600} height={400} />
   );
 }
