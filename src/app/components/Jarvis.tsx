@@ -42,7 +42,7 @@ export default function JarvisAnimation(): JSX.Element {
         this.y = Math.random() * (canvas?.height ?? 0);
         this.directionX = (Math.random() * 0.4) - 0.2;
         this.directionY = (Math.random() * 0.4) - 0.2;
-        this.size = Math.random() * 2 + 1;
+        this.size = Math.random() * 10 + 1;
         this.color = '#0d6efd';
       }
 
@@ -72,9 +72,8 @@ export default function JarvisAnimation(): JSX.Element {
       }
     }
 
-    // Inicializar partículas
     function init(): void {
-      particlesArray.length = 0; // Limpiar el array
+      particlesArray.length = 0;
       for (let i = 0; i < numberOfParticles; i++) {
         particlesArray.push(new ParticleClass());
       }
@@ -95,7 +94,7 @@ export default function JarvisAnimation(): JSX.Element {
           if (distance < 100) {
             context.beginPath();
             context.strokeStyle = '#0d6efd';
-            context.lineWidth = 0.2;
+            context.lineWidth = 1.2;
             context.moveTo(particlesArray[a].x, particlesArray[a].y);
             context.lineTo(particlesArray[b].x, particlesArray[b].y);
             context.stroke();

@@ -2,28 +2,11 @@
 import { Container, Row, Col, Card } from 'react-bootstrap';
 import humanizarImg from '@/public/Humanizar.png';
 import tertuliaImg from '@/public/Tertulia.jpg';
-import totalPedidoImg from '@/public/TotalPedido.webp';
+import totalPedidoImg from '@/public/TotalPedido.png';
 import meraVueltaImg from '@/public/MeraVuelta.png';
-import emwImg from '@/public/EMW.webp';
+import emwImg from '@/public/EMW.png';
 import { StaticImageData } from 'next/image';
-
-// Componente personalizado para el proyecto JARVIS
-function CustomJarvisImage() {
-  return (
-    <div
-      style={{
-        width: '100%',
-        height: '200px',
-        backgroundColor: '#000',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-      }}
-    >
-      <h5 style={{ color: '#fff' }}>Proyecto JARVIS</h5>
-    </div>
-  );
-}
+import Jarvis from './Jarvis';
 
 interface AchievementItem {
   name: string;
@@ -95,13 +78,15 @@ export default function Achievements() {
             <Col key={index} md={4} className="mb-4">
               <Card style={{ borderColor: tierColors[item.tier], borderWidth: '2px', height: '100%' }}>
                 {item.isCustom ? (
-                  <CustomJarvisImage />
+                  <Jarvis />
                 ) : (
                   <Card.Img
                     variant="top"
                     src={typeof item.image === 'string' ? item.image : item.image?.src}
                     alt={item.name}
-                    style={{ height: '200px', objectFit: 'cover', width: '100%' }} // Estandarizar tamaño de imagen
+                    width="100%"
+                    height={200}
+                    style={{ height: '200px', objectFit: 'cover', width: '100%' }}
                   />
                 )}
                 <Card.Body style={{ minHeight: '150px' }}> {/* Estandarizar la altura del contenido */}
