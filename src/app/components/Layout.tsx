@@ -1,20 +1,31 @@
+// components/Header.js
 'use client';
-import Head from 'next/head';
-import { Container } from 'react-bootstrap';
+import Image from 'next/image';
+import ContactInfo from './ContactInfo';
+import { Container, Row, Col } from 'react-bootstrap';
+import profileImage from '/public/profile.jpg';
 
-interface LayoutProps {
-  children: React.ReactNode;
-}
-
-export default function Layout({ children }: LayoutProps) {
+export default function Header() {
   return (
-    <Container>
-      <Head>
-        <title>Hoja de Vida - Steven Vallejo Ortiz</title>
-        <meta name="description" content="Curriculum de Steven Vallejo Ortiz" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-      </Head>
-      <main>{children}</main>
-    </Container>
+    <header className="mb-5 border-bottom pb-3">
+      <Container>
+        <Row className="align-items-center">
+          <Col xs={12} md={3} className="text-center mb-3 mb-md-0">
+            <Image
+              src={profileImage}
+              alt="Steven Vallejo Ortiz"
+              width={150}
+              height={150}
+              className="rounded-circle border border-4 border-primary"
+            />
+          </Col>
+          <Col xs={12} md={9}>
+            <h1 className="display-5 text-primary mb-0">Steven Vallejo Ortiz</h1>
+            <h2 className="h4 text-secondary">Desarrollador de Software</h2>
+            <ContactInfo />
+          </Col>
+        </Row>
+      </Container>
+    </header>
   );
 }

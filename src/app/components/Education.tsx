@@ -1,4 +1,5 @@
-import styles from '@/styles/Home.module.css';
+// components/Education.js
+import { Container } from 'react-bootstrap';
 
 interface EducationItem {
   title: string;
@@ -8,29 +9,36 @@ interface EducationItem {
 
 const educationItems: EducationItem[] = [
   {
-    title: "Técnica en Desarrollo de Software - SENA",
-    date: "2017",
-    location: "Medellín, Antioquia, Colombia",
+    title: 'Técnica en Desarrollo de Software - SENA',
+    date: '2017',
+    location: 'Colombia - Antioquia - Medellín',
   },
   {
-    title: "Curso de Desarrollo para HTC VR - SENA",
-    date: "2017",
-    location: "Medellín, Antioquia, Colombia",
+    title: 'Curso de Desarrollo para HTC VR - SENA',
+    date: '2017',
+    location: 'Colombia - Antioquia - Medellín',
   },
- 
-  // Puedes añadir más elementos de educación aquí
+  {
+    title: 'Curso en Desarrollo de Videojuegos - CENSA',
+    date: '2017',
+    location: 'Colombia - Antioquia - Medellín',
+  },
 ];
 
 export default function Education() {
   return (
-    <section>
-      <h3>Educación</h3>
-      {educationItems.map((edu, index) => (
-        <div key={index} className={styles.educationItem}>
-          <h4>{edu.title}</h4>
-          <p><strong>{edu.date}</strong> | {edu.location}</p>
-        </div>
-      ))}
+    <section className="mb-5">
+      <Container>
+        <h3 className="text-primary border-bottom pb-2 mb-4">Educación</h3>
+        {educationItems.map((edu, index) => (
+          <div key={index} className="mb-3">
+            <h4 className="h5 mb-1">{edu.title}</h4>
+            <p className="text-muted mb-0">
+              <strong>{edu.date}</strong> | {edu.location}
+            </p>
+          </div>
+        ))}
+      </Container>
     </section>
   );
 }
