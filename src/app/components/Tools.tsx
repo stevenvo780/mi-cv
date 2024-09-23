@@ -1,6 +1,7 @@
 import { Container, Row, Col, ProgressBar, Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { tools } from '@/utils/common'; // Importa el archivo donde moviste el JSON
+import { faCoins } from '@fortawesome/free-solid-svg-icons';
 
 const getProgressBarVariant = (level: number) => {
   if (level > 85) return 'success';
@@ -29,7 +30,7 @@ export default function Tools() {
                         <span>{item.name}</span>
                       </div>
                       {item.level > 85 && (
-                        <FontAwesomeIcon icon="faCoins" className="text-warning me-2" />
+                        <FontAwesomeIcon icon={faCoins} className="text-warning me-2" />
                       )}
                     </div>
                     <ProgressBar 
@@ -37,19 +38,22 @@ export default function Tools() {
                       label={`${item.level}%`} 
                       variant={getProgressBarVariant(item.level)} 
                     />
-                    {item.url && (
-                      <Button
-                        href={item.url}
-                        variant="outline-primary"
-                        className="mt-2 rounded-circle"
-                        style={{ width: '40px', height: '40px' }}
-                      >
-                        <FontAwesomeIcon icon="faLightbulb" />
-                      </Button>
-                    )}
                   </li>
                 ))}
               </ul>
+              <div className="mt-3">
+                {tool.links && tool.links.map((link, linkIndex) => (
+                  <Button
+                    key={linkIndex}
+                    href={link.url}
+                    variant="outline-primary"
+                    className="me-2 mb-2 rounded-circle"
+                    style={{ width: '40px', height: '40px' }}
+                  >
+                    <FontAwesomeIcon icon={link.icon} />
+                  </Button>
+                ))}
+              </div>
             </Col>
           ))}
         </Row>

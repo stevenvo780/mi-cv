@@ -23,6 +23,9 @@ import {
   faBrain,
   faNetworkWired,
   faImage,
+  faCloud,
+  faBook,
+  faLightbulb, // Íconos adicionales para proyectos
 } from '@fortawesome/free-solid-svg-icons';
 import { ToolCategory } from './types';
 
@@ -37,6 +40,10 @@ export const tools: ToolCategory[] = [
       { name: 'CSS3 (Bootstrap, MaterialUI, Bulma)', icon: faCss3Alt, level: 80 },
       { name: 'Laravel (Blade), Symfony (Twig)', icon: faLaravel, level: 70 },
     ].sort((a, b) => b.level - a.level),
+    links: [
+      { url: 'https://proyecto-frontend.com', icon: faLightbulb },
+      { url: 'https://frontend-docs.com', icon: faBook },
+    ],
   },
   {
     category: 'DevOps',
@@ -48,6 +55,10 @@ export const tools: ToolCategory[] = [
       { name: 'Hosting tradicional, Vercel', icon: faServer, level: 75 },
       { name: 'RabbitMQ, Apache Kafka', icon: faServer, level: 65 },
     ].sort((a, b) => b.level - a.level),
+    links: [
+      { url: 'https://proyecto-devops.com', icon: faCloud },
+      { url: 'https://devops-tutorials.com', icon: faBook },
+    ],
   },
   {
     category: 'BackEnd',
@@ -57,6 +68,10 @@ export const tools: ToolCategory[] = [
       { name: 'Python', icon: faPython, level: 75 },
       { name: '.NET y Bash', icon: faCode, level: 65 },
     ].sort((a, b) => b.level - a.level),
+    links: [
+      { url: 'https://proyecto-backend.com', icon: faLightbulb },
+      { url: 'https://backend-docs.com', icon: faBook },
+    ],
   },
   {
     category: 'Herramientas de IA',
@@ -66,6 +81,10 @@ export const tools: ToolCategory[] = [
       { name: 'Stable Diffusion avanzado', icon: faImage, level: 60 },
       { name: 'Hugging Face (LLAMA, GPT-2 y GPT-3)', icon: faNetworkWired, level: 65 },
     ].sort((a, b) => b.level - a.level),
+    links: [
+      { url: 'https://proyecto-ai.com', icon: faLightbulb },
+      { url: 'https://ai-docs.com', icon: faBook },
+    ],
   },
   {
     category: 'Planeación',
@@ -74,6 +93,10 @@ export const tools: ToolCategory[] = [
       { name: 'SCRUM, KANBAN, LEAN', icon: faPencilRuler, level: 85 },
       { name: 'TDD, UML', icon: faPencilRuler, level: 70 },
     ].sort((a, b) => b.level - a.level),
+    links: [
+      { url: 'https://proyecto-plan.com', icon: faLightbulb },
+      { url: 'https://plan-docs.com', icon: faBook },
+    ],
   },
   {
     category: 'Bases de datos',
@@ -81,6 +104,10 @@ export const tools: ToolCategory[] = [
       { name: 'MongoDB, MariaDB', icon: faDatabase, level: 85 },
       { name: 'SQL Server, Neo4j, PostgreSQL, Firebase', icon: faDatabase, level: 80 },
     ].sort((a, b) => b.level - a.level),
+    links: [
+      { url: 'https://proyecto-db.com', icon: faLightbulb },
+      { url: 'https://db-docs.com', icon: faBook },
+    ],
   },
   {
     category: 'Inteligencia Artificial',
@@ -88,6 +115,10 @@ export const tools: ToolCategory[] = [
       { name: 'Numpy, Wolfram Alpha, PNL', icon: faCode, level: 75 },
       { name: 'TensorFlow, PyTorch', icon: faBrain, level: 60 },
     ].sort((a, b) => b.level - a.level),
+    links: [
+      { url: 'https://proyecto-ai-2.com', icon: faLightbulb },
+      { url: 'https://ai2-docs.com', icon: faBook },
+    ],
   },
   {
     category: 'Videojuegos',
@@ -95,5 +126,9 @@ export const tools: ToolCategory[] = [
       { name: 'C# Unity 3D', icon: faUnity, level: 80 },
       { name: 'Realidad virtual con Oculus HTC VIVE, realidad aumentada con Vuforia', icon: faGamepad, level: 70 },
     ].sort((a, b) => b.level - a.level),
+    links: [
+      { url: 'https://proyecto-games.com', icon: faLightbulb },
+      { url: 'https://games-docs.com', icon: faBook },
+    ],
   },
 ];
