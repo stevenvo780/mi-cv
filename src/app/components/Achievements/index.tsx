@@ -43,6 +43,7 @@ export default function Achievements() {
                           objectFit: 'contain',
                           maxWidth: item.imageWidth || '100%',
                           maxHeight: item.imageHeight || '200px',
+                          padding: '15px',
                         }}
                       />
                     </div>

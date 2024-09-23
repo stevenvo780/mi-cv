@@ -17,8 +17,8 @@ export const achievements: AchievementItem[] = [
     backgroundColor: 'transparent',
   },
   {
-    name: 'Tertulia Literaria Demo',
-    description: 'Plataforma de eventos culturales en línea',
+    name: 'Tertulia Literaria',
+    description: 'La mas grande comunidad de Literatura, filosofía, ciencia y artes de Discord',
     link: 'https://www.tertulia-literaria.com/',
     image: tertuliaImg,
     tier: 'platinum',
