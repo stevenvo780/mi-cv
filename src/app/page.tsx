@@ -8,9 +8,7 @@ import ContactMe from './components/ContactMe';
 export default function Home() {
   return (
     <>
-      <div style={{ paddingBottom: '7rem' }}>
-        <Header />
-      </div >
+      <Header />
       <Achievements />
       <Portfolio />
       <Tools />

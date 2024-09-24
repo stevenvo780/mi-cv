@@ -3,7 +3,7 @@ import { Container, Row, Col, Card } from 'react-bootstrap';
 import Jarvis from '@/app/components/Matematica/Jarvis';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
-import { achievements, tierColors } from './common';
+import { achievements } from './common';
 
 export default function Achievements() {
   return (
@@ -12,11 +12,11 @@ export default function Achievements() {
         <h3 className="border-bottom pb-2 mb-4">Proyectos</h3>
         <Row>
           {achievements.map((item, index) => (
-            <Col key={index} md={4} className="mb-4">
+            <Col key={index} md={item.col} className="mb-4">
               <a href={item.link} target="_blank" rel="noreferrer" style={{ textDecoration: 'none' }}>
                 <Card
                   style={{
-                    borderColor: tierColors[item.tier],
+                    borderColor: '#9B8E7E',
                     borderWidth: '2px',
                     height: '100%',
                     backgroundColor: 'transparent',

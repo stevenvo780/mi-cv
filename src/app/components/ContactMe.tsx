@@ -37,10 +37,10 @@ export default function ContactMe() {
       <Container>
         <h3 className="border-bottom pb-2 mb-4">Contáctame</h3>
         <Row>
-          <Col md={6}>
+          <Col md={6} className="order-md-1 order-2">
             <ParticleFlow />
           </Col>
-          <Col md={6}>
+          <Col md={6} className="order-md-1 order-1">
             <h5>Envíame un mensaje</h5>
             {messageSent ? (
               <p className="text-success">¡Mensaje enviado con éxito!</p>
@@ -48,15 +48,31 @@ export default function ContactMe() {
               <Form ref={form} onSubmit={sendEmail}>
                 <Form.Group className="mb-3" controlId="user_name">
                   <Form.Label>Tu nombre</Form.Label>
-                  <Form.Control type="text" name="user_name" placeholder="Ingresa tu nombre" required />
+                  <Form.Control
+                    type="text"
+                    name="user_name"
+                    placeholder="Ingresa tu nombre"
+                    required
+                  />
                 </Form.Group>
                 <Form.Group className="mb-3" controlId="user_email">
                   <Form.Label>Tu correo</Form.Label>
-                  <Form.Control type="email" name="user_email" placeholder="Ingresa tu correo electrónico" required />
+                  <Form.Control
+                    type="email"
+                    name="user_email"
+                    placeholder="Ingresa tu correo electrónico"
+                    required
+                  />
                 </Form.Group>
                 <Form.Group className="mb-3" controlId="message">
                   <Form.Label>Mensaje</Form.Label>
-                  <Form.Control as="textarea" name="message" rows={3} placeholder="Escribe tu mensaje aquí" required />
+                  <Form.Control
+                    as="textarea"
+                    name="message"
+                    rows={3}
+                    placeholder="Escribe tu mensaje aquí"
+                    required
+                  />
                 </Form.Group>
                 <Button variant="primary" type="submit">
                   <FontAwesomeIcon icon={faPaperPlane} /> Enviar mensaje
@@ -67,15 +83,15 @@ export default function ContactMe() {
             <div className="mt-4 d-flex justify-content-around">
               <a
                 href="mailto:stevenvallejo780@gmail.com?subject=Contacto&body=Hola Steven, me gustaría ponerme en contacto contigo"
-                style={{ fontSize: '48px', color: '#000' }} // Estilo del icono de correo
+                style={{ fontSize: '48px', color: '#000' }}
               >
                 <FontAwesomeIcon icon={faEnvelope} />
               </a>
               <a
-                href="https://wa.me/1234567890" // Sustituir por tu número de WhatsApp
+                href="https://wa.me/3046374368"
                 target="_blank"
                 rel="noopener noreferrer"
-                style={{ fontSize: '48px', color: '#25D366' }} // Estilo del icono de WhatsApp
+                style={{ fontSize: '48px', color: '#25D366' }}
               >
                 <FontAwesomeIcon icon={faWhatsapp} />
               </a>

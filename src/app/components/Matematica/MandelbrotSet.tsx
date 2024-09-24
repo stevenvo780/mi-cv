@@ -7,14 +7,24 @@ export default function MandelbrotSet() {
   useEffect(() => {
     const canvas = canvasRef.current!;
     const ctx = canvas.getContext('2d')!;
-    const width = canvas.width;
-    const height = canvas.height;
 
+    let width = window.innerWidth;
+    let height = window.innerHeight;
     let zoom = 1;
     let offsetX = 0;
     let offsetY = 0;
 
+    const setCanvasSize = () => {
+      const scale = window.devicePixelRatio || 1;
+      canvas.width = width * scale;
+      canvas.height = height * scale;
+      ctx.scale(scale, scale);
+    };
+
+    setCanvasSize();
+
     const draw = () => {
+      ctx.clearRect(0, 0, width, height);
       for (let x = 0; x < width; x++) {
         for (let y = 0; y < height; y++) {
           const m = mandelbrot(
@@ -45,7 +55,6 @@ export default function MandelbrotSet() {
 
     draw();
 
-    // Manejo de zoom con el mouse
     const handleWheel = (e: WheelEvent) => {
       e.preventDefault();
       const mouseX = e.offsetX;
@@ -57,13 +66,23 @@ export default function MandelbrotSet() {
       draw();
     };
 
+    const handleResize = () => {
+      width = window.innerWidth;
+      height = window.innerHeight;
+      setCanvasSize();
+      draw();
+    };
+
     canvas.addEventListener('wheel', handleWheel);
+    window.addEventListener('resize', handleResize);
+
     return () => {
       canvas.removeEventListener('wheel', handleWheel);
+      window.removeEventListener('resize', handleResize);
     };
   }, []);
 
   return (
-    <canvas ref={canvasRef} width={600} height={400} />
+    <canvas ref={canvasRef} style={{ display: 'block', width: '100%', height: '100%' }} />
   );
 }

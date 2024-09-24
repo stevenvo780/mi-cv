@@ -1,7 +1,6 @@
 import {
   faReact,
   faNodeJs,
-  faPython,
   faLaravel,
   faGitAlt,
   faJsSquare,
@@ -247,7 +246,7 @@ export const portfolioCategories: PortfolioCategory[] = [
         important: true,
       },
       {
-        name: 'Cashel: Resurgir de los Imperios',
+        name: 'Cash: El resurgir de los Imperios',
         link: 'https://www.cashelresurgirdelosimperios.org/',
         description: 'Juego de estrategia económica y construcción de imperios.',
         icon: faPuzzlePiece,

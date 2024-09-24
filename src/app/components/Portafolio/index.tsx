@@ -17,7 +17,7 @@ export default function Portfolio() {
             <p className="mb-4">
               Te muestro mis proyectos a lo largo de mi vida. Soy polifacético y me gustan mucho más las ciencias, la filosofía y la tecnología, así que he realizado proyectos de todo tipo. Espero que te puedan servir o al menos que puedas conocerme a través de ellos.
             </p>
-            <p className="mb-4" style={{ textAlign: 'justify', }}>
+            <p className="mb-4" style={{ textAlign: 'justify' }}>
               <strong>Todos estos proyectos son OpenSource</strong> por lo cual puedes disponer de estos y están abiertos a mejoras por la comunidad de desarrolladores.
             </p>
             <Row className="mb-5">
@@ -55,7 +55,7 @@ export default function Portfolio() {
         </Row>
 
         {portfolioCategories.map((category, index) => (
-          <div key={index} className="mb-5">
+          <div key={index} className="mb-5" style={{ border: '2px solid #e9ecef', borderRadius: '10px', padding: '20px' }}>
             <h4 className="mb-4">{category.name}</h4>
             <Row>
               {category.projects
@@ -63,17 +63,16 @@ export default function Portfolio() {
                 .map((project, idx) => (
                   <Col md={6} lg={4} key={idx} className="mb-4">
                     <a href={project.link} target="_blank" rel="noreferrer" className="text-decoration-none">
-                      <Card className="h-100 shadow-sm">
-                        <Card.Body>
+                      <Card className="h-100 shadow-sm" style={{ minHeight: '120px', padding: '10px' }}>
+                        <Card.Body className="d-flex align-items-center">
                           {project.icon && (
-                            <FontAwesomeIcon icon={project.icon} size="2x" className="mb-3 " />
+                            <FontAwesomeIcon icon={project.icon} size="2x" className="me-3" />
                           )}
-                          <Card.Title>{project.name}</Card.Title>
-                          <Card.Text>{project.description}</Card.Text>
+                          <div>
+                            <Card.Title className="mb-1">{project.name}</Card.Title>
+                            <Card.Text className="text-muted small mb-0">{project.description}</Card.Text>
+                          </div>
                         </Card.Body>
-                        <Card.Footer className="d-flex justify-content-end">
-                          <FontAwesomeIcon icon={faArrowRight} />
-                        </Card.Footer>
                       </Card>
                     </a>
                   </Col>
@@ -82,26 +81,27 @@ export default function Portfolio() {
             {category.projects.some((project) => !project.important) && (
               <>
                 <h5 className="mt-4">Otros proyectos</h5>
-                <ul className="list-unstyled">
+                <Row>
                   {category.projects
                     .filter((project) => !project.important)
                     .map((project, idx) => (
-                      <li key={idx} className="mb-2">
-                        <FontAwesomeIcon icon={faGithub} className="me-2 text-secondary" />
-                        <a
-                          href={project.link}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="text-decoration-none"
-                        >
-                          {project.name}
+                      <Col md={6} lg={4} key={idx} className="mb-4">
+                        <a href={project.link} target="_blank" rel="noreferrer" className="text-decoration-none">
+                          <Card className="h-100 shadow-sm" style={{ minHeight: '100px', borderRadius: '10px', padding: '0px' }}>
+                            <Card.Body className="d-flex align-items-center">
+                              <FontAwesomeIcon icon={faGithub} className="me-3" />
+                              <div>
+                                <Card.Title className="mb-1">{project.name}</Card.Title>
+                                {project.description && (
+                                  <Card.Text className="text-muted small mb-0">{project.description}</Card.Text>
+                                )}
+                              </div>
+                            </Card.Body>
+                          </Card>
                         </a>
-                        {project.description && (
-                          <p className="mb-0 text-muted small">{project.description}</p>
-                        )}
-                      </li>
+                      </Col>
                     ))}
-                </ul>
+                </Row>
               </>
             )}
           </div>

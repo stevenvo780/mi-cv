@@ -5,11 +5,20 @@ import { Container, Row, Col } from 'react-bootstrap';
 import profileImage from '@/public/profile.jpeg';
 import GameOfLife from '@/app/components/Matematica/GameOfLife';
 
-
 export default function Header() {
   return (
-    <header className="mb-5 pb-3">
-      <div style={{ position: 'absolute', top: 0, left: 0, zIndex: -1 }}>
+    <header className="mb-5 pb-3" style={{ overflow: 'hidden', position: 'relative' }}>
+      <div
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          overflow: 'hidden',
+          zIndex: -1,
+        }}
+      >
         <GameOfLife />
       </div>
       <br />
@@ -21,7 +30,7 @@ export default function Header() {
               alt="Steven Vallejo"
               width={250}
               height={250}
-              className="rounded-circle border border-4 border-primary"
+              className="rounded-circle border border-4"
             />
           </Col>
           <Col xs={12} md={9}>

@@ -54,7 +54,7 @@ export default function GameOfLifeHeader() {
           })
         );
       });
-    }, 300); // Intervalo de 300 ms para una animación fluida
+    }, 300);
     return () => clearInterval(intervalId);
   }, []);
 
@@ -67,7 +67,7 @@ export default function GameOfLifeHeader() {
             gridTemplateColumns: `repeat(${gridCols}, 15px)`,
             justifyContent: 'center',
             margin: '0 auto',
-            overflow: 'hidden', // Opcional: evita desbordamiento
+            overflow: 'hidden',
           }}
         >
           {grid.map((rows, i) =>

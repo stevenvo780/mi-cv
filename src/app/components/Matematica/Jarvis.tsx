@@ -14,6 +14,8 @@ interface Particle {
 
 export default function JarvisAnimation(): JSX.Element {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  let canvasWidth = window.innerWidth;
+  let canvasHeight = window.innerHeight;
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -23,8 +25,14 @@ export default function JarvisAnimation(): JSX.Element {
 
     let animationFrameId: number;
 
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    const setCanvasSize = () => {
+      const scale = window.devicePixelRatio || 1;
+      canvas.width = canvasWidth * scale;
+      canvas.height = canvasHeight * scale;
+      context.scale(scale, scale);
+    };
+
+    setCanvasSize();
 
     const particlesArray: Particle[] = [];
     const numberOfParticles = 100;
@@ -38,8 +46,8 @@ export default function JarvisAnimation(): JSX.Element {
       color: string;
 
       constructor() {
-        this.x = Math.random() * (canvas?.width ?? 0);
-        this.y = Math.random() * (canvas?.height ?? 0);
+        this.x = Math.random() * canvasWidth;
+        this.y = Math.random() * canvasHeight;
         this.directionX = (Math.random() * 0.4) - 0.2;
         this.directionY = (Math.random() * 0.4) - 0.2;
         this.size = Math.random() * 10 + 1;
@@ -56,18 +64,14 @@ export default function JarvisAnimation(): JSX.Element {
       }
 
       update(): void {
-        if (canvas) {
-          if (this.x > canvas.width || this.x < 0) {
-            this.directionX = -this.directionX;
-          }
-          if (this.y > canvas.height || this.y < 0) {
-            this.directionY = -this.directionY;
-          }
+        if (this.x > canvasWidth || this.x < 0) {
+          this.directionX = -this.directionX;
         }
-
+        if (this.y > canvasHeight || this.y < 0) {
+          this.directionY = -this.directionY;
+        }
         this.x += this.directionX;
         this.y += this.directionY;
-
         this.draw();
       }
     }
@@ -81,9 +85,7 @@ export default function JarvisAnimation(): JSX.Element {
 
     function animate(): void {
       if (!context) return;
-      if (canvas) {
-        context.clearRect(0, 0, canvas.width, canvas.height);
-      }
+      context.clearRect(0, 0, canvasWidth, canvasHeight);
 
       for (let a = 0; a < particlesArray.length; a++) {
         for (let b = a + 1; b < particlesArray.length; b++) {
@@ -112,8 +114,9 @@ export default function JarvisAnimation(): JSX.Element {
     animate();
 
     const handleResize = (): void => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
+      canvasWidth = window.innerWidth;
+      canvasHeight = window.innerHeight;
+      setCanvasSize();
       init();
     };
 
@@ -125,5 +128,5 @@ export default function JarvisAnimation(): JSX.Element {
     };
   }, []);
 
-  return <canvas ref={canvasRef} style={{ display: 'block' }} />;
+  return <canvas ref={canvasRef} style={{ display: 'block', width: '100%', height: '100%' }} />;
 }

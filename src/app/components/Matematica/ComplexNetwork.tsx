@@ -16,7 +16,6 @@ export default function ComplexNetwork() {
     }
 
     if (networkType === 'random') {
-      // Conexiones aleatorias
       for (let i = 0; i < nodeCount; i++) {
         for (let j = i + 1; j < nodeCount; j++) {
           if (Math.random() > 0.9) {
@@ -25,7 +24,6 @@ export default function ComplexNetwork() {
         }
       }
     } else if (networkType === 'grid') {
-      // Conexión en cuadrícula
       const size = Math.sqrt(nodeCount);
       for (let i = 0; i < nodeCount; i++) {
         if (i % size !== size - 1) {

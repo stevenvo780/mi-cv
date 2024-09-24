@@ -7,8 +7,17 @@ export default function ParticleFlow() {
   useEffect(() => {
     const canvas = canvasRef.current!;
     const ctx = canvas.getContext('2d')!;
-    const particlesArray: Particle[] = [];
+    let particlesArray: Particle[] = [];
     const numberOfParticles = 200;
+
+    const setCanvasSize = () => {
+      const scale = window.devicePixelRatio || 1;
+      canvas.width = window.innerWidth * scale;
+      canvas.height = window.innerHeight * scale;
+      ctx.scale(scale, scale);
+    };
+
+    setCanvasSize();
 
     class Particle {
       x: number;
@@ -16,24 +25,23 @@ export default function ParticleFlow() {
       size: number;
       speedX: number;
       speedY: number;
-
+    
       constructor() {
-        this.x = Math.random() * canvas.width;
-        this.y = Math.random() * canvas.height;
-        this.size = 2;
+        this.x = Math.random() * canvas.width / (window.devicePixelRatio || 1);
+        this.y = Math.random() * canvas.height / (window.devicePixelRatio || 1);
+        this.size = 5;
         this.speedX = Math.random() * 3 - 1.5;
         this.speedY = Math.random() * 3 - 1.5;
       }
-
+    
       update() {
         this.x += this.speedX;
         this.y += this.speedY;
-
-        // Rebotar en los bordes
-        if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
-        if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+    
+        if (this.x < 0 || this.x > canvas.width / (window.devicePixelRatio || 1)) this.speedX *= -1;
+        if (this.y < 0 || this.y > canvas.height / (window.devicePixelRatio || 1)) this.speedY *= -1;
       }
-
+    
       draw() {
         ctx.fillStyle = '#0d6efd';
         ctx.beginPath();
@@ -41,8 +49,10 @@ export default function ParticleFlow() {
         ctx.fill();
       }
     }
+    
 
     const init = () => {
+      particlesArray = [];
       for (let i = 0; i < numberOfParticles; i++) {
         particlesArray.push(new Particle());
       }
@@ -66,12 +76,19 @@ export default function ParticleFlow() {
 
     canvas.addEventListener('mousemove', handleMouseMove);
 
+    const handleResize = () => {
+      setCanvasSize();
+    };
+
+    window.addEventListener('resize', handleResize);
+
     return () => {
       canvas.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('resize', handleResize);
     };
   }, []);
 
   return (
-    <canvas ref={canvasRef} width={540} height={500} />
+    <canvas ref={canvasRef} style={{ display: 'block', width: '100%', height: '100%' }} />
   );
 }

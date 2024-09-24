@@ -9,8 +9,18 @@ export default function LorenzAttractorInteractive() {
   useEffect(() => {
     const canvas = canvasRef.current!;
     const ctx = canvas.getContext('2d')!;
-    const width = canvas.width;
-    const height = canvas.height;
+
+    let width = window.innerWidth;
+    let height = window.innerHeight;
+
+    const setCanvasSize = () => {
+      const scale = window.devicePixelRatio || 1;
+      canvas.width = width * scale;
+      canvas.height = height * scale;
+      ctx.scale(scale, scale);
+    };
+
+    setCanvasSize();
 
     let x = 0.1;
     let y = 0;
@@ -23,7 +33,6 @@ export default function LorenzAttractorInteractive() {
 
     ctx.clearRect(0, 0, width, height);
 
-    // Escala y centrado dinámico
     const maxRange = 40;
     const scale = Math.min(width, height) / (maxRange * 2);
     const centerX = width / 2;
@@ -38,7 +47,6 @@ export default function LorenzAttractorInteractive() {
         z += dz;
         points.push({ x, y, z });
 
-        // Actualizamos los valores de z mínimo y máximo
         if (z < minZ) minZ = z;
         if (z > maxZ) maxZ = z;
       }
@@ -46,7 +54,7 @@ export default function LorenzAttractorInteractive() {
       if (points.length > 1) {
         const p1 = points[points.length - 2];
         const p2 = points[points.length - 1];
-        const centerY = height / 2 - ((maxZ + minZ) / 2) * scale; // Centramos en el eje vertical
+        const centerY = height / 2 - ((maxZ + minZ) / 2) * scale;
 
         ctx.strokeStyle = `hsl(${(points.length / 5000) * 360}, 100%, 50%)`;
         ctx.beginPath();
@@ -59,7 +67,7 @@ export default function LorenzAttractorInteractive() {
         const id = requestAnimationFrame(animate);
         setAnimationId(id);
       } else {
-        resetAnimation(); // Reinicia la animación
+        resetAnimation();
       }
     };
 
@@ -77,14 +85,27 @@ export default function LorenzAttractorInteractive() {
       if (animationId) {
         cancelAnimationFrame(animationId);
       }
-
       resetAnimation();
     };
 
+    const handleResize = () => {
+      width = window.innerWidth;
+      height = window.innerHeight;
+      setCanvasSize();
+      ctx.clearRect(0, 0, width, height);
+      points.length = 0;
+      x = 0.1;
+      y = 0;
+      z = 0;
+      animate();
+    };
+
     canvas.addEventListener('click', handleClick);
+    window.addEventListener('resize', handleResize);
 
     return () => {
       canvas.removeEventListener('click', handleClick);
+      window.removeEventListener('resize', handleResize);
       if (animationId) {
         cancelAnimationFrame(animationId);
       }
@@ -94,9 +115,7 @@ export default function LorenzAttractorInteractive() {
   return (
     <canvas
       ref={canvasRef}
-      width={600}
-      height={400}
-      style={{ border: '1px solid #dee2e6', backgroundColor: '#f8f9fa' }}
+      style={{ display: 'block', width: '100%', height: '100%', border: '1px solid #dee2e6', backgroundColor: '#f8f9fa' }}
     />
   );
 }
