@@ -50,7 +50,6 @@ export default function ContactMe() {
             ) : (
               <Form ref={form} onSubmit={sendEmail}>
                 <Form.Group className="mb-3" controlId="user_name">
-                  <Form.Label>Tu nombre</Form.Label>
                   <Form.Control
                     type="text"
                     name="user_name"
@@ -59,7 +58,6 @@ export default function ContactMe() {
                   />
                 </Form.Group>
                 <Form.Group className="mb-3" controlId="user_email">
-                  <Form.Label>Tu correo</Form.Label>
                   <Form.Control
                     type="email"
                     name="user_email"
@@ -68,7 +66,6 @@ export default function ContactMe() {
                   />
                 </Form.Group>
                 <Form.Group className="mb-3" controlId="message">
-                  <Form.Label>Mensaje</Form.Label>
                   <Form.Control
                     as="textarea"
                     name="message"

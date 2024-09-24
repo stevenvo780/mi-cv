@@ -96,7 +96,7 @@ export const portfolioCategories: PortfolioCategory[] = [
       {
         name: 'Neutrino Sugar',
         link: 'https://github.com/stevenvo780/NeutrinoSugar',
-        description: 'Utilidades y herramientas para proyectos Neutrino.',
+        description: 'Tienda simple de dulces con React y Redux.',
         icon: faGitAlt,
         important: false,
       },
