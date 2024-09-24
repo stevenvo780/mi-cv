@@ -19,11 +19,19 @@ const geistMono = localFont({
 
 export const metadata: Metadata = {
   title: "Steven Vallejo",
-  description: "Soy Steven Vallejo Ortiz, científico de la computación e ingeniero de software, apasionado por la filosofía y las ciencias. Emergente y holista en mi enfoque, con el objetivo de mejorar la humanidad a través del pensamiento crítico y soluciones tecnológicas.",
-  keywords: ["Steven Vallejo Ortiz", "Científico de la computación", "Ingeniero de software", "Filosofía", "Holista", "Emergentismo", "Soluciones tecnológicas"],
+  description: "Soy Steven Vallejo Ortiz, Informático y filosofo, comprometido a ayudar a la humanidad a través del pensamiento crítico y soluciones tecnológicas.",
+  keywords: [
+    "Steven Vallejo Ortiz", "Científico de la computación", "Ingeniero de software", "Filosofía", "Holista", "Emergentismo", "Soluciones tecnológicas",
+    "Ontología", "Ciencia", "Alain Badiou", "Jean-Paul Sartre", "Immanuel Kant", "Filosofía de la mente", "Ética", "Estética", "Existencialismo",
+    "Conocimiento científico", "Pensamiento crítico", "Filosofía de la ciencia", "Filosofía de la tecnología", "Filosofía de la mente", "Filosofía de la ciencia",
+    "Filosofía de la tecnología", "Filosofía de la mente", "Filosofía de la ciencia", "Filosofía de la tecnología", "Filosofía de la mente", "Filosofía de la ciencia",
+    "Filosofía etica", "Filosofía estética", "Filosofía ontológica", "Filosofía de la mente", "Filosofía de la ciencia", "Filosofía de la tecnología", "Filosofía de la mente",
+    "Filosofía de la ciencia", "Filosofía de la tecnología", "Filosofía de la mente", "Filosofía de la ciencia", "Filosofía de la tecnología", "Filosofía de la mente",
+    "Ciencias", "Tecnología", "Ontología", "Epistemología", "Metafísica", "Lógica", "Filosofía de la mente", "Filosofía de la ciencia", "Filosofía de la tecnología",
+  ],
   authors: [{ name: "Steven Vallejo Ortiz" }],
   openGraph: {
-    title: "Steven Vallejo Ortiz - Científico de la Computación e Ingeniero de Software",
+    title: "Steven Vallejo Ortiz - Informático y filosofo",
     description: "Explora mi perfil como científico de la computación e ingeniero de software, con pasión por la filosofía y ciencias. Mi misión es contribuir a un mejor vivir a través de soluciones críticas y emergentes.",
     url: "https://www.stevenvallejo.com",
     siteName: "Steven Vallejo - Portafolio",
@@ -42,8 +50,8 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     site: "@stevenvallejo",
     creator: "@stevenvallejo",
-    title: "Steven Vallejo Ortiz - Científico de la Computación",
-    description: "Conoce más sobre mi trayectoria como ingeniero de software y científico de la computación con un enfoque emergente y holista.",
+    title: "Steven Vallejo Ortiz - Informático y filosofo",
+    description: "Conoce más sobre mi trayectoria como informático y filosofo comprometido a ayudar a la humanidad a través del pensamiento crítico y soluciones tecnológicas.",
     images: [
       {
         url: "/images/profile.jpeg",
