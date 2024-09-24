@@ -32,7 +32,7 @@ export default function Header() {
           <Col xs={12} md={3} className="text-center mb-3 mb-md-0">
             <Image
               src={profileImage}
-              alt="Steven Vallejo"
+              alt="Steven Vallejo Ortiz"
               width={250}
               height={250}
               className="rounded-circle border border-4"
