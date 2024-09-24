@@ -8,7 +8,7 @@ function MyApp({ Component, pageProps }: AppProps) {
     <>
       <Head>
         <title>Steven Vallejo Ortiz</title>
-        <meta name="description" content="Soy Steven Vallejo Ortiz, científico de la computación, ingeniero de software, emergentista y holista, con pasión por la filosofía y las ciencias." />
+        <meta name="description" content="Soy Steven Vallejo Ortiz, informático y filosofo, comprometido a ayudar a la humanidad a través del pensamiento crítico y soluciones tecnológicas." />
         <meta property="og:title" content="Steven Vallejo Ortiz" />
         <meta property="og:description" content="Descubre más sobre mi experiencia, habilidades y logros. Estoy comprometido a ayudar a la humanidad a través del pensamiento crítico y soluciones tecnológicas." />
         <meta property="og:image" content="/images/profile.jpeg" />
