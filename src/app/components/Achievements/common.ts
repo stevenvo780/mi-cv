@@ -1,9 +1,9 @@
-import humanizarImg from '@/public/Humanizar.png';
-import tertuliaImg from '@/public/Tertulia.jpg';
-import totalPedidoImg from '@/public/TotalPedido.png';
-import meraVueltaImg from '@/public/MeraVuelta.png';
-import emwImg from '@/public/EMW.png';
-import LogoIndie from '@/public/LogoIndie.svg';
+import humanizarImg from '@/public/images/Humanizar.png';
+import tertuliaImg from '@/public/images/Tertulia.jpg';
+import totalPedidoImg from '@/public/images/TotalPedido.png';
+import meraVueltaImg from '@/public/images/MeraVuelta.png';
+import emwImg from '@/public/images/EMW.png';
+import LogoIndie from '@/public/images/LogoIndie.svg';
 import { AchievementItem } from './types';
 
 export const achievements: AchievementItem[] = [

@@ -1,11 +1,14 @@
 'use client';
 import React, { useRef, useState } from 'react';
+import dynamic from 'next/dynamic';
 import { Container, Row, Col, Form, Button } from 'react-bootstrap';
-import ParticleFlow from '@/app/components/Matematica/ParticleFlow';
 import emailjs from 'emailjs-com';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEnvelope, faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 import { faWhatsapp } from '@fortawesome/free-brands-svg-icons';
+const ParticleFlow = dynamic(() => import('@/app/components/Matematica/ParticleFlow'), {
+  ssr: false,
+});
 
 export default function ContactMe() {
   const form = useRef<HTMLFormElement>(null);

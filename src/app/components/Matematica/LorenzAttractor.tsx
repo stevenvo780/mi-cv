@@ -1,12 +1,14 @@
 'use client';
 import React, { useRef, useEffect, useState } from 'react';
 
-export default function LorenzAttractorInteractive() {
+export default function LorenzAttractor() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [params, setParams] = useState({ sigma: 10, rho: 28, beta: 8 / 3 });
   const [animationId, setAnimationId] = useState<number | null>(null);
 
   useEffect(() => {
+    if (typeof window === 'undefined') return;
+
     const canvas = canvasRef.current!;
     const ctx = canvas.getContext('2d')!;
 

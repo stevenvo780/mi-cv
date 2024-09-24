@@ -4,8 +4,9 @@ import { Container, Card, Row, Col } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGithub } from '@fortawesome/free-brands-svg-icons/faGithub';
 import { faCloud, faArrowRight } from '@fortawesome/free-solid-svg-icons';
-import LorenzAttractor from '@/app/components/Matematica/LorenzAttractor';
 import { portfolioCategories } from './common';
+import dynamic from 'next/dynamic';
+const LorenzAttractor = dynamic(() => import('@/app/components/Matematica/LorenzAttractor'), { ssr: false });
 
 export default function Portfolio() {
   return (

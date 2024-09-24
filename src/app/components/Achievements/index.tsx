@@ -1,9 +1,12 @@
 'use client';
 import { Container, Row, Col, Card } from 'react-bootstrap';
-import Jarvis from '@/app/components/Matematica/Jarvis';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
 import { achievements } from './common';
+import dynamic from 'next/dynamic';
+const Jarvis = dynamic(() => import('@/app/components/Matematica/Jarvis'), {
+  ssr: false,
+});
 
 export default function Achievements() {
   return (

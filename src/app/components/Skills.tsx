@@ -1,5 +1,8 @@
 import { Container, Row, Col } from 'react-bootstrap';
-import MandelbrotSet from '@/app/components/Matematica/MandelbrotSet';
+import dynamic from 'next/dynamic';
+const MandelbrotSet = dynamic(() => import('@/app/components/Matematica/MandelbrotSet'), {
+  ssr: false,
+});
 
 export default function Skills() {
   return (

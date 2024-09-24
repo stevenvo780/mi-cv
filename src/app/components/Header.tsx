@@ -1,9 +1,14 @@
 'use client';
+import React from 'react';
 import Image from 'next/image';
+import dynamic from 'next/dynamic';
 import ContactInfo from '@/app/components/ContactInfo';
 import { Container, Row, Col } from 'react-bootstrap';
-import profileImage from '@/public/profile.jpeg';
-import GameOfLife from '@/app/components/Matematica/GameOfLife';
+import profileImage from '@/public/images/profile.jpeg';
+
+const GameOfLife = dynamic(() => import('@/app/components/Matematica/GameOfLife'), {
+  ssr: false,
+});
 
 export default function Header() {
   return (
@@ -36,7 +41,7 @@ export default function Header() {
           <Col xs={12} md={9}>
             <div className="text-center text-md-start bg-white rounded p-3">
               <h1 className="display-5 mb-0">Steven Vallejo Ortiz</h1>
-              <h2 className="h4 text-secondary">Informático y filosofo</h2>
+              <h2 className="h4 text-secondary">Informático y filósofo</h2>
             </div>
             <ContactInfo />
           </Col>
