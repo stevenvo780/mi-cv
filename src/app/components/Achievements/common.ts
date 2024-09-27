@@ -60,7 +60,7 @@ export const achievements: AchievementItem[] = [
   },
   {
     name: 'EMW',
-    description: 'Solución empresarial para monitoreo de rendimiento',
+    description: 'Robots para Envíos de Mensajes masivos por WhatsApp',
     link: 'https://emw.humanizar.cloud/',
     image: emwImg,
     imageWidth: 300,
