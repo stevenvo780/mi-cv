@@ -2,7 +2,7 @@
 import { useState, useEffect, useRef } from 'react';
 
 const gridRows = 25;
-const gridCols = 130;
+const gridCols = 160;
 const cellSize = 13;
 
 const generateWidePattern = (): number[][] => {
@@ -11,7 +11,7 @@ const generateWidePattern = (): number[][] => {
   );
 
   for (let i = 5; i < 20; i++) {
-    for (let j = 40; j < 90; j++) {
+    for (let j = 10; j < gridCols - 10; j++) {
       if ((i + j) % 4 === 0 || (i - j) % 5 === 0) {
         pattern[i][j] = 1;
       }
@@ -43,6 +43,8 @@ export default function GameOfLifeHeader() {
     [-1, 0],
   ];
 
+  // Complejidad O(n * m), donde n es el número de filas y m el número de columnas.
+  // Se recorre toda la cuadrícula, y por cada celda se revisan hasta 8 vecinos.
   const updateGrid = (g: number[][]): number[][] => {
     return g.map((rows, i) =>
       rows.map((cell, j) => {
@@ -55,6 +57,7 @@ export default function GameOfLifeHeader() {
           }
         });
 
+        // Reglas del juego: sobrepoblación, subpoblación, o reproducción
         if (cell === 1 && (neighbors < 2 || neighbors > 3)) {
           return 0;
         } else if (cell === 0 && neighbors === 3) {
@@ -66,6 +69,8 @@ export default function GameOfLifeHeader() {
     );
   };
 
+  // Complejidad O(n * m), donde n es el número de filas y m el número de columnas.
+  // Se recorre toda la cuadrícula para dibujar cada celda en el canvas.
   const drawGrid = (grid: number[][], ctx: CanvasRenderingContext2D) => {
     ctx.clearRect(0, 0, canvasRef.current!.width, canvasRef.current!.height);
     for (let i = 0; i < gridRows; i++) {
@@ -98,14 +103,16 @@ export default function GameOfLifeHeader() {
       const ctx = canvas.getContext('2d');
       if (!ctx) return;
 
+      // Actualización y dibujado de la cuadrícula, complejidad O(n * m) por cada intervalo
       const updateAndDraw = () => {
         setGrid((g) => {
-          const newGrid = updateGrid(g);
-          drawGrid(newGrid, ctx);
+          const newGrid = updateGrid(g); // Actualización de la cuadrícula
+          drawGrid(newGrid, ctx); // Dibujado de la cuadrícula
           return newGrid;
         });
       };
 
+      // Se actualiza cada 500ms, ejecutando la lógica de updateGrid y drawGrid
       const intervalId = setInterval(updateAndDraw, 500);
       return () => clearInterval(intervalId);
     }
