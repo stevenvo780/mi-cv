@@ -1,88 +1,180 @@
 'use client';
 import React, { useRef, useEffect } from 'react';
 
-export default function MandelbrotSet() {
+const MandelbrotWebGL: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
     const canvas = canvasRef.current!;
-    const ctx = canvas.getContext('2d')!;
+    const gl = canvas.getContext('webgl')!;
 
-    let width = window.innerWidth;
-    let height = window.innerHeight;
-    let zoom = 1;
-    let offsetX = 0;
-    let offsetY = 0;
+    const vertexShaderSource = `
+      attribute vec4 a_position;
+      void main() {
+        gl_Position = a_position;
+      }
+    `;
 
-    const setCanvasSize = () => {
-      const scale = window.devicePixelRatio || 1;
-      canvas.width = width * scale;
-      canvas.height = height * scale;
-      ctx.scale(scale, scale);
+    const fragmentShaderSource = `
+      precision highp float;
+
+      uniform vec2 u_resolution;
+      uniform vec2 u_offset;
+      uniform float u_zoom;
+
+      vec3 getCustomColor(int iterations, int max_iterations) {
+        float t = float(iterations) / float(max_iterations);
+
+        // Define colors based on your CSS palette
+        vec3 primaryColor = vec3(49.0 / 255.0, 29.0 / 255.0, 57.0 / 255.0); // #311D39
+        vec3 secondaryColor = vec3(155.0 / 255.0, 142.0 / 255.0, 126.0 / 255.0); // #9B8E7E
+        vec3 infoColor = vec3(195.0 / 255.0, 204.0 / 255.0, 175.0 / 255.0); // #C3CCAF
+        vec3 successColor = vec3(102.0 / 255.0, 176.0 / 255.0, 50.0 / 255.0); // #66b032
+        vec3 dangerColor = vec3(165.0 / 255.0, 26.0 / 255.0, 65.0 / 255.0); // #A51A41
+
+        // Choose colors based on t value (low t: dark, high t: light)
+        if (iterations == max_iterations) {
+          return vec3(0.0); // Black for points within the Mandelbrot set
+        } else if (t < 0.25) {
+          return mix(primaryColor, secondaryColor, t * 4.0); // Transition between primary and secondary
+        } else if (t < 0.5) {
+          return mix(secondaryColor, infoColor, (t - 0.25) * 4.0); // Transition between secondary and info
+        } else if (t < 0.75) {
+          return mix(infoColor, successColor, (t - 0.5) * 4.0); // Transition between info and success
+        } else {
+          return mix(successColor, dangerColor, (t - 0.75) * 4.0); // Transition between success and danger
+        }
+      }
+
+      void main() {
+        vec2 c = (gl_FragCoord.xy - u_resolution / 2.0) / u_resolution.y * u_zoom - u_offset;
+        vec2 z = vec2(0.0);
+        int iterations = 0;
+        const int max_iterations = 1000;
+
+        for (int i = 0; i < max_iterations; i++) {
+          if (dot(z, z) > 4.0) break;
+          z = vec2(z.x * z.x - z.y * z.y + c.x, 2.0 * z.x * z.y + c.y);
+          iterations++;
+        }
+
+        vec3 color = getCustomColor(iterations, max_iterations);
+        gl_FragColor = vec4(color, 1.0);
+      }
+    `;
+
+    const createShader = (gl: WebGLRenderingContext, type: number, source: string) => {
+      const shader = gl.createShader(type)!;
+      gl.shaderSource(shader, source);
+      gl.compileShader(shader);
+      return shader;
     };
 
-    setCanvasSize();
+    const vertexShader = createShader(gl, gl.VERTEX_SHADER, vertexShaderSource);
+    const fragmentShader = createShader(gl, gl.FRAGMENT_SHADER, fragmentShaderSource);
 
-    const draw = () => {
-      ctx.clearRect(0, 0, width, height);
-      for (let x = 0; x < width; x++) {
-        for (let y = 0; y < height; y++) {
-          const m = mandelbrot(
-            (x - width / 2) / (200 * zoom) + offsetX,
-            (y - height / 2) / (200 * zoom) + offsetY
-          );
-          ctx.fillStyle = m === 0 ? '#000' : `hsl(0, 100%, ${m}%)`;
-          ctx.fillRect(x, y, 1, 1);
-        }
+    const program = gl.createProgram()!;
+    gl.attachShader(program, vertexShader);
+    gl.attachShader(program, fragmentShader);
+    gl.linkProgram(program);
+
+    gl.useProgram(program);
+
+    const positionLocation = gl.getAttribLocation(program, 'a_position');
+    const resolutionLocation = gl.getUniformLocation(program, 'u_resolution');
+    const zoomLocation = gl.getUniformLocation(program, 'u_zoom');
+    const offsetLocation = gl.getUniformLocation(program, 'u_offset');
+
+    const positionBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
+      -1, -1,
+      1, -1,
+      -1, 1,
+      -1, 1,
+      1, -1,
+      1, 1,
+    ]), gl.STATIC_DRAW);
+
+    gl.enableVertexAttribArray(positionLocation);
+    gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
+
+    let zoom = 2.5;
+    const offset = { x: 0.0, y: 0.0 };
+
+    const render = () => {
+      gl.uniform2f(resolutionLocation, canvas.width, canvas.height);
+      gl.uniform1f(zoomLocation, zoom);
+      gl.uniform2f(offsetLocation, offset.x, offset.y);
+      gl.drawArrays(gl.TRIANGLES, 0, 6);
+    };
+
+    let isDragging = false;
+    let lastMousePosition = { x: 0, y: 0 };
+
+    const onWheel = (event: WheelEvent) => {
+      event.preventDefault();
+      const { clientX, clientY } = event;
+
+      const canvasRect = canvas.getBoundingClientRect();
+      const mouseX = clientX - canvasRect.left;
+      const mouseY = clientY - canvasRect.top;
+
+      const preZoomX = ((mouseX - canvas.width / 2) / canvas.height) * zoom - offset.x;
+      const preZoomY = ((mouseY - canvas.height / 2) / canvas.height) * zoom - offset.y;
+
+      const scale = event.deltaY > 0 ? 1.1 : 0.9;
+      zoom *= scale;
+
+      const postZoomX = ((mouseX - canvas.width / 2) / canvas.height) * zoom - offset.x;
+      const postZoomY = ((mouseY - canvas.height / 2) / canvas.height) * zoom - offset.y;
+
+      offset.x += preZoomX - postZoomX;
+      offset.y += preZoomY - postZoomY;
+
+      render();
+    };
+
+    const onMouseDown = (event: MouseEvent) => {
+      isDragging = true;
+      lastMousePosition = { x: event.clientX, y: event.clientY };
+    };
+
+    const onMouseMove = (event: MouseEvent) => {
+      if (isDragging) {
+        const deltaX = (event.clientX - lastMousePosition.x) / canvas.height * zoom;
+        const deltaY = (event.clientY - lastMousePosition.y) / canvas.height * zoom;
+
+        offset.x += deltaX;
+        offset.y -= deltaY;
+
+        lastMousePosition = { x: event.clientX, y: event.clientY };
+        render();
       }
     };
 
-    const mandelbrot = (x: number, y: number) => {
-      let real = x;
-      let imag = y;
-      const maxIter = 100;
-      for (let i = 0; i < maxIter; i++) {
-        const tempReal = real * real - imag * imag + x;
-        const tempImag = 2 * real * imag + y;
-        real = tempReal;
-        imag = tempImag;
-        if (real * imag > 5) {
-          return (i / maxIter) * 100;
-        }
-      }
-      return 0;
+    const onMouseUp = () => {
+      isDragging = false;
     };
 
-    draw();
+    canvas.addEventListener('wheel', onWheel);
+    canvas.addEventListener('mousedown', onMouseDown);
+    canvas.addEventListener('mousemove', onMouseMove);
+    canvas.addEventListener('mouseup', onMouseUp);
+    canvas.addEventListener('mouseleave', onMouseUp);
 
-    const handleWheel = (e: WheelEvent) => {
-      e.preventDefault();
-      const mouseX = e.offsetX;
-      const mouseY = e.offsetY;
-      const zoomAmount = e.deltaY * -0.001;
-      zoom += zoomAmount;
-      offsetX += (mouseX - width / 2) / (200 * zoom) * zoomAmount;
-      offsetY += (mouseY - height / 2) / (200 * zoom) * zoomAmount;
-      draw();
-    };
-
-    const handleResize = () => {
-      width = window.innerWidth;
-      height = window.innerHeight;
-      setCanvasSize();
-      draw();
-    };
-
-    canvas.addEventListener('wheel', handleWheel);
-    window.addEventListener('resize', handleResize);
+    render();
 
     return () => {
-      canvas.removeEventListener('wheel', handleWheel);
-      window.removeEventListener('resize', handleResize);
+      canvas.removeEventListener('wheel', onWheel);
+      canvas.removeEventListener('mousedown', onMouseDown);
+      canvas.removeEventListener('mousemove', onMouseMove);
+      canvas.removeEventListener('mouseup', onMouseUp);
+      canvas.removeEventListener('mouseleave', onMouseUp);
     };
   }, []);
 
-  return (
-    <canvas ref={canvasRef} style={{ display: 'block', width: '100%', height: '100%' }} />
-  );
-}
+  return <canvas ref={canvasRef} width={600} height={400}></canvas>;
+};
+
+export default MandelbrotWebGL;
