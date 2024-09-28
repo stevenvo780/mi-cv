@@ -25,7 +25,6 @@ const MandelbrotWebGL: React.FC = () => {
       vec3 getCustomColor(int iterations, int max_iterations) {
         float t = float(iterations) / float(max_iterations);
 
-        // Define colors based on your CSS palette
         vec3 primaryColor = vec3(49.0 / 255.0, 29.0 / 255.0, 57.0 / 255.0); // #311D39
         vec3 secondaryColor = vec3(155.0 / 255.0, 142.0 / 255.0, 126.0 / 255.0); // #9B8E7E
         vec3 infoColor = vec3(195.0 / 255.0, 204.0 / 255.0, 175.0 / 255.0); // #C3CCAF
@@ -33,7 +32,7 @@ const MandelbrotWebGL: React.FC = () => {
         vec3 dangerColor = vec3(165.0 / 255.0, 26.0 / 255.0, 65.0 / 255.0); // #A51A41
 
         if (iterations == max_iterations) {
-          return vec3(0.0); // Black for points within the Mandelbrot set
+          return vec3(0.0);
         } else if (t < 0.25) {
           return mix(primaryColor, secondaryColor, t * 4.0);
         } else if (t < 0.5) {

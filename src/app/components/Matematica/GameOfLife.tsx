@@ -3,9 +3,8 @@ import { useState, useEffect, useRef } from 'react';
 
 const gridRows = 25;
 const gridCols = 130;
-const cellSize = 13; // Tamaño de cada celda en el canvas
+const cellSize = 13;
 
-// Genera un patrón inicial amplio
 const generateWidePattern = (): number[][] => {
   const pattern = Array.from({ length: gridRows }, () =>
     Array.from({ length: gridCols }, () => 0)
@@ -21,7 +20,6 @@ const generateWidePattern = (): number[][] => {
   return pattern;
 };
 
-// Genera una cuadrícula aleatoria
 const generateRandomGrid = (): number[][] => {
   return Array.from({ length: gridRows }, () =>
     Array.from({ length: gridCols }, () => (Math.random() > 0.7 ? 1 : 0))
@@ -31,7 +29,7 @@ const generateRandomGrid = (): number[][] => {
 export default function GameOfLifeHeader() {
   const [grid, setGrid] = useState<number[][]>(generateWidePattern());
   const [loading, setLoading] = useState<boolean>(true);
-  const [mounted, setMounted] = useState(false); // Indica si el componente ha sido montado
+  const [mounted, setMounted] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const operations = [
@@ -45,7 +43,6 @@ export default function GameOfLifeHeader() {
     [-1, 0],
   ];
 
-  // Función para actualizar la cuadrícula y aplicar las reglas del juego
   const updateGrid = (g: number[][]): number[][] => {
     return g.map((rows, i) =>
       rows.map((cell, j) => {
@@ -69,18 +66,16 @@ export default function GameOfLifeHeader() {
     );
   };
 
-  // Dibuja la cuadrícula en el canvas
   const drawGrid = (grid: number[][], ctx: CanvasRenderingContext2D) => {
-    ctx.clearRect(0, 0, canvasRef.current!.width, canvasRef.current!.height); // Limpiar el canvas
+    ctx.clearRect(0, 0, canvasRef.current!.width, canvasRef.current!.height);
     for (let i = 0; i < gridRows; i++) {
       for (let j = 0; j < gridCols; j++) {
-        ctx.fillStyle = grid[i][j] ? '#a51a41' : '#ffffff'; // Celdas activas y desactivadas
+        ctx.fillStyle = grid[i][j] ? '#a51a41' : '#ffffff';
         ctx.fillRect(j * cellSize, i * cellSize, cellSize - 1, cellSize - 1);
       }
     }
   };
 
-  // Efecto para montar el componente (solo en cliente)
   useEffect(() => {
     setMounted(true);
   }, []);
@@ -96,7 +91,6 @@ export default function GameOfLifeHeader() {
     }
   }, [mounted]);
 
-  // Efecto para actualizar la cuadrícula y redibujarla en intervalos
   useEffect(() => {
     if (!loading && mounted) {
       const canvas = canvasRef.current;
@@ -112,17 +106,15 @@ export default function GameOfLifeHeader() {
         });
       };
 
-      const intervalId = setInterval(updateAndDraw, 500); // Actualización cada 500ms
+      const intervalId = setInterval(updateAndDraw, 500);
       return () => clearInterval(intervalId);
     }
   }, [loading, mounted]);
 
-  // Evitar renderizado en SSR hasta que el componente esté montado
   if (!mounted) {
     return null;
   }
 
-  // Renderiza el grid de carga mientras está cargando
   if (loading) {
     return (
       <section>
@@ -152,7 +144,6 @@ export default function GameOfLifeHeader() {
     );
   }
 
-  // Renderiza el canvas una vez que el loading ha terminado
   return (
     <section>
       <canvas

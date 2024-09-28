@@ -35,9 +35,9 @@ export default function LorenzAttractor() {
 
     ctx.clearRect(0, 0, width, height);
 
-    const maxRange = 30; // Cambiado a 30 para reducir el tamaño
-    const scaleX = Math.min(width, height) / (maxRange * 2); // Escala horizontal
-    const scaleZ = Math.min(width, height) / (maxRange * 3); // Escala vertical ajustada para aplanar
+    const maxRange = 30;
+    const scaleX = Math.min(width, height) / (maxRange * 2);
+    const scaleZ = Math.min(width, height) / (maxRange * 3);
     const centerX = width / 2;
 
     const animate = () => {
@@ -57,7 +57,7 @@ export default function LorenzAttractor() {
       if (points.length > 1) {
         const p1 = points[points.length - 2];
         const p2 = points[points.length - 1];
-        const centerY = height / 2 - ((maxZ + minZ) / 2) * scaleZ; // Ajuste vertical más pequeño para aplanar
+        const centerY = height / 2 - ((maxZ + minZ) / 2) * scaleZ;
 
         ctx.strokeStyle = `hsl(${(points.length / 5000) * 360}, 100%, 50%)`;
         ctx.beginPath();
