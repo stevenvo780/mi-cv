@@ -14,8 +14,6 @@ interface Particle {
 
 export default function JarvisAnimation(): JSX.Element {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  let canvasWidth = window.innerWidth;
-  let canvasHeight = window.innerHeight;
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -24,6 +22,8 @@ export default function JarvisAnimation(): JSX.Element {
     if (!context) return;
 
     let animationFrameId: number;
+    let canvasWidth = window.innerWidth;
+    let canvasHeight = window.innerHeight;
 
     const setCanvasSize = () => {
       const scale = window.devicePixelRatio || 1;
@@ -128,5 +128,26 @@ export default function JarvisAnimation(): JSX.Element {
     };
   }, []);
 
-  return <canvas ref={canvasRef} style={{ display: 'block', width: '100%', height: '100%' }} />;
+  return (
+    <>
+      <style jsx>{`
+        canvas {
+          display: block;
+          width: 100%;
+          height: 100%;
+          max-height: 70vh; /* Limita la altura máxima al 70% del viewport en móviles */
+          max-width: 100%;
+          border: 1px solid #ccc; /* Opcional para ver el borde del canvas */
+        }
+
+        @media (max-width: 768px) {
+          canvas {
+            height: auto;
+            max-height: 30vh; /* Altura máxima en móviles pequeños */
+          }
+        }
+      `}</style>
+      <canvas ref={canvasRef}></canvas>
+    </>
+  );
 }

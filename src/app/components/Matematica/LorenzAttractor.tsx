@@ -35,8 +35,9 @@ export default function LorenzAttractor() {
 
     ctx.clearRect(0, 0, width, height);
 
-    const maxRange = 40;
-    const scale = Math.min(width, height) / (maxRange * 2);
+    const maxRange = 30; // Cambiado a 30 para reducir el tamaño
+    const scaleX = Math.min(width, height) / (maxRange * 2); // Escala horizontal
+    const scaleZ = Math.min(width, height) / (maxRange * 3); // Escala vertical ajustada para aplanar
     const centerX = width / 2;
 
     const animate = () => {
@@ -56,12 +57,12 @@ export default function LorenzAttractor() {
       if (points.length > 1) {
         const p1 = points[points.length - 2];
         const p2 = points[points.length - 1];
-        const centerY = height / 2 - ((maxZ + minZ) / 2) * scale;
+        const centerY = height / 2 - ((maxZ + minZ) / 2) * scaleZ; // Ajuste vertical más pequeño para aplanar
 
         ctx.strokeStyle = `hsl(${(points.length / 5000) * 360}, 100%, 50%)`;
         ctx.beginPath();
-        ctx.moveTo(centerX + p1.x * scale, centerY + p1.z * scale);
-        ctx.lineTo(centerX + p2.x * scale, centerY + p2.z * scale);
+        ctx.moveTo(centerX + p1.x * scaleX, centerY + p1.z * scaleZ);
+        ctx.lineTo(centerX + p2.x * scaleX, centerY + p2.z * scaleZ);
         ctx.stroke();
       }
 
@@ -115,9 +116,26 @@ export default function LorenzAttractor() {
   }, [params]);
 
   return (
-    <canvas
-      ref={canvasRef}
-      style={{ display: 'block', width: '100%', height: '100%', border: '1px solid #dee2e6', backgroundColor: '#f8f9fa' }}
-    />
+    <>
+      <style jsx>{`
+        canvas {
+          display: block;
+          width: 100%;
+          height: 100%;
+          max-height: 70vh; /* Limitar la altura máxima al 70% del viewport en pantallas grandes */
+          max-width: 100%;
+          border: 1px solid #dee2e6;
+          background-color: #f8f9fa;
+        }
+
+        @media (max-width: 768px) {
+          canvas {
+            height: auto;
+            max-height: 50vh; /* Limitar la altura máxima al 50% en pantallas móviles */
+          }
+        }
+      `}</style>
+      <canvas ref={canvasRef}></canvas>
+    </>
   );
 }

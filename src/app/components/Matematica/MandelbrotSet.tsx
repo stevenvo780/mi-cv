@@ -32,17 +32,16 @@ const MandelbrotWebGL: React.FC = () => {
         vec3 successColor = vec3(102.0 / 255.0, 176.0 / 255.0, 50.0 / 255.0); // #66b032
         vec3 dangerColor = vec3(165.0 / 255.0, 26.0 / 255.0, 65.0 / 255.0); // #A51A41
 
-        // Choose colors based on t value (low t: dark, high t: light)
         if (iterations == max_iterations) {
           return vec3(0.0); // Black for points within the Mandelbrot set
         } else if (t < 0.25) {
-          return mix(primaryColor, secondaryColor, t * 4.0); // Transition between primary and secondary
+          return mix(primaryColor, secondaryColor, t * 4.0);
         } else if (t < 0.5) {
-          return mix(secondaryColor, infoColor, (t - 0.25) * 4.0); // Transition between secondary and info
+          return mix(secondaryColor, infoColor, (t - 0.25) * 4.0);
         } else if (t < 0.75) {
-          return mix(infoColor, successColor, (t - 0.5) * 4.0); // Transition between info and success
+          return mix(infoColor, successColor, (t - 0.5) * 4.0);
         } else {
-          return mix(successColor, dangerColor, (t - 0.75) * 4.0); // Transition between success and danger
+          return mix(successColor, dangerColor, (t - 0.75) * 4.0);
         }
       }
 
@@ -106,6 +105,7 @@ const MandelbrotWebGL: React.FC = () => {
       gl.uniform2f(resolutionLocation, canvas.width, canvas.height);
       gl.uniform1f(zoomLocation, zoom);
       gl.uniform2f(offsetLocation, offset.x, offset.y);
+      gl.viewport(0, 0, canvas.width, canvas.height);
       gl.drawArrays(gl.TRIANGLES, 0, 6);
     };
 
@@ -163,6 +163,20 @@ const MandelbrotWebGL: React.FC = () => {
     canvas.addEventListener('mouseup', onMouseUp);
     canvas.addEventListener('mouseleave', onMouseUp);
 
+    const resizeCanvas = () => {
+      const displayWidth = canvas.clientWidth;
+      const displayHeight = canvas.clientHeight;
+
+      if (canvas.width !== displayWidth || canvas.height !== displayHeight) {
+        canvas.width = displayWidth;
+        canvas.height = displayHeight;
+        gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
+        render();
+      }
+    };
+
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
     render();
 
     return () => {
@@ -171,10 +185,25 @@ const MandelbrotWebGL: React.FC = () => {
       canvas.removeEventListener('mousemove', onMouseMove);
       canvas.removeEventListener('mouseup', onMouseUp);
       canvas.removeEventListener('mouseleave', onMouseUp);
+      window.removeEventListener('resize', resizeCanvas);
     };
   }, []);
 
-  return <canvas ref={canvasRef} width={600} height={400}></canvas>;
+  return (
+    <>
+      <style jsx>{`
+        canvas {
+          width: 100%;
+          height: auto;
+          aspect-ratio: 3 / 2; /* Mantener relación de aspecto 3:2 */
+          display: block;
+          max-width: 100%;
+          border: 1px solid #ccc; /* Para ver el borde del canvas */
+        }
+      `}</style>
+      <canvas ref={canvasRef}></canvas>
+    </>
+  );
 };
 
 export default MandelbrotWebGL;
