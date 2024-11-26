@@ -2,17 +2,21 @@
 import { Container, Row, Col, Card } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
-import { achievements } from './common';
 import dynamic from 'next/dynamic';
+import { useTranslate } from '@/utils/translate';
+import { achievements } from './common';
+
 const Jarvis = dynamic(() => import('@/app/components/Matematica/Jarvis'), {
   ssr: false,
 });
 
 export default function Achievements() {
+  const t = useTranslate();
+
   return (
     <section className="mb-5">
       <Container>
-        <h3 className="border-bottom pb-2 mb-4">Proyectos</h3>
+        <h3 className="border-bottom pb-2 mb-4">{t('achievements.title')}</h3>
         <Row>
           {achievements.map((item, index) => (
             <Col key={index} md={item.col} className="mb-4">
@@ -53,7 +57,7 @@ export default function Achievements() {
                   )}
                   <Card.Body style={{ minHeight: '150px', position: 'relative' }}>
                     <Card.Title>{item.name}</Card.Title>
-                    <Card.Text>{item.description}</Card.Text>
+                    <Card.Text>{t(`achievements.description.${item.name.toLowerCase().replace(' ', '')}`)}</Card.Text>
                     <div
                       style={{
                         position: 'absolute',

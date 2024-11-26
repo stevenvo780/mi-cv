@@ -1,9 +1,10 @@
-import Header from './components/Header';
-import Tools from './components/Tools';
-import Portfolio from './components/Portafolio';
-import Skills from './components/Skills';
-import Achievements from './components/Achievements';
-import ContactMe from './components/ContactMe';
+'use client';
+import Header from '../components/Header';
+import Tools from '../components/Tools';
+import Portfolio from '../components/Portafolio';
+import Skills from '../components/Skills';
+import Achievements from '../components/Achievements';
+import ContactMe from '../components/ContactMe';
 import Script from 'next/script';
 
 export default function Home() {

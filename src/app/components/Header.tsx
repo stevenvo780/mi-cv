@@ -5,12 +5,15 @@ import dynamic from 'next/dynamic';
 import ContactInfo from '@/app/components/ContactInfo';
 import { Container, Row, Col } from 'react-bootstrap';
 import profileImage from '@/public/images/profile.jpeg';
+import { useTranslate } from '@/utils/translate';
 
 const GameOfLife = dynamic(() => import('@/app/components/Matematica/GameOfLife'), {
   ssr: false,
 });
 
 export default function Header() {
+  const t = useTranslate();
+
   return (
     <header className="mb-5 pb-3" style={{ overflow: 'hidden', position: 'relative' }}>
       <div
@@ -32,7 +35,7 @@ export default function Header() {
           <Col xs={12} md={3} className="text-center mb-3 mb-md-0">
             <Image
               src={profileImage}
-              alt="Steven Vallejo Ortiz"
+              alt={t('header.profileImageAlt')}
               width={250}
               height={250}
               className="rounded-circle border border-4"
@@ -40,8 +43,8 @@ export default function Header() {
           </Col>
           <Col xs={12} md={9}>
             <div className="text-center text-md-start bg-white rounded p-3">
-              <h1 className="display-5 mb-0">Steven Vallejo Ortiz</h1>
-              <h2 className="h4 text-secondary">Informático y filósofo</h2>
+              <h1 className="display-5 mb-0">{t('header.name')}</h1>
+              <h2 className="h4 text-secondary">{t('header.title')}</h2>
             </div>
             <ContactInfo />
           </Col>

@@ -122,7 +122,7 @@ export default function LorenzAttractor() {
           display: block;
           width: 100%;
           height: 100%;
-          max-height: 70vh; /* Limitar la altura máxima al 70% del viewport en pantallas grandes */
+          max-height: 70vh;
           max-width: 100%;
           border: 1px solid #dee2e6;
           background-color: #f8f9fa;
@@ -131,7 +131,7 @@ export default function LorenzAttractor() {
         @media (max-width: 768px) {
           canvas {
             height: auto;
-            max-height: 50vh; /* Limitar la altura máxima al 50% en pantallas móviles */
+            max-height: 50vh;
           }
         }
       `}</style>

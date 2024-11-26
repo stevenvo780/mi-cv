@@ -6,6 +6,8 @@ import emailjs from 'emailjs-com';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEnvelope, faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 import { faWhatsapp } from '@fortawesome/free-brands-svg-icons';
+import { useTranslate } from '@/utils/translate';
+
 const ParticleFlow = dynamic(() => import('@/app/components/Matematica/ParticleFlow'), {
   ssr: false,
 });
@@ -13,6 +15,7 @@ const ParticleFlow = dynamic(() => import('@/app/components/Matematica/ParticleF
 export default function ContactMe() {
   const form = useRef<HTMLFormElement>(null);
   const [messageSent, setMessageSent] = useState(false);
+  const t = useTranslate();
 
   const sendEmail = (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,22 +41,22 @@ export default function ContactMe() {
   return (
     <section className="mb-5">
       <Container>
-        <h3 className="border-bottom pb-2 mb-4">Contáctame</h3>
+        <h3 className="border-bottom pb-2 mb-4">{t('contact.title')}</h3>
         <Row>
           <Col md={6} className="order-md-1 order-2">
             <ParticleFlow />
           </Col>
           <Col md={6} className="order-md-1 order-1">
-            <h5>Envíame un mensaje</h5>
+            <h5>{t('contact.sendMessage')}</h5>
             {messageSent ? (
-              <p className="text-success">¡Mensaje enviado con éxito!</p>
+              <p className="text-success">{t('contact.successMessage')}</p>
             ) : (
               <Form ref={form} onSubmit={sendEmail}>
                 <Form.Group className="mb-3" controlId="user_name">
                   <Form.Control
                     type="text"
                     name="user_name"
-                    placeholder="Ingresa tu nombre"
+                    placeholder={t('contact.placeholder.name')}
                     required
                   />
                 </Form.Group>
@@ -61,7 +64,7 @@ export default function ContactMe() {
                   <Form.Control
                     type="email"
                     name="user_email"
-                    placeholder="Ingresa tu correo electrónico"
+                    placeholder={t('contact.placeholder.email')}
                     required
                   />
                 </Form.Group>
@@ -70,12 +73,12 @@ export default function ContactMe() {
                     as="textarea"
                     name="message"
                     rows={3}
-                    placeholder="Escribe tu mensaje aquí"
+                    placeholder={t('contact.placeholder.message')}
                     required
                   />
                 </Form.Group>
                 <Button variant="primary" type="submit">
-                  <FontAwesomeIcon icon={faPaperPlane} /> Enviar mensaje
+                  <FontAwesomeIcon icon={faPaperPlane} /> {t('contact.button')}
                 </Button>
               </Form>
             )}

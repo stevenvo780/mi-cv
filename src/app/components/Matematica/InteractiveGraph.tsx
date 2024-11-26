@@ -1,10 +1,12 @@
 'use client';
 import React, { useRef, useEffect } from 'react';
 import { DataSet, Network } from 'vis-network/standalone';
+import { useTranslate } from '@/utils/translate';
 
 export default function InteractiveGraph() {
   const containerRef = useRef<HTMLDivElement>(null);
   const networkRef = useRef<Network | null>(null);
+  const t = useTranslate();
 
   useEffect(() => {
     const nodes = new DataSet<{ id: number; label: string }>([]);
@@ -32,8 +34,8 @@ export default function InteractiveGraph() {
 
   return (
     <div>
-      <h3>Teoría de Grafos Interactiva</h3>
-      <p>Puedes añadir nodos y aristas utilizando las herramientas integradas.</p>
+      <h3>{t('interactiveGraph.title')}</h3>
+      <p>{t('interactiveGraph.description')}</p>
       <div
         ref={containerRef}
         style={{ height: '400px', border: '1px solid #dee2e6' }}

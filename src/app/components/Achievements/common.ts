@@ -9,7 +9,7 @@ import { AchievementItem } from './types';
 export const achievements: AchievementItem[] = [
   {
     name: 'Indie Levels',
-    description: 'Estudio de videojuegos ubicado en Medellín - Colombia, con un equipo de profesionales dedicados al desarrollo de videojuegos de alta calidad para empresas de todo el mundo.',
+    description: 'achievements.description.indieLevels',
     link: 'https://indielevelstudio.com',
     image: LogoIndie,
     imageWidth: 900,
@@ -20,7 +20,7 @@ export const achievements: AchievementItem[] = [
   },
   {
     name: 'Humanizar',
-    description: 'Proyecto para mejorar la capacidad productiva de las empresas y con esto mejorar la calidad de vida de los trabajadores y la sociedad en general',
+    description: 'achievements.description.humanizar',
     link: 'https://www.humanizar.co/',
     image: humanizarImg,
     imageWidth: 300,
@@ -30,7 +30,7 @@ export const achievements: AchievementItem[] = [
   },
   {
     name: 'Tertulia Literaria',
-    description: 'La mas grande comunidad de Literatura, filosofía, ciencia y artes de Discord',
+    description: 'achievements.description.tertuliaLiteraria',
     link: 'https://www.tertulia-literaria.com/',
     image: tertuliaImg,
     imageWidth: 300,
@@ -40,7 +40,7 @@ export const achievements: AchievementItem[] = [
   },
   {
     name: 'Total Pedido - Demo',
-    description: 'Plataforma de Ecommerce robusta y escalable',
+    description: 'achievements.description.totalPedido',
     link: 'https://total-pedidos-front.vercel.app/',
     image: totalPedidoImg,
     imageWidth: 300,
@@ -50,7 +50,7 @@ export const achievements: AchievementItem[] = [
   },
   {
     name: 'Mera Vuelta',
-    description: 'Aplicación para servicios de transporte en Antioquia',
+    description: 'achievements.description.meraVuelta',
     link: 'https://www.meravuelta.com/',
     image: meraVueltaImg,
     imageWidth: 300,
@@ -60,7 +60,7 @@ export const achievements: AchievementItem[] = [
   },
   {
     name: 'EMW',
-    description: 'Robots para Envíos de Mensajes masivos por WhatsApp',
+    description: 'achievements.description.emw',
     link: 'https://emw.humanizar.cloud/',
     image: emwImg,
     imageWidth: 300,
@@ -70,7 +70,7 @@ export const achievements: AchievementItem[] = [
   },
   {
     name: 'Proyecto JARVIS',
-    description: 'Asistente virtual basado en IA',
+    description: 'achievements.description.jarvis',
     link: 'https://github.com/stevenvo780/jarvisIA',
     isCustom: true,
     backgroundColor: 'transparent',

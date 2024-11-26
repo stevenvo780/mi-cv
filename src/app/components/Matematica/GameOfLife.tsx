@@ -43,8 +43,8 @@ export default function GameOfLifeHeader() {
     [-1, 0],
   ];
 
-  // Complejidad O(n * m), donde n es el número de filas y m el número de columnas.
-  // Se recorre toda la cuadrícula, y por cada celda se revisan hasta 8 vecinos.
+  // Complexity O(n * m), where n is the number of rows and m is the number of columns.
+  // Loops through the entire grid and checks up to 8 neighbors for each cell.
   const updateGrid = (g: number[][]): number[][] => {
     return g.map((rows, i) =>
       rows.map((cell, j) => {
@@ -57,7 +57,7 @@ export default function GameOfLifeHeader() {
           }
         });
 
-        // Reglas del juego: sobrepoblación, subpoblación, o reproducción
+        // Game rules: overpopulation, underpopulation, or reproduction
         if (cell === 1 && (neighbors < 2 || neighbors > 3)) {
           return 0;
         } else if (cell === 0 && neighbors === 3) {
@@ -69,8 +69,8 @@ export default function GameOfLifeHeader() {
     );
   };
 
-  // Complejidad O(n * m), donde n es el número de filas y m el número de columnas.
-  // Se recorre toda la cuadrícula para dibujar cada celda en el canvas.
+  // Complexity O(n * m), where n is the number of rows and m is the number of columns.
+  // Loops through the entire grid to draw each cell on the canvas.
   const drawGrid = (grid: number[][], ctx: CanvasRenderingContext2D) => {
     ctx.clearRect(0, 0, canvasRef.current!.width, canvasRef.current!.height);
     for (let i = 0; i < gridRows; i++) {
@@ -103,16 +103,16 @@ export default function GameOfLifeHeader() {
       const ctx = canvas.getContext('2d');
       if (!ctx) return;
 
-      // Actualización y dibujado de la cuadrícula, complejidad O(n * m) por cada intervalo
+      // Grid update and drawing, complexity O(n * m) per interval
       const updateAndDraw = () => {
         setGrid((g) => {
-          const newGrid = updateGrid(g); // Actualización de la cuadrícula
-          drawGrid(newGrid, ctx); // Dibujado de la cuadrícula
+          const newGrid = updateGrid(g); // Updates the grid
+          drawGrid(newGrid, ctx); // Draws the grid
           return newGrid;
         });
       };
 
-      // Se actualiza cada 500ms, ejecutando la lógica de updateGrid y drawGrid
+      // Updates every 500ms, executing the logic of updateGrid and drawGrid
       const intervalId = setInterval(updateAndDraw, 500);
       return () => clearInterval(intervalId);
     }

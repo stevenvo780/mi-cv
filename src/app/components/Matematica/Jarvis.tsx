@@ -135,15 +135,15 @@ export default function JarvisAnimation(): JSX.Element {
           display: block;
           width: 100%;
           height: 100%;
-          max-height: 70vh; /* Limita la altura máxima al 70% del viewport en móviles */
+          max-height: 70vh;
           max-width: 100%;
-          border: 1px solid #ccc; /* Opcional para ver el borde del canvas */
+          border: 1px solid #ccc;
         }
 
         @media (max-width: 768px) {
           canvas {
             height: auto;
-            max-height: 30vh; /* Altura máxima en móviles pequeños */
+            max-height: 30vh;
           }
         }
       `}</style>
