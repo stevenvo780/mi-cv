@@ -17,7 +17,6 @@ const geistMono = localFont({
   weight: '100 900',
 });
 
-// Metadata para SEO y redes sociales
 export const metadata = {
   title: 'Steven Vallejo',
   description:

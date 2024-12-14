@@ -6,7 +6,6 @@ export function middleware(request: NextRequest) {
   const locales = ['en', 'es'];
   const defaultLocale = 'en';
 
-  // Ignorar rutas internas de Next.js y archivos estáticos
   if (
     pathname.startsWith('/_next') ||
     pathname.startsWith('/api') ||
@@ -16,7 +15,6 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // Comprobar si la ruta incluye el locale
   const pathnameIsMissingLocale = locales.every(
     (locale) => !pathname.startsWith(`/${locale}/`) && pathname !== `/${locale}`
   );

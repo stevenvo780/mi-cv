@@ -6,11 +6,22 @@ import Skills from '@/app/components/Skills';
 import Achievements from '@/app/components/Achievements';
 import ContactMe from '@/app/components/ContactMe';
 import Script from 'next/script';
+import { useRouter } from 'next/navigation';
 
 export default function Home() {
+  const router = useRouter();
+
+  const toggleLocale = () => {
+    const currentPath = window.location.pathname;
+    const isSpanish = currentPath.startsWith('/es');
+    const newPath = isSpanish ? currentPath.replace('/es', '/en') : currentPath.replace('/en', '/es');
+    router.push(newPath);
+  };
+
+  const currentLocale = window.location.pathname.startsWith('/es') ? 'Es' : 'En';
+
   return (
     <>
-      {/* Google Analytics Script */}
       <Script
         strategy="afterInteractive"
         src={`https://www.googletagmanager.com/gtag/js?id=G-E5NMYWLXER`}
@@ -47,6 +58,22 @@ export default function Home() {
           <ContactMe />
         </section>
       </main>
+      <button
+        onClick={toggleLocale}
+        className="btn btn-primary position-fixed d-flex align-items-center justify-content-center"
+        style={{
+          top: '10px',
+          right: '0%',
+          width: '50px',
+          height: '30px',
+          zIndex: 1000,
+          borderRadius: '10px 0px 0px 10px',
+          fontSize: '12px',
+          padding: '0',
+        }}
+      >
+        {currentLocale}
+      </button>
     </>
   );
 }

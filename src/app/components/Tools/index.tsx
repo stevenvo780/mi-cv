@@ -2,7 +2,7 @@
 import { Container, Row, Col, ProgressBar, Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { tools } from './common';
-import { useTranslate } from '@/utils/translate'; // Importar traducción
+import { useTranslate } from '@/utils/translate';
 import { faCoins } from '@fortawesome/free-solid-svg-icons';
 
 const getProgressBarVariant = (level: number) => {
