@@ -1,15 +1,15 @@
-import { useRouter } from 'next/router';
+'use client';
+import { useParams } from 'next/navigation';
 import en from '@/locales/en/common.json';
 import es from '@/locales/es/common.json';
 
-const translations = { en, es };
+const translations: { [key: string]: { [key: string]: string } } = { en, es };
 
 export const useTranslate = () => {
-  const { locale } = useRouter();
+  const params = useParams();
+  const locale = params.locale || 'en';
 
-  if (typeof window === 'undefined') {
-    return (key: string): string => key;
-  }
-  const t = (translations[locale as keyof typeof translations] || translations.en) as { [key: string]: string };
+  const t = translations[locale as keyof typeof translations] || translations.en;
+
   return (key: string): string => t[key] || key;
 };
