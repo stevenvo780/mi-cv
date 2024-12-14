@@ -9,6 +9,7 @@ import { AchievementItem } from './types';
 export const achievements: AchievementItem[] = [
   {
     name: 'Indie Levels',
+    key: 'indieLevels',
     description: 'achievements.description.indieLevels',
     link: 'https://indielevelstudio.com',
     image: LogoIndie,
@@ -20,6 +21,7 @@ export const achievements: AchievementItem[] = [
   },
   {
     name: 'Humanizar',
+    key: 'humanizar',
     description: 'achievements.description.humanizar',
     link: 'https://www.humanizar.co/',
     image: humanizarImg,
@@ -30,6 +32,7 @@ export const achievements: AchievementItem[] = [
   },
   {
     name: 'Tertulia Literaria',
+    key: 'tertuliaLiteraria',
     description: 'achievements.description.tertuliaLiteraria',
     link: 'https://www.tertulia-literaria.com/',
     image: tertuliaImg,
@@ -40,6 +43,7 @@ export const achievements: AchievementItem[] = [
   },
   {
     name: 'Total Pedido - Demo',
+    key: 'totalPedido',
     description: 'achievements.description.totalPedido',
     link: 'https://total-pedidos-front.vercel.app/',
     image: totalPedidoImg,
@@ -50,6 +54,7 @@ export const achievements: AchievementItem[] = [
   },
   {
     name: 'Mera Vuelta',
+    key: 'meraVuelta',
     description: 'achievements.description.meraVuelta',
     link: 'https://www.meravuelta.com/',
     image: meraVueltaImg,
@@ -60,6 +65,7 @@ export const achievements: AchievementItem[] = [
   },
   {
     name: 'EMW',
+    key: 'emw',
     description: 'achievements.description.emw',
     link: 'https://emw.humanizar.cloud/',
     image: emwImg,
@@ -70,6 +76,7 @@ export const achievements: AchievementItem[] = [
   },
   {
     name: 'Proyecto JARVIS',
+    key: 'jarvis',
     description: 'achievements.description.jarvis',
     link: 'https://github.com/stevenvo780/jarvisIA',
     isCustom: true,

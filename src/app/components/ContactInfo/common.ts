@@ -1,4 +1,3 @@
-
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import {
   faLinkedin,
@@ -9,7 +8,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 
 export type Contact = {
-  type: 'email' | 'linkedin' | 'portfolio';
+  type: 'email' | 'linkedin' | 'portfolio' | 'codersrank';
   value: string;
   icon: IconDefinition;
   url: string;
@@ -29,7 +28,7 @@ export const contacts: Contact[] = [
     url: 'https://www.linkedin.com/in/steven-vallejo/'
   },
   {
-    type: 'portfolio',
+    type: 'codersrank',
     value: 'CodeRank',
     icon: faLink,
     url: 'https://profile.codersrank.io/user/stevenvo780'

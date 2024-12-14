@@ -57,7 +57,7 @@ export default function Achievements() {
                   )}
                   <Card.Body style={{ minHeight: '150px', position: 'relative' }}>
                     <Card.Title>{item.name}</Card.Title>
-                    <Card.Text>{t(`achievements.description.${item.name.toLowerCase().replace(' ', '')}`)}</Card.Text>
+                    <Card.Text>{t(`achievements.description.${item.key}`)}</Card.Text>
                     <div
                       style={{
                         position: 'absolute',

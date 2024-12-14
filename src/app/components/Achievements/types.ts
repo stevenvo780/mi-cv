@@ -3,6 +3,7 @@ import { StaticImageData } from 'next/image';
 
 export interface AchievementItem {
   name: string;
+  key: string;
   description: string;
   link: string;
   image?: StaticImageData | string;

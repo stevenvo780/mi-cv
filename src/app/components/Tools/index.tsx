@@ -22,7 +22,7 @@ export default function Tools() {
         <Row>
           {tools.map((tool, index) => (
             <Col md={4} key={index} className="mb-4">
-              <h4 className="h5">{t(`tools.category.${tool.category}`)}:</h4>
+              <h4 className="h5">{t(tool.category)}:</h4>
               <ul className="list-unstyled">
                 {tool.items.map((item, i) => (
                   <li key={i} className="mb-3">
