@@ -1,41 +1,40 @@
-# Mi Hoja de Vida
+# My Resume
 
-Este proyecto es una representación digital de mi hoja de vida, donde no solo se detallan mis habilidades y experiencia, sino que también se incluyen varias curiosidades matemáticas. Estas se presentan a través de visualizaciones interactivas, que muestran cómo la programación y las matemáticas pueden trabajar en conjunto para crear herramientas fascinantes e instructivas.
+This project is a digital representation of my resume, where not only my skills and experience are detailed, but also several mathematical curiosities are included. These are presented through interactive visualizations, demonstrating how programming and mathematics can work together to create fascinating and instructive tools.
 
-## Matemáticas y Curiosidades
+## Mathematics and Curiosities
 
-Dentro del proyecto, podrás encontrar varios componentes interactivos que exploran conceptos matemáticos complejos, como:
+Within the project, you will find various interactive components that explore complex mathematical concepts, such as:
 
-- **ComplexNetwork.tsx**: Visualización de redes complejas.
-- **GameOfLife.tsx**: Simulación del Juego de la Vida de Conway.
-- **InteractiveGraph.tsx**: Herramienta para visualizar grafos en tiempo real.
-- **LorenzAttractor.tsx**: Representación de un sistema caótico.
-- **MandelbrotSet.tsx**: Visualización del famoso conjunto de Mandelbrot.
-- **ParticleFlow.tsx**: Simulación de un sistema de partículas.
+- **ComplexNetwork.tsx**: Visualization of complex networks.
+- **GameOfLife.tsx**: Simulation of Conway's Game of Life.
+- **InteractiveGraph.tsx**: Tool for real-time graph visualization.
+- **LorenzAttractor.tsx**: Representation of a chaotic system.
+- **MandelbrotSet.tsx**: Visualization of the famous Mandelbrot set.
+- **ParticleFlow.tsx**: Simulation of a particle system.
 
-Estas visualizaciones no solo muestran mi interés por las matemáticas, sino que también buscan inspirar a otros a aprender y explorar temas avanzados.
+These visualizations not only showcase my interest in mathematics but also aim to inspire others to learn and explore advanced topics.
 
-## Despliegue del Proyecto
+## Project Deployment
 
-Este proyecto está desarrollado en **Next.js**. Para ejecutarlo en tu entorno local o para hacer cambios, sigue estos pasos:
+This project is developed in **Next.js**. To run it in your local environment or to make changes, follow these steps:
 
-1. Clona el repositorio.
-2. Instala las dependencias necesarias con `npm install`, `yarn install`, `pnpm install` o `bun install`.
-3. Ejecuta el servidor de desarrollo con:
+1. Clone the repository.
+2. Install the necessary dependencies using `npm install`, `yarn install`, `pnpm install`, or `bun install`.
+3. Run the development server with:
    ```bash
    npm run dev
-   # o
+   # or
    yarn dev
-   # o
+   # or
    pnpm dev
-   # o
+   # or
    bun dev
    ```
+4. Open [http://localhost:3000](http://localhost:3000) in your browser to see the results.
 
-4. Abre [http://localhost:3000](http://localhost:3000) en tu navegador para ver los resultados.
+This project is designed to be easily deployed on platforms like [Vercel](https://vercel.com/), which is the most recommended option for **Next.js** applications. Vercel simplifies the management and scaling of the application, and you can follow their [deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
 
-Este proyecto está diseñado para desplegarse fácilmente en plataformas como [Vercel](https://vercel.com/), que es la opción más recomendada para aplicaciones **Next.js**. Vercel facilita la gestión y el escalado de la aplicación, y puedes seguir su [documentación de despliegue](https://nextjs.org/docs/app/building-your-application/deploying) para más detalles.
+## Inspiration
 
-## Inspiración
-
-Esta hoja de vida no es solo un resumen de mi recorrido profesional, sino también un ejemplo de cómo se pueden utilizar herramientas modernas para crear contenido educativo y visualmente atractivo. Te invito a explorar el código, interactuar con los componentes y adaptarlos para tus propios proyectos.
+This resume is not just a summary of my professional journey but also an example of how modern tools can be used to create educational and visually appealing content. I invite you to explore the code, interact with the components, and adapt them for your own projects.
