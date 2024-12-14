@@ -72,7 +72,7 @@ export default function Portfolio() {
             className="mb-5"
             style={{ border: '2px solid #e9ecef', borderRadius: '10px', padding: '20px' }}
           >
-            <h4 className="mb-4">{category.name}</h4>
+            <h4 className="mb-4">{t(category.name)}</h4>
             <Row>
               {category.projects
                 .filter((project) => project.important)
@@ -85,8 +85,8 @@ export default function Portfolio() {
                             <FontAwesomeIcon icon={project.icon} size="2x" className="me-3" />
                           )}
                           <div>
-                            <Card.Title className="mb-1">{project.name}</Card.Title>
-                            <Card.Text className="text-muted small mb-0">{project.description}</Card.Text>
+                            <Card.Title className="mb-1">{t(project.name)}</Card.Title>
+                            <Card.Text className="text-muted small mb-0">{t(project.description)}</Card.Text>
                           </div>
                         </Card.Body>
                       </Card>
@@ -115,10 +115,10 @@ export default function Portfolio() {
                             <Card.Body className="d-flex align-items-center">
                               <FontAwesomeIcon icon={faGithub} className="me-3" />
                               <div>
-                                <Card.Title className="mb-1">{project.name}</Card.Title>
+                                <Card.Title className="mb-1">{t(project.name)}</Card.Title>
                                 {project.description && (
                                   <Card.Text className="text-muted small mb-0">
-                                    {project.description}
+                                    {t(project.description)}
                                   </Card.Text>
                                 )}
                               </div>
