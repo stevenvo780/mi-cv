@@ -3,7 +3,7 @@ import { Container, Row, Col } from 'react-bootstrap';
 import dynamic from 'next/dynamic';
 import { useTranslate } from '@/utils/translate';
 
-const MandelbrotSet = dynamic(() => import('@/app/components/Matematica/MandelbrotSet'), {
+const MandelbrotSet = dynamic(() => import('./Matematica/MandelbrotSet'), {
   ssr: false,
 });
 

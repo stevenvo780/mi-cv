@@ -6,7 +6,7 @@ import dynamic from 'next/dynamic';
 import { useTranslate } from '@/utils/translate';
 import { achievements } from './common';
 
-const Jarvis = dynamic(() => import('@/app/components/Matematica/Jarvis'), {
+const Jarvis = dynamic(() => import('../Matematica/Jarvis'), {
   ssr: false,
 });
 

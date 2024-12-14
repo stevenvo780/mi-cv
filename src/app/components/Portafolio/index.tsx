@@ -7,7 +7,7 @@ import { faCloud, faArrowRight } from '@fortawesome/free-solid-svg-icons';
 import { portfolioCategories } from './common';
 import { useTranslate } from '@/utils/translate';
 import dynamic from 'next/dynamic';
-const LorenzAttractor = dynamic(() => import('@/app/components/Matematica/LorenzAttractor'), { ssr: false });
+const LorenzAttractor = dynamic(() => import('../Matematica/LorenzAttractor'), { ssr: false });
 
 export default function Portfolio() {
   const t = useTranslate();

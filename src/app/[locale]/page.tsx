@@ -1,15 +1,16 @@
 'use client';
-import Header from '../components/Header';
-import Tools from '../components/Tools';
-import Portfolio from '../components/Portafolio';
-import Skills from '../components/Skills';
-import Achievements from '../components/Achievements';
-import ContactMe from '../components/ContactMe';
+import Header from '@/app/components/Header';
+import Tools from '@/app/components/Tools';
+import Portfolio from '@/app/components/Portafolio';
+import Skills from '@/app/components/Skills';
+import Achievements from '@/app/components/Achievements';
+import ContactMe from '@/app/components/ContactMe';
 import Script from 'next/script';
 
 export default function Home() {
   return (
     <>
+      {/* Google Analytics Script */}
       <Script
         strategy="afterInteractive"
         src={`https://www.googletagmanager.com/gtag/js?id=G-E5NMYWLXER`}
@@ -22,7 +23,9 @@ export default function Home() {
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
-            gtag('config', 'G-E5NMYWLXER');
+            gtag('config', 'G-E5NMYWLXER', {
+              page_path: window.location.pathname,
+            });
           `,
         }}
       />

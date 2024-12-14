@@ -1,3 +1,4 @@
+
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '@/styles/globals.css';
 import { config } from '@fortawesome/fontawesome-svg-core';
@@ -6,12 +7,12 @@ config.autoAddCss = false;
 import localFont from 'next/font/local';
 
 const geistSans = localFont({
-  src: './fonts/GeistVF.woff',
+  src: '../fonts/GeistVF.woff',
   variable: '--font-geist-sans',
   weight: '100 900',
 });
 const geistMono = localFont({
-  src: './fonts/GeistMonoVF.woff',
+  src: '../fonts/GeistMonoVF.woff',
   variable: '--font-geist-mono',
   weight: '100 900',
 });
@@ -63,7 +64,7 @@ export const metadata = {
   themeColor: '#ffffff',
 };
 
-export default function RootLayout({
+export default function LocaleLayout({
   children,
   params,
 }: {

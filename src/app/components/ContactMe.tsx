@@ -8,7 +8,7 @@ import { faEnvelope, faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 import { faWhatsapp } from '@fortawesome/free-brands-svg-icons';
 import { useTranslate } from '@/utils/translate';
 
-const ParticleFlow = dynamic(() => import('@/app/components/Matematica/ParticleFlow'), {
+const ParticleFlow = dynamic(() => import('./Matematica/ParticleFlow'), {
   ssr: false,
 });
 
