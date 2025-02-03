@@ -33,7 +33,7 @@ export const achievements: AchievementItem[] = [
   {
     name: 'Cafeteria del caos',
     key: 'cafeteriaDelCaos',
-    description: 'achievements.description.tertuliaLiteraria',
+    description: 'achievements.description.cafeteriadelcaos',
     link: 'https://www.cafeteriadelcaos.com/',
     image: cafeteriaDelCaosImg,
     imageWidth: 300,
