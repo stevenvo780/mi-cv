@@ -1,5 +1,5 @@
 import humanizarImg from '@/public/images/Humanizar.png';
-import tertuliaImg from '@/public/images/Tertulia.jpg';
+import cafeteriaDelCaosImg from '@/public/images/CafeteriaDelCaos.png';
 import totalPedidoImg from '@/public/images/TotalPedido.png';
 import meraVueltaImg from '@/public/images/MeraVuelta.png';
 import emwImg from '@/public/images/EMW.png';
@@ -31,11 +31,11 @@ export const achievements: AchievementItem[] = [
     col: 4,
   },
   {
-    name: 'Tertulia Literaria',
-    key: 'tertuliaLiteraria',
+    name: 'Cafeteria del caos',
+    key: 'cafeteriaDelCaos',
     description: 'achievements.description.tertuliaLiteraria',
-    link: 'https://www.tertulia-literaria.com/',
-    image: tertuliaImg,
+    link: 'https://www.cafeteriadelcaos.com/',
+    image: cafeteriaDelCaosImg,
     imageWidth: 300,
     imageHeight: 200,
     backgroundColor: 'transparent',
@@ -78,7 +78,7 @@ export const achievements: AchievementItem[] = [
     name: 'Proyecto JARVIS',
     key: 'jarvis',
     description: 'achievements.description.jarvis',
-    link: 'https://github.com/stevenvo780/jarvisIA',
+    link: 'https://jarvis-web-seven.vercel.app/',
     isCustom: true,
     backgroundColor: 'transparent',
     col: 4,
