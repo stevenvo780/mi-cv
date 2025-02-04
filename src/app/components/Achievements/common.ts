@@ -32,7 +32,7 @@ export const achievements: AchievementItem[] = [
   },
   {
     name: 'Cafeteria del caos',
-    key: 'cafeteriaDelCaos',
+    key: 'cafeteriadelcaos',
     description: 'achievements.description.cafeteriadelcaos',
     link: 'https://www.cafeteriadelcaos.com/',
     image: cafeteriaDelCaosImg,
