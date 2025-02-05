@@ -1,4 +1,5 @@
 'use client';
+import { useState, useEffect } from 'react';
 import Header from '@/app/components/Header';
 import Tools from '@/app/components/Tools';
 import Portfolio from '@/app/components/Portafolio';
@@ -10,6 +11,13 @@ import { useRouter } from 'next/navigation';
 
 export default function Home() {
   const router = useRouter();
+  // Nuevo estado para currentLocale
+  const [currentLocale, setCurrentLocale] = useState('En');
+
+  useEffect(() => {
+    const path = window.location.pathname;
+    setCurrentLocale(path.startsWith('/es') ? 'Es' : 'En');
+  }, []);
 
   const toggleLocale = () => {
     const currentPath = window.location.pathname;
@@ -17,8 +25,6 @@ export default function Home() {
     const newPath = isSpanish ? currentPath.replace('/es', '/en') : currentPath.replace('/en', '/es');
     router.push(newPath);
   };
-
-  const currentLocale = window.location.pathname.startsWith('/es') ? 'Es' : 'En';
 
   return (
     <>

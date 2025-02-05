@@ -81,6 +81,8 @@
   "portfolio.description.tertuliaLiteraria": "Project on philosophy, sciences, literature, and art.",
   "portfolio.project.philosophyArticles": "Philosophy Articles",
   "portfolio.description.philosophyArticles": "Medium profile with philosophical essays.",
+  "portfolio.project.hackingTool": "Ethical Hacking Tool",
+  "portfolio.description.hackingTool": "Educational tool to demonstrate geolocation vulnerabilities.",
   "tools.title": "Tools",
   "tools.backendDevelopment": "Back-End Development",
   "tools.frontendDevelopment": "Front-End Development",

@@ -19,6 +19,7 @@ import {
   faThermometerHalf,
   faDoorOpen,
   faTrain,
+  faShieldAlt,  // Añadir este import
 } from '@fortawesome/free-solid-svg-icons';
 import { PortfolioCategory } from './types';
 
@@ -116,6 +117,13 @@ export const portfolioCategories: PortfolioCategory[] = [
         link: 'https://github.com/stevenvo780/neuronalLearning',
         description: 'portfolio.description.neuronalLearning',
         important: false,
+      },
+      {
+        name: 'portfolio.project.hackingTool',
+        link: 'https://github.com/stevenvo780/capturarUbicacionWhiteHack',
+        description: 'portfolio.description.hackingTool',
+        icon: faShieldAlt,
+        important: true,
       },
     ],
   },
