@@ -19,7 +19,7 @@ import {
   faThermometerHalf,
   faDoorOpen,
   faTrain,
-  faShieldAlt,  // Añadir este import
+  faShieldAlt,
 } from '@fortawesome/free-solid-svg-icons';
 import { PortfolioCategory } from './types';
 
@@ -28,6 +28,27 @@ export const portfolioCategories: PortfolioCategory[] = [
     name: 'portfolio.programming',
     icon: faCode,
     projects: [
+      {
+        name: 'portfolio.project.cafeteriaDelCaosAPI',
+        link: 'https://github.com/stevenvo780/cafeteria-del-caos-api',
+        description: 'portfolio.description.cafeteriaDelCaosAPI',
+        icon: faNodeJs,
+        important: true,
+      },
+      {
+        name: 'portfolio.project.cafeteriaDelCaosFrond',
+        link: 'https://github.com/stevenvo780/cafeteria-del-caos-frond',
+        description: 'portfolio.description.cafeteriaDelCaosFrond',
+        icon: faReact,
+        important: true,
+      },
+      {
+        name: 'portfolio.project.cafeteriaDelCaosBot',
+        link: 'https://github.com/stevenvo780/cafeteriadelcaos-bot',
+        description: 'portfolio.description.cafeteriaDelCaosBot',
+        icon: faCogs,
+        important: true,
+      },
       {
         name: 'portfolio.project.tertuliaFrontend',
         link: 'https://github.com/stevenvo780/tertulialiteraria-frond',
@@ -123,7 +144,21 @@ export const portfolioCategories: PortfolioCategory[] = [
         link: 'https://github.com/stevenvo780/capturarUbicacionWhiteHack',
         description: 'portfolio.description.hackingTool',
         icon: faShieldAlt,
-        important: true,
+        important: false,
+      },
+      {
+        name: 'portfolio.project.extratorDeTextos',
+        link: 'https://github.com/stevenvo780/ExtratorDeTextos',
+        description: 'portfolio.description.extratorDeTextos',
+        icon: faCode,
+        important: false,
+      },
+      {
+        name: 'portfolio.project.limpiadorDeRuidoEnvideos',
+        link: 'https://github.com/stevenvo780/limpiadorDeRuidoEnvideos',
+        description: 'portfolio.description.limpiadorDeRuidoEnvideos',
+        icon: faDatabase,
+        important: false,
       },
     ],
   },
@@ -131,6 +166,20 @@ export const portfolioCategories: PortfolioCategory[] = [
     name: 'portfolio.mathAndScience',
     icon: faAtom,
     projects: [
+      {
+        name: 'portfolio.project.explicaiconProblemasDeExclucion',
+        link: 'https://github.com/stevenvo780/explicaicon-problemas-de-exclucion',
+        description: 'portfolio.description.explicaiconProblemasDeExclucion',
+        icon: faPuzzlePiece,
+        important: true,
+      },
+      {
+        name: 'portfolio.project.complejidadYCostoComputacional',
+        link: 'https://github.com/stevenvo780/ComplejidadYCostoComputacional',
+        description: 'portfolio.description.complejidadYCostoComputacional',
+        icon: faChartLine,
+        important: true,
+      },
       {
         name: 'portfolio.project.cellularCommunication',
         link: 'https://github.com/stevenvo780/teoria-informacion',
