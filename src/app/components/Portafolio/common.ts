@@ -160,6 +160,13 @@ export const portfolioCategories: PortfolioCategory[] = [
         icon: faDatabase,
         important: false,
       },
+      {
+        name: 'portfolio.project.mauroLetraCancionesImagenes',
+        link: 'https://github.com/stevenvo780/mauroLetraCancionesImagenes',
+        description: 'portfolio.description.mauroLetraCancionesImagenes',
+        icon: faCode,
+        important: false,
+      },
     ],
   },
   {

@@ -88,5 +88,7 @@
   "portfolio.project.cafeteriaDelCaosFrond": "Cafeteria del Caos Frontend",
   "portfolio.description.cafeteriaDelCaosFrond": "Interface to interact with the Cafeteria del Caos community.",
   "portfolio.project.cafeteriaDelCaosBot": "Cafeteria del Caos Bot",
-  "portfolio.description.cafeteriaDelCaosBot": "Automation for the Cafeteria del Caos community."
+  "portfolio.description.cafeteriaDelCaosBot": "Automation for the Cafeteria del Caos community.",
+  "portfolio.project.mauroLetraCancionesImagenes": "SongArt",
+  "portfolio.description.mauroLetraCancionesImagenes": "Converts song lyrics to images using AI."
 }
