@@ -36,7 +36,7 @@ export async function generateMetadata({
     'en-US': {
       title: 'Steven Vallejo - Computer Scientist and Philosopher',
       description:
-        'Explore my profile as a Computer Scientist and Software Engineer with a passion for philosophy and science.',
+        'Explore my profile as Software Engineer with a passion for philosophy and science.',
       keywords: [
         'Steven Vallejo Ortiz',
         'Computer Science',
@@ -49,7 +49,7 @@ export async function generateMetadata({
     'es-ES': {
       title: 'Steven Vallejo Ortiz - Informático y Filósofo',
       description:
-        'Explora mi perfil como científico de la computación e ingeniero de software, con pasión por la filosofía y ciencias.',
+        'Explora mi perfil ingeniero de software, con pasión por la filosofía y ciencias.',
       keywords: [
         'Steven Vallejo Ortiz',
         'Ciencias de la computación',
