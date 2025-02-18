@@ -11,7 +11,6 @@ import { useRouter } from 'next/navigation';
 
 export default function Home() {
   const router = useRouter();
-  // Nuevo estado para currentLocale
   const [currentLocale, setCurrentLocale] = useState('En');
 
   useEffect(() => {
