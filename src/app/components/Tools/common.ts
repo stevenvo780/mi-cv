@@ -189,7 +189,6 @@ export const tools: ToolCategory[] = [
       { name: 'advance_documents', icon: faPencilRuler, level: 80 },
       { name: 'trello', icon: faProjectDiagram, level: 70 },
       { name: 'tdd', icon: faPencilRuler, level: 70 },
-      { name: 'agile', icon: faPencilRuler, level: 70 },
       { name: 'kanban', icon: faPencilRuler, level: 70 },
       { name: 'jira', icon: faPencilRuler, level: 60 },
       { name: 'clickup', icon: faPencilRuler, level: 55 },
