@@ -47,9 +47,9 @@ export async function generateMetadata({
       ],
     },
     'es-ES': {
-      title: 'Steven Vallejo Ortiz - Informático y Filósofo',
+      title: 'Steven Vallejo Ortiz - Informático y filósofo', // actualizado
       description:
-        'Explora mi perfil ingeniero de software, con pasión por la filosofía y ciencias.',
+        'Explora mi perfil como informático y filósofo, con pasión por la filosofía y ciencias.', // actualizado
       keywords: [
         'Steven Vallejo Ortiz',
         'Ciencias de la computación',
