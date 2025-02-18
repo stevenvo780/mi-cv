@@ -1,0 +1,9 @@
+{
+  "contact.title": "Contáctame",
+  "contact.sendMessage": "Envíame un mensaje",
+  "contact.successMessage": "¡Mensaje enviado con éxito!",
+  "contact.placeholder.name": "Ingresa tu nombre",
+  "contact.placeholder.email": "Ingresa tu correo electrónico",
+  "contact.placeholder.message": "Escribe tu mensaje aquí",
+  "contact.button": "Enviar mensaje"
+}

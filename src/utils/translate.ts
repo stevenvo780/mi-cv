@@ -1,7 +1,7 @@
 'use client';
 import { useParams } from 'next/navigation';
-import en from '@/locales/en/common.json';
-import es from '@/locales/es/common.json';
+import en from '@/locales/en/common.js';
+import es from '@/locales/es/common.js';
 
 const translations: { [key: string]: { [key: string]: string } } = { en, es };
 
