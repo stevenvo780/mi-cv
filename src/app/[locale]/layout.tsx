@@ -16,7 +16,7 @@ const geistMono = localFont({
   weight: '100 900',
 });
 
-export const metadata = {
+const meta = {
   title: {
     es: 'Steven Vallejo',
     en: 'Steven Vallejo',
@@ -102,37 +102,31 @@ export const metadata = {
   },
 };
 
+export async function generateMetadata({ params }: { params: { locale: 'es' | 'en' } }) {
+  const locale = params.locale || 'en';
+  return {
+    title: meta.title[locale],
+    description: meta.description[locale],
+    keywords: meta.keywords[locale],
+    openGraph: meta.openGraph[locale],
+    twitter: meta.twitter[locale],
+    viewport: meta.viewport,
+    themeColor: meta.themeColor,
+    alternates: meta.alternates,
+  };
+}
+
 export default function LocaleLayout({
   children,
   params,
 }: {
   children: React.ReactNode;
-  params: { locale: string };
+  params: { locale: 'es' | 'en' };
 }) {
-  const locale = (params.locale as 'es' | 'en') || 'en';
+  const locale = params.locale || 'en';
   return (
     <html lang={locale}>
-      <head>
-        <meta name="author" content="Steven Vallejo Ortiz" />
-        <meta name="keywords" content={metadata.keywords[locale].join(', ')} />
-        <meta name="viewport" content={metadata.viewport} />
-        <meta name="theme-color" content={metadata.themeColor} />
-        <meta name="robots" content="index, follow" />
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={metadata.twitter[locale].title} />
-        <meta name="twitter:description" content={metadata.twitter[locale].description} />
-        <meta name="twitter:image" content="/images/profile.jpeg" />
-        <meta property="og:title" content={metadata.openGraph[locale].title} />
-        <meta property="og:description" content={metadata.openGraph[locale].description} />
-        <meta property="og:image" content="/images/profile.jpeg" />
-        <meta property="og:url" content="https://www.stevenvallejo.com" />
-        <meta property="og:locale" content={metadata.locale[locale]} />
-        <meta property="og:site_name" content="Steven Vallejo - Portfolio" />
-        <meta property="og:type" content="website" />
-        <link rel="canonical" href="https://www.stevenvallejo.com" />
-        <link rel="alternate" hrefLang="es" href="https://www.stevenvallejo.com/es" />
-        <link rel="alternate" hrefLang="en" href="https://www.stevenvallejo.com/en" />
-      </head>
+      {/* La cabecera se gestiona automáticamente mediante generateMetadata */}
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         {children}
       </body>
