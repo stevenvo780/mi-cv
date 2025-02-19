@@ -1,5 +1,6 @@
 'use client';
-import { Container, Row, Col, ProgressBar, Button } from 'react-bootstrap';
+import { useState } from 'react';
+import { Container, Row, Col, ProgressBar, Button, Modal } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { tools } from './common';
 import { useTranslate } from '@/utils/translate';
@@ -27,6 +28,18 @@ function getYearsOfExperience(startDate: string): number {
 
 export default function Tools() {
   const t = useTranslate();
+  const [showModal, setShowModal] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState<null | typeof tools[0]>(null);
+
+  const handleOpenModal = (category: typeof tools[0]) => {
+    setSelectedCategory(category);
+    setShowModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setSelectedCategory(null);
+  };
 
   return (
     <section className="mb-5">
@@ -38,7 +51,7 @@ export default function Tools() {
             <Col md={4} key={index} className="mb-4">
               <h4 className="h5">{t(tool.category)}:</h4>
               <ul className="list-unstyled">
-                {tool.items.map((item, i) => (
+                {tool.items.slice(0, 6).map((item, i) => (
                   <li key={i} className="mb-3">
                     <div className="d-flex align-items-center justify-content-between">
                       <div className="d-flex align-items-center">
@@ -62,24 +75,71 @@ export default function Tools() {
                   </li>
                 ))}
               </ul>
-              <div className="mt-3">
-                {tool.links &&
-                  tool.links.map((link, linkIndex) => (
-                    <Button
-                      key={linkIndex}
-                      href={link.url}
-                      variant="outline-primary"
-                      className="me-2 mb-2 rounded-circle"
-                      style={{ width: '40px', height: '40px' }}
-                    >
-                      <FontAwesomeIcon icon={link.icon} />
-                    </Button>
-                  ))}
+              <div className="mb-3">
+                {tool.items.length > 6 && (
+                  <Button variant="outline-primary" onClick={() => handleOpenModal(tool)}>
+                    {t('tools.showMore')}
+                  </Button>
+                )}
               </div>
+              {tool.links &&
+                tool.links.map((link, linkIndex) => (
+                  <Button
+                    key={linkIndex}
+                    href={link.url}
+                    variant="outline-primary"
+                    className="me-2 mb-2 rounded-circle"
+                    style={{ width: '40px', height: '40px' }}
+                  >
+                    <FontAwesomeIcon icon={link.icon} />
+                  </Button>
+                ))}
             </Col>
           ))}
         </Row>
       </Container>
+
+      <Modal show={showModal} onHide={handleCloseModal} size="lg" centered>
+        <Modal.Header closeButton>
+          <Modal.Title>
+            {selectedCategory && t(selectedCategory.category)}
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {selectedCategory && (
+            <ul className="list-unstyled">
+              {selectedCategory.items.map((item, i) => (
+                <li key={i} className="mb-3">
+                  <div className="d-flex align-items-center justify-content-between">
+                    <div className="d-flex align-items-center">
+                      {item.icon && (
+                        <FontAwesomeIcon icon={item.icon} className="me-2" />
+                      )}
+                      <span>
+                        {t(`tools.item.${item.name}`)} (
+                        {getYearsOfExperience(item.startedAt)} {t("tools.years")})
+                      </span>
+                    </div>
+                    {item.level > 85 && (
+                      <FontAwesomeIcon icon={faCoins} className="text-warning me-2" />
+                    )}
+                  </div>
+                  <ProgressBar
+                    now={item.level}
+                    label={`${item.level}%`}
+                    variant={getProgressBarVariant(item.level)}
+                  />
+                </li>
+              ))}
+            </ul>
+          )}
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleCloseModal}>
+            {t('tools.close') || 'Cerrar'}
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </section>
   );
 }

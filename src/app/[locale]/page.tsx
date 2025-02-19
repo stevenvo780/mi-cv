@@ -45,21 +45,23 @@ export default function Home() {
           `,
         }}
       />
-      <Header />
+      <section id="inicio">
+        <Header />
+      </section>
       <main>
-        <section>
+        <section id="experiencia">
           <Achievements />
         </section>
-        <section>
+        <section id="educacion">
           <Portfolio />
         </section>
-        <section>
+        <section id="tools">
           <Tools />
         </section>
-        <section>
+        <section id="skills">
           <Skills />
         </section>
-        <section>
+        <section id="contacto">
           <ContactMe />
         </section>
       </main>

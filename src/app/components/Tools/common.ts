@@ -175,6 +175,32 @@ export const tools: ToolCategory[] = [
     ],
   },
   {
+    category: 'tools.category.paradigmsAndProtocols',
+    items: [
+      { name: 'rest', icon: faNetworkWired, level: 100, startedAt: '2013-01-01' },
+      { name: 'graphql', icon: faNetworkWired, level: 85, startedAt: '2017-01-01' },
+      { name: 'sqs', icon: faNetworkWired, level: 75, startedAt: '2027-01-01' },
+      { name: 'mqtt', icon: faNetworkWired, level: 70, startedAt: '2023-01-01' },
+      { name: 'rpc', icon: faCode, level: 65, startedAt: '2023-01-01' },
+      { name: 'websocket', icon: faNetworkWired, level: 60, startedAt: '2013-01-01' },
+      { name: 'grpc', icon: faNetworkWired, level: 55, startedAt: '2023-01-01' },
+      { name: 'soap', icon: faNetworkWired, level: 40, startedAt: '2018-01-01' },
+      // paradigmas
+      { name: 'objectOriented', icon: faCode, level: 95, startedAt: '2013-01-01' },
+      { name: 'functional', icon: faCode, level: 90, startedAt: '2014-01-01' },
+      { name: 'procedural', icon: faCode, level: 85, startedAt: '2015-01-01' },
+      { name: 'eventDriven', icon: faCode, level: 80, startedAt: '2016-01-01' },
+      { name: 'logicProgramming', icon: faCode, level: 75, startedAt: '2019-01-01' },
+      { name: 'declarative', icon: faCode, level: 70, startedAt: '2015-01-01' },
+      { name: 'reactive', icon: faCode, level: 68, startedAt: '2015-01-01' },
+      { name: 'concurrent', icon: faCode, level: 65, startedAt: '2015-01-01' },
+      { name: 'aspectOriented', icon: faCode, level: 60, startedAt: '2018-01-01' },
+      { name: 'metaprogramming', icon: faCode, level: 55, startedAt: '2023-01-01' },
+      { name: 'structuredProgramming', icon: faCode, level: 80, startedAt: '2018-01-01' }
+    ].sort((a, b) => b.level - a.level),
+    links: []
+  },
+  {
     category: 'tools.category.projectManagement',
     items: [
       { name: 'scrum', icon: faPencilRuler, level: 85, startedAt: '2017-02-01' },

@@ -6,6 +6,7 @@ import '@fortawesome/fontawesome-svg-core/styles.css';
 config.autoAddCss = false;
 import localFont from 'next/font/local';
 import { Metadata, Viewport } from 'next';
+import CustomNavbar from '../components/Navbar';
 
 const geistSans = localFont({
   src: '../fonts/GeistVF.woff',
@@ -136,7 +137,10 @@ export default function LocaleLayout({
       className={`${geistSans.variable} ${geistMono.variable}`}
       prefix="og: http://ogp.me/ns#"
     >
-      <body>{children}</body>
+      <body>
+        <CustomNavbar />
+        {children}
+      </body>
     </html>
   );
 }
