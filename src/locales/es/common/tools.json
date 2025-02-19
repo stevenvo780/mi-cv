@@ -105,5 +105,7 @@
   "tools.item.render": "Render",
   "tools.item.advance_documents": "Advance Documents",
   "tools.item.gitActions": "GitHub Actions",
-  "tools.item.googleArtifacts": "Google Artifacts"
+  "tools.item.googleArtifacts": "Google Artifacts",
+  "tools.years": "años",
+  "tools.tooltip.info": "Los años indican desde cuándo empecé a usar la herramienta, mientras que el % refleja cuánto la sé usar."
 }

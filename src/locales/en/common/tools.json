@@ -105,5 +105,7 @@
   "tools.category.gameDevelopment": "Game Development",
   "tools.category.projectManagement": "Project Planning and Management",
   "tools.item.gitActions": "GitHub Actions",
-  "tools.item.googleArtifacts": "Google Artifacts"
+  "tools.item.googleArtifacts": "Google Artifacts",
+  "tools.years": "years",
+  "tools.tooltip.info": "The years indicate since when I started using the tool, while the % shows how proficient I am."
 }

@@ -32,6 +32,7 @@ export default function Tools() {
     <section className="mb-5">
       <Container>
         <h3 className="border-bottom pb-2 mb-4">{t('tools.title')}</h3>
+        <p className="mb-4">{t("tools.tooltip.info")}</p>
         <Row>
           {tools.map((tool, index) => (
             <Col md={4} key={index} className="mb-4">
@@ -44,7 +45,10 @@ export default function Tools() {
                         {item.icon && (
                           <FontAwesomeIcon icon={item.icon} className="me-2" />
                         )}
-                        <span>{t(`tools.item.${item.name}`)} ({getYearsOfExperience(item.startedAt)} años)</span>
+                        <span>
+                          {t(`tools.item.${item.name}`)} (
+                          {getYearsOfExperience(item.startedAt)} {t("tools.years")})
+                        </span>
                       </div>
                       {item.level > 85 && (
                         <FontAwesomeIcon icon={faCoins} className="text-warning me-2" />
