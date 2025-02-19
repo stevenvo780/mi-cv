@@ -35,7 +35,7 @@ export async function generateMetadata({
   const baseUrl = 'https://www.stevenvallejo.com';
   const metaData = {
     'en-US': {
-      title: 'Steven Vallejo - Computer Scientist and Philosopher',
+      title: 'Steven Vallejo - IT  Engineer and Philosopher',
       description:
         'Explore my profile as Software Engineer with a passion for philosophy and science.',
       keywords: [
