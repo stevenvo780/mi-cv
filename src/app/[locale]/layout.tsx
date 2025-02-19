@@ -45,6 +45,8 @@ export async function generateMetadata({
         'Philosophy',
         'Science',
         'Information Technology',
+        'Philosophy of Science',
+        'inteligencia artificial'
       ],
     },
     'es-ES': {
@@ -58,6 +60,7 @@ export async function generateMetadata({
         'Filosofía',
         'Ciencias',
         'Tecnologías de la información',
+        'inteligencia artificial'
       ],
     },
   };

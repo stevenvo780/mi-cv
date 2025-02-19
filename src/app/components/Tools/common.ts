@@ -90,8 +90,8 @@ export const tools: ToolCategory[] = [
     category: 'tools.category.devopsAndCloud',
     items: [
       { name: 'git', icon: faGithub, level: 95, startedAt: '2016-02-01' },
-      { name: 'firebase', icon: faCloud, level: 90, startedAt: '2020-02-01' },
-      { name: 'linuxHosting', icon: faServer, level: 85, startedAt: '2014-02-01' },
+      { name: 'firebase', icon: faCloud, level: 93, startedAt: '2020-02-01' },
+      { name: 'linuxHosting', icon: faServer, level: 90, startedAt: '2014-02-01' },
       { name: 'googleCloud', icon: faCloud, level: 80, startedAt: '2020-02-01' },
       { name: 'render', icon: faCloud, level: 78, startedAt: '2023-02-01' },
       { name: 'vercel', icon: faCloud, level: 75, startedAt: '2022-02-01' },
@@ -159,10 +159,10 @@ export const tools: ToolCategory[] = [
   {
     category: 'tools.category.aiTools',
     items: [
-      { name: 'chatgpt', icon: faBrain, level: 90, startedAt: '2020-02-01' },
-      { name: 'githubCopilot', icon: faGithub, level: 85, startedAt: '2021-02-01' },
-      { name: 'openia', icon: faBrain, level: 80, startedAt: '2022-02-01' },
-      { name: 'googleCloudAI', icon: faCloud, level: 70, startedAt: '2023-02-01' },
+      { name: 'chatgpt', icon: faBrain, level: 95, startedAt: '2020-02-01' },
+      { name: 'githubCopilot', icon: faGithub, level: 93, startedAt: '2021-02-01' },
+      { name: 'openia', icon: faBrain, level: 90, startedAt: '2022-02-01' },
+      { name: 'googleCloudAI', icon: faCloud, level: 80, startedAt: '2023-02-01' },
       { name: 'deebseek', icon: faBrain, level: 70, startedAt: '2024-01-01' },
       { name: 'googleGemini', icon: faCloud, level: 75, startedAt: '2024-02-01' },
       { name: 'claude', icon: faBrain, level: 65, startedAt: '2024-02-01' },
