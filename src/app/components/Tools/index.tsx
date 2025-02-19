@@ -14,9 +14,8 @@ const getProgressBarVariant = (level: number) => {
 
 function getYearsOfExperience(startDate: string): number {
   const start = new Date(startDate);
-  const now = new Date(); // O fija "2025-02-01" si deseas
+  const now = new Date();
   const diff = now.getFullYear() - start.getFullYear();
-  // Ajuste según mes/día:
   if (
     now.getMonth() < start.getMonth() ||
     (now.getMonth() === start.getMonth() && now.getDate() < start.getDate())
