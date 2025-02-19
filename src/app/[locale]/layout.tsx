@@ -32,6 +32,7 @@ export async function generateMetadata({
 }: {
   params: { lang: 'en' | 'es' };
 }): Promise<Metadata> {
+  const baseUrl = 'https://www.stevenvallejo.com';
   const metaData = {
     'en-US': {
       title: 'Steven Vallejo - Computer Scientist and Philosopher',
@@ -47,9 +48,9 @@ export async function generateMetadata({
       ],
     },
     'es-ES': {
-      title: 'Steven Vallejo Ortiz - Informático y filósofo', // actualizado
+      title: 'Steven Vallejo Ortiz - Informático y filósofo',
       description:
-        'Explora mi perfil como informático y filósofo, con pasión por la filosofía y ciencias.', // actualizado
+        'Explora mi perfil como informático y filósofo, con pasión por la filosofía y ciencias.',
       keywords: [
         'Steven Vallejo Ortiz',
         'Ciencias de la computación',
@@ -69,10 +70,10 @@ export async function generateMetadata({
     description: data.description,
     keywords: data.keywords,
     alternates: {
-      canonical: 'https://www.stevenvallejo.com',
+      canonical: baseUrl,
       languages: {
-        'en-US': 'https://www.stevenvallejo.com/en',
-        'es-ES': 'https://www.stevenvallejo.com/es',
+        'en-US': `${baseUrl}/en`,
+        'es-ES': `${baseUrl}/es`,
       },
     },
     openGraph: {
@@ -80,11 +81,11 @@ export async function generateMetadata({
       description: data.description,
       type: 'website',
       locale: locale,
-      url: 'https://www.stevenvallejo.com',
+      url: baseUrl,
       siteName: 'Steven Vallejo',
       images: [
         {
-          url: '/og-image.jpg',
+          url: `${baseUrl}/og-image.jpg`,
           width: 1200,
           height: 630,
           alt: 'Steven Vallejo Portfolio',
@@ -95,7 +96,7 @@ export async function generateMetadata({
       card: 'summary_large_image',
       title: data.title,
       description: data.description,
-      images: ['/twitter-image.jpg'],
+      images: [`${baseUrl}/twitter-image.jpg`],
     },
     robots: {
       index: true,
@@ -130,6 +131,7 @@ export default function LocaleLayout({
     <html
       lang={params.lang === 'es' ? 'es-ES' : 'en-US'}
       className={`${geistSans.variable} ${geistMono.variable}`}
+      prefix="og: http://ogp.me/ns#"
     >
       <body>{children}</body>
     </html>
