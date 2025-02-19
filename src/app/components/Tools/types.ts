@@ -4,6 +4,7 @@ export interface ToolItem {
   name: string;
   icon?: IconDefinition;
   level: number;
+  startedAt: string;
 }
 
 export interface ToolCategory {

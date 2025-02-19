@@ -20,6 +20,7 @@
   "tools.item.slim": "SLIM Framework",
   "tools.item.bash": "Bash",
   "tools.item.dotnet": ".NET",
+  "tools.item.C#": "C#",
   "tools.item.reactjs": "ReactJS (Redux, sagas, ReactContext)",
   "tools.item.javascript": "JavaScript",
   "tools.item.html": "HTML",
@@ -33,7 +34,6 @@
   "tools.item.linuxHosting": "Linux Hosting",
   "tools.item.googleCloud": "Google Cloud",
   "tools.item.vercel": "Vercel",
-  "tools.item.cicd": "CI/CD Pipelines, GitHub Actions",
   "tools.item.aws": "AWS",
   "tools.item.docker": "Docker",
   "tools.item.rabbitmq": "RabbitMQ, Apache Kafka",
@@ -103,5 +103,7 @@
   "tools.category.aiAndMachineLearning": "Artificial Intelligence and Machine Learning",
   "tools.category.aiTools": "AI Tools",
   "tools.category.gameDevelopment": "Game Development",
-  "tools.category.projectManagement": "Project Planning and Management"
+  "tools.category.projectManagement": "Project Planning and Management",
+  "tools.item.gitActions": "GitHub Actions",
+  "tools.item.googleArtifacts": "Google Artifacts"
 }

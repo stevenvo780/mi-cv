@@ -12,6 +12,20 @@ const getProgressBarVariant = (level: number) => {
   return 'danger';
 };
 
+function getYearsOfExperience(startDate: string): number {
+  const start = new Date(startDate);
+  const now = new Date(); // O fija "2025-02-01" si deseas
+  const diff = now.getFullYear() - start.getFullYear();
+  // Ajuste según mes/día:
+  if (
+    now.getMonth() < start.getMonth() ||
+    (now.getMonth() === start.getMonth() && now.getDate() < start.getDate())
+  ) {
+    return diff - 1;
+  }
+  return diff;
+}
+
 export default function Tools() {
   const t = useTranslate();
 
@@ -31,7 +45,7 @@ export default function Tools() {
                         {item.icon && (
                           <FontAwesomeIcon icon={item.icon} className="me-2" />
                         )}
-                        <span>{t(`tools.item.${item.name}`)}</span>
+                        <span>{t(`tools.item.${item.name}`)} ({getYearsOfExperience(item.startedAt)} años)</span>
                       </div>
                       {item.level > 85 && (
                         <FontAwesomeIcon icon={faCoins} className="text-warning me-2" />
