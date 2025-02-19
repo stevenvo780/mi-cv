@@ -16,6 +16,8 @@ export default function Skills() {
         <h3 className="border-bottom pb-2 mb-4">{t('skills.title')}</h3>
         <Row>
           <Col md={6}>
+            <p>{t('skills.education')}</p>
+            <p>{t('skills.passion')}</p>
             <p>{t('skills.mind')}</p>
             <p>{t('skills.ethics')}</p>
             <p>{t('skills.study')}</p>
