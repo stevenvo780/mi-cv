@@ -25,6 +25,14 @@ export default function Home() {
     router.push(newPath);
   };
 
+  useEffect(() => {
+    if (window.location.hash) {
+      const sectionId = window.location.hash.slice(1);
+      const target = document.getElementById(sectionId);
+      if (target) target.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, []);
+
   return (
     <>
       <Script
@@ -45,14 +53,15 @@ export default function Home() {
           `,
         }}
       />
-      <section id="inicio">
+      <section id="home">
         <Header />
       </section>
       <main>
-        <section id="experiencia">
+        {/* Cambiado id de "experience" a "projects" */}
+        <section id="projects">
           <Achievements />
         </section>
-        <section id="educacion">
+        <section id="portfolio">
           <Portfolio />
         </section>
         <section id="tools">
@@ -61,7 +70,7 @@ export default function Home() {
         <section id="skills">
           <Skills />
         </section>
-        <section id="contacto">
+        <section id="contact">
           <ContactMe />
         </section>
       </main>

@@ -10,6 +10,8 @@ export default function CustomNavbar() {
 
   const scrollToSection = (id: string) => (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
+    // Actualiza el hash en la URL
+    window.history.pushState(null, '', `#${id}`);
     const target = document.getElementById(id);
     if (target) target.scrollIntoView({ behavior: 'smooth' });
   };
@@ -17,29 +19,29 @@ export default function CustomNavbar() {
   return (
     <Navbar expand="lg" className="bg-light">
       <Container>
-        <Navbar.Brand href="#inicio" onClick={scrollToSection('inicio')}>
+        <Navbar.Brand href="#home" onClick={scrollToSection('home')}>
           {t('header.name')}
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="navbar-nav" />
         <Navbar.Collapse id="navbar-nav">
           <Nav className="me-auto">
-            <Nav.Link href="#inicio" onClick={scrollToSection('inicio')}>
-              {t('navbar.inicio')}
+            <Nav.Link href="#home" onClick={scrollToSection('home')}>
+              {t('navbar.home')}
             </Nav.Link>
-            <Nav.Link href="#experiencia" onClick={scrollToSection('experiencia')}>
-              {t('navbar.experiencia')}
+            <Nav.Link href="#projects" onClick={scrollToSection('projects')}>
+              {t('navbar.projects')}
             </Nav.Link>
-            <Nav.Link href="#educacion" onClick={scrollToSection('educacion')}>
-              {t('navbar.educacion')}
+            <Nav.Link href="#portfolio" onClick={scrollToSection('portfolio')}>
+              {t('navbar.portfolio')}
             </Nav.Link>
             <Nav.Link href="#tools" onClick={scrollToSection('tools')}>
               {t('navbar.tools')}
             </Nav.Link>
             <Nav.Link href="#skills" onClick={scrollToSection('skills')}>
-              {t('navbar.habilidades')}
+              {t('navbar.skills')}
             </Nav.Link>
-            <Nav.Link href="#contacto" onClick={scrollToSection('contacto')}>
-              {t('navbar.contacto')}
+            <Nav.Link href="#contact" onClick={scrollToSection('contact')}>
+              {t('navbar.contact')}
             </Nav.Link>
           </Nav>
         </Navbar.Collapse>

@@ -1,8 +1,8 @@
 {
-  "navbar.inicio": "Home",
-  "navbar.experiencia": "Experience",
-  "navbar.educacion": "Education",
+  "navbar.home": "Home",
+  "navbar.projects": "Projects",
+  "navbar.portfolio": "Portfolio",
   "navbar.tools": "Tools",
-  "navbar.habilidades": "Skills",
-  "navbar.contacto": "Contact"
+  "navbar.skills": "Skills",
+  "navbar.contact": "Contact"
 }
