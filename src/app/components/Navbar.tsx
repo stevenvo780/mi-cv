@@ -40,6 +40,9 @@ export default function CustomNavbar() {
             <Nav.Link href="#skills" onClick={scrollToSection('skills')}>
               {t('navbar.skills')}
             </Nav.Link>
+            <Nav.Link href="#experience" onClick={scrollToSection('experience')}>
+              {t('navbar.experience')}
+            </Nav.Link>
             <Nav.Link href="#contact" onClick={scrollToSection('contact')}>
               {t('navbar.contact')}
             </Nav.Link>

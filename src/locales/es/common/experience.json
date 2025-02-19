@@ -1,0 +1,52 @@
+{
+  "experience.title": "Experiencia Laboral",
+  "experience.fincaDirecta": "Finca Directa S.A.S",
+  "experience.role.fincaDirecta": "CTO / Jefe de sistemas",
+  "experience.dates.fincaDirecta": "2021/11 - Actualidad",
+  "experience.location.fincaDirecta": "Colombia - Antioquia - Medellín",
+  
+  "experience.indieLevels": "Indie Levels Studio S.A.S",
+  "experience.role.indieLevels": "Desarrollador backend - Senior",
+  "experience.dates.indieLevels": "2021/08 - Actualidad",
+  "experience.location.indieLevels": "Colombia - Antioquia - Medellín",
+
+  "experience.zenit": "ZENIT S.A.S",
+  "experience.role.zenit": "Desarrollador Full Stack SEMI-SENIOR",
+  "experience.dates.zenit": "2020/10 - 2021/08",
+  "experience.location.zenit": "Colombia - Antioquia - Medellín",
+
+  "experience.ins": "INS S.A.S",
+  "experience.role.ins": "Desarrollador Full Stack Junior",
+  "experience.dates.ins": "2019/02 - 2020/10",
+  "experience.location.ins": "Colombia - Antioquia - Medellín",
+
+  "experience.kambban": "Kambban S.A.S",
+  "experience.role.kambban": "Desarrollador Full Stack Junior",
+  "experience.dates.kambban": "2020/02 - 2020/05",
+  "experience.location.kambban": "Colombia - Antioquia - Medellín",
+
+  "experience.sena": "Sena",
+  "experience.role.sena": "Practicante en el semillero SIPAEM",
+  "experience.dates.sena": "2018/03 - 2018/10",
+  "experience.location.sena": "Colombia - Antioquia - Medellín",
+
+  "experience.iqpixels": "IQpixels S.A.S",
+  "experience.role.iqpixels": "Gerente - Developer",
+  "experience.dates.iqpixels": "2016/07 - 2017/01",
+  "experience.location.iqpixels": "Colombia - Antioquia - Medellín",
+
+  "experience.infraestructura": "Freelance - Infraestructura",
+  "experience.role.infraestructura": "Freelance en Infraestructura de sistemas informáticos",
+  "experience.dates.infraestructura": "2014/02 - ACTUALIDAD",
+  "experience.location.infraestructura": "Colombia - Antioquia - Medellín",
+
+  "experience.videojuegos": "Freelance - Videojuegos",
+  "experience.role.videojuegos": "Freelance en Desarrollo de videojuegos",
+  "experience.dates.videojuegos": "2015/02 - ACTUALIDAD",
+  "experience.location.videojuegos": "Colombia - Antioquia - Medellín",
+
+  "experience.appsWeb": "Freelance - Aplicaciones Web",
+  "experience.role.appsWeb": "Freelance en Desarrollo de aplicaciones web",
+  "experience.dates.appsWeb": "2018 - ACTUALIDAD",
+  "experience.location.appsWeb": "Colombia - Antioquia - Medellín"
+}

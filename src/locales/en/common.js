@@ -6,6 +6,7 @@ import header from './common/header.json';
 import skills from './common/skills.json';
 import interactiveGraph from './common/interactiveGraph.json';
 import navbar from './common/navbar.json';
+import experience from './common/experience.json';
 
 const common = {
 	...achievements,
@@ -15,7 +16,8 @@ const common = {
 	...header,
 	...skills,
 	...interactiveGraph,
-	...navbar
+	...navbar,
+	...experience
 };
 
 export default common;

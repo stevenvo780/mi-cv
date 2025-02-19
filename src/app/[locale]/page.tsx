@@ -8,6 +8,7 @@ import Achievements from '@/app/components/Achievements';
 import ContactMe from '@/app/components/ContactMe';
 import Script from 'next/script';
 import { useRouter } from 'next/navigation';
+import Experience from '@/app/components/Experience';
 
 export default function Home() {
   const router = useRouter();
@@ -57,7 +58,6 @@ export default function Home() {
         <Header />
       </section>
       <main>
-        {/* Cambiado id de "experience" a "projects" */}
         <section id="projects">
           <Achievements />
         </section>
@@ -69,6 +69,9 @@ export default function Home() {
         </section>
         <section id="skills">
           <Skills />
+        </section>
+        <section id="experience">
+          <Experience />
         </section>
         <section id="contact">
           <ContactMe />
