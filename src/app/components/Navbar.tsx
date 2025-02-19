@@ -5,6 +5,7 @@ import Navbar from 'react-bootstrap/Navbar';
 import Nav from 'react-bootstrap/Nav';
 import Container from 'react-bootstrap/Container';
 import { useTranslate } from '@/utils/translate';
+import DownloadCVMinimal from './DownloadCVMinimal';
 
 export default function CustomNavbar() {
   const t = useTranslate();
@@ -61,6 +62,7 @@ export default function CustomNavbar() {
               {t('navbar.contact')}
             </Nav.Link>
           </Nav>
+          <DownloadCVMinimal />
           <button
             onClick={toggleLocale}
             className="btn btn-primary"
@@ -70,6 +72,7 @@ export default function CustomNavbar() {
               borderRadius: '10px',
               fontSize: '12px',
               padding: '0',
+              marginLeft: '10px'
             }}
           >
             {currentLocale}
