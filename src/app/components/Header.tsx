@@ -15,7 +15,7 @@ export default function Header() {
   const t = useTranslate();
 
   return (
-    <header className="mb-5 pb-3" style={{ overflow: 'hidden', position: 'relative' }}>
+    <header className="mb-5 pb-3" style={{ overflow: 'hidden', position: 'relative', marginTop: '0.95vh' }}>
       <div
         style={{
           position: 'absolute',

@@ -1,4 +1,3 @@
-// app/[lang]/layout.tsx
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '@/styles/globals.css';
 import { config } from '@fortawesome/fontawesome-svg-core';

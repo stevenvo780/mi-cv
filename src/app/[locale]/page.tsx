@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import Header from '@/app/components/Header';
 import Tools from '@/app/components/Tools';
 import Portfolio from '@/app/components/Portafolio';
@@ -7,25 +7,9 @@ import Skills from '@/app/components/Skills';
 import Achievements from '@/app/components/Achievements';
 import ContactMe from '@/app/components/ContactMe';
 import Script from 'next/script';
-import { useRouter } from 'next/navigation';
 import Experience from '@/app/components/Experience';
 
 export default function Home() {
-  const router = useRouter();
-  const [currentLocale, setCurrentLocale] = useState('En');
-
-  useEffect(() => {
-    const path = window.location.pathname;
-    setCurrentLocale(path.startsWith('/es') ? 'Es' : 'En');
-  }, []);
-
-  const toggleLocale = () => {
-    const currentPath = window.location.pathname;
-    const isSpanish = currentPath.startsWith('/es');
-    const newPath = isSpanish ? currentPath.replace('/es', '/en') : currentPath.replace('/en', '/es');
-    router.push(newPath);
-  };
-
   useEffect(() => {
     if (window.location.hash) {
       const sectionId = window.location.hash.slice(1);
@@ -77,22 +61,6 @@ export default function Home() {
           <ContactMe />
         </section>
       </main>
-      <button
-        onClick={toggleLocale}
-        className="btn btn-primary position-fixed d-flex align-items-center justify-content-center"
-        style={{
-          top: '10px',
-          right: '0%',
-          width: '50px',
-          height: '30px',
-          zIndex: 1000,
-          borderRadius: '10px 0px 0px 10px',
-          fontSize: '12px',
-          padding: '0',
-        }}
-      >
-        {currentLocale}
-      </button>
     </>
   );
 }

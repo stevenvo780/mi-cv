@@ -1,5 +1,6 @@
 "use client";
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import Navbar from 'react-bootstrap/Navbar';
 import Nav from 'react-bootstrap/Nav';
 import Container from 'react-bootstrap/Container';
@@ -7,17 +8,30 @@ import { useTranslate } from '@/utils/translate';
 
 export default function CustomNavbar() {
   const t = useTranslate();
+  const router = useRouter();
+  const [currentLocale, setCurrentLocale] = useState('En');
+
+  useEffect(() => {
+    const path = window.location.pathname;
+    setCurrentLocale(path.startsWith('/es') ? 'Es' : 'En');
+  }, []);
+
+  const toggleLocale = () => {
+    const currentPath = window.location.pathname;
+    const isSpanish = currentPath.startsWith('/es');
+    const newPath = isSpanish ? currentPath.replace('/es', '/en') : currentPath.replace('/en', '/es');
+    router.push(newPath);
+  };
 
   const scrollToSection = (id: string) => (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
-    // Actualiza el hash en la URL
     window.history.pushState(null, '', `#${id}`);
     const target = document.getElementById(id);
     if (target) target.scrollIntoView({ behavior: 'smooth' });
   };
 
   return (
-    <Navbar expand="lg" className="bg-light">
+    <Navbar expand="lg" className="bg-light sticky-top">
       <Container>
         <Navbar.Brand href="#home" onClick={scrollToSection('home')}>
           {t('header.name')}
@@ -47,6 +61,19 @@ export default function CustomNavbar() {
               {t('navbar.contact')}
             </Nav.Link>
           </Nav>
+          <button
+            onClick={toggleLocale}
+            className="btn btn-primary"
+            style={{
+              width: '50px',
+              height: '30px',
+              borderRadius: '10px',
+              fontSize: '12px',
+              padding: '0',
+            }}
+          >
+            {currentLocale}
+          </button>
         </Navbar.Collapse>
       </Container>
     </Navbar>
