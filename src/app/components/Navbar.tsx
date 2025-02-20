@@ -75,7 +75,7 @@ export default function CustomNavbar() {
                 padding: '0'
               }}
             >
-              {currentLocale}
+              {currentLocale === 'En' ? 'Es' : 'En'}
             </button>
           </div>
         </Navbar.Collapse>
