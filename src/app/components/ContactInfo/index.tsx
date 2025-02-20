@@ -8,7 +8,7 @@ export default function ContactInfo() {
   return (
     <Row className="mt-3">
       {contacts.map((contact, index) => (
-        <Col key={index} xs={12} md={6} lg={4}>
+        <Col key={index} xs={12} md={6} lg={4} className="mt-3 mt-md-0">
           <ListGroup variant="flush">
             <ListGroup.Item
               className="d-flex align-items-center"

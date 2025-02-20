@@ -82,21 +82,21 @@ export const portfolioCategories: PortfolioCategory[] = [
         link: 'https://github.com/stevenvo780/auroraCQRS',
         description: 'portfolio.description.auroraCQRS',
         icon: faCogs,
-        important: true,
+        important: false,
       },
       {
         name: 'portfolio.project.apiNode',
         link: 'https://github.com/stevenvo780/api-node-mongodb',
         description: 'portfolio.description.apiNode',
         icon: faDatabase,
-        important: true,
+        important: false,
       },
       {
         name: 'portfolio.project.graphQL',
         link: 'https://github.com/stevenvo780/GraphQLExample',
         description: 'portfolio.description.graphQL',
         icon: faNetworkWired,
-        important: true,
+        important: false,
       },
       {
         name: 'portfolio.project.laravelReact',
@@ -167,6 +167,13 @@ export const portfolioCategories: PortfolioCategory[] = [
         icon: faDatabase,
         important: false,
       },
+      {
+        name: 'portfolio.project.debatesUtil',
+        link: 'https://github.com/stevenvo780/debatesUtil',
+        description: 'portfolio.description.debatesUtil',
+        icon: faCode,
+        important: true,
+      },
     ],
   },
   {
@@ -199,7 +206,7 @@ export const portfolioCategories: PortfolioCategory[] = [
         link: 'https://github.com/stevenvo780/teoria-caos',
         description: 'portfolio.description.chaosTheory',
         icon: faCogs,
-        important: true,
+        important: false,
       },
       {
         name: 'portfolio.project.economicSystem',
@@ -248,7 +255,7 @@ export const portfolioCategories: PortfolioCategory[] = [
         link: 'https://github.com/stevenvo780/teoria-desicion',
         description: 'portfolio.description.decisionTheory',
         icon: faChartLine,
-        important: true,
+        important: false,
       },
       {
         name: 'portfolio.project.ruliatGraph',
@@ -335,3 +342,10 @@ export const portfolioCategories: PortfolioCategory[] = [
     ],
   },
 ];
+
+// Se agregan propiedades derivadas para separar proyectos visibles y ocultos.
+export const filteredPortfolioCategories = portfolioCategories.map(category => ({
+  ...category,
+  visibleProjects: category.projects.filter(project => project.important),
+  hiddenProjects: category.projects.filter(project => !project.important)
+}));

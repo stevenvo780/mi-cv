@@ -90,5 +90,9 @@
   "portfolio.project.cafeteriaDelCaosBot": "Cafetería del Caos Bot",
   "portfolio.description.cafeteriaDelCaosBot": "Automatización para la comunidad Cafetería del Caos.",
   "portfolio.project.mauroLetraCancionesImagenes": "SongArt",
-  "portfolio.description.mauroLetraCancionesImagenes": "Convierte la letra de canciones en imágenes con IA."
+  "portfolio.description.mauroLetraCancionesImagenes": "Convierte la letra de canciones en imágenes con IA.",
+  "portfolio.project.debatesUtil": "Debates Util",
+  "portfolio.description.debatesUtil": "Es un programa para gestionar debates de forma moderada",
+  "portfolio.showMore": "Ver más",
+  "portfolio.hide": "Ver menos"
 }

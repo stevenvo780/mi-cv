@@ -1,16 +1,22 @@
 'use client';
-import React from 'react';
-import { Container, Card, Row, Col } from 'react-bootstrap';
+import React, { useState } from 'react';
+import { Container, Card, Row, Col, Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGithub } from '@fortawesome/free-brands-svg-icons/faGithub';
 import { faCloud, faArrowRight } from '@fortawesome/free-solid-svg-icons';
-import { portfolioCategories } from './common';
+import { filteredPortfolioCategories } from './common'; // Modificado
 import { useTranslate } from '@/utils/translate';
 import dynamic from 'next/dynamic';
 const LorenzAttractor = dynamic(() => import('../Matematica/LorenzAttractor'), { ssr: false });
 
 export default function Portfolio() {
   const t = useTranslate();
+  // Estado para trackear las categorías expandidas
+  const [expanded, setExpanded] = useState<Record<number, boolean>>({});
+
+  const toggleCategory = (index: number) => {
+    setExpanded(prev => ({ ...prev, [index]: !prev[index] }));
+  };
 
   return (
     <section className="mb-5">
@@ -66,68 +72,68 @@ export default function Portfolio() {
           </Col>
         </Row>
 
-        {portfolioCategories.map((category, index) => (
+        {filteredPortfolioCategories.map((category, idx) => (
           <div
-            key={index}
+            key={idx}
             className="mb-5"
             style={{ border: '2px solid #e9ecef', borderRadius: '10px', padding: '20px' }}
           >
             <h4 className="mb-4">{t(category.name)}</h4>
             <Row>
-              {category.projects
-                .filter((project) => project.important)
-                .map((project, idx) => (
-                  <Col md={6} lg={4} key={idx} className="mb-4">
-                    <a href={project.link} target="_blank" rel="noreferrer" className="text-decoration-none">
-                      <Card className="h-100 shadow-sm" style={{ minHeight: '120px', padding: '10px' }}>
-                        <Card.Body className="d-flex align-items-center">
-                          {project.icon && (
-                            <FontAwesomeIcon icon={project.icon} size="2x" className="me-3" />
-                          )}
-                          <div>
-                            <Card.Title className="mb-1">{t(project.name)}</Card.Title>
-                            <Card.Text className="text-muted small mb-0">{t(project.description)}</Card.Text>
-                          </div>
-                        </Card.Body>
-                      </Card>
-                    </a>
-                  </Col>
-                ))}
+              {category.visibleProjects.map((project, pIdx) => (
+                <Col md={6} lg={4} key={pIdx} className="mb-4">
+                  <a href={project.link} target="_blank" rel="noreferrer" className="text-decoration-none">
+                    <Card className="h-100 shadow-sm" style={{ minHeight: '120px', padding: '10px' }}>
+                      <Card.Body className="d-flex align-items-center">
+                        {project.icon && (
+                          <FontAwesomeIcon icon={project.icon} size="2x" className="me-3" />
+                        )}
+                        <div>
+                          <Card.Title className="mb-1">{t(project.name)}</Card.Title>
+                          <Card.Text className="text-muted small mb-0">{t(project.description)}</Card.Text>
+                        </div>
+                      </Card.Body>
+                    </Card>
+                  </a>
+                </Col>
+              ))}
             </Row>
-            {category.projects.some((project) => !project.important) && (
+            {category.hiddenProjects.length > 0 && (
               <>
-                <h5 className="mt-4">{t('portfolio.otherProjects')}</h5>
-                <Row>
-                  {category.projects
-                    .filter((project) => !project.important)
-                    .map((project, idx) => (
-                      <Col md={6} lg={4} key={idx} className="mb-4">
-                        <a
-                          href={project.link}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="text-decoration-none"
-                        >
-                          <Card
-                            className="h-100 shadow-sm"
-                            style={{ minHeight: '100px', borderRadius: '10px', padding: '0px' }}
-                          >
-                            <Card.Body className="d-flex align-items-center">
-                              <FontAwesomeIcon icon={faGithub} className="me-3" />
-                              <div>
-                                <Card.Title className="mb-1">{t(project.name)}</Card.Title>
-                                {project.description && (
-                                  <Card.Text className="text-muted small mb-0">
-                                    {t(project.description)}
-                                  </Card.Text>
-                                )}
-                              </div>
-                            </Card.Body>
-                          </Card>
-                        </a>
-                      </Col>
-                    ))}
-                </Row>
+                {/* Si no está expandido se muestra el botón; si está expandido se muestran los proyectos ocultos */}
+                {!expanded[idx] ? (
+                  <Button variant="outline-secondary" onClick={() => toggleCategory(idx)}>
+                    {t('portfolio.showMore')}
+                  </Button>
+                ) : (
+                  <>
+                    <h5 className="mt-4">{t('portfolio.otherProjects')}</h5>
+                    <Row>
+                      {category.hiddenProjects.map((project, pIdx) => (
+                        <Col md={6} lg={4} key={pIdx} className="mb-4">
+                          <a href={project.link} target="_blank" rel="noreferrer" className="text-decoration-none">
+                            <Card className="h-100 shadow-sm" style={{ minHeight: '100px', borderRadius: '10px', padding: '0px' }}>
+                              <Card.Body className="d-flex align-items-center">
+                                <FontAwesomeIcon icon={faGithub} className="me-3" />
+                                <div>
+                                  <Card.Title className="mb-1">{t(project.name)}</Card.Title>
+                                  {project.description && (
+                                    <Card.Text className="text-muted small mb-0">
+                                      {t(project.description)}
+                                    </Card.Text>
+                                  )}
+                                </div>
+                              </Card.Body>
+                            </Card>
+                          </a>
+                        </Col>
+                      ))}
+                    </Row>
+                    <Button variant="outline-secondary" onClick={() => toggleCategory(idx)}>
+                      {t('portfolio.hide')}
+                    </Button>
+                  </>
+                )}
               </>
             )}
           </div>
