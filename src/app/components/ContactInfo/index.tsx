@@ -10,8 +10,16 @@ export default function ContactInfo() {
       {contacts.map((contact, index) => (
         <Col key={index} xs={12} md={6} lg={4}>
           <ListGroup variant="flush">
-            <ListGroup.Item className="d-flex align-items-center">
-              <FontAwesomeIcon icon={contact.icon} className="me-2 " />
+            <ListGroup.Item
+              className="d-flex align-items-center"
+              style={{
+                boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+                border: '1px solid #ddd',
+                borderRadius: '10px',
+                padding: '0.75rem'
+              }}
+            >
+              <FontAwesomeIcon icon={contact.icon} className="me-2" />
               <a
                 href={contact.url}
                 target={contact.type === 'linkedin' ? '_blank' : undefined}

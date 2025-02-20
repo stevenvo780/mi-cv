@@ -62,21 +62,22 @@ export default function CustomNavbar() {
               {t('navbar.contact')}
             </Nav.Link>
           </Nav>
-          <DownloadCVMinimal />
-          <button
-            onClick={toggleLocale}
-            className="btn btn-primary"
-            style={{
-              width: '50px',
-              height: '30px',
-              borderRadius: '10px',
-              fontSize: '12px',
-              padding: '0',
-              marginLeft: '10px'
-            }}
-          >
-            {currentLocale}
-          </button>
+          <div className="d-flex align-items-center gap-2">
+            <DownloadCVMinimal />
+            <button
+              onClick={toggleLocale}
+              className="btn btn-primary"
+              style={{
+                width: '50px',
+                height: '30px',
+                borderRadius: '10px',
+                fontSize: '12px',
+                padding: '0'
+              }}
+            >
+              {currentLocale}
+            </button>
+          </div>
         </Navbar.Collapse>
       </Container>
     </Navbar>

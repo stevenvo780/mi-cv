@@ -45,7 +45,7 @@
   "tools.item.dynamodb": "DynamoDB",
   "tools.item.numpy": "Numpy, Wolfram Alpha, NLP",
   "tools.item.tensorflow": "TensorFlow, PyTorch",
-  "tools.item.huggingface": "Hugging Face (LLAMA, GPT-2, and GPT-3)",
+  "tools.item.huggingface": "Hugging Face",
   "tools.item.stableDiffusion": "Advanced Stable Diffusion",
   "tools.item.chatgpt": "ChatGPT",
   "tools.item.githubCopilot": "GitHub Copilot, TabNine",

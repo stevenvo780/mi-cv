@@ -42,7 +42,14 @@ export default function Header() {
             />
           </Col>
           <Col xs={12} md={9}>
-            <div className="text-center text-md-start bg-white rounded p-3">
+            <div
+              className="text-center text-md-start bg-white rounded p-3"
+              style={{
+                boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+                border: '1px solid #ddd',
+                borderRadius: '10px'
+              }}
+            >
               <h1 className="display-5 mb-0">{t('header.name')}</h1>
               <h2 className="h4 text-secondary">{t('header.title')}</h2>
             </div>
