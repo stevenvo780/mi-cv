@@ -54,5 +54,10 @@ export const experiences: ExperienceItem[] = [
     name: 'Freelance - Aplicaciones Web',
     key: 'appsWeb',
     col: 4,
+  },
+  {
+    name: 'Critertec',
+    key: 'critertec',
+    col: 4,
   }
 ];

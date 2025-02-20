@@ -48,5 +48,10 @@
   "experience.appsWeb": "Freelance - Aplicaciones Web",
   "experience.role.appsWeb": "Freelance en Desarrollo de aplicaciones web",
   "experience.dates.appsWeb": "2018 - ACTUALIDAD",
-  "experience.location.appsWeb": "Colombia - Antioquia - Medellín"
+  "experience.location.appsWeb": "Colombia - Antioquia - Medellín",
+
+  "experience.critertec": "Critertec",
+  "experience.role.critertec": "Backend Developer",
+  "experience.dates.critertec": "2024/11 - Actualidad",
+  "experience.location.critertec": "Colombia - Antioquia - Medellín"
 }
