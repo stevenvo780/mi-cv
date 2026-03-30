@@ -4,20 +4,33 @@ import totalPedidoImg from '@/public/images/TotalPedido.png';
 import meraVueltaImg from '@/public/images/MeraVuelta.png';
 import emwImg from '@/public/images/EMW.png';
 import LogoIndie from '@/public/images/LogoIndie.svg';
+import CritertecImg from '@/public/images/Critertec.svg';
 import { AchievementItem } from './types';
 
 export const achievements: AchievementItem[] = [
+  {
+    name: 'Critertec - Soy Digital',
+    key: 'critertec',
+    description: 'achievements.description.critertec',
+    link: 'https://www.soydigital.gob.do/',
+    image: CritertecImg,
+    imageWidth: 300,
+    imageHeight: 200,
+    backgroundColor: '#ffffff',
+    isCustom: false,
+    col: 12,
+  },
   {
     name: 'Indie Levels',
     key: 'indieLevels',
     description: 'achievements.description.indieLevels',
     link: 'https://indielevelstudio.com',
     image: LogoIndie,
-    imageWidth: 900,
-    imageHeight: 300,
+    imageWidth: 300,
+    imageHeight: 200,
     backgroundColor: 'black',
     isCustom: false,
-    col: 12,
+    col: 4,
   },
   {
     name: 'Humanizar',
