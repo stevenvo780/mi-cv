@@ -112,13 +112,6 @@ export const portfolioCategories: PortfolioCategory[] = [
         important: false,
       },
       {
-        name: 'portfolio.project.educacionCooperativa',
-        link: 'https://github.com/stevenvo780/EducacionCooperativa',
-        description: 'portfolio.description.educacionCooperativa',
-        icon: faReact,
-        important: true,
-      },
-      {
         name: 'portfolio.project.cafeteriaDelCaosFrontNext',
         link: 'https://github.com/stevenvo780/cafeteria-del-caos-front-next',
         description: 'portfolio.description.cafeteriaDelCaosFrontNext',
@@ -422,6 +415,27 @@ export const portfolioCategories: PortfolioCategory[] = [
     name: 'portfolio.literatureAndPhilosophy',
     icon: faBook,
     projects: [
+      {
+        name: 'portfolio.project.educacionCooperativa',
+        link: 'https://github.com/stevenvo780/EducacionCooperativa',
+        description: 'portfolio.description.educacionCooperativa',
+        icon: faReact,
+        important: true,
+      },
+      {
+        name: 'portfolio.project.stLanguage',
+        link: 'https://github.com/stevenvo780/ST',
+        description: 'portfolio.description.stLanguage',
+        icon: faTerminal,
+        important: true,
+      },
+      {
+        name: 'portfolio.project.hinton',
+        link: 'https://hinton.stevenvallejo.com',
+        description: 'portfolio.description.hinton',
+        icon: faBrain,
+        important: true,
+      },
       {
         name: 'portfolio.project.autoLogic',
         link: 'https://github.com/stevenvo780/auto.logic',
