@@ -5,20 +5,33 @@ import meraVueltaImg from '@/public/images/MeraVuelta.png';
 import emwImg from '@/public/images/EMW.png';
 import LogoIndie from '@/public/images/LogoIndie.svg';
 import CritertecImg from '@/public/images/Critertec.svg';
+import SoyDigitalImg from '@/public/images/SoyDigital.svg';
 import { AchievementItem } from './types';
 
 export const achievements: AchievementItem[] = [
   {
-    name: 'Critertec - Soy Digital',
+    name: 'Critertec',
     key: 'critertec',
     description: 'achievements.description.critertec',
-    link: 'https://www.soydigital.gob.do/',
+    link: 'https://critertec.com/',
     image: CritertecImg,
     imageWidth: 300,
     imageHeight: 200,
     backgroundColor: '#ffffff',
     isCustom: false,
-    col: 12,
+    col: 6,
+  },
+  {
+    name: 'Soy Digital',
+    key: 'soyDigital',
+    description: 'achievements.description.soyDigital',
+    link: 'https://www.soydigital.gob.do/',
+    image: SoyDigitalImg,
+    imageWidth: 300,
+    imageHeight: 200,
+    backgroundColor: '#ffffff',
+    isCustom: false,
+    col: 6,
   },
   {
     name: 'Indie Levels',
@@ -94,6 +107,6 @@ export const achievements: AchievementItem[] = [
     link: 'https://jarvis-web-seven.vercel.app/',
     isCustom: true,
     backgroundColor: 'transparent',
-    col: 4,
+    col: 12,
   },
 ];
