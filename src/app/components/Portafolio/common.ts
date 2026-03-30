@@ -56,13 +56,6 @@ export const portfolioCategories: PortfolioCategory[] = [
         important: true,
       },
       {
-        name: 'portfolio.project.autoLogic',
-        link: 'https://github.com/stevenvo780/auto.logic',
-        description: 'portfolio.description.autoLogic',
-        icon: faBrain,
-        important: true,
-      },
-      {
         name: 'portfolio.project.mcpDelegateAgents',
         link: 'https://github.com/stevenvo780/MCP-delegate-agents',
         description: 'portfolio.description.mcpDelegateAgents',
@@ -285,27 +278,6 @@ export const portfolioCategories: PortfolioCategory[] = [
     icon: faAtom,
     projects: [
       {
-        name: 'portfolio.project.duoEterno',
-        link: 'https://github.com/stevenvo780/duo-eterno',
-        description: 'portfolio.description.duoEterno',
-        icon: faSeedling,
-        important: true,
-      },
-      {
-        name: 'portfolio.project.unaCartaParaIsa',
-        link: 'https://github.com/stevenvo780/UnaCartaParaIsa',
-        description: 'portfolio.description.unaCartaParaIsa',
-        icon: faHeart,
-        important: true,
-      },
-      {
-        name: 'portfolio.project.hiperObjetoSimulaciones',
-        link: 'https://github.com/stevenvo780/hiper-objeto-simulaciones',
-        description: 'portfolio.description.hiperObjetoSimulaciones',
-        icon: faCode,
-        important: false,
-      },
-      {
         name: 'portfolio.project.explicaiconProblemasDeExclucion',
         link: 'https://github.com/stevenvo780/explicaicon-problemas-de-exclucion',
         description: 'portfolio.description.explicaiconProblemasDeExclucion',
@@ -450,6 +422,34 @@ export const portfolioCategories: PortfolioCategory[] = [
     name: 'portfolio.literatureAndPhilosophy',
     icon: faBook,
     projects: [
+      {
+        name: 'portfolio.project.autoLogic',
+        link: 'https://github.com/stevenvo780/auto.logic',
+        description: 'portfolio.description.autoLogic',
+        icon: faBrain,
+        important: true,
+      },
+      {
+        name: 'portfolio.project.duoEterno',
+        link: 'https://github.com/stevenvo780/duo-eterno',
+        description: 'portfolio.description.duoEterno',
+        icon: faSeedling,
+        important: true,
+      },
+      {
+        name: 'portfolio.project.unaCartaParaIsa',
+        link: 'https://github.com/stevenvo780/UnaCartaParaIsa',
+        description: 'portfolio.description.unaCartaParaIsa',
+        icon: faHeart,
+        important: true,
+      },
+      {
+        name: 'portfolio.project.hiperObjetoSimulaciones',
+        link: 'https://github.com/stevenvo780/hiper-objeto-simulaciones',
+        description: 'portfolio.description.hiperObjetoSimulaciones',
+        icon: faCode,
+        important: false,
+      },
       {
         name: 'portfolio.project.tertuliaLiteraria',
         link: 'https://www.tertulia-literaria.com/',

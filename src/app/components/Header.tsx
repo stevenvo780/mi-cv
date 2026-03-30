@@ -4,7 +4,7 @@ import Image from 'next/image';
 import dynamic from 'next/dynamic';
 import ContactInfo from './ContactInfo';
 import { Container, Row, Col } from 'react-bootstrap';
-import profileImage from '@/public/images/profile.jpeg';
+import profileImage from '@/public/images/profile.jpg';
 import { useTranslate } from '@/utils/translate';
 
 const GameOfLife = dynamic(() => import('./Matematica/GameOfLife'), {
