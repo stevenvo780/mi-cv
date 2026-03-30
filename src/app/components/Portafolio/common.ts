@@ -35,27 +35,6 @@ export const portfolioCategories: PortfolioCategory[] = [
     icon: faCode,
     projects: [
       {
-        name: 'portfolio.project.critertec',
-        link: 'https://www.critertec.com/',
-        description: 'portfolio.description.critertec',
-        icon: faCode,
-        important: true,
-      },
-      {
-        name: 'portfolio.project.humanizar',
-        link: 'https://humanizar-seven.vercel.app',
-        description: 'portfolio.description.humanizar',
-        icon: faCode,
-        important: true,
-      },
-      {
-        name: 'portfolio.project.indie',
-        link: 'https://www.indielevels.com/',
-        description: 'portfolio.description.indie',
-        icon: faGamepad,
-        important: true,
-      },
-      {
         name: 'portfolio.project.mcpDelegateAgents',
         link: 'https://github.com/stevenvo780/MCP-delegate-agents',
         description: 'portfolio.description.mcpDelegateAgents',
