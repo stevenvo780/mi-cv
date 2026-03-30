@@ -170,3 +170,25 @@ cafeteria-del-caos-api, cafeteria-del-caos-frond, cafeteriadelcaos-bot, tertulia
 - 10+ clientes con catálogos Graf desplegados
 - Agora = visormarkdown en Vercel, Terminal = ultimate-terminal
 - Pendiente: usuario confirma cuáles añadir y en qué categoría del CV
+
+## Evaluación y Calificación (1 a 5 Estrellas)
+
+| Repositorio | Calificación | Justificación | Tecnologías | URL / Vercel |
+| ----------- | :----------: | ------------- | ----------- | ------------ |
+| ConvertPDFToMarkdownIA | ⭐⭐⭐⭐ | Utilidad real alta (PDF OCR con SURYA GPU), estructurado en frontend/worker/backend, buena documentación. | Python, OCR, GPU | (No detectado) |
+| auto.logic | ⭐⭐⭐⭐⭐ | Complejidad algorítmica alta (NLP desde cero), implementado en ST-lang, sin dependencias. 11 perfiles lógicos. | ST-lang, NLP rule-based | autologicsystem.vercel.app |
+| MCP-delegate-agents | ⭐⭐⭐⭐⭐ | Swarm orchestrator para Model Context Protocol usando Ollama/Llama (DeepSeek). Arquitectura planner-worker-reviewer moderna e innovadora. | MCP, Python, Ollama | (No detectado)|
+| MCPagents | ⭐⭐⭐⭐ | Servidor MCP completo con soporte OpenAI/GPT-4o, para Cursor/Claude Desktop. Buena integración de IA autónoma. | TypeScript, MCP, OpenAI | mcpagent.vercel.app |
+| jarvisIAV2 | ⭐⭐⭐ | Asistente multimodal extenso (main.py de ~37K lineas o muy pesado), web interface. Iteración sólida pero monolítica. | Python, IA | jarvesiav2.vercel.app |
+| duo-eterno | ⭐⭐⭐⭐⭐ | Laboratorio interactivo altamente creativo (Autopoiesis), mezcla código, vida artificial, simulación, filosofía y narrativa. | Next.js, Frontend, Simulation | duo-eterno.vercel.app |
+| UnaCartaParaIsa | ⭐⭐⭐⭐⭐ | Evolución narrativa/técnica de simulación 2D, ecosistema autónomo con +30 sistemas complejos. Excelente cruce entre filosofía y código. | Next.js, Simulacion | unacartaparaisa.vercel.app |
+| fiar-front | ⭐⭐⭐⭐ | Frontend robusto Next.js/Redux para sistema financiero/créditos. Aplicación comercial real Humanizar. | Next.js, React, Redux | fiar.humanizar.cloud |
+| fiar-api | ⭐⭐⭐ | Backend NestJS + TypeORM (Postgres) + Mercado Pago. Buena estructura empresarial estándar. | NestJS, TypeScript, Postgres | api.fiar.humanizar.cloud |
+| fiar-blockchain | ⭐⭐⭐ | Componente exploratorio blockchain de Fiar. Interesante integración en el ecosistema. | Python, SmartContracts | (No detectado) |
+| ultimate-terminal | ⭐⭐⭐ | Sistema distribuido Nexus-Worker para control remoto de terminal. Buena arquitectura de red. | Node.js, WebSockets | terminal.humanizar.cloud |
+| EducacionCooperativa| ⭐⭐⭐⭐ | Plataforma en tiempo real con arquitectura distribuida (Web Next.js, Hub Socket.IO, Worker de ejecución). | Next.js, Express, Socket.IO | educooperativa.vercel.app |
+| hiper-objeto-simulaciones | ⭐⭐⭐ | Parte académica de Tesis en Python, 7 simulaciones científicas/filosóficas implementadas. | Python, Math, Sim | (No detectado) |
+| cafeteria-del-caos-front-next | ⭐⭐⭐ | Red social/debates en Next.js. Muestra evolución desde la versión anterior (frond vs front-next). | Next.js, React | (No detectado) |
+
+*Nota: Proyectos menores o sin estructura profunda clara en clonación (shanon, TheorySemanticInformation, bunkerfilosofico, jarvisIA, cafeteria-del-caos-big-data, LogicEducation, jarvis-web) no han sido destacados con máxima prioridad, considerables como ⭐⭐ en su estado actual, a menos que sean interfaces simples.*
+
