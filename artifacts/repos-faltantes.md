@@ -1,44 +1,23 @@
 # Repositorios faltantes en el CV — Análisis 2026-03-30
 
-## Repos ya incluidos en el portafolio actual
+## Repos ya incluidos en el portafolio actual (42 items)
 
-- cafeteria-del-caos-api
-- cafeteria-del-caos-frond
-- cafeteriadelcaos-bot
-- tertulialiteraria-frond
-- tertulialiteraria-api
-- tienda (Placetopay)
-- TemplateReactBigAPP
-- auroraCQRS
-- api-node-mongodb
-- GraphQLExample
-- LaravelReactREST
-- mi-cv
-- mauroLetraCancionesImagenes (SongArt)
-- NeutrinoSugar
-- SuenoDorado
-- hardwareParaProgramadores
-- neuronalLearning
-- capturarUbicacionWhiteHack
-- ExtratorDeTextos
-- limpiadorDeRuidoEnvideos
-- debatesUtil
-- explicaicon-problemas-de-exclucion
-- ComplejidadYCostoComputacional
-- teoria-informacion
-- teoria-caos
-- teoria-sistemas
-- emergentismo-tesis
-- emergencia-juego-de-conwey
-- teoria-MASOES
-- teoria-de-juegos
-- complejidad-teoria
-- teoria-desicion
-- teoria-ruliat
-- experimento-macro-micro
-- SistemaDeTrasporteTrenes
-- emergencia-experimento-temperatura
-- entropia-vacio
+### GitHub repos en CV (37):
+cafeteria-del-caos-api, cafeteria-del-caos-frond, cafeteriadelcaos-bot, tertulialiteraria-frond, tertulialiteraria-api, tienda (Placetopay), TemplateReactBigAPP, auroraCQRS, api-node-mongodb, GraphQLExample, LaravelReactREST, mi-cv, mauroLetraCancionesImagenes, NeutrinoSugar, SuenoDorado, hardwareParaProgramadores, neuronalLearning, capturarUbicacionWhiteHack, ExtratorDeTextos, limpiadorDeRuidoEnvideos, debatesUtil, explicaicon-problemas-de-exclucion, ComplejidadYCostoComputacional, teoria-informacion, teoria-caos, teoria-sistemas, emergentismo-tesis, emergencia-juego-de-conwey, teoria-MASOES, teoria-de-juegos, complejidad-teoria, teoria-desicion, teoria-ruliat, experimento-macro-micro, SistemaDeTrasporteTrenes, emergencia-experimento-temperatura, entropia-vacio
+
+### Links externos en CV (5):
+- https://medium.com/@stevenvallejo780
+- https://www.cashelresurgirdelosimperios.org/
+- https://www.roblox.com/es/games/13343028059/ILS-TEST
+- https://www.roblox.com/es/games/13109815288/escape-room-ILS
+- https://www.tertulia-literaria.com/
+
+### ⚠️ Nombres similares que confunden
+| En la CV | NO en la CV (diferente) |
+|----------|------------------------|
+| cafeteria-del-caos-frond (React original) | cafeteria-del-caos-front-next (versión Next.js) |
+| emergentismo-tesis (repo Python) | emergentismo (frontend web en emergentismo.vercel.app) |
+| debatesUtil | orquestador-debates (versión mejorada) |
 
 ---
 
