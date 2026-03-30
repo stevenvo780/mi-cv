@@ -1,6 +1,6 @@
 import humanizarImg from '@/public/images/Humanizar.png';
 import cafeteriaDelCaosImg from '@/public/images/CafeteriaDelCaos.png';
-import totalPedidoImg from '@/public/images/TotalPedido.png';
+import agoraImg from '@/public/images/Agora.svg';
 import meraVueltaImg from '@/public/images/MeraVuelta.png';
 import emwImg from '@/public/images/EMW.png';
 import LogoIndie from '@/public/images/LogoIndie.svg';
@@ -68,13 +68,13 @@ export const achievements: AchievementItem[] = [
     col: 4,
   },
   {
-    name: 'Total Pedido - Demo',
-    key: 'totalPedido',
-    description: 'achievements.description.totalPedido',
-    link: 'https://total-pedidos-front.vercel.app/',
-    image: totalPedidoImg,
-    imageWidth: 300,
-    imageHeight: 200,
+    name: 'Agora Workspace',
+    key: 'agora',
+    description: 'achievements.description.agora',
+    link: 'https://agora.humanizar.cloud/',
+    image: agoraImg,
+    imageWidth: 150,
+    imageHeight: 150,
     backgroundColor: 'transparent',
     col: 4,
   },
