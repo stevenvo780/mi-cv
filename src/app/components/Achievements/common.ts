@@ -107,6 +107,6 @@ export const achievements: AchievementItem[] = [
     link: 'https://jarvis-web-seven.vercel.app/',
     isCustom: true,
     backgroundColor: 'transparent',
-    col: 12,
+    col: 4,
   },
 ];
