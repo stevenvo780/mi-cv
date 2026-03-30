@@ -100,13 +100,4 @@ export const achievements: AchievementItem[] = [
     backgroundColor: 'transparent',
     col: 4,
   },
-  {
-    name: 'Proyecto JARVIS',
-    key: 'jarvis',
-    description: 'achievements.description.jarvis',
-    link: 'https://jarvis-web-seven.vercel.app/',
-    isCustom: true,
-    backgroundColor: 'transparent',
-    col: 4,
-  },
 ];

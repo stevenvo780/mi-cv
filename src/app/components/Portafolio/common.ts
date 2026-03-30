@@ -81,7 +81,7 @@ export const portfolioCategories: PortfolioCategory[] = [
         link: 'https://github.com/stevenvo780/jarvisIAV2',
         description: 'portfolio.description.jarvisIaV2',
         icon: faRobot,
-        important: false,
+        important: true,
       },
       {
         name: 'portfolio.project.fiarFront',
