@@ -1,5 +1,15 @@
 {
   "experience.title": "Work Experience",
+  "experience.critertec": "Critertec",
+  "experience.role.critertec": "Backend Developer",
+  "experience.dates.critertec": "2024/11 - Present",
+  "experience.location.critertec": "Colombia - Antioquia - Medellín",
+
+  "experience.humanizar": "Humanizar Systems",
+  "experience.role.humanizar": "Founder / Lead Developer",
+  "experience.dates.humanizar": "2022 - Present",
+  "experience.location.humanizar": "Colombia - Antioquia - Medellín",
+
   "experience.fincaDirecta": "Finca Directa S.A.S",
   "experience.role.fincaDirecta": "CTO / Systems Manager",
   "experience.dates.fincaDirecta": "2021/11 - Present",
@@ -48,10 +58,5 @@
   "experience.appsWeb": "Freelance - Web Application Development",
   "experience.role.appsWeb": "Freelance in Web Apps",
   "experience.dates.appsWeb": "2018 - Present",
-  "experience.location.appsWeb": "Colombia - Antioquia - Medellín",
-
-  "experience.critertec": "Critertec",
-  "experience.role.critertec": "Backend Developer",
-  "experience.dates.critertec": "2024/11 - Present",
-  "experience.location.critertec": "Colombia - Antioquia - Medellín"
+  "experience.location.appsWeb": "Colombia - Antioquia - Medellín"
 }

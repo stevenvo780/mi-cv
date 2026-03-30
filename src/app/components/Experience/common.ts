@@ -6,13 +6,23 @@ export interface ExperienceItem {
 
 export const experiences: ExperienceItem[] = [
   {
-    name: 'Finca Directa S.A.S',
-    key: 'fincaDirecta',
+    name: 'Critertec',
+    key: 'critertec',
+    col: 4,
+  },
+  {
+    name: 'Humanizar Systems',
+    key: 'humanizar',
     col: 4,
   },
   {
     name: 'Indie Levels Studio S.A.S',
     key: 'indieLevels',
+    col: 4,
+  },
+  {
+    name: 'Finca Directa S.A.S',
+    key: 'fincaDirecta',
     col: 4,
   },
   {
@@ -53,11 +63,6 @@ export const experiences: ExperienceItem[] = [
   {
     name: 'Freelance - Aplicaciones Web',
     key: 'appsWeb',
-    col: 4,
-  },
-  {
-    name: 'Critertec',
-    key: 'critertec',
     col: 4,
   }
 ];
