@@ -5,8 +5,10 @@ const MandelbrotWebGL: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
-    const canvas = canvasRef.current!;
-    const gl = canvas.getContext('webgl')!;
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const gl = canvas.getContext('webgl');
+    if (!gl) return; // Sin soporte WebGL: no renderizamos el fractal en vez de romper la página
 
     const vertexShaderSource = `
       attribute vec4 a_position;
