@@ -24,7 +24,6 @@ import {
   faRobot,
   faBrain,
   faFilePdf,
-  faHeart,
   faSeedling,
   faStore,
   faNewspaper,
