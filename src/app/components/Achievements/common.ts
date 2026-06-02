@@ -71,7 +71,7 @@ export const achievements: AchievementItem[] = [
     name: 'Agora Workspace',
     key: 'agora',
     description: 'achievements.description.agora',
-    link: 'https://agora.humanizar.cloud/',
+    link: 'https://agora.elenxos.com',
     image: agoraImg,
     imageWidth: 150,
     imageHeight: 150,

@@ -26,19 +26,20 @@ import {
   faFilePdf,
   faHeart,
   faSeedling,
-  faServer,
   faStore,
   faNewspaper,
 } from '@fortawesome/free-solid-svg-icons';
 import { PortfolioCategory } from './types';
 
-// Proyectos ordenados de mejor a peor dentro de cada categoría.
+// Reglas: solo links PÚBLICOS (apps en vivo o repos públicos). Títulos = solo el nombre;
+// el detalle va en la descripción. Visibles (important: true) = solo los más pulcos;
+// el resto queda presente pero oculto tras "Ver más".
 export const portfolioCategories: PortfolioCategory[] = [
   {
     name: 'portfolio.programming',
     icon: faCode,
     projects: [
-      // --- Sistemas reales en producción / proyectos insignia ---
+      // --- Visibles: sistemas en producción, pulcos, con app pública en vivo ---
       {
         name: 'portfolio.project.agora',
         link: 'https://agora.elenxos.com',
@@ -68,13 +69,6 @@ export const portfolioCategories: PortfolioCategory[] = [
         important: true,
       },
       {
-        name: 'portfolio.project.fiarApi',
-        link: 'https://github.com/stevenvo780/fiar-api',
-        description: 'portfolio.description.fiarApi',
-        icon: faNodeJs,
-        important: true,
-      },
-      {
         name: 'portfolio.project.cristinaCms',
         link: 'https://cristina-cms.vercel.app',
         description: 'portfolio.description.cristinaCms',
@@ -82,79 +76,69 @@ export const portfolioCategories: PortfolioCategory[] = [
         important: true,
       },
       {
+        name: 'portfolio.project.cafeteriaDelCaosFrontNext',
+        link: 'https://cafeteria-del-caos-front-next.vercel.app',
+        description: 'portfolio.description.cafeteriaDelCaosFrontNext',
+        icon: faReact,
+        important: true,
+      },
+      // --- Ocultos: IA / backends / herramientas (links públicos) ---
+      {
+        name: 'portfolio.project.jarvisIaV2',
+        link: 'https://jarvis-web-seven.vercel.app',
+        description: 'portfolio.description.jarvisIaV2',
+        icon: faRobot,
+        important: false,
+      },
+      {
         name: 'portfolio.project.emw',
         link: 'https://emw.humanizar.cloud/',
         description: 'portfolio.description.emw',
         icon: faCogs,
-        important: true,
-      },
-      // --- IA / agentes ---
-      {
-        name: 'portfolio.project.jarvisIaV2',
-        link: 'https://github.com/stevenvo780/jarvisIAV2',
-        description: 'portfolio.description.jarvisIaV2',
-        icon: faRobot,
-        important: true,
+        important: false,
       },
       {
         name: 'portfolio.project.convertPdfToMarkdownIa',
         link: 'https://github.com/stevenvo780/ConvertPDFToMarkdownIA',
         description: 'portfolio.description.convertPdfToMarkdownIa',
         icon: faFilePdf,
-        important: true,
+        important: false,
       },
       {
         name: 'portfolio.project.mcpDelegateAgents',
         link: 'https://github.com/stevenvo780/MCP-delegate-agents',
         description: 'portfolio.description.mcpDelegateAgents',
         icon: faRobot,
-        important: true,
+        important: false,
       },
       {
         name: 'portfolio.project.mcpAgents',
         link: 'https://github.com/stevenvo780/MCPagents',
         description: 'portfolio.description.mcpAgents',
         icon: faRobot,
-        important: true,
+        important: false,
       },
-      // --- Infra / DevOps ---
       {
-        name: 'portfolio.project.gcpBucketSync',
-        link: 'https://github.com/stevenvo780/gcp-bucket-sync-api',
-        description: 'portfolio.description.gcpBucketSync',
-        icon: faServer,
-        important: true,
+        name: 'portfolio.project.fiarApi',
+        link: 'https://github.com/stevenvo780/fiar-api',
+        description: 'portfolio.description.fiarApi',
+        icon: faNodeJs,
+        important: false,
       },
       {
         name: 'portfolio.project.ultimateTerminal',
         link: 'https://github.com/stevenvo780/ultimate-terminal',
         description: 'portfolio.description.ultimateTerminal',
         icon: faTerminal,
-        important: true,
-      },
-      // --- Plataformas de comunidad ---
-      {
-        name: 'portfolio.project.cafeteriaDelCaosFrontNext',
-        link: 'https://github.com/stevenvo780/cafeteria-del-caos-front-next',
-        description: 'portfolio.description.cafeteriaDelCaosFrontNext',
-        icon: faReact,
-        important: true,
+        important: false,
       },
       {
         name: 'portfolio.project.cafeteriaDelCaosAPI',
         link: 'https://github.com/stevenvo780/cafeteria-del-caos-api',
         description: 'portfolio.description.cafeteriaDelCaosAPI',
         icon: faNodeJs,
-        important: true,
+        important: false,
       },
-      {
-        name: 'portfolio.project.debatesUtil',
-        link: 'https://github.com/stevenvo780/debatesUtil',
-        description: 'portfolio.description.debatesUtil',
-        icon: faCode,
-        important: true,
-      },
-      // --- Otros (ocultos por defecto) ---
       {
         name: 'portfolio.project.cafeteriaDelCaosFrond',
         link: 'https://github.com/stevenvo780/cafeteria-del-caos-frond',
@@ -170,17 +154,10 @@ export const portfolioCategories: PortfolioCategory[] = [
         important: false,
       },
       {
-        name: 'portfolio.project.tertuliaFrontend',
-        link: 'https://github.com/stevenvo780/tertulialiteraria-frond',
-        description: 'portfolio.description.tertuliaFrontend',
-        icon: faReact,
-        important: false,
-      },
-      {
-        name: 'portfolio.project.tertuliaAPI',
-        link: 'https://github.com/stevenvo780/tertulialiteraria-api',
-        description: 'portfolio.description.tertuliaAPI',
-        icon: faNodeJs,
+        name: 'portfolio.project.debatesUtil',
+        link: 'https://github.com/stevenvo780/debatesUtil',
+        description: 'portfolio.description.debatesUtil',
+        icon: faCode,
         important: false,
       },
       {
@@ -219,41 +196,6 @@ export const portfolioCategories: PortfolioCategory[] = [
         important: false,
       },
       {
-        name: 'portfolio.project.placetopay',
-        link: 'https://github.com/stevenvo780/tienda',
-        description: 'portfolio.description.placetopay',
-        icon: faChartLine,
-        important: false,
-      },
-      {
-        name: 'portfolio.project.fiarBlockchain',
-        link: 'https://github.com/stevenvo780/fiar-blockchain',
-        description: 'portfolio.description.fiarBlockchain',
-        icon: faCode,
-        important: false,
-      },
-      {
-        name: 'portfolio.project.mauroLetraCancionesImagenes',
-        link: 'https://github.com/stevenvo780/mauroLetraCancionesImagenes',
-        description: 'portfolio.description.mauroLetraCancionesImagenes',
-        icon: faCode,
-        important: false,
-      },
-      {
-        name: 'portfolio.project.extratorDeTextos',
-        link: 'https://github.com/stevenvo780/ExtratorDeTextos',
-        description: 'portfolio.description.extratorDeTextos',
-        icon: faCode,
-        important: false,
-      },
-      {
-        name: 'portfolio.project.limpiadorDeRuidoEnvideos',
-        link: 'https://github.com/stevenvo780/limpiadorDeRuidoEnvideos',
-        description: 'portfolio.description.limpiadorDeRuidoEnvideos',
-        icon: faDatabase,
-        important: false,
-      },
-      {
         name: 'portfolio.project.neutrinoSugar',
         link: 'https://github.com/stevenvo780/NeutrinoSugar',
         description: 'portfolio.description.neutrinoSugar',
@@ -265,26 +207,6 @@ export const portfolioCategories: PortfolioCategory[] = [
         link: 'https://github.com/stevenvo780/capturarUbicacionWhiteHack',
         description: 'portfolio.description.hackingTool',
         icon: faShieldAlt,
-        important: false,
-      },
-      {
-        name: 'portfolio.project.hardwareProgrammers',
-        link: 'https://github.com/stevenvo780/hardwareParaProgramadores',
-        description: 'portfolio.description.hardwareProgrammers',
-        icon: faCogs,
-        important: false,
-      },
-      {
-        name: 'portfolio.project.neuronalLearning',
-        link: 'https://github.com/stevenvo780/neuronalLearning',
-        description: 'portfolio.description.neuronalLearning',
-        important: false,
-      },
-      {
-        name: 'portfolio.project.suenoDorado',
-        link: 'https://github.com/stevenvo780/SuenoDorado',
-        description: 'portfolio.description.suenoDorado',
-        icon: faPuzzlePiece,
         important: false,
       },
       {
@@ -301,13 +223,6 @@ export const portfolioCategories: PortfolioCategory[] = [
     icon: faBook,
     projects: [
       {
-        name: 'portfolio.project.educacionCooperativa',
-        link: 'https://github.com/stevenvo780/EducacionCooperativa',
-        description: 'portfolio.description.educacionCooperativa',
-        icon: faReact,
-        important: true,
-      },
-      {
         name: 'portfolio.project.autoLogic',
         link: 'https://github.com/stevenvo780/auto.logic',
         description: 'portfolio.description.autoLogic',
@@ -322,31 +237,24 @@ export const portfolioCategories: PortfolioCategory[] = [
         important: true,
       },
       {
-        name: 'portfolio.project.hinton',
-        link: 'https://hinton.stevenvallejo.com',
-        description: 'portfolio.description.hinton',
-        icon: faBrain,
-        important: true,
+        name: 'portfolio.project.educacionCooperativa',
+        link: 'https://github.com/stevenvo780/EducacionCooperativa',
+        description: 'portfolio.description.educacionCooperativa',
+        icon: faReact,
+        important: false,
       },
       {
         name: 'portfolio.project.duoEterno',
         link: 'https://github.com/stevenvo780/duo-eterno',
         description: 'portfolio.description.duoEterno',
         icon: faSeedling,
-        important: true,
+        important: false,
       },
       {
         name: 'portfolio.project.hiperObjetoSimulaciones',
         link: 'https://github.com/stevenvo780/hiper-objeto-simulaciones',
         description: 'portfolio.description.hiperObjetoSimulaciones',
         icon: faAtom,
-        important: true,
-      },
-      {
-        name: 'portfolio.project.unaCartaParaIsa',
-        link: 'https://github.com/stevenvo780/UnaCartaParaIsa',
-        description: 'portfolio.description.unaCartaParaIsa',
-        icon: faHeart,
         important: false,
       },
       {
@@ -377,13 +285,6 @@ export const portfolioCategories: PortfolioCategory[] = [
         important: true,
       },
       {
-        name: 'portfolio.project.masoSimulation',
-        link: 'https://github.com/stevenvo780/teoria-MASOES',
-        description: 'portfolio.description.masoSimulation',
-        icon: faCogs,
-        important: true,
-      },
-      {
         name: 'portfolio.project.conwayLife',
         link: 'https://github.com/stevenvo780/emergencia-juego-de-conwey',
         description: 'portfolio.description.conwayLife',
@@ -391,44 +292,37 @@ export const portfolioCategories: PortfolioCategory[] = [
         important: true,
       },
       {
+        name: 'portfolio.project.masoSimulation',
+        link: 'https://github.com/stevenvo780/teoria-MASOES',
+        description: 'portfolio.description.masoSimulation',
+        icon: faCogs,
+        important: false,
+      },
+      {
         name: 'portfolio.project.complexityTheory',
         link: 'https://github.com/stevenvo780/complejidad-teoria',
         description: 'portfolio.description.complexityTheory',
         icon: faCogs,
-        important: true,
+        important: false,
       },
       {
         name: 'portfolio.project.economicSystem',
         link: 'https://github.com/stevenvo780/teoria-sistemas',
         description: 'portfolio.description.economicSystem',
         icon: faChartLine,
-        important: true,
+        important: false,
       },
       {
         name: 'portfolio.project.cellularCommunication',
         link: 'https://github.com/stevenvo780/teoria-informacion',
         description: 'portfolio.description.cellularCommunication',
         icon: faNetworkWired,
-        important: true,
+        important: false,
       },
       {
         name: 'portfolio.project.gameTheory',
         link: 'https://github.com/stevenvo780/teoria-de-juegos',
         description: 'portfolio.description.gameTheory',
-        icon: faPuzzlePiece,
-        important: true,
-      },
-      {
-        name: 'portfolio.project.complejidadYCostoComputacional',
-        link: 'https://github.com/stevenvo780/ComplejidadYCostoComputacional',
-        description: 'portfolio.description.complejidadYCostoComputacional',
-        icon: faChartLine,
-        important: true,
-      },
-      {
-        name: 'portfolio.project.explicaiconProblemasDeExclucion',
-        link: 'https://github.com/stevenvo780/explicaicon-problemas-de-exclucion',
-        description: 'portfolio.description.explicaiconProblemasDeExclucion',
         icon: faPuzzlePiece,
         important: false,
       },
@@ -454,20 +348,6 @@ export const portfolioCategories: PortfolioCategory[] = [
         important: false,
       },
       {
-        name: 'portfolio.project.macroMicro',
-        link: 'https://github.com/stevenvo780/experimento-macro-micro',
-        description: 'portfolio.description.macroMicro',
-        icon: faAtom,
-        important: false,
-      },
-      {
-        name: 'portfolio.project.temperatureExperiment',
-        link: 'https://github.com/stevenvo780/emergencia-experimento-temperatura',
-        description: 'portfolio.description.temperatureExperiment',
-        icon: faThermometerHalf,
-        important: false,
-      },
-      {
         name: 'portfolio.project.trainSystem',
         link: 'https://github.com/stevenvo780/SistemaDeTrasporteTrenes',
         description: 'portfolio.description.trainSystem',
@@ -475,10 +355,10 @@ export const portfolioCategories: PortfolioCategory[] = [
         important: false,
       },
       {
-        name: 'portfolio.project.vacuumEntropy',
-        link: 'https://github.com/stevenvo780/entropia-vacio',
-        description: 'portfolio.description.vacuumEntropy',
-        icon: faCogs,
+        name: 'portfolio.project.temperatureExperiment',
+        link: 'https://github.com/stevenvo780/emergencia-experimento-temperatura',
+        description: 'portfolio.description.temperatureExperiment',
+        icon: faThermometerHalf,
         important: false,
       },
     ],
@@ -499,14 +379,14 @@ export const portfolioCategories: PortfolioCategory[] = [
         link: 'https://www.roblox.com/es/games/13109815288/escape-room-ILS',
         description: 'portfolio.description.escapeRoom',
         icon: faDoorOpen,
-        important: true,
+        important: false,
       },
       {
         name: 'portfolio.project.robloxGame',
         link: 'https://www.roblox.com/es/games/13343028059/ILS-TEST',
         description: 'portfolio.description.robloxGame',
         icon: faGamepad,
-        important: true,
+        important: false,
       },
     ],
   },
