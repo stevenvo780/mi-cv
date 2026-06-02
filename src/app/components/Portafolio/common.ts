@@ -63,6 +63,20 @@ export const portfolioCategories: PortfolioCategory[] = [
         important: true,
       },
       {
+        name: 'portfolio.project.graf',
+        link: 'https://totalpedidosv2-client.vercel.app',
+        description: 'portfolio.description.graf',
+        icon: faChartLine,
+        important: true,
+      },
+      {
+        name: 'portfolio.project.sinergiaPos',
+        link: 'https://pos-frond.vercel.app',
+        description: 'portfolio.description.sinergiaPos',
+        icon: faCogs,
+        important: true,
+      },
+      {
         name: 'portfolio.project.fiarFront',
         link: 'https://github.com/stevenvo780/fiar-front',
         description: 'portfolio.description.fiarFront',

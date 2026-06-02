@@ -3,10 +3,10 @@
   "achievements.description.critertec": "Agencia educativa y tecnológica. Diseño e implementación de soluciones digitales innovadoras con impacto masivo.",
   "achievements.description.soyDigital": "Portal del gobierno dominicano orientado al desarrollo de competencias digitales para millones de jóvenes, adultos y niños.",
   "achievements.description.indieLevels": "Estudio de videojuegos ubicado en Medellín, Colombia, con un equipo de profesionales dedicados al desarrollo de videojuegos de alta calidad para empresas de todo el mundo.",
-  "achievements.description.humanizar": "Proyecto para mejorar la capacidad productiva de las empresas y con esto mejorar la calidad de vida de los trabajadores y la sociedad en general.",
+  "achievements.description.humanizar": "Ecosistema SaaS empresarial multi-tenant: e-commerce (Graf), punto de venta con facturación electrónica DIAN (Sinergia POS), fintech de créditos (FIAR) y mensajería, orquestados con microservicios NestJS.",
   "achievements.description.cafeteriadelcaos": "Cafetería del Caos es una comunidad intelectual virtual en Discord, donde se fomenta el intercambio de ideas y el aprendizaje en diversas disciplinas como filosofía, ciencia, literatura y arte.",
-  "achievements.description.agora": "Plataforma educativa colaborativa basada en WebSockets diseñada para fomentar la cooperación y el debate activo.",
+  "achievements.description.agora": "Plataforma SaaS distribuida de agentes IA, construida en solitario como poly-repo de 7 servicios: frontend Next.js, backend agéntico en Cloud Run (~150 herramientas, multi-proveedor LLM: OpenAI/Anthropic/Gemini/DeepSeek), hub en tiempo real (socket.io) y flota de ~30 workers Docker con terminales Linux. En producción a <1 USD/mes.",
   "achievements.description.meraVuelta": "Aplicación para servicios de transporte en Antioquia.",
-  "achievements.description.emw": "Robots para envío masivo de mensajes por WhatsApp.",
+  "achievements.description.emw": "Plataforma de marketing automation por WhatsApp Business (NestJS + MySQL + Redis): campañas y envío masivo de mensajes.",
   "achievements.description.jarvis": "Asistente virtual basado en IA."
 }
