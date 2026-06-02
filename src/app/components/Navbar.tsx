@@ -63,6 +63,26 @@ export default function CustomNavbar() {
             </Nav.Link>
           </Nav>
           <div className="d-flex align-items-center gap-2">
+            <a
+              href="https://services.stevenvallejo.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn btn-primary"
+              style={{
+                height: '30px',
+                borderRadius: '10px',
+                fontSize: '12px',
+                fontWeight: 600,
+                padding: '0 12px',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '5px',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              {t('navbar.services')}
+              <span aria-hidden="true">↗</span>
+            </a>
             <DownloadCVMinimal />
             <button
               onClick={toggleLocale}
