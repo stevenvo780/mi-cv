@@ -25,11 +25,11 @@ const MandelbrotWebGL: React.FC = () => {
       vec3 getCustomColor(int iterations, int max_iterations) {
         float t = float(iterations) / float(max_iterations);
 
-        vec3 primaryColor = vec3(49.0 / 255.0, 29.0 / 255.0, 57.0 / 255.0); // #311D39
-        vec3 secondaryColor = vec3(155.0 / 255.0, 142.0 / 255.0, 126.0 / 255.0); // #9B8E7E
-        vec3 infoColor = vec3(195.0 / 255.0, 204.0 / 255.0, 175.0 / 255.0); // #C3CCAF
-        vec3 successColor = vec3(102.0 / 255.0, 176.0 / 255.0, 50.0 / 255.0); // #66b032
-        vec3 dangerColor = vec3(165.0 / 255.0, 26.0 / 255.0, 65.0 / 255.0); // #A51A41
+        vec3 primaryColor = vec3(224.0 / 255.0, 168.0 / 255.0, 94.0 / 255.0);  // --gold  #e0a85e
+        vec3 secondaryColor = vec3(207.0 / 255.0, 106.0 / 255.0, 60.0 / 255.0); // --orange #cf6a3c
+        vec3 infoColor = vec3(67.0 / 255.0, 181.0 / 255.0, 166.0 / 255.0);      // --teal  #43b5a6
+        vec3 successColor = vec3(111.0 / 255.0, 211.0 / 255.0, 196.0 / 255.0);  // --teal-ink #6fd3c4
+        vec3 dangerColor = vec3(141.0 / 255.0, 124.0 / 255.0, 192.0 / 255.0);   // --violet #8d7cc0
 
         if (iterations == max_iterations) {
           return vec3(0.0);
@@ -197,7 +197,7 @@ const MandelbrotWebGL: React.FC = () => {
           aspect-ratio: 3 / 2; /* Mantener relación de aspecto 3:2 */
           display: block;
           max-width: 100%;
-          border: 1px solid #ccc; /* Para ver el borde del canvas */
+          border: 1px solid rgba(244,236,224,0.10);
         }
       `}</style>
       <canvas ref={canvasRef}></canvas>

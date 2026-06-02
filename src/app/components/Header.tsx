@@ -25,6 +25,7 @@ export default function Header() {
           height: '100%',
           overflow: 'hidden',
           zIndex: -1,
+          opacity: 0.35,
         }}
       >
         <GameOfLife />
@@ -38,20 +39,13 @@ export default function Header() {
               alt={t('header.profileImageAlt')}
               width={250}
               height={250}
-              className="rounded-circle border border-4"
+              className="rounded-circle border border-4 profile-img"
             />
           </Col>
           <Col xs={12} md={9}>
-            <div
-              className="text-center text-md-start bg-white rounded p-3"
-              style={{
-                boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-                border: '1px solid #ddd',
-                borderRadius: '10px'
-              }}
-            >
+            <div className="header-card text-center text-md-start p-3">
               <h1 className="display-5 mb-0">{t('header.name')}</h1>
-              <h2 className="h4 text-secondary">{t('header.title')}</h2>
+              <h2 className="h4" style={{ color: 'var(--teal-ink)', fontWeight: 500 }}>{t('header.title')}</h2>
             </div>
             <ContactInfo />
           </Col>

@@ -86,7 +86,7 @@ export default function ContactMe() {
             <div className="mt-4 d-flex justify-content-around">
               <a
                 href="mailto:stevenvallejo780@gmail.com?subject=Contacto&body=Hola Steven, me gustaría ponerme en contacto contigo"
-                style={{ fontSize: '48px', color: '#000' }}
+                style={{ fontSize: '48px', color: 'var(--text-soft)' }}
               >
                 <FontAwesomeIcon icon={faEnvelope} />
               </a>

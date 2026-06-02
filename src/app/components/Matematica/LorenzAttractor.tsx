@@ -124,8 +124,8 @@ export default function LorenzAttractor() {
           height: 100%;
           max-height: 70vh;
           max-width: 100%;
-          border: 1px solid #dee2e6;
-          background-color: #f8f9fa;
+          border: 1px solid rgba(244,236,224,0.10);
+          background-color: #0b1417;
         }
 
         @media (max-width: 768px) {

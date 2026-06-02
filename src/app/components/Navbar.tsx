@@ -32,7 +32,7 @@ export default function CustomNavbar() {
   };
 
   return (
-    <Navbar expand="lg" className="bg-light sticky-top">
+    <Navbar expand="lg" className="sticky-top">
       <Container>
         <Navbar.Brand href="#home" onClick={scrollToSection('home')}>
           {t('header.name')}

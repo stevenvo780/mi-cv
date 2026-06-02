@@ -13,10 +13,12 @@ export default function ContactInfo() {
             <ListGroup.Item
               className="d-flex align-items-center"
               style={{
-                boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-                border: '1px solid #ddd',
+                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.4)',
+                border: '1px solid var(--border-strong)',
                 borderRadius: '10px',
-                padding: '0.75rem'
+                padding: '0.75rem',
+                backgroundColor: 'var(--panel-solid)',
+                color: 'var(--text-soft)',
               }}
             >
               <FontAwesomeIcon icon={contact.icon} className="me-2" />

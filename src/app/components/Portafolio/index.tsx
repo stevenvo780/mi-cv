@@ -75,8 +75,7 @@ export default function Portfolio() {
         {filteredPortfolioCategories.map((category, idx) => (
           <div
             key={idx}
-            className="mb-5"
-            style={{ border: '2px solid #e9ecef', borderRadius: '10px', padding: '20px' }}
+            className="mb-5 portfolio-category"
           >
             <h4 className="mb-4">{t(category.name)}</h4>
             <Row>

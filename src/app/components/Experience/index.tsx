@@ -17,7 +17,7 @@ export default function Experience() {
         <Row>
           {experiences.map((item) => (
             <Col key={item.key} md={item.col} className="mb-3">
-              <Card style={{ backgroundColor: 'transparent' }}>
+              <Card style={{ backgroundColor: 'var(--panel-solid)', borderColor: 'var(--border-strong)' }}>
                 <Card.Body>
                   <Card.Title>{t(`experience.${item.key}`)}</Card.Title>
                   <Card.Text>

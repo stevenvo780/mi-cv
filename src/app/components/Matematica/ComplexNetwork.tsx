@@ -68,7 +68,7 @@ export default function ComplexNetwork() {
       </div>
       <div
         ref={containerRef}
-        style={{ height: '400px', border: '1px solid #dee2e6' }}
+        style={{ height: '400px', border: '1px solid rgba(244,236,224,0.10)', backgroundColor: '#0b1417', borderRadius: '10px' }}
       />
     </div>
   );

@@ -75,7 +75,7 @@ export default function GameOfLifeHeader() {
     ctx.clearRect(0, 0, canvasRef.current!.width, canvasRef.current!.height);
     for (let i = 0; i < gridRows; i++) {
       for (let j = 0; j < gridCols; j++) {
-        ctx.fillStyle = grid[i][j] ? '#a51a41' : '#ffffff';
+        ctx.fillStyle = grid[i][j] ? '#e0a85e' : 'rgba(11,20,23,0.0)';
         ctx.fillRect(j * cellSize, i * cellSize, cellSize - 1, cellSize - 1);
       }
     }
@@ -140,8 +140,8 @@ export default function GameOfLifeHeader() {
                 style={{
                   width: `${cellSize - 1}px`,
                   height: `${cellSize - 1}px`,
-                  backgroundColor: grid[i][j] ? '#a51a41' : '#ffffff',
-                  border: 'solid 1px #dee2e6',
+                  backgroundColor: grid[i][j] ? '#e0a85e' : 'rgba(11,20,23,0.0)',
+                  border: 'solid 1px rgba(244,236,224,0.06)',
                 }}
               />
             ))
@@ -160,7 +160,8 @@ export default function GameOfLifeHeader() {
         style={{
           display: 'block',
           margin: '0 auto',
-          border: '1px solid #dee2e6',
+          border: '1px solid rgba(244,236,224,0.06)',
+          background: 'transparent',
         }}
       />
     </section>

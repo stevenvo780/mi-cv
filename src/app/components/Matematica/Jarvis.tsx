@@ -51,7 +51,7 @@ export default function JarvisAnimation(): JSX.Element {
         this.directionX = (Math.random() * 0.4) - 0.2;
         this.directionY = (Math.random() * 0.4) - 0.2;
         this.size = Math.random() * 10 + 1;
-        this.color = '#0d6efd';
+        this.color = '#43b5a6';
       }
 
       draw(): void {
@@ -95,7 +95,7 @@ export default function JarvisAnimation(): JSX.Element {
 
           if (distance < 100) {
             context.beginPath();
-            context.strokeStyle = '#0d6efd';
+            context.strokeStyle = '#e0a85e';
             context.lineWidth = 1.2;
             context.moveTo(particlesArray[a].x, particlesArray[a].y);
             context.lineTo(particlesArray[b].x, particlesArray[b].y);
@@ -137,7 +137,7 @@ export default function JarvisAnimation(): JSX.Element {
           height: 100%;
           max-height: 70vh;
           max-width: 100%;
-          border: 1px solid #ccc;
+          border: 1px solid rgba(244,236,224,0.10);
         }
 
         @media (max-width: 768px) {

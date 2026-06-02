@@ -23,10 +23,10 @@ export default function Achievements() {
               <a href={item.link} target="_blank" rel="noreferrer" style={{ textDecoration: 'none' }}>
                 <Card
                   style={{
-                    borderColor: '#9B8E7E',
-                    borderWidth: '2px',
+                    borderColor: 'var(--border-strong)',
+                    borderWidth: '1px',
                     height: '100%',
-                    backgroundColor: 'transparent',
+                    backgroundColor: 'var(--panel-solid)',
                   }}
                 >
                   {item.isCustom ? (
@@ -64,7 +64,7 @@ export default function Achievements() {
                         bottom: '10px',
                         right: '10px',
                         fontSize: '24px',
-                        color: '#6c757d',
+                        color: 'var(--teal)',
                       }}
                     >
                       <FontAwesomeIcon icon={faArrowRight} />
