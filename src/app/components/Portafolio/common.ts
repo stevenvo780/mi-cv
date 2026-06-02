@@ -38,12 +38,33 @@ export const portfolioCategories: PortfolioCategory[] = [
     name: 'portfolio.programming',
     icon: faCode,
     projects: [
-      // --- Visibles: sistemas en producción, pulcos, con app pública en vivo ---
+      // --- Visibles: lo más ambicioso/pulcro y sistemas en producción ---
+      {
+        name: 'portfolio.project.stLanguage',
+        link: 'https://github.com/stevenvo780/ST',
+        description: 'portfolio.description.stLanguage',
+        icon: faTerminal,
+        important: true,
+      },
       {
         name: 'portfolio.project.agora',
         link: 'https://agora.elenxos.com',
         description: 'portfolio.description.agora',
         icon: faRobot,
+        important: true,
+      },
+      {
+        name: 'portfolio.project.autoLogic',
+        link: 'https://github.com/stevenvo780/auto.logic',
+        description: 'portfolio.description.autoLogic',
+        icon: faBrain,
+        important: true,
+      },
+      {
+        name: 'portfolio.project.educacionCooperativa',
+        link: 'https://github.com/stevenvo780/EducacionCooperativa',
+        description: 'portfolio.description.educacionCooperativa',
+        icon: faReact,
         important: true,
       },
       {
@@ -68,6 +89,13 @@ export const portfolioCategories: PortfolioCategory[] = [
         important: true,
       },
       {
+        name: 'portfolio.project.ultimateTerminal',
+        link: 'https://github.com/stevenvo780/ultimate-terminal',
+        description: 'portfolio.description.ultimateTerminal',
+        icon: faTerminal,
+        important: true,
+      },
+      {
         name: 'portfolio.project.cristinaCms',
         link: 'https://cristina-cms.vercel.app',
         description: 'portfolio.description.cristinaCms',
@@ -84,7 +112,7 @@ export const portfolioCategories: PortfolioCategory[] = [
       // --- Ocultos: IA / backends / herramientas (links públicos) ---
       {
         name: 'portfolio.project.jarvisIaV2',
-        link: 'https://jarvis-web-seven.vercel.app',
+        link: 'https://github.com/stevenvo780/jarvisIAV2',
         description: 'portfolio.description.jarvisIaV2',
         icon: faRobot,
         important: false,
@@ -218,34 +246,58 @@ export const portfolioCategories: PortfolioCategory[] = [
     ],
   },
   {
+    // Línea de investigación en simulación computacional aplicada a filosofía de la ciencia.
     name: 'portfolio.literatureAndPhilosophy',
     icon: faBook,
     projects: [
+      // --- Visibles: investigación/simulación y lógica formal (lo subestimado) ---
       {
-        name: 'portfolio.project.autoLogic',
-        link: 'https://github.com/stevenvo780/auto.logic',
-        description: 'portfolio.description.autoLogic',
+        name: 'portfolio.project.estructurasPreontologicas',
+        link: 'https://estructuras-preontologicas.vercel.app',
+        description: 'portfolio.description.estructurasPreontologicas',
+        icon: faAtom,
+        important: true,
+      },
+      {
+        name: 'portfolio.project.tesisJacob',
+        link: 'https://github.com/stevenvo780/TesisJacobContenidos',
+        description: 'portfolio.description.tesisJacob',
+        icon: faChartLine,
+        important: true,
+      },
+      {
+        name: 'portfolio.project.fenomenologiaUrbana',
+        link: 'https://github.com/stevenvo780/FenomenologiaUrbana',
+        description: 'portfolio.description.fenomenologiaUrbana',
+        icon: faNetworkWired,
+        important: true,
+      },
+      {
+        name: 'portfolio.project.unaCartaParaIsaSim',
+        link: 'https://github.com/stevenvo780/UnaCartaParaIsa',
+        description: 'portfolio.description.unaCartaParaIsaSim',
+        icon: faSeedling,
+        important: true,
+      },
+      {
+        name: 'portfolio.project.redesNeuronalesFilo',
+        link: 'https://github.com/stevenvo780/RedesNeuronalesFilosofiaNeurociencia',
+        description: 'portfolio.description.redesNeuronalesFilo',
         icon: faBrain,
         important: true,
       },
+      // --- Ocultos: el resto de la línea de investigación/simulación ---
       {
-        name: 'portfolio.project.stLanguage',
-        link: 'https://github.com/stevenvo780/ST',
-        description: 'portfolio.description.stLanguage',
-        icon: faTerminal,
-        important: true,
-      },
-      {
-        name: 'portfolio.project.educacionCooperativa',
-        link: 'https://github.com/stevenvo780/EducacionCooperativa',
-        description: 'portfolio.description.educacionCooperativa',
-        icon: faReact,
+        name: 'portfolio.project.cartaParaIsa',
+        link: 'https://github.com/stevenvo780/CartaParaIsa',
+        description: 'portfolio.description.cartaParaIsa',
+        icon: faBrain,
         important: false,
       },
       {
-        name: 'portfolio.project.duoEterno',
-        link: 'https://github.com/stevenvo780/duo-eterno',
-        description: 'portfolio.description.duoEterno',
+        name: 'portfolio.project.unMundoParaIsa',
+        link: 'https://github.com/stevenvo780/UnMundoParaIsa',
+        description: 'portfolio.description.unMundoParaIsa',
         icon: faSeedling,
         important: false,
       },
@@ -257,10 +309,17 @@ export const portfolioCategories: PortfolioCategory[] = [
         important: false,
       },
       {
-        name: 'portfolio.project.tertuliaLiteraria',
-        link: 'https://www.tertulia-literaria.com/',
-        description: 'portfolio.description.tertuliaLiteraria',
+        name: 'portfolio.project.logicEducation',
+        link: 'https://github.com/stevenvo780/LogicEducation',
+        description: 'portfolio.description.logicEducation',
         icon: faGraduationCap,
+        important: false,
+      },
+      {
+        name: 'portfolio.project.duoEterno',
+        link: 'https://github.com/stevenvo780/duo-eterno',
+        description: 'portfolio.description.duoEterno',
+        icon: faSeedling,
         important: false,
       },
       {

@@ -11,8 +11,8 @@ export const experiences: ExperienceItem[] = [
     col: 4,
   },
   {
-    name: 'Humanizar Systems',
-    key: 'humanizar',
+    name: 'Finca Directa S.A.S',
+    key: 'fincaDirecta',
     col: 4,
   },
   {
@@ -21,8 +21,8 @@ export const experiences: ExperienceItem[] = [
     col: 4,
   },
   {
-    name: 'Finca Directa S.A.S',
-    key: 'fincaDirecta',
+    name: 'Humanizar Systems',
+    key: 'humanizar',
     col: 4,
   },
   {

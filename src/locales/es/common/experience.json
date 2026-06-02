@@ -1,7 +1,7 @@
 {
   "experience.title": "Experiencia Laboral",
   "experience.critertec": "Critertec",
-  "experience.role.critertec": "SysAdmin",
+  "experience.role.critertec": "Administrador de Sistemas (SysAdmin)",
   "experience.dates.critertec": "2024/11 - Actualidad",
   "experience.location.critertec": "Colombia - Antioquia - Medellín",
 
@@ -11,12 +11,12 @@
   "experience.location.humanizar": "Colombia - Antioquia - Medellín",
 
   "experience.fincaDirecta": "Finca Directa S.A.S",
-  "experience.role.fincaDirecta": "CTO / Jefe de sistemas",
+  "experience.role.fincaDirecta": "CTO / Jefe de Sistemas — liderando sistemas en producción",
   "experience.dates.fincaDirecta": "2021/11 - Actualidad",
   "experience.location.fincaDirecta": "Colombia - Antioquia - Medellín",
   
   "experience.indieLevels": "Indie Levels Studio S.A.S",
-  "experience.role.indieLevels": "Desarrollador backend - Senior",
+  "experience.role.indieLevels": "Desarrollador Backend Senior",
   "experience.dates.indieLevels": "2021/08 - Actualidad",
   "experience.location.indieLevels": "Colombia - Antioquia - Medellín",
 

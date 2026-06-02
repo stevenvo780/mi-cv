@@ -1,11 +1,11 @@
 {
   "achievements.title": "Projects",
-  "achievements.description.critertec": "Educational tech agency. Designing and implementing innovative digital solutions with massive impact.",
-  "achievements.description.soyDigital": "Dominican government portal aimed at developing digital competencies for millions of youth, adults, and children.",
-  "achievements.description.indieLevels": "Video game studio based in Medellín, Colombia, with a team of professionals dedicated to high-quality video game development for companies around the world.",
-  "achievements.description.humanizar": "Multi-tenant enterprise SaaS ecosystem: e-commerce (Graf), point-of-sale with DIAN e-invoicing (Sinergia POS), credit fintech (FIAR), and messaging, orchestrated with NestJS microservices.",
+  "achievements.description.critertec": "Educational tech agency. As Systems Administrator, I operate and secure the infrastructure that keeps its digital solutions running in production.",
+  "achievements.description.soyDigital": "Dominican Government portal (INDOTEL) for developing digital skills at national scale. I contributed to building a platform aimed at millions of users.",
+  "achievements.description.indieLevels": "Video game studio in Medellín building titles for clients worldwide. As Senior Backend Developer, I lead the studio's product services and APIs.",
+  "achievements.description.humanizar": "Multi-tenant enterprise SaaS ecosystem I architected end to end: e-commerce (Graf), point-of-sale with DIAN e-invoicing (Sinergia POS), credit fintech (FIAR), and messaging, orchestrated with NestJS microservices.",
   "achievements.description.cafeteriadelcaos": "Cafeteria is an intellectual virtual community on Discord.",
-  "achievements.description.agora": "Distributed AI-agent SaaS platform, solo-built as a 7-service poly-repo: Next.js frontend, agentic Cloud Run backend (~150 tools, multi-LLM: OpenAI/Anthropic/Gemini/DeepSeek), a real-time socket.io hub, and a fleet of ~30 Docker workers running Linux terminals. In production for under $1/month.",
+  "achievements.description.agora": "Distributed AI-agent SaaS platform: a 7-service poly-repo with a Next.js frontend, agentic Cloud Run backend (~150 tools, multi-LLM: OpenAI/Anthropic/Gemini/DeepSeek), a real-time socket.io hub, and a fleet of ~30 Docker workers running Linux terminals. Architecture, backend, AI, frontend, and DevOps end to end. In production for under $1/month.",
   "achievements.description.meraVuelta": "Transportation services application in Antioquia.",
   "achievements.description.emw": "WhatsApp Business marketing-automation platform (NestJS + MySQL + Redis): campaigns and mass messaging.",
   "achievements.description.jarvis": "AI-based virtual assistant."
