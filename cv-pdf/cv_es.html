@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<style>
+  @page { size: A4; margin: 0; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root{
+    --bg:#0b1417; --bg2:#0f1c20; --cream:#f3ece0; --cream-dim:#c9c2b6;
+    --gold:#e0a85e; --gold-ink:#f0c887; --orange:#cf6a3c; --teal:#43b5a6; --teal-ink:#6fd3c4; --violet:#8d7cc0;
+    --ink:#1c2024; --ink-soft:#454b52; --rule:#e3ddd2; --paper:#ffffff;
+    --grad:linear-gradient(110deg,#e0a85e 0%,#cf6a3c 42%,#43b5a6 100%);
+  }
+  html,body{ width:210mm; height:297mm; }
+  body{
+    font-family:'Inter',-apple-system,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;
+    color:var(--ink); background:var(--paper);
+    -webkit-print-color-adjust:exact; print-color-adjust:exact;
+    font-size:9.4pt; line-height:1.42; letter-spacing:.005em;
+  }
+  .page{ width:210mm; height:297mm; display:grid; grid-template-columns:71mm 1fr; }
+
+  /* ---------- SIDEBAR ---------- */
+  .side{ background:var(--bg); color:var(--cream); padding:13mm 8.5mm 12mm; position:relative; }
+  .side::before{ content:""; position:absolute; top:0; left:0; right:0; height:2.4mm; background:var(--grad); }
+  .mark{ display:flex; align-items:center; gap:3mm; margin-bottom:9mm; }
+  .mark svg{ width:13mm; height:13mm; flex:none; }
+  .mark .mk-name{ font-weight:700; font-size:11pt; line-height:1.12; color:var(--cream); letter-spacing:.02em; }
+  .mark .mk-sub{ font-size:7.2pt; color:var(--teal-ink); letter-spacing:.16em; text-transform:uppercase; margin-top:1mm; }
+
+  .s-block{ margin-bottom:7.5mm; }
+  .s-title{ font-size:8pt; letter-spacing:.22em; text-transform:uppercase; color:var(--gold); font-weight:700; margin-bottom:3mm; padding-bottom:1.6mm; border-bottom:.3pt solid rgba(224,168,94,.32); }
+  .c-item{ display:flex; align-items:flex-start; gap:2.6mm; margin-bottom:2.4mm; font-size:8.4pt; color:var(--cream); word-break:break-word; }
+  .c-item svg{ width:3.6mm; height:3.6mm; margin-top:.4mm; flex:none; fill:var(--teal-ink); }
+  .c-item a{ color:var(--cream); text-decoration:none; }
+
+  .cap{ font-size:8.6pt; color:var(--cream); margin-bottom:2.5mm; padding-left:4mm; position:relative; }
+  .cap::before{ content:""; position:absolute; left:0; top:1.6mm; width:2mm; height:2mm; border-radius:50%; background:var(--grad); }
+  .cap small{ display:block; color:var(--cream-dim); font-size:7.3pt; letter-spacing:.01em; margin-top:.2mm; }
+
+  .ed-item{ margin-bottom:3mm; }
+  .ed-item b{ font-size:8.6pt; color:var(--cream); font-weight:600; display:block; }
+  .ed-item span{ font-size:7.6pt; color:var(--cream-dim); }
+  .lang{ display:flex; justify-content:space-between; font-size:8.3pt; color:var(--cream); margin-bottom:1.8mm; }
+  .lang span{ color:var(--teal-ink); font-size:7.7pt; }
+
+  /* ---------- MAIN ---------- */
+  .main{ padding:13mm 11.5mm 12mm; background:var(--paper); }
+  .hd{ margin-bottom:5mm; }
+  .hd h1{ font-size:23pt; font-weight:800; letter-spacing:-.01em; color:var(--bg); line-height:1.02; }
+  .hd .role{ font-size:11.5pt; color:var(--teal); font-weight:600; margin-top:1.4mm; letter-spacing:.01em; }
+  .hd .loc{ font-size:8.6pt; color:var(--ink-soft); margin-top:1.6mm; }
+  .hd .bar{ height:1.5mm; width:100%; background:var(--grad); border-radius:2px; margin-top:3.4mm; }
+
+  .m-title{ font-size:9.4pt; font-weight:800; letter-spacing:.16em; text-transform:uppercase; color:var(--bg); display:flex; align-items:center; gap:3mm; margin:5.5mm 0 3mm; }
+  .m-title::after{ content:""; flex:1; height:.4pt; background:var(--rule); }
+  .m-title .dot{ width:2.4mm; height:2.4mm; border-radius:50%; background:var(--grad); flex:none; }
+
+  .profile{ font-size:9.3pt; color:var(--ink-soft); line-height:1.5; text-align:justify; }
+
+  .exp{ margin-bottom:3.2mm; }
+  .exp .row{ display:flex; justify-content:space-between; align-items:baseline; gap:4mm; }
+  .exp .co{ font-size:9.9pt; font-weight:700; color:var(--bg); }
+  .exp .co .at{ font-weight:600; color:var(--orange); }
+  .exp .dt{ font-size:7.8pt; color:var(--ink-soft); font-weight:600; white-space:nowrap; letter-spacing:.02em; }
+  .exp .desc{ font-size:8.7pt; color:var(--ink-soft); line-height:1.4; margin-top:.6mm; }
+  .prev{ font-size:8.4pt; color:var(--ink-soft); font-style:italic; margin-top:1.5mm; }
+
+  .proj{ margin-bottom:2.8mm; }
+  .proj b{ font-size:9.3pt; color:var(--bg); font-weight:700; }
+  .proj b .tag{ font-size:7.3pt; color:#fff; background:var(--teal); padding:.3mm 1.6mm; border-radius:3px; margin-left:1.6mm; font-weight:700; letter-spacing:.04em; vertical-align:middle; }
+  .proj .pd{ font-size:8.6pt; color:var(--ink-soft); line-height:1.4; }
+</style>
+</head>
+<body>
+<div class="page">
+  <!-- ================= SIDEBAR ================= -->
+  <aside class="side">
+    <div class="mark">
+      <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <defs>
+          <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#e0a85e"/><stop offset=".45" stop-color="#cf6a3c"/><stop offset="1" stop-color="#43b5a6"/>
+          </linearGradient>
+        </defs>
+        <circle cx="50" cy="50" r="46" fill="none" stroke="url(#g)" stroke-width="3.5"/>
+        <path d="M30 50 C30 34 50 34 50 50 C50 66 70 66 70 50 C70 34 50 34 50 50 C50 66 30 66 30 50 Z" fill="none" stroke="url(#g)" stroke-width="3.2"/>
+        <circle cx="50" cy="50" r="3.2" fill="#f0c887"/>
+      </svg>
+      <div>
+        <div class="mk-name">Steven<br>Vallejo Ortiz</div>
+        <div class="mk-sub">Filósofo · Informático</div>
+      </div>
+    </div>
+
+    <div class="s-block">
+      <div class="s-title">Contacto</div>
+      <div class="c-item"><svg viewBox="0 0 24 24"><path d="M2 4h20v16H2z" fill="none"/><path d="M2 4h20v16H2V4zm2 2v.4l8 5 8-5V6H4zm16 3-8 5-8-5v9h16V9z"/></svg><span>stevenvallejo780@gmail.com</span></div>
+      <div class="c-item"><svg viewBox="0 0 24 24"><path d="M6.6 10.8a15 15 0 0 0 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.2.4 2.4.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1A17 17 0 0 1 3 4c0-.6.4-1 1-1h3.6c.6 0 1 .4 1 1 0 1.2.2 2.4.6 3.6.1.3 0 .7-.2 1l-2.4 2.2z"/></svg><span>+57 304 637 4368 · WhatsApp</span></div>
+      <div class="c-item"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm6.9 6h-2.5a15 15 0 0 0-1.3-3.4A8 8 0 0 1 18.9 8zM12 4c.8 1 1.5 2.4 1.9 4h-3.8C10.5 6.4 11.2 5 12 4zM4.3 14a8 8 0 0 1 0-4h2.9a17 17 0 0 0 0 4H4.3zm.8 2h2.5c.3 1.2.8 2.4 1.3 3.4A8 8 0 0 1 5.1 16zM7.6 8H5.1a8 8 0 0 1 3.8-3.4C8.4 5.6 7.9 6.8 7.6 8zM12 20c-.8-1-1.5-2.4-1.9-4h3.8c-.4 1.6-1.1 3-1.9 4zm2.3-6h-4.6a15 15 0 0 1 0-4h4.6a15 15 0 0 1 0 4zm.5 5.4c.5-1 1-2.2 1.3-3.4h2.5a8 8 0 0 1-3.8 3.4zM16.8 14a17 17 0 0 0 0-4h2.9a8 8 0 0 1 0 4h-2.9z"/></svg><span>stevenvallejo.com · services.stevenvallejo.com</span></div>
+      <div class="c-item"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-3.2 19.5c.5.1.7-.2.7-.5v-1.7c-2.8.6-3.4-1.3-3.4-1.3-.5-1.2-1.1-1.5-1.1-1.5-.9-.6.1-.6.1-.6 1 .1 1.5 1 1.5 1 .9 1.5 2.3 1.1 2.9.8.1-.6.3-1.1.6-1.4-2.2-.3-4.6-1.1-4.6-5 0-1.1.4-2 1-2.7-.1-.3-.4-1.3.1-2.7 0 0 .8-.3 2.7 1a9.3 9.3 0 0 1 4.9 0c1.9-1.3 2.7-1 2.7-1 .5 1.4.2 2.4.1 2.7.6.7 1 1.6 1 2.7 0 3.9-2.4 4.7-4.6 5 .3.3.7 1 .7 2v2.9c0 .3.2.6.7.5A10 10 0 0 0 12 2z"/></svg><span>github.com/stevenvo780</span></div>
+      <div class="c-item"><svg viewBox="0 0 24 24"><path d="M4.98 3.5A2.5 2.5 0 1 1 5 8.5a2.5 2.5 0 0 1-.02-5zM3 9h4v12H3zM9 9h3.8v1.7h.1c.5-1 1.8-2 3.7-2 4 0 4.7 2.6 4.7 6V21h-4v-5.3c0-1.3 0-2.9-1.8-2.9s-2 1.4-2 2.8V21H9z"/></svg><span>linkedin.com/in/steven-vallejo</span></div>
+    </div>
+
+    <div class="s-block">
+      <div class="s-title">Capacidades</div>
+      <div class="cap">IA agéntica, LLMs &amp; RAG<small>agentes que ejecutan acciones, no solo chat</small></div>
+      <div class="cap">Backend &amp; APIs<small>NestJS / Node · microservicios · Postgres</small></div>
+      <div class="cap">Arquitectura distribuida<small>sistemas multi-tenant en producción</small></div>
+      <div class="cap">Cloud · DevOps · Linux<small>Docker · Cloud Run · infraestructura propia</small></div>
+      <div class="cap">Frontend<small>Next.js / React · PWA · SEO</small></div>
+      <div class="cap">Automatización de procesos<small>OCR · integraciones · harnesses con IA</small></div>
+    </div>
+
+    <div class="s-block">
+      <div class="s-title">Educación</div>
+      <div class="ed-item"><b>Filosofía</b><span>Universidad de Antioquia</span></div>
+      <div class="ed-item"><b>Técnico en software</b><span>+ trayectoria autodidacta (10+ años)</span></div>
+    </div>
+
+    <div class="s-block" style="margin-bottom:0">
+      <div class="s-title">Idiomas</div>
+      <div class="lang">Español <span>Nativo</span></div>
+      <div class="lang">Inglés <span>Técnico (lect./escr.)</span></div>
+    </div>
+  </aside>
+
+  <!-- ================= MAIN ================= -->
+  <main class="main">
+    <header class="hd">
+      <h1>Steven Vallejo Ortiz</h1>
+      <div class="role">Filósofo e Informático · Ingeniero de Software</div>
+      <div class="loc">Medellín, Colombia · 10+ años de sistemas en producción</div>
+      <div class="bar"></div>
+    </header>
+
+    <section>
+      <div class="m-title"><span class="dot"></span>Perfil</div>
+      <p class="profile">Filósofo de formación analítica (Universidad de Antioquia) e informático desde la infancia, con más de 10 años construyendo y operando software en producción. Mi ventaja no es una lista de tecnologías —manejo el ecosistema moderno completo y elijo la herramienta según el problema— sino entender a fondo los sistemas y la IA, y trabajar con IA agéntica que multiplica lo que se puede construir y operar. He ejercido como CTO / Jefe de Sistemas, Backend Senior y SysAdmin, y fundé un ecosistema SaaS empresarial.</p>
+    </section>
+
+    <section>
+      <div class="m-title"><span class="dot"></span>Experiencia</div>
+
+      <div class="exp">
+        <div class="row"><div class="co">Finca Directa S.A.S <span class="at">· CTO / Jefe de Sistemas</span></div><div class="dt">2021 — Act.</div></div>
+        <div class="desc">Lidero los sistemas en producción y construí un harness de automatización empresarial: OCR de facturas, descarga de extractos bancarios, clasificación de correos y sincronización a CRM.</div>
+      </div>
+
+      <div class="exp">
+        <div class="row"><div class="co">Humanizar Systems <span class="at">· Fundador / Lead Developer</span></div><div class="dt">2022 — Act.</div></div>
+        <div class="desc">Arquitecté de extremo a extremo un ecosistema SaaS empresarial multi-tenant: e-commerce (Graf), POS con facturación electrónica DIAN (Sinergia POS), fintech de créditos (FIAR) y mensajería, en microservicios NestJS.</div>
+      </div>
+
+      <div class="exp">
+        <div class="row"><div class="co">Critertec <span class="at">· Administrador de Sistemas</span></div><div class="dt">2024 — Act.</div></div>
+        <div class="desc">Opero y aseguro la infraestructura que sostiene las soluciones digitales de la agencia en producción.</div>
+      </div>
+
+      <div class="exp">
+        <div class="row"><div class="co">Indie Levels Studio <span class="at">· Desarrollador Backend Senior</span></div><div class="dt">2021 — Act.</div></div>
+        <div class="desc">Lidero los servicios y APIs de los productos de un estudio de videojuegos con clientes en todo el mundo.</div>
+      </div>
+
+      <div class="exp">
+        <div class="row"><div class="co">Soy Digital · INDOTEL <span class="at">· Gobierno (Rep. Dominicana)</span></div><div class="dt">2023</div></div>
+        <div class="desc">Frontend con soporte offline y sincronización automática para una plataforma nacional de habilitación digital orientada a millones de usuarios.</div>
+      </div>
+
+      <div class="prev">Trayectoria previa: Full Stack en ZENIT, INS e IQpixels, y freelance en infraestructura, web y videojuegos desde 2014.</div>
+    </section>
+
+    <section>
+      <div class="m-title"><span class="dot"></span>Proyectos destacados</div>
+
+      <div class="proj">
+        <b>Ágora<span class="tag">INSIGNIA</span></b>
+        <div class="pd">Plataforma SaaS distribuida de agentes IA (poly-repo de 7 servicios): motor agéntico de ~150 herramientas, multi-LLM (OpenAI/Anthropic/Gemini/DeepSeek), hub en tiempo real y flota de ~30 workers Docker. Arquitectura, backend, IA, frontend y DevOps de extremo a extremo, en producción a &lt;1 USD/mes.</div>
+      </div>
+
+      <div class="proj">
+        <b>ST — lenguaje de lógica formal ejecutable</b>
+        <div class="pd">Lenguaje publicado en npm con SAT solver propio (CDCL), teoría de tipos y más de 6.000 tests. Cruce de filosofía analítica e ingeniería.</div>
+      </div>
+    </section>
+  </main>
+</div>
+</body>
+</html>
