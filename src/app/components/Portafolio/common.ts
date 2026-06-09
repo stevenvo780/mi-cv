@@ -40,6 +40,13 @@ export const portfolioCategories: PortfolioCategory[] = [
     projects: [
       // --- Visibles: lo más ambicioso/pulcro y sistemas en producción ---
       {
+        name: 'portfolio.project.symploqueCrm',
+        link: 'https://github.com/stevenvo780/symploque-crm',
+        description: 'portfolio.description.symploqueCrm',
+        icon: faChartLine,
+        important: true,
+      },
+      {
         name: 'portfolio.project.stLanguage',
         link: 'https://github.com/stevenvo780/ST',
         description: 'portfolio.description.stLanguage',
@@ -50,6 +57,13 @@ export const portfolioCategories: PortfolioCategory[] = [
         name: 'portfolio.project.agora',
         link: 'https://agora.elenxos.com',
         description: 'portfolio.description.agora',
+        icon: faReact,
+        important: true,
+      },
+      {
+        name: 'portfolio.project.mcpDelegateAgents',
+        link: 'https://github.com/stevenvo780/MCP-delegate-agents',
+        description: 'portfolio.description.mcpDelegateAgents',
         icon: faRobot,
         important: true,
       },

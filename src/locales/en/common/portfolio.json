@@ -9,6 +9,8 @@
   "portfolio.mathAndScience": "Mathematics and Sciences",
   "portfolio.games": "Games",
   "portfolio.literatureAndPhilosophy": "Literature and Philosophy",
+  "portfolio.project.symploqueCrm": "Symploque CRM SaaS",
+  "portfolio.description.symploqueCrm": "Custom full-stack CRM SaaS with authentication, PostgreSQL (Neon), and premium UI.",
   "portfolio.project.critertec": "Critertec",
   "portfolio.description.critertec": "Educational and technological agency. Designing and implementing innovative digital solutions.",
   "portfolio.project.humanizar": "Humanizar Systems",

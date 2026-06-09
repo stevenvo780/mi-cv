@@ -24,7 +24,11 @@ export default function ContactInfo() {
               <FontAwesomeIcon icon={contact.icon} className="me-2" />
               <a
                 href={contact.url}
-                target={contact.type === 'linkedin' ? '_blank' : undefined}
+                target={
+                  contact.type === 'linkedin' || contact.type === 'codersrank'
+                    ? '_blank'
+                    : undefined
+                }
                 rel="noopener noreferrer"
                 className="text-decoration-none"
               >
