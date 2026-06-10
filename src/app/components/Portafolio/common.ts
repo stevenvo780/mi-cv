@@ -82,6 +82,20 @@ export const portfolioCategories: PortfolioCategory[] = [
         important: true,
       },
       {
+        name: 'portfolio.project.agoraBackend',
+        link: 'https://github.com/stevenvo780/agora-backend',
+        description: 'portfolio.description.agoraBackend',
+        icon: faNodeJs,
+        important: true,
+      },
+      {
+        name: 'portfolio.project.helenikos',
+        link: 'https://github.com/stevenvo780/helenikos',
+        description: 'portfolio.description.helenikos',
+        icon: faGraduationCap,
+        important: true,
+      },
+      {
         name: 'portfolio.project.graf',
         link: 'https://totalpedidosv2-client.vercel.app',
         description: 'portfolio.description.graf',
@@ -129,6 +143,20 @@ export const portfolioCategories: PortfolioCategory[] = [
         link: 'https://github.com/stevenvo780/jarvisIAV2',
         description: 'portfolio.description.jarvisIaV2',
         icon: faRobot,
+        important: false,
+      },
+      {
+        name: 'portfolio.project.localLlmChat',
+        link: 'https://github.com/stevenvo780/IA',
+        description: 'portfolio.description.localLlmChat',
+        icon: faRobot,
+        important: false,
+      },
+      {
+        name: 'portfolio.project.warehouseManagement',
+        link: 'https://github.com/stevenvo780/warehouse-management',
+        description: 'portfolio.description.warehouseManagement',
+        icon: faStore,
         important: false,
       },
       {
