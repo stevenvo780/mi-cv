@@ -5,6 +5,7 @@ import {
 import {
   faEnvelope,
   faLink,
+  faBookOpen,
 } from '@fortawesome/free-solid-svg-icons';
 
 export type Contact = {
@@ -26,6 +27,12 @@ export const contacts: Contact[] = [
     value: 'LinkedIn',
     icon: faLinkedin,
     url: 'https://www.linkedin.com/in/steven-vallejo/'
+  },
+  {
+    type: 'portfolio',
+    value: 'Blog · Abstracción',
+    icon: faBookOpen,
+    url: 'https://blog.stevenvallejo.com'
   },
   {
     type: 'codersrank',
