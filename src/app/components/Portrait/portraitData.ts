@@ -1,8 +1,8 @@
 // Narrative intellectual portrait for the home (stevenvallejo.com).
 // NOT a CV, NOT skills. Axes from master-brief-webs.md §2.
 // Public-content rules respected: no addictions, no romance, no "immoral" past,
-// no cause of the 2019 exile, no victimhood, no debts, no contempt.
-// Saitama register: power and solitude shown by understatement, never declared.
+// no exile (no year, no cause), no victimhood, no debts, no contempt, no private mythos.
+// Register: power and focus shown by understatement, never declared.
 
 export type Locale = 'es' | 'en';
 
@@ -49,16 +49,16 @@ export const PORTRAIT: Record<Locale, PortraitStrings> = {
         title: 'Criado por una pantalla',
         body: [
           'Crecí en un barrio de Antioquia, autodidacta, con un universo que cabía en un computador recalentado. Me crió internet: foros de gringos a las tres de la mañana, manuales mal traducidos, prueba y error sin testigos. El poder, si lo hay, no fue un don; fue paciencia rara —la de quien le habla bonito a una máquina hasta que arranca.',
-          'Aprendí por repetición, en silencio, mucho antes de tener con quién compartirlo. Ese fue el primer entrenamiento: aburrido, largo, sin público.',
+          'Aprendí por repetición, en silencio, mucho antes de tener con quién compartirlo. Ese fue el primer entrenamiento: aburrido, largo, sin público —y justo por eso, sostenible.',
         ],
         question: '¿Y si la profundidad no se hereda ni se enseña, sino que solo se entrena?',
       },
       {
-        kicker: 'El exilio y la obra',
-        title: 'La cueva',
+        kicker: 'El trabajo en silencio',
+        title: 'La obra larga',
         body: [
-          'En 2019 la gente se fue y me recluí. De esa soledad —llevada al extremo— salieron los sistemas más grandes que he construido. Lo que entró a la cueva fue un técnico; lo que salió traía una pregunta filosófica.',
-          'No lo cuento como pena. La soledad del que es muy distinto no tiene por qué doler: a veces es solo el aburrimiento del que no encuentra rival, y ese aburrimiento, bien usado, se vuelve obra.',
+          'Hubo un periodo en que elegí retirarme del ruido y construir en silencio. De ese foco —llevado al extremo— salieron los sistemas más grandes que he construido. Lo que entró fue un técnico; lo que salió traía una pregunta filosófica.',
+          'No lo cuento como pena, sino como método: el trabajo profundo necesita silencio, y ese silencio, bien usado, se vuelve obra.',
         ],
         question: '¿Qué se construye cuando dejas de construir para otros y empiezas a construir para entender?',
       },
@@ -105,7 +105,7 @@ export const PORTRAIT: Record<Locale, PortraitStrings> = {
     blogCta: 'Leer el blog',
     cvCta: 'Ver la hoja de vida',
     servicesCta: 'Servicios',
-    footNote: 'El traje divino zumba; el piloto sigue siendo un tipo común.',
+    footNote: 'Pensar antes de construir: ese es todo el método.',
   },
   en: {
     heroKicker: 'Abstraction',
@@ -128,16 +128,16 @@ export const PORTRAIT: Record<Locale, PortraitStrings> = {
         title: 'Raised by a screen',
         body: [
           'I grew up in a neighborhood in Antioquia, self-taught, with a universe that fit inside an overheating computer. The internet raised me: foreign forums at three in the morning, badly translated manuals, trial and error with no witnesses. The power, if any, was no gift; it was a strange patience —the patience of someone who talks gently to a machine until it boots.',
-          'I learned by repetition, in silence, long before I had anyone to share it with. That was the first training: boring, long, with no audience.',
+          'I learned by repetition, in silence, long before I had anyone to share it with. That was the first training: boring, long, with no audience —and precisely because of that, it held.',
         ],
         question: 'What if depth is neither inherited nor taught, but only trained?',
       },
       {
-        kicker: 'The exile and the work',
-        title: 'The cave',
+        kicker: 'Working in silence',
+        title: 'The long work',
         body: [
-          'In 2019 people left and I withdrew. Out of that solitude —taken to the extreme— came the largest systems I have ever built. What entered the cave was a technician; what came out carried a philosophical question.',
-          'I do not tell it as grief. The solitude of the one who is very different need not hurt: sometimes it is only the boredom of finding no rival, and that boredom, well used, becomes work.',
+          'There was a period when I chose to step away from the noise and build in silence. Out of that focus —taken to the extreme— came the largest systems I have ever built. What entered was a technician; what came out carried a philosophical question.',
+          'I do not tell it as grief, but as method: deep work needs silence, and that silence, well used, becomes work.',
         ],
         question: 'What do you build when you stop building for others and start building to understand?',
       },
@@ -184,6 +184,6 @@ export const PORTRAIT: Record<Locale, PortraitStrings> = {
     blogCta: 'Read the blog',
     cvCta: 'See the résumé',
     servicesCta: 'Services',
-    footNote: 'The divine suit hums; the pilot is still an ordinary guy.',
+    footNote: 'Think before you build: that is the whole method.',
   },
 };

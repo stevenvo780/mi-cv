@@ -44,8 +44,11 @@ export default function CustomNavbar() {
             <Nav.Link as={Link} href={`/${locale}`}>
               {t('navbar.home')}
             </Nav.Link>
-            <Nav.Link as={Link} href={`/${locale}/cv`}>
+            <Nav.Link href="https://informatico.stevenvallejo.com" target="_blank" rel="noopener noreferrer">
               {t('navbar.cv')}
+            </Nav.Link>
+            <Nav.Link href="https://filosofo.stevenvallejo.com" target="_blank" rel="noopener noreferrer">
+              {locale === 'es' ? 'Filosofía' : 'Philosophy'}
             </Nav.Link>
             <Nav.Link href="https://blog.stevenvallejo.com" target="_blank" rel="noopener noreferrer">
               {t('navbar.blog')}
@@ -72,21 +75,6 @@ export default function CustomNavbar() {
               {t('navbar.services')}
               <span aria-hidden="true">↗</span>
             </a>
-            <Link
-              href={`/${locale}/cv`}
-              className="btn btn-outline-primary"
-              style={{
-                height: '30px',
-                borderRadius: '10px',
-                fontSize: '12px',
-                fontWeight: 600,
-                padding: '0 12px',
-                display: 'inline-flex',
-                alignItems: 'center',
-              }}
-            >
-              CV
-            </Link>
             <button
               onClick={toggleLocale}
               className="btn btn-primary"

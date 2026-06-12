@@ -1,7 +1,6 @@
 'use client';
 
 import { useParams } from 'next/navigation';
-import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRight, faFilePdf } from '@fortawesome/free-solid-svg-icons';
@@ -40,10 +39,10 @@ export default function Portrait() {
             <p className={styles.heroLead}>{t.heroLead}</p>
             <p className={styles.epigraph}>{t.epigraph}</p>
             <div className={styles.heroCtas}>
-              <Link href={`/${locale}/cv`} className={styles.ctaPrimary}>
+              <a href="https://informatico.stevenvallejo.com" target="_blank" rel="noopener noreferrer" className={styles.ctaPrimary}>
                 <FontAwesomeIcon icon={faFilePdf} />
                 {t.cvCta}
-              </Link>
+              </a>
               <a
                 href="https://blog.stevenvallejo.com"
                 target="_blank"
