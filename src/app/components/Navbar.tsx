@@ -6,6 +6,7 @@ import Navbar from 'react-bootstrap/Navbar';
 import Nav from 'react-bootstrap/Nav';
 import Container from 'react-bootstrap/Container';
 import { useTranslate } from '@/utils/translate';
+import BrandLogo from './BrandLogo';
 
 export default function CustomNavbar() {
   const t = useTranslate();
@@ -29,8 +30,13 @@ export default function CustomNavbar() {
   return (
     <Navbar expand="lg" className="sticky-top">
       <Container>
-        <Navbar.Brand as={Link} href={`/${locale}`}>
-          {t('header.name')}
+        <Navbar.Brand
+          as={Link}
+          href={`/${locale}`}
+          className="d-inline-flex align-items-center gap-2"
+        >
+          <BrandLogo size={30} title={t('header.name')} />
+          <span>{t('header.name')}</span>
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="navbar-nav" />
         <Navbar.Collapse id="navbar-nav">

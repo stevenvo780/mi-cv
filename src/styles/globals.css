@@ -26,7 +26,7 @@
 
   /* ── Typography ── */
   --text:      #f3ece0;
-  --text-soft: #cfc8ba;
+  --text-soft: #c9c2b6;
   --muted:     #93999a;
 
   /* ── Gradient swirl (warm → cool) ── */
@@ -413,12 +413,17 @@ a:focus,
 }
 
 .navbar-brand {
+  font-weight: 800;
+  font-size: 1.1rem;
+  color: var(--text) !important;
+}
+
+/* Gradient ink applies only to the wordmark text, never the SVG logo. */
+.navbar-brand span {
   background: var(--grad);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  font-weight: 800;
-  font-size: 1.1rem;
 }
 
 .navbar .navbar-nav .nav-link {

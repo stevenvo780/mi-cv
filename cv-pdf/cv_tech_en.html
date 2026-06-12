@@ -183,7 +183,7 @@
     <div class="s-block" style="margin-bottom:0">
       <div class="s-title">Languages</div>
       <div class="lang">Spanish <span>Native</span></div>
-      <div class="lang">English <span>strong technical reading/writing · conversational improving</span></div>
+      <div class="lang">English <span>technical English (written) · B1 · conversational in progress</span></div>
     </div>
   </aside>
 
@@ -237,7 +237,7 @@
 
       <div class="proj">
         <b>Ágora — AI agent platform</b> · agora.elenxos.com
-        <div class="pd">Designed and ran the full architecture: an Express/NestJS microservices backend on Cloud Run, multi-LLM orchestration (OpenAI/Anthropic/Gemini/DeepSeek/xAI) with bring-your-own-key, real-time communication (socket.io) and execution in Docker workers. Built the engine that lets agents invoke 40+ registered tools and carry out real actions, not just return text, with an AES-256-GCM vault and an MCP server. Deployed and running.</div>
+        <div class="pd">Designed and implemented the full architecture as a poly-repo of separate services (Next.js frontend, Express/NestJS backend on Cloud Run, a socket.io hub and Docker workers) to isolate concerns and deploy each part independently. Design decisions: a tool registry so agents carry out real actions (not just text), bring-your-own-key, contracts validated with Zod, secrets encrypted with AES-256-GCM, and a custom MCP server. Deployed and running.</div>
       </div>
 
       <div class="proj">
