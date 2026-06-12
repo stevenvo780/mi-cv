@@ -1,16 +1,25 @@
 'use client';
 import { useState } from 'react';
-import { Container, Row, Col, ProgressBar, Button, Modal } from 'react-bootstrap';
+import { Container, Row, Col, Button, Modal, Badge } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { tools } from './common';
+import { ToolItem } from './types';
 import { useTranslate } from '@/utils/translate';
-import { faCoins } from '@fortawesome/free-solid-svg-icons';
 
-const getProgressBarVariant = (level: number) => {
-  if (level > 85) return 'success';
-  if (level > 70) return 'info';
-  if (level > 50) return 'warning';
-  return 'danger';
+type Tier = 'advanced' | 'intermediate' | 'familiar';
+
+const TIER_ORDER: Tier[] = ['advanced', 'intermediate', 'familiar'];
+
+function getTier(level: number): Tier {
+  if (level >= 80) return 'advanced';
+  if (level >= 55) return 'intermediate';
+  return 'familiar';
+}
+
+const TIER_VARIANT: Record<Tier, string> = {
+  advanced: 'success',
+  intermediate: 'info',
+  familiar: 'secondary',
 };
 
 function getYearsOfExperience(startDate: string): number {
@@ -24,6 +33,18 @@ function getYearsOfExperience(startDate: string): number {
     return diff - 1;
   }
   return diff;
+}
+
+function groupByTier(items: ToolItem[]): Record<Tier, ToolItem[]> {
+  const groups: Record<Tier, ToolItem[]> = {
+    advanced: [],
+    intermediate: [],
+    familiar: [],
+  };
+  items.forEach((item) => {
+    groups[getTier(item.level)].push(item);
+  });
+  return groups;
 }
 
 export default function Tools() {
@@ -41,40 +62,48 @@ export default function Tools() {
     setSelectedCategory(null);
   };
 
+  const renderItem = (item: ToolItem, i: number) => {
+    const years = getYearsOfExperience(item.startedAt);
+    return (
+      <li key={i} className="mb-2 d-flex align-items-center">
+        {item.icon && <FontAwesomeIcon icon={item.icon} className="me-2" />}
+        <span>
+          {t(`tools.item.${item.name}`)}
+          {years > 0 && (
+            <span className="text-muted">
+              {' '}
+              ({years} {t('tools.years')})
+            </span>
+          )}
+        </span>
+      </li>
+    );
+  };
+
+  const renderTiers = (items: ToolItem[]) => {
+    const groups = groupByTier(items);
+    return TIER_ORDER.map((tier) =>
+      groups[tier].length === 0 ? null : (
+        <div key={tier} className="mb-3">
+          <Badge bg={TIER_VARIANT[tier]} className="mb-2">
+            {t(`tools.level.${tier}`)}
+          </Badge>
+          <ul className="list-unstyled mb-0">{groups[tier].map(renderItem)}</ul>
+        </div>
+      ),
+    );
+  };
+
   return (
     <section className="mb-5">
       <Container>
         <h3 className="border-bottom pb-2 mb-4">{t('tools.title')}</h3>
-        <p className="mb-4">{t("tools.tooltip.info")}</p>
+        <p className="mb-4">{t('tools.tooltip.info')}</p>
         <Row>
           {tools.map((tool, index) => (
             <Col md={4} key={index} className="mb-4">
               <h4 className="h5">{t(tool.category)}:</h4>
-              <ul className="list-unstyled">
-                {tool.items.slice(0, 6).map((item, i) => (
-                  <li key={i} className="mb-3">
-                    <div className="d-flex align-items-center justify-content-between">
-                      <div className="d-flex align-items-center">
-                        {item.icon && (
-                          <FontAwesomeIcon icon={item.icon} className="me-2" />
-                        )}
-                        <span>
-                          {t(`tools.item.${item.name}`)} (
-                          {getYearsOfExperience(item.startedAt)} {t("tools.years")})
-                        </span>
-                      </div>
-                      {item.level > 85 && (
-                        <FontAwesomeIcon icon={faCoins} className="text-warning me-2" />
-                      )}
-                    </div>
-                    <ProgressBar
-                      now={item.level}
-                      label={`${item.level}%`}
-                      variant={getProgressBarVariant(item.level)}
-                    />
-                  </li>
-                ))}
-              </ul>
+              {renderTiers(tool.items.slice(0, 6))}
               <div className="mb-3">
                 {tool.items.length > 6 && (
                   <Button variant="outline-primary" onClick={() => handleOpenModal(tool)}>
@@ -105,35 +134,7 @@ export default function Tools() {
             {selectedCategory && t(selectedCategory.category)}
           </Modal.Title>
         </Modal.Header>
-        <Modal.Body>
-          {selectedCategory && (
-            <ul className="list-unstyled">
-              {selectedCategory.items.map((item, i) => (
-                <li key={i} className="mb-3">
-                  <div className="d-flex align-items-center justify-content-between">
-                    <div className="d-flex align-items-center">
-                      {item.icon && (
-                        <FontAwesomeIcon icon={item.icon} className="me-2" />
-                      )}
-                      <span>
-                        {t(`tools.item.${item.name}`)} (
-                        {getYearsOfExperience(item.startedAt)} {t("tools.years")})
-                      </span>
-                    </div>
-                    {item.level > 85 && (
-                      <FontAwesomeIcon icon={faCoins} className="text-warning me-2" />
-                    )}
-                  </div>
-                  <ProgressBar
-                    now={item.level}
-                    label={`${item.level}%`}
-                    variant={getProgressBarVariant(item.level)}
-                  />
-                </li>
-              ))}
-            </ul>
-          )}
-        </Modal.Body>
+        <Modal.Body>{selectedCategory && renderTiers(selectedCategory.items)}</Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleCloseModal}>
             {t('tools.close') || 'Cerrar'}

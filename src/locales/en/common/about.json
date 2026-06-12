@@ -1,0 +1,14 @@
+{
+  "about.title": "Who I am",
+  "about.lead": "I am Steven Vallejo Ortiz: a philosopher and a software engineer. I work across two worlds that, to me, are really one: building systems that work, and understanding why they should exist at all. I have been developing software for over ten years, and at the same time I study philosophy at the Universidad de Antioquia.",
+  "about.p1": "The way I work starts from a simple idea: think before you build. Before writing a line of code I want to understand the real problem, its limits and its consequences. Philosophy gave me the method —to analyze, to define precisely, to tell the necessary from the incidental— and engineering gave me the place where that method becomes something tangible that people use every day.",
+  "about.p2": "On the technical side I design and build backend systems: microservice architectures, APIs, process automation, and the integration of language models into real production systems. I have owned infrastructure, platforms that bill and operate, and teams. I am not interested in technology for its own sake; I care that it solves something concrete and that it holds up over time.",
+  "about.p3": "On the philosophical side I work from formal logic and analytic philosophy: epistemology, philosophy of mind and of artificial intelligence, ethics, and argumentation. To me these are not separate from engineering. Symbolic logic, type theory, and rigorous reasoning are the same tools you use to build correct software. Thinking well and programming well are, in the end, the same discipline.",
+  "about.p4": "I started programming very young, and for years building was also a refuge: a place where effort translates directly into result. I learned to collaborate and to understand people by moderating online communities of thousands, where what matters is not the code but the conversation. I have always been quite different from those around me, and that distance, far from weighing on me, became the angle from which I see things: abstraction as a way of looking.",
+  "about.p5": "I reread Plato often. In the Gorgias there is a question that stays with me: it is not enough to know how to persuade or to execute, you have to know toward what end. Philosophy, for me, is a method and also a way of putting things in order: a way of building with meaning. That is what I try to bring to every project.",
+  "about.cv.title": "Download CV",
+  "about.cv.tech.es": "Technical CV (Spanish)",
+  "about.cv.tech.en": "Technical CV (English)",
+  "about.cv.filo.es": "Philosophy CV (Spanish)",
+  "about.cv.filo.en": "Philosophy CV (English)"
+}

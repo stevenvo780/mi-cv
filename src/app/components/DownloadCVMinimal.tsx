@@ -10,7 +10,7 @@ export default function DownloadCVMinimal() {
     setLang(path.startsWith('/es') ? 'es' : 'en');
   }, []);
 
-  const href = lang === 'es' ? '/pdf/CV_es.pdf' : '/pdf/CV_en.pdf';
+  const href = lang === 'es' ? '/pdf/CV_tech_es.pdf' : '/pdf/CV_tech_en.pdf';
 
   return (
     <div style={{ marginTop: '0' }}>

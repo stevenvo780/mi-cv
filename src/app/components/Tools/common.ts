@@ -25,6 +25,9 @@ import {
   faNetworkWired,
   faImage,
   faCloud,
+  faBookOpen,
+  faScaleBalanced,
+  faSitemap,
 } from '@fortawesome/free-solid-svg-icons';
 import { ToolCategory } from './types';
 
@@ -226,5 +229,23 @@ export const tools: ToolCategory[] = [
       { name: 'capturaDeDatos', icon: faGamepad, level: 70, startedAt: '2022-02-01' },
     ].sort((a, b) => b.level - a.level),
     links: [],
+  },
+  {
+    category: 'tools.category.philosophyAndLogic',
+    items: [
+      { name: 'formalLogic', icon: faScaleBalanced, level: 90, startedAt: '2019-02-01' },
+      { name: 'analyticPhilosophy', icon: faBookOpen, level: 88, startedAt: '2019-02-01' },
+      { name: 'argumentation', icon: faScaleBalanced, level: 88, startedAt: '2019-02-01' },
+      { name: 'epistemology', icon: faBookOpen, level: 85, startedAt: '2019-02-01' },
+      { name: 'philosophyOfMind', icon: faBrain, level: 85, startedAt: '2019-02-01' },
+      { name: 'philosophyOfAI', icon: faBrain, level: 85, startedAt: '2020-02-01' },
+      { name: 'symbolicLogic', icon: faSitemap, level: 82, startedAt: '2019-02-01' },
+      { name: 'ethics', icon: faScaleBalanced, level: 80, startedAt: '2019-02-01' },
+      { name: 'typeTheory', icon: faSitemap, level: 75, startedAt: '2021-02-01' },
+      { name: 'satSolving', icon: faSitemap, level: 70, startedAt: '2022-02-01' },
+    ].sort((a, b) => b.level - a.level),
+    links: [
+      { url: 'https://github.com/stevenvo780/emergentismo-tesis', icon: faBookOpen },
+    ],
   },
 ];

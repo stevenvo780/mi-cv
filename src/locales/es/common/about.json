@@ -1,0 +1,14 @@
+{
+  "about.title": "Quién soy",
+  "about.lead": "Soy Steven Vallejo Ortiz: filósofo e ingeniero de software. Trabajo en dos mundos que para mí son uno solo: el de construir sistemas que funcionan y el de entender por qué deberían existir. Llevo más de diez años desarrollando software, y al mismo tiempo estudio filosofía en la Universidad de Antioquia.",
+  "about.p1": "Mi forma de trabajar parte de una idea simple: pensar antes de construir. Antes de escribir una línea de código me interesa entender el problema real, sus límites y sus consecuencias. La filosofía me dio el método —analizar, definir con precisión, distinguir lo necesario de lo accesorio— y la ingeniería me dio el lugar donde ese método se vuelve algo tangible que la gente usa todos los días.",
+  "about.p2": "En lo técnico diseño y construyo backend: arquitecturas de microservicios, APIs, automatización de procesos e integración de modelos de lenguaje en sistemas reales de producción. He sido responsable de infraestructura, de plataformas que facturan y operan, y de equipos. No me interesa la tecnología por la tecnología; me interesa que resuelva algo concreto y que se sostenga en el tiempo.",
+  "about.p3": "En lo filosófico trabajo desde la lógica formal y la filosofía analítica: epistemología, filosofía de la mente y de la inteligencia artificial, ética y argumentación. Para mí no son campos separados de la ingeniería. La lógica simbolica, la teoría de tipos y el razonamiento riguroso son las mismas herramientas con las que se construye software correcto. Pensar bien y programar bien son, en el fondo, la misma disciplina.",
+  "about.p4": "Empecé a programar muy joven y durante años el construir fue también mi refugio: un lugar donde el esfuerzo se traduce directamente en resultado. Aprendí a colaborar y a entender a las personas moderando comunidades en línea de miles de miembros, donde lo que importa no es el código sino la conversación. Siempre he sido alguien bastante distinto a su entorno, y esa distancia, lejos de pesarme, terminó siendo el ángulo desde el que veo las cosas: la abstracción como una forma de mirar.",
+  "about.p5": "Releo a Platón con frecuencia. En el Gorgias hay una pregunta que me acompaña: no basta con saber persuadir o ejecutar, hay que saber hacia qué fin. La filosofía, para mí, es método y también una manera de poner orden: una forma de construir con sentido. Eso es lo que intento llevar a cada proyecto.",
+  "about.cv.title": "Descargar CV",
+  "about.cv.tech.es": "CV técnico (Español)",
+  "about.cv.tech.en": "CV técnico (Inglés)",
+  "about.cv.filo.es": "CV filosófico (Español)",
+  "about.cv.filo.en": "CV filosófico (Inglés)"
+}

@@ -1,6 +1,7 @@
 'use client';
 import { useEffect } from 'react';
 import Header from '@/app/components/Header';
+import About from '@/app/components/About';
 import Tools from '@/app/components/Tools';
 import Portfolio from '@/app/components/Portafolio';
 import Skills from '@/app/components/Skills';
@@ -42,6 +43,9 @@ export default function Home() {
         <Header />
       </section>
       <main>
+        <section id="about">
+          <About />
+        </section>
         <section id="projects">
           <Achievements />
         </section>

@@ -1,3 +1,4 @@
+import about from './common/about.json';
 import achievements from './common/achievements.json';
 import portfolio from './common/portfolio.json';
 import tools from './common/tools.json';
@@ -9,6 +10,7 @@ import navbar from './common/navbar.json';
 import experience from './common/experience.json';
 
 const common = {
+	...about,
 	...achievements,
 	...portfolio,
 	...tools,

@@ -43,6 +43,9 @@ export default function CustomNavbar() {
             <Nav.Link href="#home" onClick={scrollToSection('home')}>
               {t('navbar.home')}
             </Nav.Link>
+            <Nav.Link href="#about" onClick={scrollToSection('about')}>
+              {t('navbar.about')}
+            </Nav.Link>
             <Nav.Link href="#projects" onClick={scrollToSection('projects')}>
               {t('navbar.projects')}
             </Nav.Link>
