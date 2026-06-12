@@ -7,5 +7,7 @@
   "navbar.skills": "Skills",
   "navbar.contact": "Contact",
   "navbar.experience": "Experience",
-  "navbar.services": "Services"
+  "navbar.services": "Services",
+  "navbar.cv": "Résumé",
+  "navbar.blog": "Blog"
 }

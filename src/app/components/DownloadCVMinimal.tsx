@@ -1,5 +1,6 @@
 'use client';
 import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { Button } from 'react-bootstrap';
 
 export default function DownloadCVMinimal() {
@@ -10,11 +11,11 @@ export default function DownloadCVMinimal() {
     setLang(path.startsWith('/es') ? 'es' : 'en');
   }, []);
 
-  const href = lang === 'es' ? '/pdf/CV_tech_es.pdf' : '/pdf/CV_tech_en.pdf';
+  const href = `/${lang}/cv`;
 
   return (
     <div style={{ marginTop: '0' }}>
-      <a href={href} download>
+      <Link href={href}>
         <Button
           variant="primary"
           style={{
@@ -28,7 +29,7 @@ export default function DownloadCVMinimal() {
         >
           CV
         </Button>
-      </a>
+      </Link>
     </div>
   );
 }

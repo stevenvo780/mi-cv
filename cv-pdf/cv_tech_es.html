@@ -75,25 +75,25 @@
     font-family:'Inter',-apple-system,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;
     color:var(--ink); background:var(--paper);
     -webkit-print-color-adjust:exact; print-color-adjust:exact;
-    font-size:9.4pt; line-height:1.42; letter-spacing:.005em;
+    font-size:9pt; line-height:1.36; letter-spacing:.004em;
   }
   .page{ width:210mm; height:297mm; display:grid; grid-template-columns:71mm 1fr; }
 
   /* ---------- SIDEBAR ---------- */
-  .side{ background:var(--bg); color:var(--cream); padding:13mm 8.5mm 12mm; position:relative; }
+  .side{ background:var(--bg); color:var(--cream); padding:11mm 8mm 10mm; position:relative; }
   .side::before{ content:""; position:absolute; top:0; left:0; right:0; height:2.4mm; background:var(--grad); }
   .mark{ display:flex; align-items:center; gap:3mm; margin-bottom:9mm; }
   .mark svg{ width:13mm; height:13mm; flex:none; }
   .mark .mk-name{ font-weight:700; font-size:11pt; line-height:1.12; color:var(--cream); letter-spacing:.02em; }
   .mark .mk-sub{ font-size:7.2pt; color:var(--teal-ink); letter-spacing:.16em; text-transform:uppercase; margin-top:1mm; }
 
-  .s-block{ margin-bottom:7mm; }
-  .s-title{ font-size:8pt; letter-spacing:.22em; text-transform:uppercase; color:var(--gold); font-weight:700; margin-bottom:3mm; padding-bottom:1.6mm; border-bottom:.3pt solid rgba(224,168,94,.32); }
-  .c-item{ display:flex; align-items:flex-start; gap:2.6mm; margin-bottom:2.4mm; font-size:8.4pt; color:var(--cream); word-break:break-word; }
+  .s-block{ margin-bottom:5mm; }
+  .s-title{ font-size:8pt; letter-spacing:.22em; text-transform:uppercase; color:var(--gold); font-weight:700; margin-bottom:2.4mm; padding-bottom:1.4mm; border-bottom:.3pt solid rgba(224,168,94,.32); }
+  .c-item{ display:flex; align-items:flex-start; gap:2.6mm; margin-bottom:2mm; font-size:8.2pt; color:var(--cream); word-break:break-word; }
   .c-item svg{ width:3.6mm; height:3.6mm; margin-top:.4mm; flex:none; fill:var(--teal-ink); }
   .c-item a{ color:var(--cream); text-decoration:none; }
 
-  .sk{ font-size:8.5pt; color:var(--cream); margin-bottom:2.6mm; padding-left:4mm; position:relative; }
+  .sk{ font-size:8.2pt; color:var(--cream); margin-bottom:1.9mm; padding-left:4mm; position:relative; }
   .sk::before{ content:""; position:absolute; left:0; top:1.6mm; width:2mm; height:2mm; border-radius:50%; background:var(--grad); }
   .sk b{ font-weight:600; }
   .sk small{ display:block; color:var(--cream-dim); font-size:7.4pt; letter-spacing:.01em; margin-top:.2mm; }
@@ -105,31 +105,31 @@
   .lang span{ color:var(--teal-ink); font-size:7.7pt; }
 
   /* ---------- MAIN ---------- */
-  .main{ padding:13mm 11.5mm 12mm; background:var(--paper); }
-  .hd{ margin-bottom:5mm; }
+  .main{ padding:11mm 11mm 10mm; background:var(--paper); }
+  .hd{ margin-bottom:3.6mm; }
   .hd h1{ font-size:23pt; font-weight:800; letter-spacing:-.01em; color:var(--bg); line-height:1.02; }
   .hd .role{ font-size:11.5pt; color:var(--teal); font-weight:600; margin-top:1.4mm; letter-spacing:.01em; }
   .hd .loc{ font-size:8.6pt; color:var(--ink-soft); margin-top:1.6mm; }
   .hd .bar{ height:1.5mm; width:100%; background:var(--grad); border-radius:2px; margin-top:3.4mm; }
 
-  .m-title{ font-size:9.4pt; font-weight:800; letter-spacing:.16em; text-transform:uppercase; color:var(--bg); display:flex; align-items:center; gap:3mm; margin:5mm 0 3mm; }
+  .m-title{ font-size:9.2pt; font-weight:800; letter-spacing:.16em; text-transform:uppercase; color:var(--bg); display:flex; align-items:center; gap:3mm; margin:3.6mm 0 2.2mm; }
   .m-title::after{ content:""; flex:1; height:.4pt; background:var(--rule); }
   .m-title .dot{ width:2.4mm; height:2.4mm; border-radius:50%; background:var(--grad); flex:none; }
 
-  .profile{ font-size:9.3pt; color:var(--ink-soft); line-height:1.5; text-align:justify; }
+  .profile{ font-size:9pt; color:var(--ink-soft); line-height:1.42; text-align:justify; }
 
-  .exp{ margin-bottom:3mm; }
+  .exp{ margin-bottom:2.4mm; }
   .exp .row{ display:flex; justify-content:space-between; align-items:baseline; gap:4mm; }
-  .exp .co{ font-size:9.9pt; font-weight:700; color:var(--bg); }
+  .exp .co{ font-size:9.6pt; font-weight:700; color:var(--bg); }
   .exp .co .at{ font-weight:600; color:var(--orange); }
-  .exp .co .type{ font-weight:600; color:var(--teal); font-size:8pt; }
-  .exp .dt{ font-size:7.8pt; color:var(--ink-soft); font-weight:600; white-space:nowrap; letter-spacing:.02em; }
-  .exp .desc{ font-size:8.7pt; color:var(--ink-soft); line-height:1.4; margin-top:.6mm; }
-  .prev{ font-size:8.4pt; color:var(--ink-soft); font-style:italic; margin-top:1.5mm; }
+  .exp .co .type{ font-weight:600; color:var(--teal); font-size:7.8pt; }
+  .exp .dt{ font-size:7.7pt; color:var(--ink-soft); font-weight:600; white-space:nowrap; letter-spacing:.02em; }
+  .exp .desc{ font-size:8.4pt; color:var(--ink-soft); line-height:1.34; margin-top:.5mm; }
+  .prev{ font-size:8.2pt; color:var(--ink-soft); font-style:italic; margin-top:1.2mm; }
 
-  .proj{ margin-bottom:2.8mm; }
-  .proj b{ font-size:9.3pt; color:var(--bg); font-weight:700; }
-  .proj .pd{ font-size:8.6pt; color:var(--ink-soft); line-height:1.4; }
+  .proj{ margin-bottom:2.2mm; }
+  .proj b{ font-size:9.1pt; color:var(--bg); font-weight:700; }
+  .proj .pd{ font-size:8.4pt; color:var(--ink-soft); line-height:1.34; }
 </style>
 </head>
 <body>
@@ -164,22 +164,26 @@
 
     <div class="s-block">
       <div class="s-title">Stack</div>
-      <div class="sk"><b>Backend</b><small>Node.js · NestJS · TypeScript · REST APIs · PostgreSQL</small></div>
-      <div class="sk"><b>Cloud &amp; DevOps</b><small>Docker · Linux · GCP / Cloud Run · CI/CD</small></div>
-      <div class="sk"><b>Automatización con IA</b><small>integración de LLMs (OpenAI/Anthropic) · RAG · OCR</small></div>
+      <div class="sk"><b>Backend</b><small>Node.js · NestJS · Express · TypeScript · Python · REST APIs · microservices</small></div>
+      <div class="sk"><b>Datos</b><small>PostgreSQL · MongoDB · Redis · SQLite</small></div>
+      <div class="sk"><b>Cloud &amp; DevOps</b><small>Docker · Linux · GCP / Cloud Run · Git · CI/CD</small></div>
+      <div class="sk"><b>IA / Agentes</b><small>LLMs (OpenAI/Anthropic) · RAG · MCP · OCR</small></div>
+      <div class="sk"><b>Seguridad</b><small>JWT · OAuth2 · HMAC · AES-256-GCM</small></div>
       <div class="sk"><b>Frontend</b><small>React · Next.js · PWA</small></div>
+      <div class="sk"><b>Testing</b><small>Jest · pruebas unitarias · WebSockets / tiempo real</small></div>
     </div>
 
     <div class="s-block">
       <div class="s-title">Educación</div>
-      <div class="ed-item"><b>Técnico en desarrollo de software</b><span>+ trayectoria autodidacta (10+ años)</span></div>
+      <div class="ed-item"><b>Técnico en Desarrollo de Software</b><span>SENA · título formal</span></div>
+      <div class="ed-item"><b>Perfil empírico / autodidacta</b><span>10+ años en producción · los cargos pesan más que el título</span></div>
       <div class="ed-item"><b>Filosofía (en curso)</b><span>Universidad de Antioquia · base en lógica y razonamiento</span></div>
     </div>
 
     <div class="s-block" style="margin-bottom:0">
       <div class="s-title">Idiomas</div>
       <div class="lang">Español <span>Nativo</span></div>
-      <div class="lang">Inglés <span>B1–B2 · técnico escrito</span></div>
+      <div class="lang">Inglés <span>técnico (lect./escr.) · conversación en desarrollo</span></div>
     </div>
   </aside>
 
@@ -194,7 +198,7 @@
 
     <section>
       <div class="m-title"><span class="dot"></span>Perfil</div>
-      <p class="profile">Ingeniero de software con más de 10 años construyendo sistemas backend, plataformas SaaS, flujos de automatización e infraestructura en la nube. Base sólida en Node.js/NestJS, PostgreSQL, Docker, Linux y GCP, con foco en automatización de procesos asistida por IA (integración de LLMs, RAG y OCR). Priorizo software confiable, mantenible y bien documentado para clientes reales, y disfruto entender el problema a fondo antes de escribir código.</p>
+      <p class="profile">Ingeniero de software empírico con más de 10 años en producción construyendo sistemas backend, plataformas SaaS multi-tenant y automatización de procesos. Sólido en Node.js, NestJS, TypeScript, Python, PostgreSQL, Docker, Linux y GCP/Cloud Run, con foco en microservicios, APIs REST, metodologías ágiles (Scrum) e integración de IA (LLM, RAG, MCP). Perfil autodidacta: mis cargos y sistemas en producción son mi credencial principal. Disponible para tiempo completo, remoto o reubicación a España.</p>
     </section>
 
     <section>
@@ -202,43 +206,43 @@
 
       <div class="exp">
         <div class="row"><div class="co">Humanizar Systems <span class="at">· Fundador / Lead Developer</span> <span class="type">· proyecto propio</span></div><div class="dt">2022 — Act.</div></div>
-        <div class="desc">Construí un ecosistema SaaS multi-tenant para PYMEs (e-commerce, POS con facturación electrónica DIAN y créditos) usando microservicios NestJS + PostgreSQL, para darles herramientas de venta y facturación legal en Colombia.</div>
+        <div class="desc">Construí un ecosistema SaaS multi-tenant (e-commerce, POS con facturación electrónica DIAN y módulo de créditos) usando microservicios NestJS, PostgreSQL y Docker, para que PYMEs colombianas vendieran, facturaran legalmente y gestionaran créditos desde una sola plataforma. Comunicación entre servicios vía pub/sub y webhooks firmados con HMAC; autenticación con JWT/OAuth2; despliegue con Git y CI/CD. En producción con clientes reales.</div>
       </div>
 
       <div class="exp">
-        <div class="row"><div class="co">Finca Directa S.A.S <span class="at">· CTO / Jefe de Sistemas</span> <span class="type">· contrato</span></div><div class="dt">2021 — Act.</div></div>
-        <div class="desc">Construí un sistema de automatización administrativa (OCR de facturas, descarga de extractos bancarios, clasificación de correos y sincronización a CRM) con Node.js y Python sobre Linux, para eliminar trabajo manual repetitivo del equipo.</div>
+        <div class="row"><div class="co">Finca Directa S.A.S <span class="at">· CTO / Jefe de Sistemas</span> <span class="type">· prestación de servicios</span></div><div class="dt">Actualidad</div></div>
+        <div class="desc">Construí un sistema RPA de automatización administrativa (OCR de facturas, descarga de extractos bancarios, clasificación de correos y sincronización a CRM) con Node.js y Python sobre Linux, con idempotencia y validación humana, para eliminar trabajo manual repetitivo del equipo y reducir errores de digitación.</div>
       </div>
 
       <div class="exp">
-        <div class="row"><div class="co">Indie Levels Studio <span class="at">· Backend Developer</span> <span class="type">· freelance</span></div><div class="dt">2021 — Act.</div></div>
-        <div class="desc">Desarrollo y mantengo servicios y APIs backend (Node.js) de los productos de un estudio de videojuegos con usuarios en varios países.</div>
+        <div class="row"><div class="co">Indie Levels Studio <span class="at">· Backend Developer</span> <span class="type">· contrato a término fijo</span></div><div class="dt">Actualidad</div></div>
+        <div class="desc">Desarrollé y mantuve servicios y APIs REST backend (Node.js/TypeScript) con PostgreSQL para los productos de un estudio de videojuegos con usuarios en varios países, aplicando control de versiones con Git y pruebas para sostener releases estables.</div>
       </div>
 
       <div class="exp">
-        <div class="row"><div class="co">Critertec <span class="at">· Administrador de Sistemas</span> <span class="type">· part-time</span></div><div class="dt">2024 — Act.</div></div>
-        <div class="desc">Opero y aseguro la infraestructura en producción (Linux, Docker) que sostiene las soluciones digitales de la agencia.</div>
+        <div class="row"><div class="co">Critertec <span class="at">· Administrador de Sistemas</span> <span class="type">· contrato a término fijo</span></div><div class="dt">2024 — 2026</div></div>
+        <div class="desc">Operé y aseguré la infraestructura en producción (Linux, Docker, CI/CD) que sostenía las soluciones digitales de la agencia, garantizando disponibilidad continua del servicio. Contrato finalizado en 2026.</div>
       </div>
 
       <div class="exp">
-        <div class="row"><div class="co">Soy Digital · INDOTEL <span class="at">· Frontend Developer</span> <span class="type">· contrato (gobierno R.D.)</span></div><div class="dt">2023</div></div>
-        <div class="desc">Construí el frontend con soporte offline y sincronización automática para una plataforma nacional de habilitación digital, usando React/PWA, orientada a uso masivo.</div>
+        <div class="row"><div class="co">Soy Digital · INDOTEL <span class="at">· Frontend Developer</span> <span class="type">· proyecto de gobierno (Rep. Dominicana, vía Critertec)</span></div><div class="dt">2023</div></div>
+        <div class="desc">Construí el frontend con soporte offline y sincronización automática para una plataforma nacional de habilitación digital del gobierno dominicano, usando React/Next.js y PWA, para que el registro funcionara aun sin conexión estable en campo.</div>
       </div>
 
-      <div class="prev">Trayectoria previa: Full Stack en ZENIT, INS e IQpixels; freelance en web, infraestructura y videojuegos desde 2014.</div>
+      <div class="prev">Trayectoria previa: Full Stack en ZENIT, INS, Kambban e IQpixels; freelance en web, infraestructura y videojuegos desde 2014.</div>
     </section>
 
     <section>
       <div class="m-title"><span class="dot"></span>Proyectos destacados</div>
 
       <div class="proj">
-        <b>Ágora — plataforma de agentes de IA</b>
-        <div class="pd">Diseñé y operé la arquitectura completa: backend en microservicios NestJS, orquestación de múltiples proveedores de LLM (OpenAI/Anthropic/Gemini), comunicación en tiempo real y ejecución en workers Docker. Construí el motor que permite a los agentes invocar herramientas y ejecutar acciones reales, no solo responder texto. Desplegada y en funcionamiento.</div>
+        <b>Ágora — plataforma de agentes de IA</b> · agora.elenxos.com
+        <div class="pd">Diseñé y operé la arquitectura completa: backend en microservicios (Express/NestJS) sobre Cloud Run, orquestación multi-LLM (OpenAI/Anthropic/Gemini/DeepSeek/xAI) con claves del usuario (BYOK), comunicación en tiempo real (socket.io) y ejecución en workers Docker. Construí el motor que permite a los agentes invocar 40+ herramientas registradas y ejecutar acciones reales, no solo responder texto, con vault AES-256-GCM y un servidor MCP. Desplegada y en funcionamiento.</div>
       </div>
 
       <div class="proj">
-        <b>ST — lenguaje de lógica formal ejecutable</b>
-        <div class="pd">Lenguaje publicado en npm con SAT solver propio (CDCL), teoría de tipos y más de 6.000 pruebas automatizadas. Combina lógica formal e ingeniería.</div>
+        <b>ST — lenguaje de lógica formal ejecutable</b> · paquete npm
+        <div class="pd">Lenguaje publicado en npm con SAT solver propio (CDCL), teoría de tipos y más de 6.000 pruebas automatizadas (Jest). Combina lógica formal e ingeniería; es el núcleo lógico de Ágora.</div>
       </div>
     </section>
   </main>

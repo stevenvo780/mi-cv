@@ -1,0 +1,357 @@
+.wrap {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 3rem 1.25rem 5rem;
+}
+
+.back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.9rem;
+  color: var(--teal-ink);
+  margin-bottom: 1.5rem;
+}
+
+/* ---- Header ---- */
+.head {
+  position: relative;
+  border: 1px solid var(--border-strong);
+  border-radius: 18px;
+  background: var(--panel-solid);
+  padding: 2rem 2rem 2.2rem;
+  overflow: hidden;
+}
+.head::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--grad);
+}
+.name {
+  font-size: clamp(1.9rem, 4vw, 2.7rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  background: var(--grad);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1.05;
+}
+.role {
+  font-size: clamp(1rem, 2vw, 1.25rem);
+  color: var(--teal-ink);
+  font-weight: 600;
+  margin-top: 0.5rem;
+}
+.location {
+  font-size: 0.92rem;
+  color: var(--muted);
+  margin-top: 0.5rem;
+}
+.lead {
+  font-size: 1.02rem;
+  color: var(--text-soft);
+  line-height: 1.7;
+  margin-top: 1.2rem;
+  max-width: 760px;
+}
+.contactRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.1rem;
+  margin-top: 1.3rem;
+}
+.contactRow a,
+.contactRow span {
+  font-size: 0.86rem;
+  color: var(--text-soft) !important;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+.contactRow a:hover {
+  color: var(--gold-ink) !important;
+}
+
+/* ---- Tabs ---- */
+.tabs {
+  display: inline-flex;
+  gap: 0.4rem;
+  margin: 2.2rem 0 1.2rem;
+  padding: 0.3rem;
+  border: 1px solid var(--border-strong);
+  border-radius: 12px;
+  background: var(--panel);
+}
+.tab {
+  appearance: none;
+  border: none;
+  background: transparent;
+  color: var(--text-soft);
+  font-weight: 600;
+  font-size: 0.95rem;
+  padding: 0.5rem 1.1rem;
+  border-radius: 9px;
+  cursor: pointer;
+  transition: background 0.18s, color 0.18s;
+}
+.tab:hover {
+  color: var(--gold-ink);
+}
+.tabActive {
+  background: var(--grad);
+  color: #0b1417;
+}
+
+/* ---- Downloads ---- */
+.downloads {
+  border: 1px solid var(--border-strong);
+  border-radius: 16px;
+  background: var(--panel-solid);
+  padding: 1.4rem 1.5rem;
+  margin: 1.4rem 0 2.4rem;
+}
+.dlTitle {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 1rem;
+}
+.dlGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.3rem;
+}
+@media (min-width: 640px) {
+  .dlGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+.dlGroupLabel {
+  font-size: 0.74rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--gold);
+  font-weight: 700;
+  margin-bottom: 0.6rem;
+}
+.dlButtons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+}
+.dlBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.86rem;
+  font-weight: 600;
+  padding: 0.5rem 0.85rem;
+  border-radius: 10px;
+  border: 1px solid var(--gold);
+  color: var(--gold-ink) !important;
+  background: transparent;
+  transition: all 0.18s ease;
+}
+.dlBtn:hover {
+  background: var(--grad);
+  border-color: transparent;
+  color: #0b1417 !important;
+}
+.dlBtnAts {
+  border-color: var(--teal);
+  color: var(--teal-ink) !important;
+}
+.dlBtnAts:hover {
+  background: var(--teal);
+  border-color: transparent;
+  color: #0b1417 !important;
+}
+.atsNote {
+  font-size: 0.8rem;
+  color: var(--muted);
+  margin-top: 1rem;
+  line-height: 1.5;
+}
+
+/* ---- Layout: main + aside ---- */
+.body {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  margin-top: 1.5rem;
+}
+@media (min-width: 880px) {
+  .body {
+    grid-template-columns: 1fr 280px;
+    align-items: start;
+  }
+}
+
+.section {
+  margin-bottom: 2rem;
+}
+.sTitle {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  font-size: 0.82rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--text);
+  margin-bottom: 1rem;
+}
+.sTitle .dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--grad);
+  flex: none;
+}
+.sTitle::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border-strong);
+}
+.profileText {
+  font-size: 1rem;
+  color: var(--text-soft);
+  line-height: 1.7;
+}
+
+/* job/area/project cards */
+.item {
+  border-left: 2px solid var(--border-strong);
+  padding: 0 0 0 1.1rem;
+  margin-bottom: 1.4rem;
+  position: relative;
+}
+.item::before {
+  content: '';
+  position: absolute;
+  left: -5px;
+  top: 4px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--grad);
+}
+.itemHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.3rem 1rem;
+}
+.itemTitle {
+  font-size: 1.02rem;
+  font-weight: 700;
+  color: var(--text);
+}
+.itemTitle .at {
+  color: var(--orange);
+  font-weight: 600;
+}
+.itemBond {
+  color: var(--teal-ink);
+  font-weight: 600;
+  font-size: 0.82rem;
+}
+.itemDates {
+  font-size: 0.8rem;
+  color: var(--muted);
+  font-weight: 600;
+  white-space: nowrap;
+}
+.itemDesc {
+  font-size: 0.92rem;
+  color: var(--text-soft);
+  line-height: 1.6;
+  margin-top: 0.4rem;
+}
+.prev {
+  font-size: 0.88rem;
+  color: var(--muted);
+  font-style: italic;
+  margin-top: 0.6rem;
+}
+.projLink {
+  font-size: 0.82rem;
+  color: var(--teal-ink) !important;
+  font-weight: 600;
+  margin-left: 0.5rem;
+}
+
+/* aside */
+.aside {
+  display: flex;
+  flex-direction: column;
+  gap: 1.6rem;
+}
+.card {
+  border: 1px solid var(--border-strong);
+  border-radius: 14px;
+  background: var(--panel-solid);
+  padding: 1.2rem 1.3rem;
+}
+.cardTitle {
+  font-size: 0.74rem;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--gold);
+  font-weight: 700;
+  margin-bottom: 0.9rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border);
+}
+.skill {
+  margin-bottom: 0.8rem;
+}
+.skill b {
+  display: block;
+  color: var(--text);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+.skill small {
+  color: var(--text-soft);
+  font-size: 0.8rem;
+  line-height: 1.45;
+}
+.eduItem {
+  margin-bottom: 0.85rem;
+}
+.eduItem b {
+  display: block;
+  color: var(--text);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+.eduItem span {
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+.lang {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.6rem;
+  font-size: 0.88rem;
+  color: var(--text-soft);
+  margin-bottom: 0.5rem;
+}
+.lang span {
+  color: var(--teal-ink);
+  font-size: 0.8rem;
+  text-align: right;
+}
+.writing {
+  font-size: 0.95rem;
+  color: var(--text-soft);
+  line-height: 1.7;
+}
