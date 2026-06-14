@@ -1,0 +1,214 @@
+/* ================================================================
+   BRAND — "Cloud Atlas" canonical tokens (single source of truth)
+   Source: INeedMoney/docs/05-activos/brand-tokens.md
+         + INeedMoney/docs/03-perfil-y-marca/portal-marca-4-frentes.md
+   Replicate this file IDENTICALLY in services, blog and cv-* sites.
+   Logo: BrandLogo.tsx (lemniscata). Fonts: Inter + JetBrains Mono +
+   Cormorant Garamond (Cormorant ONLY in the Philosophy front / blog).
+   ================================================================ */
+:root {
+  /* ── Core backgrounds ── */
+  --bg:        #0b1417;
+  --bg-2:      #0f1c20;
+  --bg-card:   #11211f;
+  --bg-card-2: #102327;
+  --ink:       #091012;
+
+  /* ── Typography colors ── */
+  --text:      #f3ece0;        /* cream */
+  --cream:     #f3ece0;
+  --text-soft: #c9c2b6;
+  --muted:     #93999a;
+
+  /* ── Teal (cool primary) ── */
+  --teal:       #43b5a6;
+  --teal-light: #6fd3c4;
+  --teal-dim:   #2f8478;
+
+  /* ── Gold (warm primary) ── */
+  --gold:       #e0a85e;
+  --gold-light: #f0c887;
+
+  /* ── Tertiary cosmic ── */
+  --rust:    #cf6a3c;
+  --orange:  #cf6a3c;          /* alias */
+  --violet:  #8d7cc0;
+
+  /* ── Lines / borders ── */
+  --line:   rgba(243, 236, 224, 0.10);
+  --line-2: rgba(67, 181, 166, 0.24);
+
+  /* ── Signature gradient (warm → cool swirl) ── */
+  --grad-sig:  linear-gradient(110deg, #e0a85e 0%, #cf6a3c 35%, #43b5a6 100%);
+  --grad-sig-hover: linear-gradient(110deg, #f0c887 0%, #d97b45 35%, #6fd3c4 100%);
+  /* Wider stop set so animated background-position has room to travel */
+  --grad-sig-anim: linear-gradient(110deg, #e0a85e 0%, #cf6a3c 30%, #43b5a6 60%, #e0a85e 100%);
+
+  /* ── Radii ── */
+  --r-sm: 16px;
+  --r-md: 22px;
+  --r-lg: 28px;
+
+  /* ── Per-front sub-accents (differentiate without breaking brand) ── */
+  --acc-filosofia:   var(--gold);
+  --acc-ciencias:    var(--teal-light);
+  --acc-ciencias-2:  var(--violet);
+  --acc-informatica: var(--teal);
+  --acc-enterprise:  var(--gold);
+  --acc-enterprise-2: var(--rust);
+
+  /* ── Fonts (wired by next/font in layout) ── */
+  --font-sans:  var(--font-inter), 'Inter', system-ui, sans-serif;
+  --font-mono:  var(--font-jetbrains), 'JetBrains Mono', ui-monospace, monospace;
+  --font-serif: var(--font-cormorant), 'Cormorant Garamond', Georgia, serif;
+}
+
+/* ================================================================
+   SHARED BRAND PATTERNS
+   ================================================================ */
+.brand-eyebrow {
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.18em;          /* ~3px at 14px */
+  font-size: 0.78rem;
+  color: var(--teal);
+  font-weight: 600;
+}
+
+.brand-sec-no {
+  font-family: var(--font-mono);
+  color: var(--teal);
+  font-size: 0.82rem;
+  letter-spacing: 0.04em;
+}
+
+.brand-gradient-text {
+  background: var(--grad-sig);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+.brand-chip {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  padding: 0.22rem 0.6rem;
+  border-radius: 999px;
+  border: 1px solid var(--line-2);
+  background: rgba(67, 181, 166, 0.08);
+  color: var(--text-soft);
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+/* Generic card surface for the portal fronts */
+.brand-card {
+  background: var(--bg-card);
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  transition: transform 0.22s ease, border-color 0.22s ease,
+    box-shadow 0.22s ease;
+  will-change: auto;
+}
+.brand-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--line-2);
+  box-shadow: 0 10px 36px rgba(0, 0, 0, 0.45);
+}
+
+/* Focus visibility — universal */
+:where(a, button, [tabindex]):focus-visible {
+  outline: 2px solid var(--teal);
+  outline-offset: 2px;
+}
+
+/* ================================================================
+   KEYFRAMES (CPU-cheap: transform / opacity / filter / bg-position)
+   ================================================================ */
+@keyframes brand-pulse {
+  0%, 100% { opacity: 0.55; transform: scale(1); }
+  50%      { opacity: 1;    transform: scale(1.04); }
+}
+
+@keyframes brand-shimmer {
+  0%   { background-position: -150% 0; }
+  100% { background-position: 250% 0; }
+}
+
+@keyframes brand-float {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-6px); }
+}
+
+@keyframes brand-reveal {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes brand-grad-shift {
+  0%   { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
+}
+
+/* ── Animation utility classes ── */
+.anim-pulse  { animation: brand-pulse 2.8s ease-in-out infinite; }
+.anim-float  { animation: brand-float 5s ease-in-out infinite; }
+
+/* Light-sweep shimmer overlay (use on a positioned ::before/element) */
+.anim-shimmer {
+  background-image: linear-gradient(
+    100deg,
+    transparent 25%,
+    rgba(240, 200, 135, 0.14) 45%,
+    rgba(111, 211, 196, 0.10) 55%,
+    transparent 75%
+  );
+  background-size: 250% 100%;
+  animation: brand-shimmer 3.6s linear infinite;
+}
+
+/* Animated signature gradient (cheap: only background-position moves) */
+.anim-grad {
+  background: var(--grad-sig-anim);
+  background-size: 200% 100%;
+  animation: brand-grad-shift 8s linear infinite alternate;
+}
+
+/* Scroll-reveal: starts hidden, .is-visible (set by IntersectionObserver)
+   transitions it in. Falls back to visible if JS never runs (no .reveal
+   without observer because the class itself hides it — observer is required,
+   but reduced-motion + no-JS users get the no-motion rule below). */
+.reveal {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ================================================================
+   REDUCED MOTION — freeze everything decorative
+   ================================================================ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+  .anim-pulse,
+  .anim-float,
+  .anim-shimmer,
+  .anim-grad {
+    animation: none !important;
+  }
+  .reveal {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}

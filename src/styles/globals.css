@@ -98,6 +98,8 @@
    ================================================================ */
 html {
   color-scheme: dark;
+  scroll-behavior: smooth;
+  scroll-padding-top: 80px; /* offset for the sticky navbar on hash navigation */
 }
 
 body {

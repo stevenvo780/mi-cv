@@ -9,5 +9,9 @@
   "navbar.experience": "Experiencia",
   "navbar.services": "Servicios",
   "navbar.cv": "Hoja de vida",
-  "navbar.blog": "Blog"
+  "navbar.blog": "Blog",
+  "navbar.filosofia": "Filosofía",
+  "navbar.ciencias": "Ciencias",
+  "navbar.informatica": "Informática",
+  "navbar.enterprise": "Enterprise"
 }
