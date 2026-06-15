@@ -30,6 +30,8 @@
 }
 .heroTitle em {
   font-style: normal;
+  /* readable solid fallback (gold) under the gradient clip */
+  color: var(--gold);
   background: var(--grad);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -69,7 +71,9 @@
   transition: all 0.18s ease;
 }
 .ctaPrimary {
-  background: var(--grad);
+  /* Solid gold under the gradient so the dark ink stays AA-legible. */
+  background-color: var(--gold);
+  background-image: var(--grad);
   color: #0b1417 !important;
   border: 1px solid transparent;
 }

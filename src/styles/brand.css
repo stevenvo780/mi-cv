@@ -33,6 +33,7 @@
   --rust:    #cf6a3c;
   --orange:  #cf6a3c;          /* alias */
   --violet:  #8d7cc0;
+  --violet-light: #a99ee0;     /* AA-safe violet for small text on tinted bg */
 
   /* ── Lines / borders ── */
   --line:   rgba(243, 236, 224, 0.10);
@@ -87,7 +88,10 @@
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
-  color: transparent;
+  /* Readable solid fallback (gold, AA-large on dark) instead of transparent:
+     keeps the heading legible if the gradient clip is unsupported, and gives
+     contrast scanners a real foreground color to measure. */
+  color: var(--gold);
 }
 
 .brand-chip {

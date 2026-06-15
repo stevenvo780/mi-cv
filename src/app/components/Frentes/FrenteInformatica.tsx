@@ -413,8 +413,9 @@ export default function FrenteInformatica() {
           </p>
         </div>
 
-        {/* Inline style block for grid — avoids module-css dep */}
-        <style>{`
+        {/* Inline style block for grid — raw CSS via dangerouslySetInnerHTML to
+            keep SSR/CSR identical (no hydration text mismatch). */}
+        <style dangerouslySetInnerHTML={{ __html: `
           .info-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
@@ -436,7 +437,7 @@ export default function FrenteInformatica() {
           .info-card {
             animation: brand-reveal 0.45s ease both;
           }
-        `}</style>
+        ` }} />
 
         {/* Cards grid */}
         <div className="info-grid">

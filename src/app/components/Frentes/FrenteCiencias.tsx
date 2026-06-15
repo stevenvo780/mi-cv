@@ -202,11 +202,11 @@ function CienciasCard({ producto, locale }: CardProps) {
           <span
             className="brand-chip"
             style={{
-              color: isFeatured ? 'var(--teal-light)' : 'var(--violet)',
-              borderColor: isFeatured ? 'rgba(111,211,196,0.35)' : 'rgba(141,124,192,0.35)',
+              color: isFeatured ? 'var(--teal-light)' : 'var(--violet-light)',
+              borderColor: isFeatured ? 'rgba(111,211,196,0.35)' : 'rgba(141,124,192,0.45)',
               background: isFeatured
                 ? 'rgba(111,211,196,0.07)'
-                : 'rgba(141,124,192,0.07)',
+                : 'rgba(141,124,192,0.10)',
             }}
           >
             {produto_metric_icon(producto.id)}{producto.badge[locale]}
@@ -277,12 +277,12 @@ function CienciasCard({ producto, locale }: CardProps) {
               fontFamily: 'var(--font-mono)',
               textDecoration: 'none',
               border: '1.5px solid rgba(141,124,192,0.50)',
-              color: 'var(--violet)',
-              background: 'rgba(141,124,192,0.07)',
+              color: 'var(--violet-light)',
+              background: 'rgba(141,124,192,0.10)',
               transition: 'background 0.18s ease',
             }}
             onMouseEnter={(e) => {
-              (e.currentTarget as HTMLAnchorElement).style.background = 'rgba(141,124,192,0.18)';
+              (e.currentTarget as HTMLAnchorElement).style.background = 'rgba(141,124,192,0.22)';
             }}
             onMouseLeave={(e) => {
               (e.currentTarget as HTMLAnchorElement).style.background = 'rgba(141,124,192,0.07)';
@@ -343,8 +343,9 @@ export default function FrenteCiencias() {
 
   return (
     <>
-      {/* Scoped styles — oscilloscope aesthetic */}
-      <style>{`
+      {/* Scoped styles via dangerouslySetInnerHTML (raw CSS, no JSX text
+          encoding) to keep SSR/CSR byte-identical and avoid hydration warnings. */}
+      <style dangerouslySetInnerHTML={{ __html: `
         #ciencias {
           position: relative;
           scroll-margin-top: 80px;
@@ -466,7 +467,7 @@ export default function FrenteCiencias() {
             grid-template-columns: 3fr 2fr;
           }
         }
-      `}</style>
+      ` }} />
 
       <section id="ciencias">
         {/* Background Lorenz — mounted/unmounted by CanvasViewport */}

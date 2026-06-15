@@ -129,19 +129,6 @@ export const productos: Producto[] = [
     featured: true,
   },
   {
-    id: 'ponencia-yuk-hui',
-    frente: 'filosofia',
-    nombre: 'Ponencia · Yuk Hui',
-    descripcion: {
-      es: '«Fragmentar el futuro: sobre el límite de la IA» — ponencia de Filosofía de la Ciudad / Unidad Urban AI (19 slides).',
-      en: '"Fragmenting the future: on the limit of AI" — Philosophy of the City / Urban AI Unit talk (19 slides).',
-    },
-    url: 'https://ponencia-yuk-hui-critertec-a963d21e.vercel.app/',
-    status: 'live',
-    badge: { es: 'Ponencia', en: 'Talk' },
-    secondary: true,
-  },
-  {
     id: 'debatesuite',
     frente: 'filosofia',
     nombre: 'DebateSuite',
@@ -251,18 +238,6 @@ export const productos: Producto[] = [
     status: 'soon',
     badge: { es: 'Próximamente', en: 'Coming soon' },
     featured: true,
-  },
-  {
-    id: 'graf',
-    frente: 'enterprise',
-    nombre: 'Graf / Humanizar',
-    descripcion: {
-      es: 'E-commerce multi-tienda del ecosistema Humanizar: catálogo, inventario en tiempo real, checkout y pasarela. NestJS + PostgreSQL + Next.js, en producción.',
-      en: 'Multi-store e-commerce from the Humanizar ecosystem: catalogue, real-time inventory, checkout and payment gateway. NestJS + PostgreSQL + Next.js, in production.',
-    },
-    url: 'https://totalpedidosv2-client.vercel.app',
-    status: 'live',
-    badge: { es: 'Humanizar · en producción', en: 'Humanizar · in production' },
   },
   {
     id: 'devkits',

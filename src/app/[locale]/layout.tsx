@@ -1,55 +1,9 @@
-import 'bootstrap/dist/css/bootstrap.min.css';
-import '@/styles/globals.css';
-import '@/styles/brand.css';
-import { config } from '@fortawesome/fontawesome-svg-core';
-import '@fortawesome/fontawesome-svg-core/styles.css';
-config.autoAddCss = false;
-import localFont from 'next/font/local';
-import { Inter, JetBrains_Mono, Cormorant_Garamond } from 'next/font/google';
-import { Metadata, Viewport } from 'next';
+import { Metadata } from 'next';
 import Script from 'next/script';
 import CustomNavbar from '../components/Navbar';
-
-const geistSans = localFont({
-  src: '../fonts/GeistVF.woff',
-  variable: '--font-geist-sans',
-  weight: '100 900',
-});
-const geistMono = localFont({
-  src: '../fonts/GeistMonoVF.woff',
-  variable: '--font-geist-mono',
-  weight: '100 900',
-});
-
-// Cloud Atlas typography: Inter (UI), JetBrains Mono (eyebrows/chips/meta),
-// Cormorant Garamond (Philosophy front + blog only).
-const inter = Inter({
-  subsets: ['latin'],
-  variable: '--font-inter',
-  display: 'swap',
-});
-const jetbrainsMono = JetBrains_Mono({
-  subsets: ['latin'],
-  variable: '--font-jetbrains',
-  display: 'swap',
-});
-const cormorant = Cormorant_Garamond({
-  subsets: ['latin'],
-  weight: ['400', '500', '600', '700'],
-  variable: '--font-cormorant',
-  display: 'swap',
-});
+import LocaleLangSync from '../components/LocaleLangSync';
 
 const baseUrl = 'https://stevenvallejo.com';
-
-export const viewport: Viewport = {
-  width: 'device-width',
-  initialScale: 1.0,
-  themeColor: [
-    { media: '(prefers-color-scheme: light)', color: '#0b1417' },
-    { media: '(prefers-color-scheme: dark)', color: '#0b1417' },
-  ],
-};
 
 type Locale = 'es' | 'en';
 
@@ -269,21 +223,16 @@ export default function LocaleLayout({
   };
 
   return (
-    <html
-      lang={data.htmlLang}
-      className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} ${jetbrainsMono.variable} ${cormorant.variable}`}
-      prefix="og: http://ogp.me/ns#"
-    >
-      <body>
-        <Script
-          id="ld-json-person"
-          type="application/ld+json"
-          strategy="beforeInteractive"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
-        />
-        <CustomNavbar />
-        {children}
-      </body>
-    </html>
+    <>
+      <LocaleLangSync lang={data.htmlLang} />
+      <Script
+        id="ld-json-person"
+        type="application/ld+json"
+        strategy="beforeInteractive"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
+      />
+      <CustomNavbar />
+      {children}
+    </>
   );
 }

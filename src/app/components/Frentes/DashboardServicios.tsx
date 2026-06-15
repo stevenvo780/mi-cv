@@ -82,7 +82,7 @@ export default function DashboardServicios() {
 
   return (
     <>
-      <style>{`
+      <style dangerouslySetInnerHTML={{ __html: `
         /* ── Section shell ── */
         #servicios {
           position: relative;
@@ -280,7 +280,9 @@ export default function DashboardServicios() {
           letter-spacing: 0.06em;
           text-decoration: none !important;
           color: var(--bg) !important;
-          background: var(--grad-sig);
+          /* Solid gold under the signature gradient for AA-legible dark ink. */
+          background-color: var(--gold);
+          background-image: var(--grad-sig);
           padding: 0.65rem 1.5rem;
           border-radius: var(--r-sm);
           transition: opacity 0.18s ease, transform 0.15s ease;
@@ -308,7 +310,7 @@ export default function DashboardServicios() {
             transition: none !important;
           }
         }
-      `}</style>
+      ` }} />
 
       <section id="servicios">
         <div className="container" style={{ position: 'relative', zIndex: 1 }}>

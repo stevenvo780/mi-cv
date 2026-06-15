@@ -10,15 +10,15 @@ interface BrandLogoProps {
   title?: string;
 }
 
-// Unique-per-render gradient ids so multiple instances never collide in the DOM.
-let counter = 0;
-
 export default function BrandLogo({
   size = 30,
   className,
   title = 'Steven Vallejo',
 }: BrandLogoProps) {
-  const id = React.useId().replace(/:/g, '') + (counter++).toString(36);
+  // useId() is stable across SSR/CSR and unique per instance — do NOT mix in a
+  // module-level mutable counter, which increments differently on server vs
+  // client and causes a hydration id mismatch.
+  const id = React.useId().replace(/:/g, '');
   const sig = `sv-sig-${id}`;
   const cosmos = `sv-cosmos-${id}`;
   const core = `sv-core-${id}`;

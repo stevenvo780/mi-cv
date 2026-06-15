@@ -7,7 +7,7 @@
  *     mounted only while in viewport via CanvasViewport.
  *   - Header: eyebrow (mono) + Cormorant h2 + intro paragraph in text-soft.
  *   - Cross-links (filosofo.stevenvallejo.com, blog) as small chips.
- *   - Rich product grid: 3 cards (Clavis featured, Ponencia secondary, DebateSuite).
+ *   - Rich product grid: Clavis (featured) + DebateSuite.
  *
  * Typography: Cormorant Garamond (--font-serif) for h2 + card names.
  * Sub-accent: --acc-filosofia = var(--gold) throughout.
@@ -254,8 +254,10 @@ export default function FrenteFilosofia() {
 
   return (
     <>
-      {/* ── Scoped styles (no extra file, no CSS Modules needed) ── */}
-      <style>{`
+      {/* Scoped styles via dangerouslySetInnerHTML so the CSS text is emitted
+          as raw HTML (no JSX text-node encoding) — keeps SSR and CSR byte-identical
+          and avoids React hydration "Text content did not match" warnings. */}
+      <style dangerouslySetInnerHTML={{ __html: `
         /* ── Section shell ── */
         #filosofia {
           position: relative;
@@ -502,7 +504,7 @@ export default function FrenteFilosofia() {
             transition: none !important;
           }
         }
-      `}</style>
+      ` }} />
 
       <section id="filosofia">
         {/* Background canvas — paused when off-screen */}

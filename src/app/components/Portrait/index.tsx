@@ -26,6 +26,7 @@ export default function Portrait() {
             zIndex: 0,
             opacity: 0.18,
             pointerEvents: 'none',
+            overflow: 'hidden', // clip the wide Game-of-Life grid (no h-scroll)
           }}
         >
           <GameOfLife />

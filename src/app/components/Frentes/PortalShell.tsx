@@ -39,7 +39,7 @@ export default function PortalShell() {
 
       {/* (6) Blog card — codigo-con-criterio */}
       <section id="blog" style={{ scrollMarginTop: '80px', padding: '5rem 0 4rem' }}>
-        <style>{`
+        <style dangerouslySetInnerHTML={{ __html: `
           #blog {
             position: relative;
             overflow: hidden;
@@ -84,7 +84,8 @@ export default function PortalShell() {
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
-            color: transparent;
+            /* readable solid fallback (gold) instead of transparent */
+            color: var(--gold);
           }
           .blog-card-lead {
             color: var(--text-soft);
@@ -116,7 +117,7 @@ export default function PortalShell() {
           @media (prefers-reduced-motion: reduce) {
             .blog-card-cta { transition: none !important; }
           }
-        `}</style>
+        ` }} />
         <div className="container" style={{ position: 'relative', zIndex: 1 }}>
           <div className="blog-card reveal">
             <div className="blog-card-kicker">
@@ -148,7 +149,7 @@ export default function PortalShell() {
         id="contacto"
         style={{ scrollMarginTop: '80px', padding: '3rem 0 6rem' }}
       >
-        <style>{`
+        <style dangerouslySetInnerHTML={{ __html: `
           .close-line {
             display: block;
             width: 2px;
@@ -214,7 +215,7 @@ export default function PortalShell() {
           @media (prefers-reduced-motion: reduce) {
             .close-link { transition: none !important; }
           }
-        `}</style>
+        ` }} />
         <div className="container">
           <div className="reveal">
             <span className="close-line" aria-hidden="true" />

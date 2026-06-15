@@ -8,16 +8,15 @@
  *     (mounted/unmounted by CanvasViewport, paused when off-screen).
  *   - PRISMA: full-width featured card, animated gradient border, CSS halo pulse.
  *   - Shimmer sweep: CSS anim-shimmer class on each card overlay.
- *   - Graf/Humanizar: "caso de estudio" variant, no broken link.
  *   - Business model badges on DevKits/*,  ScrapeKit, Warehouse.
  *   - All animations: transform/opacity only (CPU-first, no GPU obligation).
  *   - Respects prefers-reduced-motion (brand.css global rule).
  *
  * Data: reads from src/data/frentes.ts, frente === 'enterprise'.
- * Products rendered (7):
- *   PRISMA (featured/soon), Graf/Humanizar (live), DevKits (live),
- *   DevKits Hours (live), DevKits CRM (live), ScrapeKit Colombia (live),
- *   Warehouse (live).
+ * Products rendered (6, own deployments only):
+ *   PRISMA (featured/soon), DevKits (live), DevKits Hours (live),
+ *   DevKits CRM (live), ScrapeKit Colombia (live), Warehouse (live).
+ *   (Graf/Humanizar removed: only live URL was a client/NDA deployment.)
  */
 
 import React, { useRef } from 'react';
@@ -279,7 +278,8 @@ function ProductCard({
               alignSelf: 'flex-start',
               background: 'rgba(207,106,60,0.12)',
               borderColor: 'rgba(207,106,60,0.4)',
-              color: 'var(--rust)',
+              /* gold-light (AA on the warm chip bg) — rust failed AA at 4.0 */
+              color: 'var(--gold-light)',
             }}
           >
             {product.badge[locale]}
