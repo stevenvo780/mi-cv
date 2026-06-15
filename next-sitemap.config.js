@@ -1,5 +1,5 @@
 module.exports = {
-  siteUrl: 'https://www.stevenvallejo.com',
+  siteUrl: 'https://stevenvallejo.com',
   generateRobotsTxt: true,
   priority: 0.7,
   changefreq: 'weekly',
@@ -21,7 +21,7 @@ module.exports = {
       { userAgent: '*', disallow: '/admin' },
     ],
     additionalSitemaps: [
-      'https://www.stevenvallejo.com/sitemap-0.xml',
+      'https://stevenvallejo.com/sitemap-0.xml',
     ],
   },
 };

@@ -1,6 +1,6 @@
 'use client';
 import Script from 'next/script';
-import PortalShell from '@/app/components/Frentes/PortalShell';
+import LinktreeHome from '@/app/components/LinktreeHome';
 
 export default function Home() {
   return (
@@ -23,7 +23,7 @@ export default function Home() {
           `,
         }}
       />
-      <PortalShell />
+      <LinktreeHome />
     </>
   );
 }

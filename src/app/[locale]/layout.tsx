@@ -3,7 +3,7 @@ import Script from 'next/script';
 import CustomNavbar from '../components/Navbar';
 import LocaleLangSync from '../components/LocaleLangSync';
 
-const baseUrl = 'https://www.stevenvallejo.com';
+const baseUrl = 'https://stevenvallejo.com';
 
 type Locale = 'es' | 'en';
 

@@ -82,6 +82,4 @@ export function FrenteCiencias() {
 export function FrenteInformatica() {
   return <FrenteInformaticaReal />;
 }
-export function FrenteEnterprise() {
-  return <FrenteStub frente="enterprise" />;
-}
+/* FrenteEnterprise removed: enterprise frente merged into Ingeniería (informatica). */

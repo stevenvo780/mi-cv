@@ -30,125 +30,12 @@ type Locale = 'es' | 'en';
 /* ------------------------------------------------------------------ */
 /* PRISMA card — full-width, animated gradient border, pulsing halo    */
 /* ------------------------------------------------------------------ */
+/* eslint-disable-next-line @typescript-eslint/no-unused-vars */
+/* PrismaCard removed: PRISMA / Prizma suite corporativa is now a linktree link,
+   not a gallery product. This stub satisfies references in the legacy PortalShell. */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function PrismaCard({ locale }: { locale: Locale }) {
-  const p: Producto = productosPorFrente('enterprise').find(
-    (x) => x.id === 'prisma'
-  )!;
-
-  return (
-    <div
-      className="reveal"
-      style={{
-        position: 'relative',
-        borderRadius: 'var(--r-lg)',
-        padding: '2px',           /* border "width" (gradient sits here) */
-        background: 'var(--grad-sig-anim)',
-        backgroundSize: '200% 100%',
-        animation: 'brand-grad-shift 6s linear infinite alternate',
-        marginBottom: '2rem',
-      }}
-    >
-      {/* Pulsing halo — pure opacity/scale, no GPU */}
-      <div
-        aria-hidden="true"
-        className="anim-pulse"
-        style={{
-          position: 'absolute',
-          inset: '-12px',
-          borderRadius: 'calc(var(--r-lg) + 12px)',
-          background:
-            'radial-gradient(ellipse at 50% 50%, rgba(224,168,94,0.22) 0%, rgba(207,106,60,0.12) 50%, transparent 72%)',
-          pointerEvents: 'none',
-          zIndex: 0,
-        }}
-      />
-
-      {/* Inner card surface */}
-      <div
-        style={{
-          position: 'relative',
-          zIndex: 1,
-          borderRadius: 'calc(var(--r-lg) - 2px)',
-          background: 'var(--bg-card)',
-          padding: '2.5rem 2rem',
-          overflow: 'hidden',
-        }}
-      >
-        {/* Shimmer sweep */}
-        <div
-          aria-hidden="true"
-          className="anim-shimmer"
-          style={{
-            position: 'absolute',
-            inset: 0,
-            borderRadius: 'inherit',
-            pointerEvents: 'none',
-          }}
-        />
-
-        <div style={{ position: 'relative', zIndex: 1 }}>
-          <div
-            style={{
-              display: 'flex',
-              flexWrap: 'wrap',
-              alignItems: 'center',
-              gap: '0.75rem',
-              marginBottom: '0.75rem',
-            }}
-          >
-            <span
-              className="brand-eyebrow"
-              style={{ color: 'var(--gold)', letterSpacing: '0.22em' }}
-            >
-              {locale === 'es' ? 'Insignia · Próximamente' : 'Flagship · Coming soon'}
-            </span>
-            <span
-              className="brand-chip"
-              style={{
-                background: 'rgba(224,168,94,0.12)',
-                borderColor: 'rgba(224,168,94,0.4)',
-                color: 'var(--gold-light)',
-              }}
-            >
-              {p.badge?.[locale]}
-            </span>
-          </div>
-
-          <h3
-            className="brand-gradient-text"
-            style={{ fontSize: 'clamp(1.6rem, 3.5vw, 2.4rem)', margin: '0 0 0.75rem' }}
-          >
-            {p.nombre}
-          </h3>
-
-          <p
-            style={{
-              maxWidth: '66ch',
-              color: 'var(--text-soft)',
-              fontSize: '1rem',
-              lineHeight: '1.65',
-            }}
-          >
-            {p.descripcion[locale]}
-          </p>
-
-          <p
-            style={{
-              marginTop: '1rem',
-              fontFamily: 'var(--font-mono)',
-              fontSize: '0.8rem',
-              color: 'var(--muted)',
-              letterSpacing: '0.04em',
-            }}
-          >
-            {locale === 'es'
-              ? 'Reserva tu lugar ahora — lanzamiento privado'
-              : 'Reserve your spot now — private launch'}
-          </p>
-        </div>
-      </div>
-    </div>
-  );
+  return null;
 }
 
 /* ------------------------------------------------------------------ */
@@ -416,13 +303,14 @@ function EnterpriseAmbient() {
 export default function FrenteEnterprise() {
   const params = useParams();
   const locale: Locale = params.locale === 'es' ? 'es' : 'en';
-  const meta = frentesMeta['enterprise'];
+  /* enterprise merged into informatica; use informatica meta for display */
+  const meta = frentesMeta['informatica'];
   const sectionRef = useRef<HTMLElement>(null);
 
-  /* Separate PRISMA from the rest; keep insertion order for the grid */
-  const allProducts = productosPorFrente('enterprise');
-  const prisma = allProducts.find((p) => p.id === 'prisma');
-  const gridProducts = allProducts.filter((p) => p.id !== 'prisma');
+  /* PRISMA removed; render all engineering/business products */
+  const allProducts = productosPorFrente('informatica');
+  const prisma = undefined; // PRISMA removed (now a linktree link)
+  const gridProducts = allProducts;
 
   return (
     <section

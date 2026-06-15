@@ -2,11 +2,11 @@
    FRENTES — typed, bilingual (ES/EN) data for the brand portal.
    Sources:
      - INeedMoney/docs/05-activos/productos-desplegados-2026-06.md
-     - INeedMoney/docs/03-perfil-y-marca/portal-marca-4-frentes.md
+     - INeedMoney/docs/03-perfil-y-marca/portal-marca-3-frentes.md
      - src/app/components/Portafolio/common.ts (raw URLs)
-   Front assignment follows portal-marca-4-frentes.md.
-   NOTE: never invent URLs. PRISMA is status:'soon' (no URL) by design —
-   flip to 'live' + add url the day it ships, zero refactor.
+   Front assignment: 4 frentes (Filosofía · Ciencias · Ingeniería · Enterprise).
+   Enterprise = la suite corporativa Prizma, como 4º frente de la galería.
+   NOTE: never invent URLs. status:'soon' = sin dominio propio aún.
    ================================================================ */
 
 export type FrenteId = 'filosofia' | 'ciencias' | 'informatica' | 'enterprise';
@@ -79,15 +79,15 @@ export const frentesMeta: Record<FrenteId, FrenteMeta> = {
   },
   informatica: {
     id: 'informatica',
-    nombre: { es: 'Informática', en: 'Computer Science' },
+    nombre: { es: 'Ingeniería', en: 'Engineering' },
     secNo: '03',
     tagline: {
-      es: '10+ años de backend, IA agéntica, devtools.',
-      en: '10+ years of backend, agentic AI, devtools.',
+      es: '12+ años de backend, IA agéntica, devtools y software de negocio.',
+      en: '12+ years of backend, agentic AI, devtools and business software.',
     },
     descripcion: {
-      es: 'El frente del ingeniero: más de 10 años de backend, IA agéntica, lógica computacional, devtools OSS y arquitectura multi-tenant. La columna vertebral técnica.',
-      en: 'The engineer front: 10+ years of backend, agentic AI, computational logic, OSS devtools and multi-tenant architecture. The technical backbone.',
+      es: 'El frente del ingeniero: más de 12 años de backend, IA agéntica, lógica computacional, devtools OSS, arquitectura multi-tenant y starter kits para PYME. La columna vertebral técnica.',
+      en: 'The engineer front: 12+ years of backend, agentic AI, computational logic, OSS devtools, multi-tenant architecture and SMB starter kits. The technical backbone.',
     },
   },
   enterprise: {
@@ -95,12 +95,12 @@ export const frentesMeta: Record<FrenteId, FrenteMeta> = {
     nombre: { es: 'Enterprise', en: 'Enterprise' },
     secNo: '04',
     tagline: {
-      es: 'Software que genera caja para PYME y empresa.',
-      en: 'Software that drives revenue for SMBs and enterprise.',
+      es: 'Software empresarial de producción: la suite Prizma.',
+      en: 'Production business software: the Prizma suite.',
     },
     descripcion: {
-      es: 'El frente comercial: la suite que genera caja para PYME y empresa, el legado vivo de Humanizar, y el lugar reservado para PRISMA.',
-      en: 'The commercial front: the suite that drives revenue for SMBs and enterprise, the living legacy of Humanizar, and the reserved slot for PRISMA.',
+      es: 'El frente empresarial: Prizma, suite modular para PYME y comercio (POS con facturación DIAN, crédito sin interés, marketing por WhatsApp, e-commerce conversacional y CRM). NestJS + Next.js sobre Cloud Run.',
+      en: 'The business front: Prizma, a modular suite for SMBs and commerce (POS with e-invoicing, interest-free credit, WhatsApp marketing, conversational e-commerce and CRM). NestJS + Next.js on Cloud Run.',
     },
   },
 };
@@ -129,7 +129,7 @@ export const productos: Producto[] = [
       es: 'Portal de humanidades digitales: Griego Clásico, Neurofilosofía y Filosofía de la Ciudad. 227 rutas estáticas de contenido académico en MDX.',
       en: 'Digital humanities portal: Classical Greek, Neurophilosophy and Philosophy of the City. 227 static routes of academic content in MDX.',
     },
-    url: 'https://clavis-weld.vercel.app',
+    url: 'https://paideia.stevenvallejo.com',
     repo: 'https://github.com/stevenvo780/clavis',
     status: 'live',
     badge: { es: 'Humanidades digitales', en: 'Digital humanities' },
@@ -147,7 +147,7 @@ export const productos: Producto[] = [
       es: 'Moderador de debates (timer, turnos, falacias) y simulador de dinámicas con autómata celular. PWA con uso offline.',
       en: 'Debate moderator (timer, turns, fallacies) and dynamics simulator with a cellular automaton. Offline-capable PWA.',
     },
-    url: 'https://debatesuite.vercel.app',
+    url: 'https://agon.stevenvallejo.com',
     repo: 'https://github.com/stevenvo780/debatesuite',
     status: 'live',
     badge: { es: 'PWA offline', en: 'Offline PWA' },
@@ -166,7 +166,7 @@ export const productos: Producto[] = [
       es: 'Catálogo educativo de simulación científica que unifica 16 repos de sistemas complejos, emergencia y filosofía de la ciencia. 22 páginas SSG.',
       en: 'Educational catalogue of scientific simulation unifying 16 repos on complex systems, emergence and philosophy of science. 22 SSG pages.',
     },
-    url: 'https://complexlab.vercel.app',
+    url: 'https://kosmos.stevenvallejo.com',
     repo: 'https://github.com/stevenvo780/complexlab',
     status: 'live',
     badge: { es: '16 repos · 22 páginas', en: '16 repos · 22 pages' },
@@ -178,12 +178,27 @@ export const productos: Producto[] = [
     nombre: 'Redes Neuronales · Hinton',
     descripcion: {
       es: 'Deck sobre redes neuronales y aprendizaje profundo: del perceptrón a la retropropagación, con la mirada de Hinton.',
-      en: 'Deck on neural networks and deep learning: from the perceptron to backpropagation, through Hinton’s lens.',
+      en: "Deck on neural networks and deep learning: from the perceptron to backpropagation, through Hinton's lens.",
     },
     url: 'https://hinton.stevenvallejo.com/',
     status: 'live',
     badge: { es: 'Deck', en: 'Deck' },
     secondary: true,
+  },
+  {
+    id: 'aporia',
+    frente: 'ciencias',
+    nombre: 'Áporía',
+    subtitulo: {
+      es: 'La ciencia en lo absurdo',
+      en: 'Science at the edge of the absurd',
+    },
+    descripcion: {
+      es: 'La ciencia en lo absurdo: paradojas, problemas sin solución y las fronteras donde el rigor tropieza con lo inexplicable.',
+      en: 'Science at the edge of the absurd: paradoxes, unsolvable problems and the frontiers where rigor meets the inexplicable.',
+    },
+    status: 'soon',
+    badge: { es: 'Próximamente', en: 'Coming soon' },
   },
 
   /* ===================== INFORMÁTICA ===================== */
@@ -199,7 +214,7 @@ export const productos: Producto[] = [
       es: 'La joya técnica: escribes en español → auto.logic formaliza → ST ejecuta (lenguaje lógico con SAT solver CDCL propio, 6333 tests).',
       en: 'The technical jewel: write in Spanish → auto.logic formalizes → ST executes (a logic language with a home-grown CDCL SAT solver, 6333 tests).',
     },
-    url: 'https://nlp-to-logic.vercel.app',
+    url: 'https://organon.stevenvallejo.com',
     repo: 'https://github.com/stevenvo780/nlp-to-logic',
     status: 'live',
     badge: { es: 'Joya técnica', en: 'Technical jewel' },
@@ -217,7 +232,7 @@ export const productos: Producto[] = [
       es: 'Vitrina de la pila de IA: RAG, LLM local en GGUF, swarm de agentes vía MCP y conversor OCR.',
       en: 'Showcase of the AI stack: RAG, local GGUF LLM, agent swarm over MCP and an OCR converter.',
     },
-    url: 'https://stevenai.vercel.app',
+    url: 'https://daimon.stevenvallejo.com',
     repo: 'https://github.com/stevenvo780/stevenai',
     status: 'live',
     badge: { es: 'Pila de IA', en: 'AI stack' },
@@ -234,7 +249,7 @@ export const productos: Producto[] = [
       es: '8 devtools OSS de desarrollo y sistema: Ultimate Terminal, Mission Center Web, clawbar, kratos-jarvis, vaultlog y más.',
       en: '8 OSS dev/system devtools: Ultimate Terminal, Mission Center Web, clawbar, kratos-jarvis, vaultlog and more.',
     },
-    url: 'https://stevendevbox.vercel.app',
+    url: 'https://techne.stevenvallejo.com',
     repo: 'https://github.com/stevenvo780/stevendevbox',
     status: 'live',
     badge: { es: '8 herramientas OSS', en: '8 OSS tools' },
@@ -251,28 +266,16 @@ export const productos: Producto[] = [
       es: 'Plataforma multi-tenant de comunidades: eventos, biblioteca, ranking y normativa. Next.js 15 + NestJS serverless + Neon + auth Firebase.',
       en: 'Multi-tenant community platform: events, library, ranking and rules. Next.js 15 + serverless NestJS + Neon + Firebase auth.',
     },
-    url: 'https://communityos-liard.vercel.app',
+    url: 'https://koinonia.stevenvallejo.com',
     repo: 'https://github.com/stevenvo780/communityos',
     status: 'live',
     badge: { es: 'Multi-tenant', en: 'Multi-tenant' },
   },
 
-  /* ===================== ENTERPRISE ===================== */
-  {
-    id: 'prisma',
-    frente: 'enterprise',
-    nombre: 'PRISMA',
-    descripcion: {
-      es: 'Humanizar, al siguiente nivel. Próximamente.',
-      en: 'Humanizar, at the next level. Coming soon.',
-    },
-    status: 'soon',
-    badge: { es: 'Próximamente', en: 'Coming soon' },
-    featured: true,
-  },
+  /* ── Ingeniería: software de negocio (ex-Enterprise) ── */
   {
     id: 'devkits',
-    frente: 'enterprise',
+    frente: 'informatica',
     nombre: 'Érgon',
     subtitulo: {
       es: 'Software a medida PYME',
@@ -282,13 +285,13 @@ export const productos: Producto[] = [
       es: 'Suite de starter kits para PYME: «el 80% ya está hecho, pagas el customizing». Venta cerrada o micro-SaaS.',
       en: 'Suite of SMB starter kits: "80% is already built, you pay for the customizing". Fixed-scope sale or micro-SaaS.',
     },
-    url: 'https://devkits-psi.vercel.app',
+    url: 'https://ergon.stevenvallejo.com',
     status: 'live',
     badge: { es: 'Venta cerrada 40/30/30', en: 'Fixed-scope 40/30/30' },
   },
   {
     id: 'devkits-hours',
-    frente: 'enterprise',
+    frente: 'informatica',
     nombre: 'Chrónos',
     subtitulo: {
       es: 'Horas + cuentas de cobro',
@@ -298,13 +301,13 @@ export const productos: Producto[] = [
       es: 'Control de horas por empresa/proyecto + cuentas de cobro colombianas (firma, NIT, banco) + reportes PDF.',
       en: 'Time tracking by company/project + Colombian invoices (signature, tax ID, bank) + PDF reports.',
     },
-    url: 'https://devkits-hours.vercel.app',
+    url: 'https://chronos.stevenvallejo.com',
     status: 'live',
     badge: { es: 'SaaS · ~29k COP/mes', en: 'SaaS · ~29k COP/mo' },
   },
   {
     id: 'devkits-crm',
-    frente: 'enterprise',
+    frente: 'informatica',
     nombre: 'Xenía',
     subtitulo: {
       es: 'CRM PYME',
@@ -314,13 +317,13 @@ export const productos: Producto[] = [
       es: 'CRM para PYME colombiana: pipeline kanban, contactos, empresas y negocios, 19 entidades, localizado NIT/COP.',
       en: 'CRM for Colombian SMBs: kanban pipeline, contacts, companies and deals, 19 entities, localized for tax ID/COP.',
     },
-    url: 'https://devkits-crm.vercel.app',
+    url: 'https://xenia.stevenvallejo.com',
     status: 'live',
     badge: { es: 'CRM PYME', en: 'SMB CRM' },
   },
   {
     id: 'scrapekit',
-    frente: 'enterprise',
+    frente: 'informatica',
     nombre: 'Nómos',
     subtitulo: {
       es: 'Scraping legal',
@@ -330,13 +333,13 @@ export const productos: Producto[] = [
       es: 'Indexa documentos legislativos (Cámara/Senado CO + Cámara RD) con búsqueda full-text. FastAPI + Neon.',
       en: 'Indexes legislative documents (CO House/Senate + DR House) with full-text search. FastAPI + Neon.',
     },
-    url: 'https://scrapekit-beta.vercel.app',
+    url: 'https://nomos.stevenvallejo.com',
     status: 'live',
     badge: { es: 'Llave en mano o SaaS', en: 'Turnkey or SaaS' },
   },
   {
     id: 'warehouse',
-    frente: 'enterprise',
+    frente: 'informatica',
     nombre: 'Apothḗke',
     subtitulo: {
       es: 'Inventario',
@@ -346,9 +349,42 @@ export const productos: Producto[] = [
       es: 'Gestión de almacén e inventario: stock, órdenes, movimientos, roles y exportación a PDF/Excel.',
       en: 'Warehouse and inventory management: stock, orders, movements, roles and PDF/Excel export.',
     },
-    url: 'https://warehouse-eta-inky.vercel.app',
+    url: 'https://apotheke.stevenvallejo.com',
     status: 'live',
     badge: { es: 'Venta cerrada PYME', en: 'Fixed-scope SMB sale' },
+  },
+  {
+    id: 'eikon',
+    frente: 'informatica',
+    nombre: 'Eikón',
+    subtitulo: {
+      es: 'Generador de imagen de marca',
+      en: 'Brand image generator',
+    },
+    descripcion: {
+      es: 'Generador de imagen de marca: logos, paletas, activos visuales y kits de identidad con IA.',
+      en: 'Brand image generator: logos, palettes, visual assets and identity kits powered by AI.',
+    },
+    status: 'soon',
+    badge: { es: 'Próximamente', en: 'Coming soon' },
+  },
+
+  /* ===================== ENTERPRISE ===================== */
+  {
+    id: 'prizma',
+    frente: 'enterprise',
+    nombre: 'Prizma',
+    subtitulo: {
+      es: 'Suite empresarial modular',
+      en: 'Modular business suite',
+    },
+    descripcion: {
+      es: 'Suite corporativa modular: POS con facturación DIAN (Talanton), crédito sin interés (Pistis), marketing por WhatsApp (Iris), e-commerce conversacional (Hermes), logística de última milla (Talaria) y CRM, orquestados por un hub de eventos (Nous). NestJS + Next.js sobre Cloud Run.',
+      en: 'Modular corporate suite: POS with e-invoicing (Talanton), interest-free credit (Pistis), WhatsApp marketing (Iris), conversational e-commerce (Hermes), last-mile logistics (Talaria) and CRM, orchestrated by an event hub (Nous). NestJS + Next.js on Cloud Run.',
+    },
+    status: 'soon',
+    badge: { es: 'Suite empresarial', en: 'Business suite' },
+    featured: true,
   },
 ];
 
@@ -368,11 +404,11 @@ export interface FrenteLink {
 export const frenteLinks: Partial<Record<FrenteId, FrenteLink[]>> = {
   filosofia: [
     {
-      label: { es: 'Portal Filosofía', en: 'Philosophy portal' },
+      label: { es: 'CV Filósofo', en: 'Philosophy CV' },
       url: 'https://filosofo.stevenvallejo.com',
     },
     {
-      label: { es: 'Blog · Abstracción', en: 'Blog · Abstracción' },
+      label: { es: 'Blog · Scholḗ', en: 'Blog · Scholḗ' },
       url: 'https://blog.stevenvallejo.com',
     },
   ],
@@ -382,8 +418,8 @@ export const frenteLinks: Partial<Record<FrenteId, FrenteLink[]>> = {
       url: 'https://informatico.stevenvallejo.com',
     },
     {
-      label: { es: 'Hub · Portafolio', en: 'Hub · Portfolio' },
-      url: 'https://portafolio-gamma-roan.vercel.app',
+      label: { es: 'Servicios', en: 'Services' },
+      url: 'https://services.stevenvallejo.com',
     },
   ],
 };
