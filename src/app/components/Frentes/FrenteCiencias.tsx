@@ -196,6 +196,22 @@ function CienciasCard({ producto, locale }: CardProps) {
         {produto_status_badge(producto, locale)}
       </div>
 
+      {/* What it is (one-liner) */}
+      {producto.subtitulo && (
+        <p
+          style={{
+            margin: '-0.3rem 0 0.55rem',
+            fontFamily: 'var(--font-mono)',
+            fontSize: '0.72rem',
+            letterSpacing: '0.04em',
+            color: 'var(--teal-light)',
+            lineHeight: 1.4,
+          }}
+        >
+          {producto.subtitulo[locale]}
+        </p>
+      )}
+
       {/* Badge / metric chips */}
       {producto.badge && (
         <div style={{ marginBottom: '0.55rem' }}>

@@ -199,7 +199,7 @@ function FilosofiaCard({ producto: p, locale, index }: CardProps) {
         )}
       </div>
 
-      {/* Name */}
+      {/* Name (Greek wordmark) */}
       <h3 className="fc-name">
         {p.nombre}
         {isFeatured && (
@@ -208,6 +208,7 @@ function FilosofiaCard({ producto: p, locale, index }: CardProps) {
           </span>
         )}
       </h3>
+      {p.subtitulo && <p className="fc-subtitle">{p.subtitulo[locale]}</p>}
 
       {/* Description */}
       <p className="fc-desc">{p.descripcion[locale]}</p>
@@ -434,6 +435,15 @@ export default function FrenteFilosofia() {
           color: var(--gold);
           flex-shrink: 0;
           line-height: 1;
+        }
+
+        .fc-subtitle {
+          font-family: var(--font-mono);
+          font-size: 0.72rem;
+          letter-spacing: 0.04em;
+          color: var(--gold-light);
+          margin: -0.35rem 0 0;
+          line-height: 1.4;
         }
 
         .fc-desc {

@@ -2,7 +2,7 @@ import { ImageResponse } from 'next/og';
 
 export const runtime = 'nodejs';
 
-export const alt = 'Steven Vallejo Ortiz — Ingeniero de Software & Líder de Sistemas';
+export const alt = 'Steven Vallejo · Mouseîon — Ingeniero de Software & Filósofo';
 export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';
 
@@ -49,9 +49,24 @@ export default function OpengraphImage() {
             borderRadius: 999,
             background: SIGNATURE,
             display: 'flex',
-            marginBottom: 44,
+            marginBottom: 26,
           }}
         />
+
+        {/* Ecosystem wordmark */}
+        <div
+          style={{
+            display: 'flex',
+            fontSize: 26,
+            fontWeight: 600,
+            letterSpacing: '0.32em',
+            textTransform: 'uppercase',
+            color: TEAL_INK,
+            marginBottom: 18,
+          }}
+        >
+          Mouseîon
+        </div>
 
         {/* Name */}
         <div

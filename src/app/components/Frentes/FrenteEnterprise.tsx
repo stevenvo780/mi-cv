@@ -247,6 +247,21 @@ function ProductCard({
           )}
         </div>
 
+        {/* What it is (one-liner) */}
+        {product.subtitulo && (
+          <span
+            className="brand-eyebrow"
+            style={{
+              color: 'var(--gold-light)',
+              fontSize: '0.72rem',
+              letterSpacing: '0.04em',
+              textTransform: 'none',
+            }}
+          >
+            {product.subtitulo[locale]}
+          </span>
+        )}
+
         {/* Heritage tag for Graf */}
         {isGraf && (
           <span

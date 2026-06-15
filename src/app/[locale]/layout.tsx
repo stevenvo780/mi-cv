@@ -11,7 +11,7 @@ const META = {
   es: {
     ogLocale: 'es_ES',
     htmlLang: 'es-ES',
-    title: 'Steven Vallejo Ortiz — Ingeniero de Software y Filósofo',
+    title: 'Steven Vallejo · Mouseîon — Ingeniero y Filósofo',
     jobTitle: ['Ingeniero de Software', 'Filósofo'],
     description:
       'Steven Vallejo Ortiz, ingeniero de software y filósofo. Ingeniería backend de extremo a extremo (Node.js, NestJS, TypeScript, PostgreSQL, Docker, Linux, GCP/Cloud Run, microservicios, APIs REST, integración de LLMs, RAG, OCR y automatización de procesos) y formación filosófica en lógica formal, filosofía analítica, epistemología, filosofía de la mente y de la IA, ética y argumentación.',
@@ -53,7 +53,7 @@ const META = {
   en: {
     ogLocale: 'en_US',
     htmlLang: 'en-US',
-    title: 'Steven Vallejo Ortiz — Software Engineer and Philosopher',
+    title: 'Steven Vallejo · Mouseîon — Engineer and Philosopher',
     jobTitle: ['Software Engineer', 'Philosopher'],
     description:
       'Steven Vallejo Ortiz, software engineer and philosopher. End-to-end backend engineering (Node.js, NestJS, TypeScript, PostgreSQL, Docker, Linux, GCP/Cloud Run, microservices, REST APIs, LLM integration, RAG, OCR and process automation) together with a philosophical background in formal logic, analytic philosophy, epistemology, philosophy of mind and of AI, ethics and argumentation.',
@@ -111,7 +111,7 @@ export async function generateMetadata({
     metadataBase: new URL(baseUrl),
     title: {
       default: data.title,
-      template: '%s | Steven Vallejo Ortiz',
+      template: '%s | Mouseîon · Steven Vallejo',
     },
     description: data.description,
     keywords: [...data.keywords],
@@ -137,7 +137,7 @@ export async function generateMetadata({
       locale: data.ogLocale,
       alternateLocale: locale === 'es' ? ['en_US'] : ['es_ES'],
       url: localizedUrl,
-      siteName: 'Steven Vallejo Ortiz',
+      siteName: 'Mouseîon · Steven Vallejo',
     },
     twitter: {
       card: 'summary_large_image',

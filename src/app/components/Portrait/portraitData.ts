@@ -17,6 +17,8 @@ export interface PortraitStrings {
   heroKicker: string;
   heroTitle: string;
   heroLead: string;
+  /** Subtle line naming the body of work as the Mouseîon ecosystem. */
+  bodyOfWork: string;
   epigraph: string;
   sections: PortraitSection[];
   blogTitle: string;
@@ -33,6 +35,8 @@ export const PORTRAIT: Record<Locale, PortraitStrings> = {
     heroTitle: 'Pensar antes de construir.',
     heroLead:
       'Llegué a la filosofía desde la ingeniería, no al revés. No soy un humanista que aprendió a programar: soy alguien que llevó muchos sistemas a producción y descubrió que el cuello de botella casi nunca era técnico, sino conceptual. Hablo de abstracción con las manos manchadas de producción.',
+    bodyOfWork:
+      'Mi cuerpo de trabajo —los sistemas, los lenguajes, las plazas— vive bajo un mismo nombre: Mouseîon, la casa de las Musas.',
     epigraph: '«La abstracción no es alejarse del problema. Es verlo desde la altura exacta.»',
     sections: [
       {
@@ -112,6 +116,8 @@ export const PORTRAIT: Record<Locale, PortraitStrings> = {
     heroTitle: 'Think before you build.',
     heroLead:
       'I came to philosophy from engineering, not the other way around. I am not a humanist who learned to code: I am someone who took many systems to production and found that the real bottleneck was almost never technical, but conceptual. I talk about abstraction with my hands stained by production.',
+    bodyOfWork:
+      'My body of work —the systems, the languages, the squares— lives under one name: Mouseîon, the house of the Muses.',
     epigraph: '"Abstraction is not stepping away from the problem. It is seeing it from the exact height."',
     sections: [
       {

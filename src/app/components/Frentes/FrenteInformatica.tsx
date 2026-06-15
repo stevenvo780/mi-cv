@@ -214,6 +214,22 @@ function ProductCard({ p, locale }: { p: Producto; locale: Locale }) {
         )}
       </header>
 
+      {/* What it is (one-liner) */}
+      {p.subtitulo && (
+        <p
+          style={{
+            margin: '-0.4rem 0 0',
+            fontFamily: 'var(--font-mono)',
+            fontSize: '0.72rem',
+            letterSpacing: '0.04em',
+            color: 'var(--teal-light)',
+            lineHeight: 1.4,
+          }}
+        >
+          {p.subtitulo[locale]}
+        </p>
+      )}
+
       {/* Description */}
       <p
         style={{

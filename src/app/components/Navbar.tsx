@@ -96,7 +96,21 @@ export default function CustomNavbar() {
           className="d-inline-flex align-items-center gap-2"
         >
           <BrandLogo size={30} title={t('header.name')} />
-          <span>{t('header.name')}</span>
+          <span className="d-inline-flex flex-column lh-1">
+            <span>{t('header.name')}</span>
+            <span
+              style={{
+                fontFamily: 'var(--font-mono, monospace)',
+                fontSize: '0.6rem',
+                letterSpacing: '0.22em',
+                textTransform: 'uppercase',
+                color: 'var(--teal-light, #6fd3c4)',
+                marginTop: '2px',
+              }}
+            >
+              Mouseîon
+            </span>
+          </span>
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="navbar-nav" />
         <Navbar.Collapse id="navbar-nav">

@@ -20,7 +20,10 @@ export interface LocalizedText {
 export interface Producto {
   id: string;
   frente: FrenteId;
+  /** Visible Greek wordmark for the product (e.g. "Kósmos"). */
   nombre: string;
+  /** One-line bilingual "what it is", shown under the Greek name. */
+  subtitulo?: LocalizedText;
   descripcion: LocalizedText;
   /** Live public URL. Absent for status:'soon'. */
   url?: string;
@@ -117,7 +120,11 @@ export const productos: Producto[] = [
   {
     id: 'clavis',
     frente: 'filosofia',
-    nombre: 'Clavis',
+    nombre: 'Paideía',
+    subtitulo: {
+      es: 'Portal de humanidades',
+      en: 'Humanities portal',
+    },
     descripcion: {
       es: 'Portal de humanidades digitales: Griego Clásico, Neurofilosofía y Filosofía de la Ciudad. 227 rutas estáticas de contenido académico en MDX.',
       en: 'Digital humanities portal: Classical Greek, Neurophilosophy and Philosophy of the City. 227 static routes of academic content in MDX.',
@@ -131,7 +138,11 @@ export const productos: Producto[] = [
   {
     id: 'debatesuite',
     frente: 'filosofia',
-    nombre: 'DebateSuite',
+    nombre: 'Agón',
+    subtitulo: {
+      es: 'Moderador de debates',
+      en: 'Debate moderator',
+    },
     descripcion: {
       es: 'Moderador de debates (timer, turnos, falacias) y simulador de dinámicas con autómata celular. PWA con uso offline.',
       en: 'Debate moderator (timer, turns, fallacies) and dynamics simulator with a cellular automaton. Offline-capable PWA.',
@@ -146,7 +157,11 @@ export const productos: Producto[] = [
   {
     id: 'complexlab',
     frente: 'ciencias',
-    nombre: 'ComplexLab',
+    nombre: 'Kósmos',
+    subtitulo: {
+      es: 'Catálogo de simulación científica',
+      en: 'Scientific simulation catalogue',
+    },
     descripcion: {
       es: 'Catálogo educativo de simulación científica que unifica 16 repos de sistemas complejos, emergencia y filosofía de la ciencia. 22 páginas SSG.',
       en: 'Educational catalogue of scientific simulation unifying 16 repos on complex systems, emergence and philosophy of science. 22 SSG pages.',
@@ -175,7 +190,11 @@ export const productos: Producto[] = [
   {
     id: 'nlp-to-logic',
     frente: 'informatica',
-    nombre: 'NLP-to-Logic',
+    nombre: 'Órganon',
+    subtitulo: {
+      es: 'Lenguaje natural → lógica formal',
+      en: 'Natural language → formal logic',
+    },
     descripcion: {
       es: 'La joya técnica: escribes en español → auto.logic formaliza → ST ejecuta (lenguaje lógico con SAT solver CDCL propio, 6333 tests).',
       en: 'The technical jewel: write in Spanish → auto.logic formalizes → ST executes (a logic language with a home-grown CDCL SAT solver, 6333 tests).',
@@ -189,7 +208,11 @@ export const productos: Producto[] = [
   {
     id: 'stevenai',
     frente: 'informatica',
-    nombre: 'StevenAI Suite',
+    nombre: 'Daímon',
+    subtitulo: {
+      es: 'Pila de IA',
+      en: 'AI stack',
+    },
     descripcion: {
       es: 'Vitrina de la pila de IA: RAG, LLM local en GGUF, swarm de agentes vía MCP y conversor OCR.',
       en: 'Showcase of the AI stack: RAG, local GGUF LLM, agent swarm over MCP and an OCR converter.',
@@ -202,7 +225,11 @@ export const productos: Producto[] = [
   {
     id: 'stevendevbox',
     frente: 'informatica',
-    nombre: 'StevenDevBox',
+    nombre: 'Téchne',
+    subtitulo: {
+      es: 'Herramientas dev OSS',
+      en: 'OSS dev tools',
+    },
     descripcion: {
       es: '8 devtools OSS de desarrollo y sistema: Ultimate Terminal, Mission Center Web, clawbar, kratos-jarvis, vaultlog y más.',
       en: '8 OSS dev/system devtools: Ultimate Terminal, Mission Center Web, clawbar, kratos-jarvis, vaultlog and more.',
@@ -215,7 +242,11 @@ export const productos: Producto[] = [
   {
     id: 'communityos',
     frente: 'informatica',
-    nombre: 'CommunityOS',
+    nombre: 'Koinonía',
+    subtitulo: {
+      es: 'Plataforma de comunidades',
+      en: 'Community platform',
+    },
     descripcion: {
       es: 'Plataforma multi-tenant de comunidades: eventos, biblioteca, ranking y normativa. Next.js 15 + NestJS serverless + Neon + auth Firebase.',
       en: 'Multi-tenant community platform: events, library, ranking and rules. Next.js 15 + serverless NestJS + Neon + Firebase auth.',
@@ -242,7 +273,11 @@ export const productos: Producto[] = [
   {
     id: 'devkits',
     frente: 'enterprise',
-    nombre: 'DevKits',
+    nombre: 'Érgon',
+    subtitulo: {
+      es: 'Software a medida PYME',
+      en: 'Custom SMB software',
+    },
     descripcion: {
       es: 'Suite de starter kits para PYME: «el 80% ya está hecho, pagas el customizing». Venta cerrada o micro-SaaS.',
       en: 'Suite of SMB starter kits: "80% is already built, you pay for the customizing". Fixed-scope sale or micro-SaaS.',
@@ -254,7 +289,11 @@ export const productos: Producto[] = [
   {
     id: 'devkits-hours',
     frente: 'enterprise',
-    nombre: 'DevKits Hours',
+    nombre: 'Chrónos',
+    subtitulo: {
+      es: 'Horas + cuentas de cobro',
+      en: 'Time tracking + invoices',
+    },
     descripcion: {
       es: 'Control de horas por empresa/proyecto + cuentas de cobro colombianas (firma, NIT, banco) + reportes PDF.',
       en: 'Time tracking by company/project + Colombian invoices (signature, tax ID, bank) + PDF reports.',
@@ -266,7 +305,11 @@ export const productos: Producto[] = [
   {
     id: 'devkits-crm',
     frente: 'enterprise',
-    nombre: 'DevKits CRM',
+    nombre: 'Xenía',
+    subtitulo: {
+      es: 'CRM PYME',
+      en: 'SMB CRM',
+    },
     descripcion: {
       es: 'CRM para PYME colombiana: pipeline kanban, contactos, empresas y negocios, 19 entidades, localizado NIT/COP.',
       en: 'CRM for Colombian SMBs: kanban pipeline, contacts, companies and deals, 19 entities, localized for tax ID/COP.',
@@ -278,7 +321,11 @@ export const productos: Producto[] = [
   {
     id: 'scrapekit',
     frente: 'enterprise',
-    nombre: 'ScrapeKit Colombia',
+    nombre: 'Nómos',
+    subtitulo: {
+      es: 'Scraping legal',
+      en: 'Legal scraping',
+    },
     descripcion: {
       es: 'Indexa documentos legislativos (Cámara/Senado CO + Cámara RD) con búsqueda full-text. FastAPI + Neon.',
       en: 'Indexes legislative documents (CO House/Senate + DR House) with full-text search. FastAPI + Neon.',
@@ -290,7 +337,11 @@ export const productos: Producto[] = [
   {
     id: 'warehouse',
     frente: 'enterprise',
-    nombre: 'Warehouse',
+    nombre: 'Apothḗke',
+    subtitulo: {
+      es: 'Inventario',
+      en: 'Inventory',
+    },
     descripcion: {
       es: 'Gestión de almacén e inventario: stock, órdenes, movimientos, roles y exportación a PDF/Excel.',
       en: 'Warehouse and inventory management: stock, orders, movements, roles and PDF/Excel export.',

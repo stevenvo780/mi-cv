@@ -212,6 +212,13 @@ export default function PortalShell() {
             letter-spacing: 0.04em;
             margin: 0;
           }
+          .close-foot-brand {
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            color: var(--teal-light);
+            letter-spacing: 0.10em;
+            margin: 0.5rem 0 0;
+          }
           @media (prefers-reduced-motion: reduce) {
             .close-link { transition: none !important; }
           }
@@ -279,6 +286,11 @@ export default function PortalShell() {
                 {locale === 'es'
                   ? 'Pensar antes de construir: ese es todo el método.'
                   : 'Think before you build: that is the whole method.'}
+              </p>
+              <p className="close-foot-brand">
+                {locale === 'es'
+                  ? 'Mouseîon · por Steven Vallejo'
+                  : 'Mouseîon · by Steven Vallejo'}
               </p>
             </div>
           </div>

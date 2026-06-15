@@ -38,6 +38,7 @@ export default function Portrait() {
               <em>{t.heroTitle}</em>
             </h1>
             <p className={styles.heroLead}>{t.heroLead}</p>
+            <p className={styles.bodyOfWork}>{t.bodyOfWork}</p>
             <p className={styles.epigraph}>{t.epigraph}</p>
             <div className={styles.heroCtas}>
               <a href="https://informatico.stevenvallejo.com" target="_blank" rel="noopener noreferrer" className={styles.ctaPrimary}>
@@ -103,6 +104,9 @@ export default function Portrait() {
 
         <footer className={styles.foot}>
           <p className={styles.footNote}>{t.footNote}</p>
+          <p className={styles.footBrand}>
+            {locale === 'es' ? 'Mouseîon · por Steven Vallejo' : 'Mouseîon · by Steven Vallejo'}
+          </p>
         </footer>
       </div>
     </article>

@@ -55,6 +55,11 @@ export default function FrenteStub({ frente }: FrenteStubProps) {
               ) : (
                 <span>{p.nombre}</span>
               )}
+              {p.subtitulo ? (
+                <span style={{ color: 'var(--muted)', marginLeft: '0.5rem', fontSize: '0.85em' }}>
+                  — {p.subtitulo[locale]}
+                </span>
+              ) : null}
               {p.badge ? (
                 <span className="brand-chip" style={{ marginLeft: '0.6rem' }}>
                   {p.badge[locale]}
