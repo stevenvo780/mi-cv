@@ -65,11 +65,25 @@ export default function CustomNavbar() {
               {locale === 'es' ? 'Mi historia' : 'My story'}
             </Nav.Link>
             <Nav.Link
-              href="https://pinakotheke.stevenvallejo.com"
+              href="https://filosofo.stevenvallejo.com"
               target="_blank"
               rel="noopener noreferrer"
             >
-              Pinakothḗke ↗
+              {locale === 'es' ? 'CV Filósofo' : 'Philosophy CV'}
+            </Nav.Link>
+            <Nav.Link
+              href="https://informatico.stevenvallejo.com"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {locale === 'es' ? 'CV Informático' : 'Engineering CV'}
+            </Nav.Link>
+            <Nav.Link
+              href="https://services.stevenvallejo.com"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {locale === 'es' ? 'Servicios' : 'Services'}
             </Nav.Link>
           </Nav>
 

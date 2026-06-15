@@ -384,8 +384,6 @@ export default function LinktreeHome() {
   const t = T[locale];
   useReveal();
 
-  const { links } = t;
-
   // Group products by frente for gallery sections
   const productsByFrente = FRENTE_SECTIONS.map((fs) => ({
     ...fs,
@@ -985,34 +983,7 @@ export default function LinktreeHome() {
         </div>
       </section>
 
-      {/* ─── LINKTREE ──────────────────────────────────────────── */}
-      <div className="lt-section-hd reveal">
-        <h2>{t.linktreeTitle}</h2>
-        <p>stevenvallejo.com</p>
-        <hr />
-      </div>
-
-      <div className="lt-section">
-        <CatLabel>{t.linkCat1}</CatLabel>
-        <HubCard {...links.cvFilosofo} accent="gold" delay={0} />
-        <HubCard {...links.cvInfo}     accent="teal" delay={60} />
-
-        <CatLabel>{t.linkCat2}</CatLabel>
-        <HubCard {...links.prizma} accent="rust"  delay={0} />
-        <HubCard {...links.agora}  accent="teal"  delay={60} />
-
-        <CatLabel>{t.linkCat3}</CatLabel>
-        <HubCard {...links.services} accent="rust" delay={0} />
-        <HubCard {...links.blog}     accent="teal" delay={60} />
-        <HubCard
-          label={links.lore.label}
-          sub={links.lore.sub}
-          url={links.lore.url}
-          accent="gold"
-          delay={120}
-          internal
-        />
-      </div>
+      {/* Accesos directos (CVs · Servicios · Blog) movidos a la barra superior (navbar). */}
 
       {/* ─── LORE LINK ─────────────────────────────────────────── */}
       <div className="lt-lore-row">
