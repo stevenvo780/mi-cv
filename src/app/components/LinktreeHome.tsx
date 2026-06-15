@@ -877,7 +877,7 @@ export default function LinktreeHome() {
           <p className="lt-hero-lead">{t.lead}</p>
           <blockquote className="lt-hero-epigraph">{t.epigraph}</blockquote>
           <a
-            href={links.services.url}
+            href={t.links.services.url}
             target="_blank"
             rel="noopener noreferrer"
             className="lt-hero-cta"
