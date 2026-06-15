@@ -6,10 +6,25 @@ export function middleware(request: NextRequest) {
   const locales = ['en', 'es'];
   const defaultLocale = 'en';
 
+  // App Router file-based metadata routes live at the root (no locale prefix)
+  // and have no file extension, so they must bypass the locale redirect below.
+  const metadataRoutes = [
+    '/opengraph-image',
+    '/twitter-image',
+    '/icon',
+    '/icon.svg',
+    '/apple-icon',
+    '/favicon.ico',
+    '/sitemap.xml',
+    '/robots.txt',
+    '/manifest.webmanifest',
+  ];
+
   if (
     pathname.startsWith('/_next') ||
     pathname.startsWith('/api') ||
     pathname.startsWith('/static') ||
+    metadataRoutes.includes(pathname) ||
     /\.(.*)$/.test(pathname)
   ) {
     return NextResponse.next();
