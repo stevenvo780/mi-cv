@@ -3,7 +3,7 @@ import Script from 'next/script';
 import CustomNavbar from '../components/Navbar';
 import LocaleLangSync from '../components/LocaleLangSync';
 
-const baseUrl = 'https://stevenvallejo.com';
+const baseUrl = 'https://www.stevenvallejo.com';
 
 type Locale = 'es' | 'en';
 
@@ -11,8 +11,10 @@ const META = {
   es: {
     ogLocale: 'es_ES',
     htmlLang: 'es-ES',
-    title: 'Steven Vallejo · Mouseîon — Ingeniero y Filósofo',
+    title: 'Mouseîon — Portal de Steven Vallejo (Ingeniero & Filósofo)',
     jobTitle: ['Ingeniero de Software', 'Filósofo'],
+    metaDescription:
+      'Portal de Steven Vallejo Ortiz: ingeniero de software backend (Node.js, NestJS, GCP, LLMs) y filósofo (lógica, filosofía analítica, ética, IA). Mouseîon.',
     description:
       'Steven Vallejo Ortiz, ingeniero de software y filósofo. Ingeniería backend de extremo a extremo (Node.js, NestJS, TypeScript, PostgreSQL, Docker, Linux, GCP/Cloud Run, microservicios, APIs REST, integración de LLMs, RAG, OCR y automatización de procesos) y formación filosófica en lógica formal, filosofía analítica, epistemología, filosofía de la mente y de la IA, ética y argumentación.',
     keywords: [
@@ -53,8 +55,10 @@ const META = {
   en: {
     ogLocale: 'en_US',
     htmlLang: 'en-US',
-    title: 'Steven Vallejo · Mouseîon — Engineer and Philosopher',
+    title: 'Mouseîon — Steven Vallejo Portal (Engineer & Philosopher)',
     jobTitle: ['Software Engineer', 'Philosopher'],
+    metaDescription:
+      'Portal of Steven Vallejo Ortiz: backend software engineer (Node.js, NestJS, GCP, LLMs) and philosopher (logic, analytic philosophy, ethics, AI). Mouseîon.',
     description:
       'Steven Vallejo Ortiz, software engineer and philosopher. End-to-end backend engineering (Node.js, NestJS, TypeScript, PostgreSQL, Docker, Linux, GCP/Cloud Run, microservices, REST APIs, LLM integration, RAG, OCR and process automation) together with a philosophical background in formal logic, analytic philosophy, epistemology, philosophy of mind and of AI, ethics and argumentation.',
     keywords: [
@@ -113,7 +117,7 @@ export async function generateMetadata({
       default: data.title,
       template: '%s | Mouseîon · Steven Vallejo',
     },
-    description: data.description,
+    description: data.metaDescription,
     keywords: [...data.keywords],
     authors: [{ name: 'Steven Vallejo Ortiz', url: baseUrl }],
     creator: 'Steven Vallejo Ortiz',
@@ -128,21 +132,27 @@ export async function generateMetadata({
       },
     },
     openGraph: {
-      type: 'profile',
-      firstName: 'Steven',
-      lastName: 'Vallejo Ortiz',
-      username: 'stevenvo780',
+      type: 'website',
       title: data.title,
-      description: data.description,
+      description: data.metaDescription,
       locale: data.ogLocale,
       alternateLocale: locale === 'es' ? ['en_US'] : ['es_ES'],
       url: localizedUrl,
-      siteName: 'Mouseîon · Steven Vallejo',
+      siteName: 'Mouseîon',
+      images: [
+        {
+          url: `${baseUrl}/opengraph-image`,
+          width: 1200,
+          height: 630,
+          alt: data.title,
+        },
+      ],
     },
     twitter: {
       card: 'summary_large_image',
       title: data.title,
-      description: data.description,
+      description: data.metaDescription,
+      images: [`${baseUrl}/opengraph-image`],
     },
     robots: {
       index: true,
@@ -187,7 +197,7 @@ export default function LocaleLayout({
     },
     sameAs: [
       'https://github.com/stevenvo780',
-      'https://www.linkedin.com/in/steven-vallejo/',
+      'https://www.linkedin.com/in/stevenvo780',
     ],
     knowsAbout: [
       'Node.js',
@@ -222,6 +232,27 @@ export default function LocaleLayout({
     knowsLanguage: ['es', 'en'],
   };
 
+  const websiteJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: 'Mouseîon',
+    description: locale === 'es'
+      ? 'Portal de Steven Vallejo — ingeniero de software y filósofo'
+      : 'Portal of Steven Vallejo — software engineer and philosopher',
+    url: baseUrl,
+    author: {
+      '@type': 'Person',
+      name: 'Steven Vallejo Ortiz',
+      url: baseUrl,
+    },
+    inLanguage: [locale === 'es' ? 'es-ES' : 'en-US', locale === 'es' ? 'en-US' : 'es-ES'],
+    potentialAction: {
+      '@type': 'SearchAction',
+      target: `${baseUrl}/en?q={search_term_string}`,
+      'query-input': 'required name=search_term_string',
+    },
+  };
+
   return (
     <>
       <LocaleLangSync lang={data.htmlLang} />
@@ -230,6 +261,12 @@ export default function LocaleLayout({
         type="application/ld+json"
         strategy="beforeInteractive"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
+      />
+      <Script
+        id="ld-json-website"
+        type="application/ld+json"
+        strategy="beforeInteractive"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
       />
       <CustomNavbar />
       {children}

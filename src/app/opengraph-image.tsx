@@ -121,7 +121,7 @@ export default function OpengraphImage() {
           }}
         >
           <div style={{ width: 14, height: 14, borderRadius: '50%', background: SIGNATURE, display: 'flex', marginRight: 16 }} />
-          stevenvallejo.com
+          www.stevenvallejo.com
         </div>
       </div>
     ),
