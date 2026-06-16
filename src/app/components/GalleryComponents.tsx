@@ -93,9 +93,7 @@ export function GalleryCard({ producto: p, locale, accent, borderAlpha, bgAlpha,
       )}
 
       <div className="gc-body">
-        {!cover && (
-          <h3 className="gc-name">{p.nombre}</h3>
-        )}
+        <h3 className="gc-name">{p.nombre}</h3>
 
         {p.subtitulo && (
           <p className="gc-sub">{p.subtitulo[locale]}</p>
