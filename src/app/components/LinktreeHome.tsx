@@ -5,10 +5,10 @@
  *
  * Structure:
  *   (0) Hero: GameOfLife bg + BrandLogo + name + identity + CTA
- *   (1) Gallery §01 Informática — productos del frente
- *   (2) Gallery §02 Ciencias    — productos del frente
- *   (3) Gallery §03 Filosofía   — productos del frente
- *   (4) Gallery §04 Enterprise  — productos del frente
+ *   (1) Gallery §01 Ingeniería   — 10 productos (más a menos)
+ *   (2) Gallery §02 Filosofía   —  4 productos
+ *   (3) Gallery §03 Ciencias    —  2 productos
+ *   (4) Gallery §04 Enterprise  —  1 producto
  *   (5) Lore link + social chips + footer
  *
  * Brand: bg #0b1417, teal #43b5a6, gold #e0a85e, rust #cf6a3c

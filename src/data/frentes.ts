@@ -56,7 +56,7 @@ export const frentesMeta: Record<FrenteId, FrenteMeta> = {
   filosofia: {
     id: 'filosofia',
     nombre: { es: 'Filosofía', en: 'Philosophy' },
-    secNo: '01',
+    secNo: '02',
     tagline: {
       es: 'El criterio que da forma a todo lo demás.',
       en: 'The judgment that shapes everything else.',
@@ -69,7 +69,7 @@ export const frentesMeta: Record<FrenteId, FrenteMeta> = {
   ciencias: {
     id: 'ciencias',
     nombre: { es: 'Ciencias', en: 'Sciences' },
-    secNo: '02',
+    secNo: '03',
     tagline: {
       es: 'Sistemas complejos, emergencia, simulación.',
       en: 'Complex systems, emergence, simulation.',
@@ -82,7 +82,7 @@ export const frentesMeta: Record<FrenteId, FrenteMeta> = {
   informatica: {
     id: 'informatica',
     nombre: { es: 'Ingeniería', en: 'Engineering' },
-    secNo: '03',
+    secNo: '01',
     tagline: {
       es: '12+ años de backend, IA agéntica, devtools y software de negocio.',
       en: '12+ years of backend, agentic AI, devtools and business software.',
@@ -95,7 +95,7 @@ export const frentesMeta: Record<FrenteId, FrenteMeta> = {
   enterprise: {
     id: 'enterprise',
     nombre: { es: 'Enterprise', en: 'Enterprise' },
-    secNo: '04',
+    secNo: '04',  // keeps last (1 product)
     tagline: {
       es: 'Software empresarial de producción: la suite Prizma.',
       en: 'Production business software: the Prizma suite.',
@@ -107,10 +107,11 @@ export const frentesMeta: Record<FrenteId, FrenteMeta> = {
   },
 };
 
+// Ordered descending by product count: informatica(10) > filosofia(4) > ciencias(2) > enterprise(1)
 export const frenteOrder: FrenteId[] = [
   'informatica',
-  'ciencias',
   'filosofia',
+  'ciencias',
   'enterprise',
 ];
 

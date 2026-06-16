@@ -38,6 +38,7 @@ export const BRAND_COVER: Record<string, string> = {
 /* ------------------------------------------------------------------ */
 /* Frente accent palette                                               */
 /* ------------------------------------------------------------------ */
+// Ordered descending by product count: informatica(10) > filosofia(4) > ciencias(2) > enterprise(1)
 export const FRENTE_SECTIONS: Array<{
   id: FrenteId;
   accent: string;
@@ -46,8 +47,8 @@ export const FRENTE_SECTIONS: Array<{
   badgeColor: string;
 }> = [
   { id: 'informatica', accent: '#43b5a6', borderAlpha: 'rgba(67,181,166,0.28)',  bgAlpha: 'rgba(67,181,166,0.06)',  badgeColor: 'var(--teal)' },
-  { id: 'ciencias',    accent: '#6fd3c4', borderAlpha: 'rgba(111,211,196,0.28)', bgAlpha: 'rgba(111,211,196,0.06)', badgeColor: 'var(--teal-light)' },
   { id: 'filosofia',   accent: '#e0a85e', borderAlpha: 'rgba(224,168,94,0.28)',  bgAlpha: 'rgba(224,168,94,0.06)',  badgeColor: 'var(--gold)' },
+  { id: 'ciencias',    accent: '#6fd3c4', borderAlpha: 'rgba(111,211,196,0.28)', bgAlpha: 'rgba(111,211,196,0.06)', badgeColor: 'var(--teal-light)' },
   { id: 'enterprise',  accent: '#cf6a3c', borderAlpha: 'rgba(207,106,60,0.28)',  bgAlpha: 'rgba(207,106,60,0.06)',  badgeColor: 'var(--rust)' },
 ];
 
