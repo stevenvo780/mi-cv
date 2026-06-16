@@ -46,10 +46,16 @@ export type Locale = 'es' | 'en';
 /* Each is SUBTLE, behind the cards (z-index 0), reduced-motion aware. */
 /* ------------------------------------------------------------------ */
 export const FRENTE_FIELD: Record<FrenteId, { variant: FieldVariant; opacity: number }> = {
-  informatica: { variant: 'circuit', opacity: 0.13 },
-  filosofia: { variant: 'constellation', opacity: 0.16 },
-  ciencias: { variant: 'lorenz', opacity: 0.18 },
-  enterprise: { variant: 'prism', opacity: 0.14 },
+  // Opacities tuned per animation's intrinsic contrast so each field reads
+  // clearly in the lateral margins without ever fighting the cards:
+  //  · circuit  — sparse hairline lattice, lowest per-pixel ink → highest layer α
+  //  · prism    — faint spectral rays on dark → high α
+  //  · constellation — medium-density gold web → mid α
+  //  · lorenz   — bright continuous trail (highest per-pixel ink) → mid-high α
+  informatica: { variant: 'circuit', opacity: 0.4 },
+  filosofia: { variant: 'constellation', opacity: 0.36 },
+  ciencias: { variant: 'lorenz', opacity: 0.42 },
+  enterprise: { variant: 'prism', opacity: 0.38 },
 };
 
 /* ------------------------------------------------------------------ */
@@ -365,31 +371,50 @@ export const GALLERY_CSS = `
     width: 100vw;
     left: 50%;
     margin-left: -50vw;
-    padding: 2.4rem 0 0;
+    padding: 3.4rem 0 3.4rem;
     isolation: isolate; /* own stacking context: field can't leak over siblings */
   }
 
+  /* Short sections (e.g. Ciencias = 2 cards) would barely give the field any
+     vertical area, so the animation never gets room to read around the cards.
+     Give them a floor height and extra breathing room so the Lorenz attractor
+     has visible canvas above, below and beside the centered cards. */
+  #gallery-ciencias.gs-section {
+    min-height: 78vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-top: 4.5rem;
+    padding-bottom: 4.5rem;
+  }
+
   /* ── Decorative ambient field (canvas) ──
-     Now fills the entire .gs-section (which IS 100vw). The mask fades the
-     animation gently at the top, bottom, and horizontal edges so it never
-     crowds the cards. Always behind everything in this section. */
+     Fills the entire .gs-section (which IS 100vw). The cards sit centered in a
+     ~1120px column, so the field has to stay BRIGHT in the lateral margins —
+     that's the only place it shows. The previous radial mask did the opposite:
+     it kept the centre solid (hidden behind the cards) and faded the sides
+     (where the margins are). Now we feather ONLY the top/bottom seams with
+     adjacent sections, and keep the field at full strength across the whole
+     width so it reads in the side gutters and around short sections. */
   .gs-section .section-field {
     position: absolute;
     inset: 0;
     z-index: 0;
     pointer-events: none;
     overflow: hidden;
-    /* Horizontal fade: full opacity in the centre, fades to transparent at the
-       left/right 15% edges. Vertical fade: solid at 50–80% height, fades
-       at top and bottom so seams with adjacent sections are invisible. */
-    -webkit-mask-image: radial-gradient(
-      ellipse 88% 88% at 50% 48%,
-      #000 45%,
+    /* Vertical seam-feather only: solid through the body, soft top & bottom. */
+    -webkit-mask-image: linear-gradient(
+      to bottom,
+      transparent 0%,
+      #000 14%,
+      #000 86%,
       transparent 100%
     );
-    mask-image: radial-gradient(
-      ellipse 88% 88% at 50% 48%,
-      #000 45%,
+    mask-image: linear-gradient(
+      to bottom,
+      transparent 0%,
+      #000 14%,
+      #000 86%,
       transparent 100%
     );
   }

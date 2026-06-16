@@ -148,7 +148,10 @@ export default function LinktreeHome() {
           position: absolute;
           inset: 0;
           z-index: 0;
-          opacity: 0.14;
+          /* Raised from 0.14 → 0.30 so the Conway automaton clearly reads
+             behind the hero. Gold cells on dark are high-contrast, so the
+             radial glow + bottom mask keep the centered name/CTA legible. */
+          opacity: 0.3;
           pointer-events: none;
           overflow: hidden;
           /* Center the field both axes; the canvas below stretches to fill. */
@@ -190,12 +193,22 @@ export default function LinktreeHome() {
           inset: 0;
           z-index: 0;
           pointer-events: none;
-          background: radial-gradient(
-            ellipse 70% 60% at 50% 50%,
-            rgba(67,181,166,0.07) 0%,
-            rgba(224,168,94,0.04) 50%,
-            transparent 75%
-          );
+          /* Two layers: (1) a soft dark core that grounds the centered name/CTA
+             against the now-brighter gold automaton without dimming the cells
+             toward the edges; (2) the original teal/gold ambient tint. */
+          background:
+            radial-gradient(
+              ellipse 46% 50% at 50% 46%,
+              rgba(11,20,23,0.55) 0%,
+              rgba(11,20,23,0.28) 45%,
+              transparent 72%
+            ),
+            radial-gradient(
+              ellipse 70% 60% at 50% 50%,
+              rgba(67,181,166,0.07) 0%,
+              rgba(224,168,94,0.04) 50%,
+              transparent 75%
+            );
         }
         .lt-hero-inner {
           position: relative;
