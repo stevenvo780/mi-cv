@@ -69,14 +69,14 @@ export default function CustomNavbar() {
               target="_blank"
               rel="noopener noreferrer"
             >
-              {locale === 'es' ? 'CV Filósofo' : 'Philosophy CV'}
+              {locale === 'es' ? 'Filósofo' : 'Philosopher'}
             </Nav.Link>
             <Nav.Link
               href="https://informatico.stevenvallejo.com"
               target="_blank"
               rel="noopener noreferrer"
             >
-              {locale === 'es' ? 'CV Informático' : 'Engineering CV'}
+              {locale === 'es' ? 'Informático' : 'Engineer'}
             </Nav.Link>
             <Nav.Link
               href="https://services.stevenvallejo.com"
