@@ -12,7 +12,13 @@
  *   we show it at its native ratio, full-bleed, with NO redundant text title on top —
  *   only a minimal status ribbon and a single live-link affordance.
  *
- *   Layout adapts to how many products a section has (count-driven density):
+ *   Layout adapts to how many products a section has (count-driven density),
+ *   with a per-product BANNER override layered on top:
+ *     · banner:true  → that product renders as a full-width SHOWCASE BANNER at the
+ *                      TOP of its section (horizontal og_product cover, big radius),
+ *                      even when the section also has grid cards below. A section can
+ *                      therefore MIX: one (or more) banner(s) on top + a portrait grid
+ *                      underneath. Used by Ágora in Filosofía (the "big" one).
  *     · count === 1  → "showcase": one giant near-full-bleed HORIZONTAL banner
  *                      (Enterprise/Prizma) using the hi-res landscape cover.
  *     · count ≥ 2    → "grid": fixed 2-column grid of UNIFORM, taller PORTRAIT cards
@@ -98,13 +104,16 @@ export const BRAND_COVER_PORTRAIT: Record<string, string> = {
   // so both read their 4:5 portrait art instead of the landscape cover.
   complexlab:                     '/brand/kosmos/portrait.png',
   'estructuras-preontologicas':   '/brand/estructuras-preontologicas/portrait.png',
-  // Ingeniería grid (count 12).
+  // NOTE: 'agora' is intentionally ABSENT here. Ágora now lives in Filosofía
+  // and renders as a full-width SHOWCASE BANNER (banner:true) using its
+  // HORIZONTAL cover BRAND_COVER['agora'] (/brand/agora/og_product.png), never
+  // the 4:5 portrait — so it must not appear in the portrait grid map.
+  // Ingeniería grid (count 11).
   'nlp-to-logic':                 '/brand/organon/portrait.png',
   aporia:                         '/brand/aporia/portrait.png',
   stevenai:       '/brand/daimon/portrait.png',
   stevendevbox:   '/brand/techne/portrait.png',
   communityos:    '/brand/koinonia/portrait.png',
-  agora:          '/brand/agora/portrait.png',
   devkits:        '/brand/ergon/portrait.png',
   'devkits-hours': '/brand/chronos/portrait.png',
   'devkits-crm':  '/brand/xenia/portrait.png',
@@ -116,7 +125,7 @@ export const BRAND_COVER_PORTRAIT: Record<string, string> = {
 /* ------------------------------------------------------------------ */
 /* Frente accent palette                                               */
 /* ------------------------------------------------------------------ */
-// Ordered descending by product count: informatica(12) > filosofia(2) = ciencias(2) > enterprise(1)
+// Ordered descending by product count: informatica(11) > filosofia(3) > ciencias(2) > enterprise(1)
 export const FRENTE_SECTIONS: Array<{
   id: FrenteId;
   accent: string;
@@ -310,11 +319,27 @@ export function GallerySection({
   name,
   tagline,
 }: GallerySectionProps) {
-  const layout = layoutForCount(items.length);
+  // Split a section into BANNER products (rendered as full-width showcase
+  // banners stacked on top) and the REST (rendered in the normal layout below).
+  // A product flagged banner:true always gets the wide horizontal plate, even
+  // when the section also holds grid cards (e.g. Ágora over Paideía + Agón in
+  // Filosofía). Sections with no banner flag (Ing./Ciencias/Enterprise) keep
+  // their original count-driven behavior unchanged.
+  const banners = items.filter((p) => p.banner === true);
+  const rest = items.filter((p) => p.banner !== true);
+  // The grid/showcase mode is derived from how many NON-banner products remain.
+  const restLayout = layoutForCount(rest.length);
+  // For data-layout / styling hooks: 'mixed' when a banner coexists with a grid.
+  const sectionLayout =
+    banners.length > 0 && rest.length > 0 ? 'mixed' : restLayout;
   const field = FRENTE_FIELD[frenteId];
 
   return (
-    <div className="gs-section" id={`gallery-${frenteId}`} data-layout={layout}>
+    <div
+      className="gs-section"
+      id={`gallery-${frenteId}`}
+      data-layout={sectionLayout}
+    >
       {/* Decorative ambient field — sits behind the cards (z-index 0). */}
       {field && (
         <SectionField
@@ -331,21 +356,46 @@ export function GallerySection({
           </p>
           <h3 className="gs-tagline">{tagline}</h3>
         </div>
-        <div className={`gs-grid gs-grid--${layout}`}>
-          {items.map((p, i) => (
-            <GalleryCard
-              key={p.id}
-              producto={p}
-              locale={locale}
-              accent={accent}
-              borderAlpha={borderAlpha}
-              bgAlpha={bgAlpha}
-              badgeColor={badgeColor}
-              index={i}
-              layout={layout}
-            />
-          ))}
-        </div>
+
+        {/* Banner row(s): each flagged product as a full-width horizontal
+            showcase, ABOVE the grid. */}
+        {banners.length > 0 && (
+          <div className="gs-grid gs-grid--showcase gs-banners">
+            {banners.map((p, i) => (
+              <GalleryCard
+                key={p.id}
+                producto={p}
+                locale={locale}
+                accent={accent}
+                borderAlpha={borderAlpha}
+                bgAlpha={bgAlpha}
+                badgeColor={badgeColor}
+                index={i}
+                layout="showcase"
+              />
+            ))}
+          </div>
+        )}
+
+        {/* The remaining products in their normal layout (grid or showcase). */}
+        {rest.length > 0 && (
+          <div className={`gs-grid gs-grid--${restLayout}`}>
+            {rest.map((p, i) => (
+              <GalleryCard
+                key={p.id}
+                producto={p}
+                locale={locale}
+                accent={accent}
+                borderAlpha={borderAlpha}
+                bgAlpha={bgAlpha}
+                badgeColor={badgeColor}
+                // Offset reveal index so banner + grid stagger continues smoothly.
+                index={banners.length + i}
+                layout={restLayout}
+              />
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
@@ -465,6 +515,11 @@ export const GALLERY_CSS = `
   .gs-grid--showcase {
     grid-template-columns: 1fr;
   }
+  /* Banner row sitting ON TOP of a portrait grid (mixed section, e.g. Filosofía:
+     Ágora banner over Paideía + Agón). Space it from the grid below; multiple
+     banners stack with the same gap. */
+  .gs-banners { margin-bottom: 1.5rem; }
+  .gs-banners + .gs-grid--grid { margin-top: 0; }
   /* Collapse to a single column on phones. */
   @media (max-width: 560px) {
     .gs-grid--grid { grid-template-columns: 1fr; gap: 1.25rem; }

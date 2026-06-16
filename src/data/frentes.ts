@@ -38,6 +38,14 @@ export interface Producto {
   secondary?: boolean;
   /** Product type override, e.g. 'ponencia' for academic talks/presentations. */
   tipo?: 'ponencia';
+  /**
+   * Render this product as a full-width SHOWCASE BANNER (horizontal og_product
+   * cover, big radius) at the TOP of its section — even when the section also
+   * holds grid cards below. Used for the "big" products that deserve a wide
+   * plate in a multi-product front (e.g. Ágora in Filosofía). The remaining
+   * non-banner products in the same section keep the uniform 2-col portrait grid.
+   */
+  banner?: boolean;
 }
 
 export interface FrenteMeta {
@@ -56,7 +64,7 @@ export const frentesMeta: Record<FrenteId, FrenteMeta> = {
   filosofia: {
     id: 'filosofia',
     nombre: { es: 'Filosofía', en: 'Philosophy' },
-    secNo: '02',  // 2 products (grid-portrait)
+    secNo: '02',  // 3 products: Ágora (banner) + Paideía + Agón (grid-portrait)
     tagline: {
       es: 'El criterio que da forma a todo lo demás.',
       en: 'The judgment that shapes everything else.',
@@ -82,7 +90,7 @@ export const frentesMeta: Record<FrenteId, FrenteMeta> = {
   informatica: {
     id: 'informatica',
     nombre: { es: 'Ingeniería', en: 'Engineering' },
-    secNo: '01',  // 12 products (grid-portrait)
+    secNo: '01',  // 11 products (grid-portrait)
     tagline: {
       es: '12+ años de backend, IA agéntica, devtools y software de negocio.',
       en: '12+ years of backend, agentic AI, devtools and business software.',
@@ -107,7 +115,7 @@ export const frentesMeta: Record<FrenteId, FrenteMeta> = {
   },
 };
 
-// Ordered descending by product count: informatica(12) > filosofia(2) = ciencias(2) > enterprise(1)
+// Ordered descending by product count: informatica(11) > filosofia(3) > ciencias(2) > enterprise(1)
 export const frenteOrder: FrenteId[] = [
   'informatica',
   'filosofia',
@@ -120,6 +128,27 @@ export const frenteOrder: FrenteId[] = [
 /* ---------------------------------------------------------------- */
 export const productos: Producto[] = [
   /* ===================== FILOSOFÍA ===================== */
+  // Ágora es de las "grandes": va PRIMERO y como BANNER full-width (showcase
+  // horizontal con su og_product), no como card de grid. Debajo, Paideía + Agón
+  // siguen en el grid 2-col portrait normal.
+  {
+    id: 'agora',
+    frente: 'filosofia',
+    nombre: 'Ágora',
+    subtitulo: {
+      es: 'Plataforma académica · Elenxos',
+      en: 'Academic platform · Elenxos',
+    },
+    descripcion: {
+      es: 'Plataforma académica en vivo (Elenxos): traduce el caos en estructuras lógicas. Integra ST (lenguaje lógico con SAT solver CDCL propio, 6 333 tests), auto.logic (NLP → lógica formal por reglas, 11 perfiles) y colaboración en tiempo real para razonamiento compartido. NestJS + Next.js sobre Docker.',
+      en: 'Live academic platform (Elenxos): turns chaos into logical structures. It bundles ST (a logic language with a home-grown CDCL SAT solver, 6,333 tests), auto.logic (rule-based NLP → formal logic, 11 profiles) and real-time collaboration for shared reasoning. NestJS + Next.js on Docker.',
+    },
+    url: 'https://agora.elenxos.com',
+    status: 'live',
+    badge: { es: 'Plataforma académica', en: 'Academic platform' },
+    featured: true,
+    banner: true,
+  },
   {
     id: 'clavis',
     frente: 'filosofia',
@@ -263,22 +292,6 @@ export const productos: Producto[] = [
     repo: 'https://github.com/stevenvo780/communityos',
     status: 'live',
     badge: { es: 'Multi-tenant', en: 'Multi-tenant' },
-  },
-  {
-    id: 'agora',
-    frente: 'informatica',
-    nombre: 'Ágora',
-    subtitulo: {
-      es: 'Plataforma académica · Elenxos',
-      en: 'Academic platform · Elenxos',
-    },
-    descripcion: {
-      es: 'Plataforma académica en vivo (Elenxos): traduce el caos en estructuras lógicas. Integra ST (lenguaje lógico con SAT solver CDCL propio, 6 333 tests), auto.logic (NLP → lógica formal por reglas, 11 perfiles) y colaboración en tiempo real para razonamiento compartido. NestJS + Next.js sobre Docker.',
-      en: 'Live academic platform (Elenxos): turns chaos into logical structures. It bundles ST (a logic language with a home-grown CDCL SAT solver, 6,333 tests), auto.logic (rule-based NLP → formal logic, 11 profiles) and real-time collaboration for shared reasoning. NestJS + Next.js on Docker.',
-    },
-    url: 'https://agora.elenxos.com',
-    status: 'live',
-    badge: { es: 'Plataforma académica', en: 'Academic platform' },
   },
 
   /* ── Ingeniería: software de negocio (ex-Enterprise) ── */

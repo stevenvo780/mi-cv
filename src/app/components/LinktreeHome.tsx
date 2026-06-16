@@ -5,8 +5,8 @@
  *
  * Structure:
  *   (0) Hero: GameOfLife bg + BrandLogo + name + identity + CTA
- *   (1) Gallery §01 Ingeniería   — 12 productos (grid-portrait)
- *   (2) Gallery §02 Filosofía   —  2 productos (grid-portrait)
+ *   (1) Gallery §01 Ingeniería   — 11 productos (grid-portrait)
+ *   (2) Gallery §02 Filosofía   —  3 productos (Ágora banner + Paideía + Agón grid)
  *   (3) Gallery §03 Ciencias    —  2 productos (Kósmos + Estructuras, grid-portrait)
  *   (4) Gallery §04 Enterprise  —  1 producto (showcase)
  *   (5) Lore link + social chips + footer
