@@ -5,11 +5,10 @@
  *
  * Structure:
  *   (0) Hero: GameOfLife bg + BrandLogo + name + identity + CTA
- *   (1) Gallery §01 Filosofía  — Paideía, Agón
- *   (2) Gallery §02 Ciencias   — Kósmos, Hinton, Áporía
- *   (3) Gallery §03 Ingeniería — Órganon, Daímon, Téchne, Koinonía,
- *                                Érgon, Chrónos, Xenía, Nómos, Apothḗke, Eikón
- *   (4) Linktree: Prizma, Blog·Scholḗ, Servicios, CVs, Ágora, Mi historia
+ *   (1) Gallery §01 Informática — productos del frente
+ *   (2) Gallery §02 Ciencias    — productos del frente
+ *   (3) Gallery §03 Filosofía   — productos del frente
+ *   (4) Gallery §04 Enterprise  — productos del frente
  *   (5) Lore link + social chips + footer
  *
  * Brand: bg #0b1417, teal #43b5a6, gold #e0a85e, rust #cf6a3c
@@ -22,8 +21,8 @@ import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import BrandLogo from './BrandLogo';
 import { useReveal } from './Frentes/useReveal';
-import { frentesMeta } from '@/data/frentes';
-import { FRENTE_SECTIONS } from './GalleryComponents';
+import { productos, frentesMeta } from '@/data/frentes';
+import { FRENTE_SECTIONS, GallerySection, GALLERY_CSS } from './GalleryComponents';
 
 const GameOfLife = dynamic(() => import('./Matematica/GameOfLife'), { ssr: false });
 
@@ -43,16 +42,8 @@ const T = {
     loreLink: 'Mi historia →',
     lorePath: '/es/lore',
 
-    frentesTitle: 'Frentes de trabajo',
-    frentesSub: 'Cuatro registros: el código, la ciencia, la filosofía y la empresa.',
-    exploreFrente: 'Explorar →',
-
-    soonBadge: 'Próximamente',
-
-    linktreeTitle: 'Accesos directos',
-    linkCat1: 'Currículum',
-    linkCat2: 'Plataformas',
-    linkCat3: 'Servicios & Escritura',
+    galleryTitle: 'Portafolio de productos',
+    gallerySub: 'Cada proyecto es una tesis: sobre lógica, sistemas complejos o software que genera caja.',
 
     links: {
       cvFilosofo:  { label: 'CV Filósofo',      sub: 'filosofo.stevenvallejo.com',    url: 'https://filosofo.stevenvallejo.com' },
@@ -82,16 +73,8 @@ const T = {
     loreLink: 'My story →',
     lorePath: '/en/lore',
 
-    frentesTitle: 'Work fronts',
-    frentesSub: 'Four registers: code, science, philosophy and business.',
-    exploreFrente: 'Explore →',
-
-    soonBadge: 'Coming soon',
-
-    linktreeTitle: 'Quick access',
-    linkCat1: 'Résumé',
-    linkCat2: 'Platforms',
-    linkCat3: 'Services & Writing',
+    galleryTitle: 'Product portfolio',
+    gallerySub: 'Each project is a thesis: on logic, complex systems or software that drives revenue.',
 
     links: {
       cvFilosofo:  { label: 'CV Philosopher',       sub: 'filosofo.stevenvallejo.com',    url: 'https://filosofo.stevenvallejo.com' },
@@ -122,9 +105,10 @@ export default function LinktreeHome() {
   const t = T[locale];
   useReveal();
 
-  // Frente cards for the home 2-level nav
-  const frenteCards = FRENTE_SECTIONS.map((fs) => ({
+  // Group products by frente for gallery sections
+  const productsByFrente = FRENTE_SECTIONS.map((fs) => ({
     ...fs,
+    items: productos.filter((p) => p.frente === fs.id),
     meta: frentesMeta[fs.id],
   }));
 
@@ -250,71 +234,46 @@ export default function LinktreeHome() {
         }
 
         /* ────────────────────────────────────────────────
-           FRENTE CARDS (home 2-level nav)
+           GALLERY WRAPPER
         ──────────────────────────────────────────────── */
-        .lt-frentes-grid {
-          display: grid;
-          grid-template-columns: 1fr;
-          gap: 1.1rem;
-          padding: 2.5rem 1.25rem 3rem;
-          max-width: 980px;
+        .lt-gallery {
+          padding: 4rem 1.25rem 2rem;
+          max-width: 1120px;
           margin: 0 auto;
           width: 100%;
         }
-        @media (min-width: 640px) {
-          .lt-frentes-grid { grid-template-columns: repeat(2, 1fr); }
+        .lt-gallery-hd {
+          text-align: center;
+          margin-bottom: 3.5rem;
         }
-        .ft-card {
-          display: flex;
-          flex-direction: column;
-          gap: 0.6rem;
-          padding: 1.5rem 1.6rem 1.5rem;
-          border-radius: var(--r-md);
-          border: 1px solid var(--ft-border);
-          background: var(--bg-card);
-          text-decoration: none !important;
-          transition: border-color 0.22s ease, box-shadow 0.22s ease, transform 0.18s ease;
-          min-height: 160px;
-        }
-        .ft-card:hover {
-          border-color: var(--ft-accent);
-          box-shadow: 0 10px 36px rgba(0,0,0,0.45), 0 0 0 1px rgba(255,255,255,0.03);
-          transform: translateY(-3px);
-        }
-        .ft-card-kicker {
-          font-family: var(--font-mono);
-          font-size: 0.68rem;
-          text-transform: uppercase;
-          letter-spacing: 0.22em;
-          font-weight: 700;
-          color: var(--ft-accent);
-          margin: 0;
-        }
-        .ft-card-name {
-          font-size: clamp(1.25rem, 3vw, 1.65rem);
+        .lt-gallery-hd h2 {
+          font-size: clamp(1.5rem, 4vw, 2.4rem);
           font-weight: 800;
-          letter-spacing: -0.02em;
-          color: var(--text);
-          margin: 0;
-          line-height: 1.15;
+          background: var(--grad-sig);
+          -webkit-background-clip: text;
+          background-clip: text;
+          -webkit-text-fill-color: transparent;
+          color: var(--gold);
+          margin: 0 0 0.65rem;
+          letter-spacing: -0.025em;
         }
-        .ft-card-tagline {
-          font-size: 0.90rem;
+        .lt-gallery-hd p {
           color: var(--muted);
-          margin: 0;
-          line-height: 1.55;
-          flex: 1;
-        }
-        .ft-card-arrow {
-          font-size: 1rem;
-          color: var(--ft-accent);
-          align-self: flex-end;
-          transition: transform 0.18s ease;
-        }
-        .ft-card:hover .ft-card-arrow {
-          transform: translate(3px, -3px);
+          font-size: 0.96rem;
+          max-width: 54ch;
+          margin: 0 auto;
+          line-height: 1.6;
         }
 
+        /* ── Divider between gallery sections ── */
+        .lt-gallery-divider {
+          width: 100%;
+          height: 1px;
+          background: var(--line);
+          margin: 3rem 0 0;
+        }
+
+        ${GALLERY_CSS}
 
         /* ────────────────────────────────────────────────
            LORE LINK ROW
@@ -402,11 +361,13 @@ export default function LinktreeHome() {
         @media (prefers-reduced-motion: reduce) {
           .lt-hero-logo { animation: none !important; }
           .lt-hero-inner { animation: none !important; }
-          .ft-card,
-          .ft-card-arrow,
+          .gc-card,
+          .hub-card,
+          .hub-arrow,
           .lt-lore-link,
           .lt-social-chip,
-          .lt-hero-cta { transition: none !important; }
+          .lt-hero-cta,
+          .gc-cta { transition: none !important; }
         }
       ` }} />
 
@@ -437,32 +398,30 @@ export default function LinktreeHome() {
         </div>
       </section>
 
-      {/* ─── FRENTE CARDS (2-level nav) ─────────────────────────── */}
-      <section aria-label={t.frentesTitle}>
-        <div style={{ textAlign: 'center', padding: '3.5rem 1.25rem 0', maxWidth: '980px', margin: '0 auto', width: '100%' }} className="reveal">
-          <h2 style={{ fontSize: 'clamp(1.4rem, 4vw, 2.2rem)', fontWeight: 800, background: 'var(--grad-sig)', WebkitBackgroundClip: 'text', backgroundClip: 'text', WebkitTextFillColor: 'transparent', color: 'var(--gold)', margin: '0 0 0.6rem', letterSpacing: '-0.025em' }}>
-            {t.frentesTitle}
-          </h2>
-          <p style={{ color: 'var(--muted)', fontSize: '0.96rem', maxWidth: '54ch', margin: '0 auto', lineHeight: 1.6 }}>
-            {t.frentesSub}
-          </p>
-        </div>
-        <div className="lt-frentes-grid">
-          {frenteCards.map((fs) => (
-            <Link
-              key={fs.id}
-              href={`/${locale}/${fs.id}`}
-              className="ft-card reveal"
-              style={{
-                '--ft-accent': fs.accent,
-                '--ft-border': fs.borderAlpha,
-              } as React.CSSProperties}
-            >
-              <p className="ft-card-kicker">{fs.meta.secNo} · {fs.meta.nombre[locale]}</p>
-              <h3 className="ft-card-name">{fs.meta.nombre[locale]}</h3>
-              <p className="ft-card-tagline">{fs.meta.tagline[locale]}</p>
-              <span className="ft-card-arrow" aria-hidden="true">↗</span>
-            </Link>
+      {/* ─── GALLERY ───────────────────────────────────────────── */}
+      <section aria-label={t.galleryTitle}>
+        <div className="lt-gallery">
+          <div className="lt-gallery-hd reveal">
+            <h2>{t.galleryTitle}</h2>
+            <p>{t.gallerySub}</p>
+          </div>
+
+          {productsByFrente.map((fs, idx) => (
+            <React.Fragment key={fs.id}>
+              {idx > 0 && <div className="lt-gallery-divider" aria-hidden="true" />}
+              <GallerySection
+                frenteId={fs.id}
+                accent={fs.accent}
+                borderAlpha={fs.borderAlpha}
+                bgAlpha={fs.bgAlpha}
+                badgeColor={fs.badgeColor}
+                locale={locale}
+                items={fs.items}
+                secNo={fs.meta.secNo}
+                name={fs.meta.nombre[locale]}
+                tagline={fs.meta.tagline[locale]}
+              />
+            </React.Fragment>
           ))}
         </div>
       </section>
