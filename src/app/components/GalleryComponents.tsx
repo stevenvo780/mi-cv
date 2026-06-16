@@ -41,7 +41,7 @@ export type Locale = 'es' | 'en';
 /* Decorative background variant per frente (subject-driven mapping):  */
 /*   §01 informatica → circuit lattice (engineering = circuitry)       */
 /*   §02 filosofia   → orbiting constellation (dialectic links)        */
-/*   §03 ciencias    → Lorenz attractor (complex-systems chaos)        */
+/*   §03 ciencias    → scatter field (drifting particles, full-bleed)  */
 /*   §04 enterprise  → prism refracting a spectral fan (Prizma)        */
 /* Each is SUBTLE, behind the cards (z-index 0), reduced-motion aware. */
 /* ------------------------------------------------------------------ */
@@ -51,10 +51,10 @@ export const FRENTE_FIELD: Record<FrenteId, { variant: FieldVariant; opacity: nu
   //  · circuit  — sparse hairline lattice, lowest per-pixel ink → highest layer α
   //  · prism    — faint spectral rays on dark → high α
   //  · constellation — medium-density gold web → mid α
-  //  · lorenz   — bright continuous trail (highest per-pixel ink) → mid-high α
+  //  · scatter  — uniform particle field, mid-high per-pixel ink → mid α
   informatica: { variant: 'circuit', opacity: 0.4 },
   filosofia: { variant: 'constellation', opacity: 0.36 },
-  ciencias: { variant: 'lorenz', opacity: 0.42 },
+  ciencias: { variant: 'scatter', opacity: 0.4 },
   enterprise: { variant: 'prism', opacity: 0.38 },
 };
 
@@ -373,19 +373,6 @@ export const GALLERY_CSS = `
     margin-left: -50vw;
     padding: 3.4rem 0 3.4rem;
     isolation: isolate; /* own stacking context: field can't leak over siblings */
-  }
-
-  /* Short sections (e.g. Ciencias = 2 cards) would barely give the field any
-     vertical area, so the animation never gets room to read around the cards.
-     Give them a floor height and extra breathing room so the Lorenz attractor
-     has visible canvas above, below and beside the centered cards. */
-  #gallery-ciencias.gs-section {
-    min-height: 78vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    padding-top: 4.5rem;
-    padding-bottom: 4.5rem;
   }
 
   /* ── Decorative ambient field (canvas) ──

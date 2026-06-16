@@ -8,7 +8,7 @@
  *
  *   variant="circuit"       §01 Ingeniería  — circuit lattice w/ traveling current
  *   variant="constellation" §02 Filosofía   — orbiting particle constellation
- *   variant="lorenz"        §03 Ciencias    — Lorenz attractor (chaos), brand-tinted
+ *   variant="scatter"       §03 Ciencias    — drifting particle field, full-bleed
  *   variant="prism"         §04 Enterprise  — prism refracting a spectral fan
  *
  * (The hero keeps its existing GameOfLife canvas in LinktreeHome.)
@@ -27,7 +27,7 @@
 
 import React, { useEffect, useRef } from 'react';
 
-export type FieldVariant = 'circuit' | 'constellation' | 'lorenz' | 'prism';
+export type FieldVariant = 'circuit' | 'constellation' | 'scatter' | 'prism';
 
 interface SectionFieldProps {
   variant: FieldVariant;
@@ -225,75 +225,78 @@ function createConstellation(ctx: CanvasRenderingContext2D): Renderer {
   };
 }
 
-/* ── §03 — Lorenz attractor (chaos) ───────────────────────────────
-   Self-contained, brand-tinted, fits its container; trail fades. */
-function createLorenz(ctx: CanvasRenderingContext2D): Renderer {
+/* ── §03 — Scatter field (drifting particles, full-bleed) ─────────
+   Particles seeded uniformly across the full canvas drift slowly;
+   nearby pairs draw a faint link. No central attractor → the field
+   fills every pixel of the container including the side gutters.
+   Tinted teal-light (#6fd3c4) to match Ciencias accent. */
+function createScatter(ctx: CanvasRenderingContext2D): Renderer {
   let w = 0;
   let h = 0;
-  const sigma = 10;
-  const rho = 28;
-  const beta = 8 / 3;
-  const dt = 0.006;
-  let x = 0.1;
-  let y = 0;
-  let z = 0;
-  let scale = 1;
-  let cx = 0;
-  let cy = 0;
-  let hue = 0;
-  let primed = false;
+  const LINK_DIST = 90; // px — max distance to draw a link
+  type Particle = {
+    x: number; y: number;
+    vx: number; vy: number;
+    r: number; // dot radius
+  };
+  let pts: Particle[] = [];
 
-  const reset = () => {
-    x = 0.1;
-    y = 0;
-    z = 0;
-    primed = false;
+  const seed = () => {
+    // Density: ~1 particle per 10 000 px² gives good coverage without clutter.
+    const count = Math.min(120, Math.max(40, Math.round((w * h) / 10000)));
+    pts = Array.from({ length: count }, () => ({
+      x: Math.random() * w,
+      y: Math.random() * h,
+      vx: (Math.random() - 0.5) * 0.28,
+      vy: (Math.random() - 0.5) * 0.28,
+      r: 0.9 + Math.random() * 1.2,
+    }));
   };
 
   return {
     resize(nw, nh) {
       w = nw;
       h = nh;
-      // Fit the classic z∈[0,50], x∈[-20,20] envelope into the container.
-      scale = Math.min(w / 46, h / 56);
-      cx = w / 2;
-      cy = h * 0.62;
-      reset();
-      ctx.clearRect(0, 0, w, h);
+      seed();
     },
     draw() {
-      // Fade the previous frame slightly → glowing trail without unbounded growth.
-      ctx.fillStyle = 'rgba(11,20,23,0.06)';
-      ctx.fillRect(0, 0, w, h);
+      ctx.clearRect(0, 0, w, h);
 
-      let px = cx + x * scale;
-      let py = cy - (z - 25) * scale;
-      const steps = 6;
-      for (let i = 0; i < steps; i++) {
-        const dx = sigma * (y - x) * dt;
-        const dy = (x * (rho - z) - y) * dt;
-        const dz = (x * y - beta * z) * dt;
-        x += dx;
-        y += dy;
-        z += dz;
-        const nx = cx + x * scale;
-        const ny = cy - (z - 25) * scale;
-        if (primed) {
-          // Oscillate hue between teal (170) and violet-ish (250) for "complex science".
-          hue = 170 + 50 * (0.5 + 0.5 * Math.sin(z * 0.05));
-          ctx.strokeStyle = `hsla(${hue.toFixed(0)},55%,62%,0.5)`;
-          ctx.lineWidth = 1.1;
-          ctx.beginPath();
-          ctx.moveTo(px, py);
-          ctx.lineTo(nx, ny);
-          ctx.stroke();
-        }
-        px = nx;
-        py = ny;
-        primed = true;
+      // Advance positions; wrap at edges so no corner ever empties.
+      for (const p of pts) {
+        p.x += p.vx;
+        p.y += p.vy;
+        if (p.x < 0) p.x += w;
+        else if (p.x > w) p.x -= w;
+        if (p.y < 0) p.y += h;
+        else if (p.y > h) p.y -= h;
       }
-      // Soft restart if it ever wanders out of frame.
-      if (px < -w || px > 2 * w || py < -h || py > 2 * h) reset();
+
+      // Links between nearby pairs — teal-light, alpha fades with distance.
+      ctx.lineWidth = 0.8;
+      for (let i = 0; i < pts.length; i++) {
+        for (let j = i + 1; j < pts.length; j++) {
+          const dx = pts[i].x - pts[j].x;
+          const dy = pts[i].y - pts[j].y;
+          const d2 = dx * dx + dy * dy;
+          if (d2 < LINK_DIST * LINK_DIST) {
+            const alpha = (1 - Math.sqrt(d2) / LINK_DIST) * 0.45;
+            ctx.strokeStyle = `rgba(111,211,196,${alpha.toFixed(3)})`;
+            ctx.beginPath();
+            ctx.moveTo(pts[i].x, pts[i].y);
+            ctx.lineTo(pts[j].x, pts[j].y);
+            ctx.stroke();
+          }
+        }
+      }
+
+      // Dots — teal-light, slightly brighter than the links.
+      ctx.fillStyle = 'rgba(111,211,196,0.75)';
+      for (const p of pts) {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fill();
+      }
     },
   };
 }
@@ -376,8 +379,8 @@ function makeRenderer(variant: FieldVariant, ctx: CanvasRenderingContext2D): Ren
       return createCircuit(ctx);
     case 'constellation':
       return createConstellation(ctx);
-    case 'lorenz':
-      return createLorenz(ctx);
+    case 'scatter':
+      return createScatter(ctx);
     case 'prism':
       return createPrism(ctx);
   }
