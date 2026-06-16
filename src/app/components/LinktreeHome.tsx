@@ -130,6 +130,7 @@ const BRAND_COVER: Record<string, string> = {
   'devkits-crm':   '/brand/xenia/og_product.png',
   scrapekit:       '/brand/nomos/og_product.png',
   warehouse:       '/brand/apotheke/og_product.png',
+  prizma:          '/brand/prizma/og_product.png',
 };
 
 /* (mapa WORDMARK eliminado: el cover og_product ya incluye el lockup de marca; era redundante) */
@@ -144,9 +145,9 @@ const FRENTE_SECTIONS: Array<{
   bgAlpha: string;
   badgeColor: string;
 }> = [
-  { id: 'filosofia',  accent: '#e0a85e', borderAlpha: 'rgba(224,168,94,0.28)', bgAlpha: 'rgba(224,168,94,0.06)', badgeColor: 'var(--gold)' },
-  { id: 'ciencias',   accent: '#6fd3c4', borderAlpha: 'rgba(111,211,196,0.28)', bgAlpha: 'rgba(111,211,196,0.06)', badgeColor: 'var(--teal-light)' },
   { id: 'informatica',accent: '#43b5a6', borderAlpha: 'rgba(67,181,166,0.28)',  bgAlpha: 'rgba(67,181,166,0.06)',  badgeColor: 'var(--teal)' },
+  { id: 'ciencias',   accent: '#6fd3c4', borderAlpha: 'rgba(111,211,196,0.28)', bgAlpha: 'rgba(111,211,196,0.06)', badgeColor: 'var(--teal-light)' },
+  { id: 'filosofia',  accent: '#e0a85e', borderAlpha: 'rgba(224,168,94,0.28)', bgAlpha: 'rgba(224,168,94,0.06)', badgeColor: 'var(--gold)' },
   { id: 'enterprise', accent: '#cf6a3c', borderAlpha: 'rgba(207,106,60,0.28)',  bgAlpha: 'rgba(207,106,60,0.06)',  badgeColor: 'var(--rust)' },
 ];
 

@@ -106,9 +106,9 @@ export const frentesMeta: Record<FrenteId, FrenteMeta> = {
 };
 
 export const frenteOrder: FrenteId[] = [
-  'filosofia',
-  'ciencias',
   'informatica',
+  'ciencias',
+  'filosofia',
   'enterprise',
 ];
 
@@ -382,7 +382,8 @@ export const productos: Producto[] = [
       es: 'Suite corporativa modular: POS con facturación DIAN (Talanton), crédito sin interés (Pistis), marketing por WhatsApp (Iris), e-commerce conversacional (Hermes), logística de última milla (Talaria) y CRM, orquestados por un hub de eventos (Nous). NestJS + Next.js sobre Cloud Run.',
       en: 'Modular corporate suite: POS with e-invoicing (Talanton), interest-free credit (Pistis), WhatsApp marketing (Iris), conversational e-commerce (Hermes), last-mile logistics (Talaria) and CRM, orchestrated by an event hub (Nous). NestJS + Next.js on Cloud Run.',
     },
-    status: 'soon',
+    url: 'https://prisma-enterprice.cloud',
+    status: 'live',
     badge: { es: 'Suite empresarial', en: 'Business suite' },
     featured: true,
   },
