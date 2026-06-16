@@ -162,13 +162,18 @@ export function GalleryCard({
             src={cover}
             alt={p.nombre}
             fill
+            // Brand covers and portraits are PNG assets with baked-in text —
+            // skip Next.js re-compression so no JPEG artefacts degrade the type.
+            // Portrait PNGs are 2160x2700 @2x; og_product PNGs 2400x1260 @2x —
+            // already sharp at every viewport size we serve.
+            unoptimized
             sizes={
               layout === 'showcase'
                 ? '(max-width: 1120px) 100vw, 1120px'
                 : layout === 'featured'
                 ? '(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 540px'
-                : // grid: fixed 2 columns, single column on narrow viewports
-                  '(max-width: 560px) 100vw, 540px'
+                : // grid: 2-col portrait cards — retina needs ~1080px each column
+                  '(max-width: 560px) 100vw, (max-width: 1280px) 50vw, 640px'
             }
             style={{ objectFit: 'cover' }}
             priority={index < 3}
