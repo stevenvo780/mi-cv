@@ -8,7 +8,7 @@
  *
  *   variant="circuit"       §01 Ingeniería  — circuit lattice w/ traveling current
  *   variant="constellation" §02 Filosofía   — orbiting particle constellation
- *   variant="scatter"       §03 Ciencias    — drifting particle field, full-bleed
+ *   variant="flowfield"     §03 Ciencias    — curl-noise flow field, full-bleed
  *   variant="prism"         §04 Enterprise  — prism refracting a spectral fan
  *
  * (The hero keeps its existing GameOfLife canvas in LinktreeHome.)
@@ -27,7 +27,7 @@
 
 import React, { useEffect, useRef } from 'react';
 
-export type FieldVariant = 'circuit' | 'constellation' | 'scatter' | 'prism';
+export type FieldVariant = 'circuit' | 'constellation' | 'flowfield' | 'prism';
 
 interface SectionFieldProps {
   variant: FieldVariant;
@@ -225,32 +225,78 @@ function createConstellation(ctx: CanvasRenderingContext2D): Renderer {
   };
 }
 
-/* ── §03 — Scatter field (drifting particles, full-bleed) ─────────
-   Particles seeded uniformly across the full canvas drift slowly;
-   nearby pairs draw a faint link. No central attractor → the field
-   fills every pixel of the container including the side gutters.
-   Tinted teal-light (#6fd3c4) to match Ciencias accent. */
-function createScatter(ctx: CanvasRenderingContext2D): Renderer {
+/* ── §03 — Curl-noise flow field (full-bleed) ─────────────────────
+   Ciencias = complex systems / emergence / simulation. Instead of the
+   dots-and-lines vocabulary every other section already uses, this is a
+   CONTINUOUS VECTOR FIELD: a swarm of tracer particles is advected along
+   an invisible, slowly-evolving flow and leaves fading trails. The trails
+   braid, split and merge into organic river-like filaments — order
+   emerging from a field, never a connect-the-dots web.
+
+   How it stays distinct AND cheap:
+   · The flow direction at (x,y,t) comes from a curl-of-sines pseudo-noise
+     (a handful of sin/cos terms) — analytic, so there is NO per-pixel
+     image sampling and the whole frame is O(particles), not O(particles²)
+     like the scatter/constellation link loops it replaces.
+   · Trails are produced by painting a translucent "fade" rect over the
+     previous frame instead of clearRect, so streaks decay smoothly.
+   · Tracers are seeded uniformly across the FULL canvas and, when they age
+     out or drift off any edge, respawn at a fresh random full-width point —
+     so flow is always present in the side gutters, never centre-weighted.
+   Tinted teal / teal-light (#43b5a6 / #6fd3c4) to match the Ciencias accent. */
+function createFlowField(ctx: CanvasRenderingContext2D): Renderer {
   let w = 0;
   let h = 0;
-  const LINK_DIST = 90; // px — max distance to draw a link
-  type Particle = {
+  // Spatial frequency of the field (smaller = larger, calmer swirls).
+  const FREQ = 0.0017;
+  const SPEED = 1.15; // px advected per (throttled) frame
+  const MAX_AGE = 150; // frames before a tracer respawns (keeps the field churning)
+  type Tracer = {
     x: number; y: number;
-    vx: number; vy: number;
-    r: number; // dot radius
+    px: number; py: number; // previous position → draw the segment between
+    age: number; life: number;
+    tone: number; // 0..1 pick along the teal ramp
+    width: number;
   };
-  let pts: Particle[] = [];
+  let pts: Tracer[] = [];
+  let primed = false; // first frame paints an opaque base so fade-rects have something to eat
+
+  // Smooth, divergence-free-ish direction from a sum of offset sine waves.
+  // Returns an angle in radians; the orthogonal of a scalar potential's
+  // gradient gives the swirling, curl-like motion that reads as "flow".
+  const angleAt = (x: number, y: number, t: number): number => {
+    const a =
+      Math.sin(x * FREQ + t) +
+      Math.sin(y * FREQ * 1.3 - t * 0.8) +
+      Math.sin((x + y) * FREQ * 0.6 + t * 0.5);
+    const b =
+      Math.cos(y * FREQ - t * 0.9) +
+      Math.cos(x * FREQ * 1.2 + t * 0.6) +
+      Math.cos((x - y) * FREQ * 0.7 - t * 0.4);
+    // Two scalar fields → take their "curl": atan2 of orthogonal gradient proxy.
+    return Math.atan2(a, b) + Math.PI * 0.5;
+  };
+
+  const spawn = (p: Tracer) => {
+    p.x = Math.random() * w;
+    p.y = Math.random() * h;
+    p.px = p.x;
+    p.py = p.y;
+    p.age = 0;
+    p.life = MAX_AGE * (0.5 + Math.random() * 0.5);
+    p.tone = Math.random();
+    p.width = 0.6 + Math.random() * 1.0;
+  };
 
   const seed = () => {
-    // Density: ~1 particle per 10 000 px² gives good coverage without clutter.
-    const count = Math.min(120, Math.max(40, Math.round((w * h) / 10000)));
-    pts = Array.from({ length: count }, () => ({
-      x: Math.random() * w,
-      y: Math.random() * h,
-      vx: (Math.random() - 0.5) * 0.28,
-      vy: (Math.random() - 0.5) * 0.28,
-      r: 0.9 + Math.random() * 1.2,
-    }));
+    // ~1 tracer per 7 000 px² → dense enough to braid, light enough to stay 30fps.
+    const count = Math.min(220, Math.max(70, Math.round((w * h) / 7000)));
+    pts = Array.from({ length: count }, () => {
+      const p: Tracer = { x: 0, y: 0, px: 0, py: 0, age: 0, life: 0, tone: 0, width: 1 };
+      spawn(p);
+      return p;
+    });
+    primed = false;
   };
 
   return {
@@ -259,44 +305,81 @@ function createScatter(ctx: CanvasRenderingContext2D): Renderer {
       h = nh;
       seed();
     },
-    draw() {
-      ctx.clearRect(0, 0, w, h);
+    draw(timeMs) {
+      const t = timeMs / 1000 * 0.12; // very slow field evolution
 
-      // Advance positions; wrap at edges so no corner ever empties.
-      for (const p of pts) {
-        p.x += p.vx;
-        p.y += p.vy;
-        if (p.x < 0) p.x += w;
-        else if (p.x > w) p.x -= w;
-        if (p.y < 0) p.y += h;
-        else if (p.y > h) p.y -= h;
-      }
-
-      // Links between nearby pairs — teal-light, alpha fades with distance.
-      ctx.lineWidth = 0.8;
-      for (let i = 0; i < pts.length; i++) {
-        for (let j = i + 1; j < pts.length; j++) {
-          const dx = pts[i].x - pts[j].x;
-          const dy = pts[i].y - pts[j].y;
-          const d2 = dx * dx + dy * dy;
-          if (d2 < LINK_DIST * LINK_DIST) {
-            const alpha = (1 - Math.sqrt(d2) / LINK_DIST) * 0.45;
-            ctx.strokeStyle = `rgba(111,211,196,${alpha.toFixed(3)})`;
-            ctx.beginPath();
-            ctx.moveTo(pts[i].x, pts[i].y);
-            ctx.lineTo(pts[j].x, pts[j].y);
-            ctx.stroke();
+      if (!primed) {
+        // First frame: clear to transparent. Reduced-motion users only ever
+        // get this single frame, so we also pre-walk each tracer a few steps
+        // below to leave a visible streak instead of a bare point.
+        ctx.clearRect(0, 0, w, h);
+        ctx.globalCompositeOperation = 'lighter';
+        ctx.lineCap = 'round';
+        for (const p of pts) {
+          let x = p.x;
+          let y = p.y;
+          const r = Math.round(67 + (111 - 67) * p.tone);
+          const g = Math.round(181 + (211 - 181) * p.tone);
+          const b = Math.round(166 + (196 - 166) * p.tone);
+          ctx.strokeStyle = `rgba(${r},${g},${b},0.22)`;
+          ctx.lineWidth = p.width;
+          ctx.beginPath();
+          ctx.moveTo(x, y);
+          for (let s = 0; s < 14; s++) {
+            const ang = angleAt(x, y, t);
+            x += Math.cos(ang) * SPEED;
+            y += Math.sin(ang) * SPEED;
+            ctx.lineTo(x, y);
           }
+          ctx.stroke();
+          p.x = x; // continue the live loop from where the static streak ended
+          p.y = y;
         }
+        ctx.globalCompositeOperation = 'source-over';
+        primed = true;
+        return;
       }
 
-      // Dots — teal-light, slightly brighter than the links.
-      ctx.fillStyle = 'rgba(111,211,196,0.75)';
+      // Translucent wash = motion-blur trails that fade over ~25 frames.
+      ctx.globalCompositeOperation = 'source-over';
+      ctx.fillStyle = 'rgba(11,20,23,0.16)'; // bg #0b1417 → erodes old streaks
+      ctx.fillRect(0, 0, w, h);
+
+      // Brighten where filaments overlap → lit ridges, like a simulation density map.
+      ctx.globalCompositeOperation = 'lighter';
+      ctx.lineCap = 'round';
+
       for (const p of pts) {
+        const ang = angleAt(p.x, p.y, t);
+        p.px = p.x;
+        p.py = p.y;
+        p.x += Math.cos(ang) * SPEED;
+        p.y += Math.sin(ang) * SPEED;
+        p.age++;
+
+        const off = p.x < -4 || p.x > w + 4 || p.y < -4 || p.y > h + 4;
+        if (off || p.age > p.life) {
+          spawn(p);
+          continue; // don't draw the teleport segment
+        }
+
+        // Fade in/out over the tracer's life so streaks don't pop.
+        const k = p.age / p.life;
+        const env = Math.sin(Math.PI * k); // 0→1→0
+        const alpha = 0.10 + env * 0.30;
+        // Ramp teal (#43b5a6) → teal-light (#6fd3c4) by tone.
+        const r = Math.round(67 + (111 - 67) * p.tone);
+        const g = Math.round(181 + (211 - 181) * p.tone);
+        const b = Math.round(166 + (196 - 166) * p.tone);
+        ctx.strokeStyle = `rgba(${r},${g},${b},${alpha.toFixed(3)})`;
+        ctx.lineWidth = p.width;
         ctx.beginPath();
-        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-        ctx.fill();
+        ctx.moveTo(p.px, p.py);
+        ctx.lineTo(p.x, p.y);
+        ctx.stroke();
       }
+
+      ctx.globalCompositeOperation = 'source-over';
     },
   };
 }
@@ -379,8 +462,8 @@ function makeRenderer(variant: FieldVariant, ctx: CanvasRenderingContext2D): Ren
       return createCircuit(ctx);
     case 'constellation':
       return createConstellation(ctx);
-    case 'scatter':
-      return createScatter(ctx);
+    case 'flowfield':
+      return createFlowField(ctx);
     case 'prism':
       return createPrism(ctx);
   }

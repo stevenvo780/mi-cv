@@ -41,7 +41,7 @@ export type Locale = 'es' | 'en';
 /* Decorative background variant per frente (subject-driven mapping):  */
 /*   §01 informatica → circuit lattice (engineering = circuitry)       */
 /*   §02 filosofia   → orbiting constellation (dialectic links)        */
-/*   §03 ciencias    → scatter field (drifting particles, full-bleed)  */
+/*   §03 ciencias    → curl-noise flow field (advected tracers, full-bleed) */
 /*   §04 enterprise  → prism refracting a spectral fan (Prizma)        */
 /* Each is SUBTLE, behind the cards (z-index 0), reduced-motion aware. */
 /* ------------------------------------------------------------------ */
@@ -51,10 +51,10 @@ export const FRENTE_FIELD: Record<FrenteId, { variant: FieldVariant; opacity: nu
   //  · circuit  — sparse hairline lattice, lowest per-pixel ink → highest layer α
   //  · prism    — faint spectral rays on dark → high α
   //  · constellation — medium-density gold web → mid α
-  //  · scatter  — uniform particle field, mid-high per-pixel ink → mid α
+  //  · flowfield — additive teal filaments on dark, full-width → mid α
   informatica: { variant: 'circuit', opacity: 0.4 },
   filosofia: { variant: 'constellation', opacity: 0.36 },
-  ciencias: { variant: 'scatter', opacity: 0.4 },
+  ciencias: { variant: 'flowfield', opacity: 0.4 },
   enterprise: { variant: 'prism', opacity: 0.38 },
 };
 
