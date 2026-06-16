@@ -132,21 +132,7 @@ const BRAND_COVER: Record<string, string> = {
   warehouse:       '/brand/apotheke/og_product.png',
 };
 
-const WORDMARK: Record<string, string> = {
-  clavis:          '/brand/paideia/logo_lockup_color.png',
-  debatesuite:     '/brand/agon/logo_lockup_color.png',
-  complexlab:      '/brand/kosmos/logo_lockup_color.png',
-  hinton:          '/brand/hinton/logo_lockup_color.png',
-  'nlp-to-logic':  '/brand/organon/logo_lockup_color.png',
-  stevenai:        '/brand/daimon/logo_lockup_color.png',
-  stevendevbox:    '/brand/techne/logo_lockup_color.png',
-  communityos:     '/brand/koinonia/logo_lockup_color.png',
-  devkits:         '/brand/ergon/logo_lockup_color.png',
-  'devkits-hours': '/brand/chronos/logo_lockup_color.png',
-  'devkits-crm':   '/brand/xenia/logo_lockup_color.png',
-  scrapekit:       '/brand/nomos/logo_lockup_color.png',
-  warehouse:       '/brand/apotheke/logo_lockup_color.png',
-};
+/* (mapa WORDMARK eliminado: el cover og_product ya incluye el lockup de marca; era redundante) */
 
 /* ------------------------------------------------------------------ */
 /* Frente order + accent colors for gallery sections                   */
@@ -179,7 +165,6 @@ interface GalleryCardProps {
 
 function GalleryCard({ producto: p, locale, accent, borderAlpha, bgAlpha, badgeColor, index }: GalleryCardProps) {
   const cover = BRAND_COVER[p.id];
-  const wordmark = WORDMARK[p.id];
   const isFeatured = p.featured === true;
 
   return (
@@ -211,21 +196,8 @@ function GalleryCard({ producto: p, locale, accent, borderAlpha, bgAlpha, badgeC
       )}
 
       <div className="gc-body">
-        {/* Wordmark */}
-        {wordmark && (
-          <div className="gc-wordmark-wrap">
-            <Image
-              src={wordmark}
-              alt={p.nombre}
-              width={130}
-              height={36}
-              style={{ objectFit: 'contain', objectPosition: 'left center' }}
-            />
-          </div>
-        )}
-
-        {/* Greek name fallback if no wordmark */}
-        {!wordmark && (
+        {/* El cover (og_product) ya incluye el wordmark de marca; solo mostramos el nombre en texto si NO hay cover. */}
+        {!cover && (
           <h3 className="gc-name">{p.nombre}</h3>
         )}
 
