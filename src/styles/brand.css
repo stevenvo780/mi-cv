@@ -194,6 +194,17 @@
 }
 
 /* ================================================================
+   VIEWPORT OVERFLOW GUARD
+   Prevents the full-bleed .gs-section (100vw breakout technique) from
+   producing a horizontal scrollbar. clip (not hidden) is used so that
+   position:sticky children and scroll-linked effects still work.
+   ================================================================ */
+html,
+body {
+  overflow-x: clip;
+}
+
+/* ================================================================
    DECORATIVE SECTION FIELDS (ambient canvas backgrounds)
    Base layer styles; per-section positioning lives where it is used.
    ================================================================ */

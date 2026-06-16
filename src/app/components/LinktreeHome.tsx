@@ -5,9 +5,9 @@
  *
  * Structure:
  *   (0) Hero: GameOfLife bg + BrandLogo + name + identity + CTA
- *   (1) Gallery §01 Ingeniería   — 10 productos (más a menos)
- *   (2) Gallery §02 Filosofía   —  4 productos
- *   (3) Gallery §03 Ciencias    —  2 productos
+ *   (1) Gallery §01 Ingeniería   — 11 productos (más a menos)
+ *   (2) Gallery §02 Filosofía   —  3 productos
+ *   (3) Gallery §03 Ciencias    —  2 productos (Kósmos + Estructuras)
  *   (4) Gallery §04 Enterprise  —  1 producto
  *   (5) Lore link + social chips + footer
  *
@@ -125,6 +125,12 @@ export default function LinktreeHome() {
 
         /* ────────────────────────────────────────────────
            HERO
+           The hero is the WHOLE upper strip of the page: it spans from the
+           top edge down to where "Portafolio de productos" begins. The Conway
+           Game of Life canvas fills this entire strip (not just a band), so
+           the cellular automaton runs behind all of the intro content —
+           name, tagline, lead and epigraph — ending exactly where the
+           gallery starts.
         ──────────────────────────────────────────────── */
         .lt-hero {
           position: relative;
@@ -132,9 +138,12 @@ export default function LinktreeHome() {
           display: flex;
           align-items: center;
           justify-content: center;
-          min-height: 56vh;
-          padding: 5.5rem 1.5rem 4.5rem;
+          /* Tall enough that the automaton covers the full intro zone on every
+             viewport; the content stays vertically centered within it. */
+          min-height: 72vh;
+          padding: 6rem 1.5rem 5rem;
         }
+        /* Conway field — covers the ENTIRE hero strip, behind the content. */
         .lt-hero-bg {
           position: absolute;
           inset: 0;
@@ -142,6 +151,39 @@ export default function LinktreeHome() {
           opacity: 0.14;
           pointer-events: none;
           overflow: hidden;
+          /* Center the field both axes; the canvas below stretches to fill. */
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          /* Fade the automaton out toward the bottom so the seam with the
+             gallery is invisible and the lower text never fights the cells. */
+          -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 70%, transparent 100%);
+          mask-image: linear-gradient(to bottom, #000 0%, #000 70%, transparent 100%);
+        }
+        /* The GameOfLife component renders <section><canvas/></section> (or a
+           loading <div> grid). Force the whole thing to fill .lt-hero-bg so
+           the fixed-size grid stretches to cover the full hero strip instead
+           of sitting as a short centered band. inline styles on the canvas
+           need !important to be overridden. */
+        .lt-hero-bg > section {
+          width: 100%;
+          height: 100%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        .lt-hero-bg canvas {
+          width: 100% !important;
+          height: 100% !important;
+          margin: 0 !important;
+          border: 0 !important;
+          object-fit: cover;
+        }
+        /* Loading-state grid (pre-hydration random seed) — let it fill too so
+           there is no visible jump when the canvas takes over. */
+        .lt-hero-bg > section > div {
+          width: 100%;
+          height: 100%;
         }
         .lt-hero-glow {
           position: absolute;
