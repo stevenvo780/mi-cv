@@ -27,9 +27,29 @@
 
 import React from 'react';
 import Image from 'next/image';
+import dynamic from 'next/dynamic';
 import { type Producto, type FrenteId } from '@/data/frentes';
+import { type FieldVariant } from './SectionBackgrounds';
+
+// Decorative ambient background — client-only, never blocks paint.
+const SectionField = dynamic(() => import('./SectionBackgrounds'), { ssr: false });
 
 export type Locale = 'es' | 'en';
+
+/* ------------------------------------------------------------------ */
+/* Decorative background variant per frente (subject-driven mapping):  */
+/*   §01 informatica → circuit lattice (engineering = circuitry)       */
+/*   §02 filosofia   → orbiting constellation (dialectic links)        */
+/*   §03 ciencias    → Lorenz attractor (complex-systems chaos)        */
+/*   §04 enterprise  → prism refracting a spectral fan (Prizma)        */
+/* Each is SUBTLE, behind the cards (z-index 0), reduced-motion aware. */
+/* ------------------------------------------------------------------ */
+export const FRENTE_FIELD: Record<FrenteId, { variant: FieldVariant; opacity: number }> = {
+  informatica: { variant: 'circuit', opacity: 0.13 },
+  filosofia: { variant: 'constellation', opacity: 0.16 },
+  ciencias: { variant: 'lorenz', opacity: 0.18 },
+  enterprise: { variant: 'prism', opacity: 0.14 },
+};
 
 /* ------------------------------------------------------------------ */
 /* Brand image map: product id → /brand/<slug>/og_product.png         */
@@ -280,30 +300,41 @@ export function GallerySection({
   tagline,
 }: GallerySectionProps) {
   const layout = layoutForCount(items.length);
+  const field = FRENTE_FIELD[frenteId];
 
   return (
     <div className="gs-section" id={`gallery-${frenteId}`} data-layout={layout}>
-      <div className="gs-header reveal">
-        <p className="gs-eyebrow" style={{ color: accent }}>
-          <span className="brand-sec-no">{secNo}</span>
-          &nbsp;&nbsp;{name}
-        </p>
-        <h3 className="gs-tagline">{tagline}</h3>
-      </div>
-      <div className={`gs-grid gs-grid--${layout}`}>
-        {items.map((p, i) => (
-          <GalleryCard
-            key={p.id}
-            producto={p}
-            locale={locale}
-            accent={accent}
-            borderAlpha={borderAlpha}
-            bgAlpha={bgAlpha}
-            badgeColor={badgeColor}
-            index={i}
-            layout={layout}
-          />
-        ))}
+      {/* Decorative ambient field — sits behind the cards (z-index 0). */}
+      {field && (
+        <SectionField
+          variant={field.variant}
+          opacity={field.opacity}
+          className="gs-field"
+        />
+      )}
+      <div className="gs-content">
+        <div className="gs-header reveal">
+          <p className="gs-eyebrow" style={{ color: accent }}>
+            <span className="brand-sec-no">{secNo}</span>
+            &nbsp;&nbsp;{name}
+          </p>
+          <h3 className="gs-tagline">{tagline}</h3>
+        </div>
+        <div className={`gs-grid gs-grid--${layout}`}>
+          {items.map((p, i) => (
+            <GalleryCard
+              key={p.id}
+              producto={p}
+              locale={locale}
+              accent={accent}
+              borderAlpha={borderAlpha}
+              bgAlpha={bgAlpha}
+              badgeColor={badgeColor}
+              index={i}
+              layout={layout}
+            />
+          ))}
+        </div>
       </div>
     </div>
   );
@@ -316,7 +347,40 @@ export const GALLERY_CSS = `
   /* ────────────────────────────────────────────────
      GALLERY SECTION
   ──────────────────────────────────────────────── */
-  .gs-section { padding: 2.4rem 0 0; }
+  .gs-section {
+    position: relative;
+    padding: 2.4rem 0 0;
+    isolation: isolate; /* own stacking context: field can't leak over siblings */
+  }
+
+  /* ── Decorative ambient field (canvas) ──
+     Bleeds a little beyond the content box, masked to fade at the edges so it
+     never crowds the cards. Always behind everything in this section. */
+  .gs-section .section-field {
+    position: absolute;
+    top: 0.6rem;
+    bottom: -1rem;
+    left: -2.5rem;
+    right: -2.5rem;
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
+    border-radius: var(--r-lg);
+    -webkit-mask-image: radial-gradient(120% 92% at 50% 42%, #000 52%, transparent 100%);
+    mask-image: radial-gradient(120% 92% at 50% 42%, #000 52%, transparent 100%);
+  }
+  .gs-section .section-field-canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+  /* Content rides above the field. */
+  .gs-content { position: relative; z-index: 1; }
+  @media (max-width: 640px) {
+    /* Tighter bleed on phones so the field stays inside the viewport. */
+    .gs-section .section-field { left: -1rem; right: -1rem; }
+  }
+
   .gs-header { margin-bottom: 1.6rem; }
   .gs-eyebrow {
     font-family: var(--font-mono);

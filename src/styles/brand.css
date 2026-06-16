@@ -194,6 +194,22 @@
 }
 
 /* ================================================================
+   DECORATIVE SECTION FIELDS (ambient canvas backgrounds)
+   Base layer styles; per-section positioning lives where it is used.
+   ================================================================ */
+.section-field {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+.section-field-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* ================================================================
    REDUCED MOTION — freeze everything decorative
    ================================================================ */
 @media (prefers-reduced-motion: reduce) {
