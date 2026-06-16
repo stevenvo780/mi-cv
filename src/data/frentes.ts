@@ -56,7 +56,7 @@ export const frentesMeta: Record<FrenteId, FrenteMeta> = {
   filosofia: {
     id: 'filosofia',
     nombre: { es: 'Filosofía', en: 'Philosophy' },
-    secNo: '02',  // 3 products (grid)
+    secNo: '02',  // 2 products (grid-portrait)
     tagline: {
       es: 'El criterio que da forma a todo lo demás.',
       en: 'The judgment that shapes everything else.',
@@ -69,7 +69,7 @@ export const frentesMeta: Record<FrenteId, FrenteMeta> = {
   ciencias: {
     id: 'ciencias',
     nombre: { es: 'Ciencias', en: 'Sciences' },
-    secNo: '03',  // 2 products (featured)
+    secNo: '03',  // 2 products (grid-portrait)
     tagline: {
       es: 'Sistemas complejos, emergencia, simulación.',
       en: 'Complex systems, emergence, simulation.',
@@ -82,7 +82,7 @@ export const frentesMeta: Record<FrenteId, FrenteMeta> = {
   informatica: {
     id: 'informatica',
     nombre: { es: 'Ingeniería', en: 'Engineering' },
-    secNo: '01',  // 11 products (grid)
+    secNo: '01',  // 12 products (grid-portrait)
     tagline: {
       es: '12+ años de backend, IA agéntica, devtools y software de negocio.',
       en: '12+ years of backend, agentic AI, devtools and business software.',
@@ -95,7 +95,7 @@ export const frentesMeta: Record<FrenteId, FrenteMeta> = {
   enterprise: {
     id: 'enterprise',
     nombre: { es: 'Enterprise', en: 'Enterprise' },
-    secNo: '04',  // keeps last (1 product)
+    secNo: '04',  // keeps last (1 product → showcase)
     tagline: {
       es: 'Software empresarial de producción: la suite Prizma.',
       en: 'Production business software: the Prizma suite.',
@@ -107,7 +107,7 @@ export const frentesMeta: Record<FrenteId, FrenteMeta> = {
   },
 };
 
-// Ordered descending by product count: informatica(11) > filosofia(3) > ciencias(2) > enterprise(1)
+// Ordered descending by product count: informatica(12) > filosofia(2) = ciencias(2) > enterprise(1)
 export const frenteOrder: FrenteId[] = [
   'informatica',
   'filosofia',
@@ -154,20 +154,6 @@ export const productos: Producto[] = [
     repo: 'https://github.com/stevenvo780/debatesuite',
     status: 'live',
     badge: { es: 'PWA offline', en: 'Offline PWA' },
-  },
-  {
-    id: 'hinton',
-    frente: 'filosofia',
-    nombre: 'Redes Neuronales · Hinton',
-    descripcion: {
-      es: 'Presentación académica sobre el texto de Hinton (1992): aborda la epistemología de las redes neuronales artificiales, la ambigüedad ontológica del modelo y su valor como programa de investigación funcionalista frente a una reducción neurológica acabada.',
-      en: 'Academic presentation on Hinton (1992): addresses the epistemology of artificial neural networks, the model’s ontological ambiguity and its value as a functionalist research program rather than a finished neurological reduction.',
-    },
-    url: 'https://hinton.stevenvallejo.com/',
-    status: 'live',
-    badge: { es: 'Ponencia', en: 'Talk' },
-    secondary: true,
-    tipo: 'ponencia',
   },
 
   /* ===================== CIENCIAS ===================== */
@@ -277,6 +263,22 @@ export const productos: Producto[] = [
     repo: 'https://github.com/stevenvo780/communityos',
     status: 'live',
     badge: { es: 'Multi-tenant', en: 'Multi-tenant' },
+  },
+  {
+    id: 'agora',
+    frente: 'informatica',
+    nombre: 'Ágora',
+    subtitulo: {
+      es: 'Plataforma académica · Elenxos',
+      en: 'Academic platform · Elenxos',
+    },
+    descripcion: {
+      es: 'Plataforma académica en vivo (Elenxos): traduce el caos en estructuras lógicas. Integra ST (lenguaje lógico con SAT solver CDCL propio, 6 333 tests), auto.logic (NLP → lógica formal por reglas, 11 perfiles) y colaboración en tiempo real para razonamiento compartido. NestJS + Next.js sobre Docker.',
+      en: 'Live academic platform (Elenxos): turns chaos into logical structures. It bundles ST (a logic language with a home-grown CDCL SAT solver, 6,333 tests), auto.logic (rule-based NLP → formal logic, 11 profiles) and real-time collaboration for shared reasoning. NestJS + Next.js on Docker.',
+    },
+    url: 'https://agora.elenxos.com',
+    status: 'live',
+    badge: { es: 'Plataforma académica', en: 'Academic platform' },
   },
 
   /* ── Ingeniería: software de negocio (ex-Enterprise) ── */
