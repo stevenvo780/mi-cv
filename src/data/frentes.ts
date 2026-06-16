@@ -36,6 +36,8 @@ export interface Producto {
   featured?: boolean;
   /** Secondary card shown nested under a primary product. */
   secondary?: boolean;
+  /** Product type override, e.g. 'ponencia' for academic talks/presentations. */
+  tipo?: 'ponencia';
 }
 
 export interface FrenteMeta {
@@ -152,6 +154,38 @@ export const productos: Producto[] = [
     status: 'live',
     badge: { es: 'PWA offline', en: 'Offline PWA' },
   },
+  {
+    id: 'estructuras-preontologicas',
+    frente: 'filosofia',
+    nombre: 'Estructuras Preontológicas',
+    subtitulo: {
+      es: 'Tesis doctoral · Filosofía de la ciencia',
+      en: 'Doctoral thesis · Philosophy of science',
+    },
+    descripcion: {
+      es: 'Tesis doctoral en filosofía de la ciencia y ciencias de la complejidad: propone que todo fenómeno empírico está anclado en un sustrato material dinámico, y que las categorías con que lo pensamos son "estructuras pre-ontológicas" (regularidades operativas anteriores a la objetualidad), validadas mediante compresión multiescala y evidencia EDI multidominio. Autoría: Jacob Agudelo (UdeA) + Steven Vallejo (ing. computacional).',
+      en: 'Doctoral thesis in philosophy of science and complexity sciences: proposes that every empirical phenomenon is anchored in a dynamic material substrate, and that the categories by which we think it are "pre-ontological structures" (operative regularities prior to objecthood), validated via multiscale compression and multi-domain EDI evidence. Authored by Jacob Agudelo (UdeA) + Steven Vallejo (computational engineering).',
+    },
+    url: 'https://estructuras-preontologicas.vercel.app',
+    repo: 'https://github.com/stevenvo780/EstructurasPreontologicas',
+    status: 'live',
+    badge: { es: 'Investigación doctoral', en: 'Doctoral research' },
+    featured: true,
+  },
+  {
+    id: 'hinton',
+    frente: 'filosofia',
+    nombre: 'Redes Neuronales · Hinton',
+    descripcion: {
+      es: 'Deck sobre redes neuronales y aprendizaje profundo: del perceptrón a la retropropagación, con la mirada de Hinton.',
+      en: "Deck on neural networks and deep learning: from the perceptron to backpropagation, through Hinton's lens.",
+    },
+    url: 'https://hinton.stevenvallejo.com/',
+    status: 'live',
+    badge: { es: 'Ponencia', en: 'Talk' },
+    secondary: true,
+    tipo: 'ponencia',
+  },
 
   /* ===================== CIENCIAS ===================== */
   {
@@ -171,19 +205,6 @@ export const productos: Producto[] = [
     status: 'live',
     badge: { es: '16 repos · 22 páginas', en: '16 repos · 22 pages' },
     featured: true,
-  },
-  {
-    id: 'hinton',
-    frente: 'ciencias',
-    nombre: 'Redes Neuronales · Hinton',
-    descripcion: {
-      es: 'Deck sobre redes neuronales y aprendizaje profundo: del perceptrón a la retropropagación, con la mirada de Hinton.',
-      en: "Deck on neural networks and deep learning: from the perceptron to backpropagation, through Hinton's lens.",
-    },
-    url: 'https://hinton.stevenvallejo.com/',
-    status: 'live',
-    badge: { es: 'Deck', en: 'Deck' },
-    secondary: true,
   },
   {
     id: 'aporia',
