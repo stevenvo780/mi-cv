@@ -361,13 +361,9 @@ export default function LinktreeHome() {
         @media (prefers-reduced-motion: reduce) {
           .lt-hero-logo { animation: none !important; }
           .lt-hero-inner { animation: none !important; }
-          .gc-card,
-          .hub-card,
-          .hub-arrow,
           .lt-lore-link,
           .lt-social-chip,
-          .lt-hero-cta,
-          .gc-cta { transition: none !important; }
+          .lt-hero-cta { transition: none !important; }
         }
       ` }} />
 
