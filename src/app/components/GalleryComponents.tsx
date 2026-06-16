@@ -16,20 +16,23 @@ export type Locale = 'es' | 'en';
 /* Brand image map: product id → /brand/<slug>/og_product.png         */
 /* ------------------------------------------------------------------ */
 export const BRAND_COVER: Record<string, string> = {
-  clavis:                        '/brand/paideia/og_product.png',
-  debatesuite:                   '/brand/agon/og_product.png',
-  complexlab:                    '/brand/kosmos/og_product.png',
-  hinton:                        '/brand/hinton/og_product.png',
-  'nlp-to-logic':                '/brand/organon/og_product.png',
-  stevenai:                      '/brand/daimon/og_product.png',
-  stevendevbox:                  '/brand/techne/og_product.png',
-  communityos:                   '/brand/koinonia/og_product.png',
-  devkits:                       '/brand/ergon/og_product.png',
-  'devkits-hours':               '/brand/chronos/og_product.png',
-  'devkits-crm':                 '/brand/xenia/og_product.png',
-  scrapekit:                     '/brand/nomos/og_product.png',
-  warehouse:                     '/brand/apotheke/og_product.png',
-  prizma:                        '/brand/prizma/og_product.png',
+  clavis:                             '/brand/paideia/og_product.png',
+  debatesuite:                        '/brand/agon/og_product.png',
+  'estructuras-preontologicas':       '/brand/estructuras-preontologicas/og_product.png',
+  hinton:                             '/brand/hinton/og_product.png',
+  complexlab:                         '/brand/kosmos/og_product.png',
+  aporia:                             '/brand/aporia/og_product.png',
+  'nlp-to-logic':                     '/brand/organon/og_product.png',
+  stevenai:                           '/brand/daimon/og_product.png',
+  stevendevbox:                       '/brand/techne/og_product.png',
+  communityos:                        '/brand/koinonia/og_product.png',
+  devkits:                            '/brand/ergon/og_product.png',
+  'devkits-hours':                    '/brand/chronos/og_product.png',
+  'devkits-crm':                      '/brand/xenia/og_product.png',
+  scrapekit:                          '/brand/nomos/og_product.png',
+  warehouse:                          '/brand/apotheke/og_product.png',
+  eikon:                              '/brand/eikon/og_product.png',
+  prizma:                             '/brand/prizma/og_product.png',
 };
 
 /* ------------------------------------------------------------------ */
