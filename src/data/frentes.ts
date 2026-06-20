@@ -447,7 +447,7 @@ export const frenteLinks: Partial<Record<FrenteId, FrenteLink[]>> = {
     },
     {
       label: { es: 'Blog · Scholḗ', en: 'Blog · Scholḗ' },
-      url: 'https://blog.stevenvallejo.com',
+      url: 'https://schole.stevenvallejo.com',
     },
   ],
   informatica: [
@@ -457,7 +457,7 @@ export const frenteLinks: Partial<Record<FrenteId, FrenteLink[]>> = {
     },
     {
       label: { es: 'Servicios', en: 'Services' },
-      url: 'https://services.stevenvallejo.com',
+      url: 'https://praxis.stevenvallejo.com',
     },
   ],
 };

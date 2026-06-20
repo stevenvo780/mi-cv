@@ -6,7 +6,7 @@
   --bg:           #0b1417;
   --bg-2:         #091012;
   --panel:        rgba(244,236,224,0.035);
-  --panel-solid:  #10191c;
+  --panel-solid:  #152028;
 
   /* ── Borders ── */
   --border:        rgba(244,236,224,0.10);
@@ -21,21 +21,21 @@
   --teal-ink:  #6fd3c4;
 
   /* ── Tertiary cosmic ── */
-  --orange:  #cf6a3c;
+  --orange:  #c0522a;
   --violet:  #8d7cc0;
 
   /* ── Typography ── */
-  --text:      #f3ece0;
+  --text:      #e8e0d4;
   --text-soft: #c9c2b6;
-  --muted:     #93999a;
+  --muted:     #8fa3a8;
 
   /* ── Gradient swirl (warm → cool) ── */
-  --grad: linear-gradient(110deg, #e0a85e 0%, #cf6a3c 35%, #43b5a6 100%);
+  --grad: linear-gradient(135deg, #e0a85e 0%, #c0522a 40%, #43b5a6 100%);
 
   /* ── Legacy aliases used across components ── */
   --font-color:    var(--text);
   --bg-color:      var(--bg);
-  --white-color:   #f3ece0;
+  --white-color:   #e8e0d4;
   --border-color:  var(--border-strong);
 
   /* primary → gold */
@@ -54,7 +54,7 @@
   --info-color:  var(--violet);
   --info-hover:  #a99ee0;
   --info-border: var(--violet);
-  --info-text:   #f3ece0;
+  --info-text:   #e8e0d4;
 
   /* success → teal-ink */
   --success-color:  #43c59e;
@@ -72,7 +72,7 @@
   --danger-color:  var(--orange);
   --danger-hover:  #b05530;
   --danger-border: var(--orange);
-  --danger-text:   #f3ece0;
+  --danger-text:   #e8e0d4;
 
   /* links */
   --link-color:  var(--gold-ink);
@@ -112,7 +112,7 @@ body {
   padding: 0;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  font-family: 'Geist', 'Roboto', sans-serif;
+  font-family: var(--font-sans);
   background-color: var(--bg);
   color: var(--text);
   /* Safety net against decorative canvases/grids that draw wider than the
@@ -225,7 +225,7 @@ a:focus {
 .btn-primary:focus,
 .btn-primary:active {
   background-color: var(--gold-ink);
-  background-image: linear-gradient(110deg, #f0c887 0%, #d97b45 35%, #6fd3c4 100%);
+  background-image: linear-gradient(135deg, #f0c887 0%, #d97b45 40%, #6fd3c4 100%);
   border-color: transparent;
   color: #0b1417;
 }

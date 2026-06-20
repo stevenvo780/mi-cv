@@ -10,15 +10,15 @@
   /* ── Core backgrounds ── */
   --bg:        #0b1417;
   --bg-2:      #0f1c20;
-  --bg-card:   #11211f;
-  --bg-card-2: #102327;
+  --bg-card:   #152028;
+  --bg-card-2: #152028;
   --ink:       #091012;
 
   /* ── Typography colors ── */
-  --text:      #f3ece0;        /* cream */
-  --cream:     #f3ece0;
+  --text:      #e8e0d4;        /* cream */
+  --cream:     #e8e0d4;
   --text-soft: #c9c2b6;
-  --muted:     #93999a;
+  --muted:     #8fa3a8;
 
   /* ── Teal (cool primary) ── */
   --teal:       #43b5a6;
@@ -30,8 +30,8 @@
   --gold-light: #f0c887;
 
   /* ── Tertiary cosmic ── */
-  --rust:    #cf6a3c;
-  --orange:  #cf6a3c;          /* alias */
+  --rust:    #c0522a;
+  --orange:  #c0522a;          /* alias */
   --violet:  #8d7cc0;
   --violet-light: #a99ee0;     /* AA-safe violet for small text on tinted bg */
 
@@ -40,10 +40,10 @@
   --line-2: rgba(67, 181, 166, 0.24);
 
   /* ── Signature gradient (warm → cool swirl) ── */
-  --grad-sig:  linear-gradient(110deg, #e0a85e 0%, #cf6a3c 35%, #43b5a6 100%);
-  --grad-sig-hover: linear-gradient(110deg, #f0c887 0%, #d97b45 35%, #6fd3c4 100%);
+  --grad-sig:  linear-gradient(135deg, #e0a85e 0%, #c0522a 40%, #43b5a6 100%);
+  --grad-sig-hover: linear-gradient(135deg, #f0c887 0%, #d97b45 40%, #6fd3c4 100%);
   /* Wider stop set so animated background-position has room to travel */
-  --grad-sig-anim: linear-gradient(110deg, #e0a85e 0%, #cf6a3c 30%, #43b5a6 60%, #e0a85e 100%);
+  --grad-sig-anim: linear-gradient(135deg, #e0a85e 0%, #c0522a 30%, #43b5a6 60%, #e0a85e 100%);
 
   /* ── Radii ── */
   --r-sm: 16px;

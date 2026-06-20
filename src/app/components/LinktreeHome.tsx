@@ -50,8 +50,8 @@ const T = {
       cvInfo:      { label: 'CV Informático',    sub: 'informatico.stevenvallejo.com', url: 'https://informatico.stevenvallejo.com' },
       prizma:      { label: 'Prizma',            sub: 'Suite corporativa · Prizma',    url: 'https://prizma.stevenvallejo.com' },
       agora:       { label: 'Ágora',             sub: 'agora.elenxos.com',             url: 'https://agora.elenxos.com' },
-      services:    { label: 'Servicios',         sub: 'services.stevenvallejo.com',    url: 'https://services.stevenvallejo.com' },
-      blog:        { label: 'Blog · Scholḗ',     sub: 'blog.stevenvallejo.com',        url: 'https://blog.stevenvallejo.com' },
+      services:    { label: 'Servicios',         sub: 'praxis.stevenvallejo.com',      url: 'https://praxis.stevenvallejo.com' },
+      blog:        { label: 'Blog · Scholḗ',     sub: 'schole.stevenvallejo.com',      url: 'https://schole.stevenvallejo.com' },
       lore:        { label: 'Mi historia',       sub: '/lore',                         url: '/es/lore' },
     },
 
@@ -81,8 +81,8 @@ const T = {
       cvInfo:      { label: 'CV Computer Scientist', sub: 'informatico.stevenvallejo.com', url: 'https://informatico.stevenvallejo.com' },
       prizma:      { label: 'Prizma',                sub: 'Corporate suite · Prizma',      url: 'https://prizma.stevenvallejo.com' },
       agora:       { label: 'Agora',                 sub: 'agora.elenxos.com',             url: 'https://agora.elenxos.com' },
-      services:    { label: 'Services',              sub: 'services.stevenvallejo.com',    url: 'https://services.stevenvallejo.com' },
-      blog:        { label: 'Blog · Scholḗ',         sub: 'blog.stevenvallejo.com',        url: 'https://blog.stevenvallejo.com' },
+      services:    { label: 'Services',              sub: 'praxis.stevenvallejo.com',      url: 'https://praxis.stevenvallejo.com' },
+      blog:        { label: 'Blog · Scholḗ',         sub: 'schole.stevenvallejo.com',      url: 'https://schole.stevenvallejo.com' },
       lore:        { label: 'My story',              sub: '/lore',                         url: '/en/lore' },
     },
 

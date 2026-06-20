@@ -79,7 +79,7 @@ export default function CustomNavbar() {
               {locale === 'es' ? 'Informático' : 'Engineer'}
             </Nav.Link>
             <Nav.Link
-              href="https://services.stevenvallejo.com"
+              href="https://praxis.stevenvallejo.com"
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -89,7 +89,7 @@ export default function CustomNavbar() {
 
           <div className="d-flex align-items-center gap-2">
             <a
-              href="https://blog.stevenvallejo.com"
+              href="https://schole.stevenvallejo.com"
               target="_blank"
               rel="noopener noreferrer"
               className="btn btn-primary"

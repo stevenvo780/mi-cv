@@ -13,11 +13,11 @@ const GOLD = '#e0a85e';
 const GOLD_INK = '#f0c887';
 const TEAL = '#43b5a6';
 const TEAL_INK = '#6fd3c4';
-const ORANGE = '#cf6a3c';
+const ORANGE = '#c0522a';
 const VIOLET = '#8d7cc0';
-const CREAM = '#f3ece0';
+const CREAM = '#e8e0d4';
 const CREAM_MUTED = '#cfc8ba';
-const SIGNATURE = `linear-gradient(110deg, ${GOLD} 0%, ${ORANGE} 35%, ${TEAL} 100%)`;
+const SIGNATURE = `linear-gradient(135deg, ${GOLD} 0%, ${ORANGE} 40%, ${TEAL} 100%)`;
 
 export default function OpengraphImage() {
   return new ImageResponse(

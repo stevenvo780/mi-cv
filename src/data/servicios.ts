@@ -3,7 +3,7 @@
    Transcribed from steven-vallejo-services/app/content.ts
    (contentES.services + contentEN.services), with a category for
    the in-page dashboard tabs/filter. Prices kept verbatim.
-   CTA target: services.stevenvallejo.com (the dedicated site).
+   CTA target: praxis.stevenvallejo.com (the dedicated site).
    ================================================================ */
 
 export type ServicioCategoria = 'ia' | 'desarrollo' | 'marca';
@@ -132,4 +132,4 @@ export const servicioCategorias: CategoriaMeta[] = [
   { id: 'marca', label: { es: 'Marca', en: 'Brand' } },
 ];
 
-export const SERVICIOS_URL = 'https://services.stevenvallejo.com';
+export const SERVICIOS_URL = 'https://praxis.stevenvallejo.com';

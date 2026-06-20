@@ -46,7 +46,7 @@ export default function Portrait() {
                 {t.cvCta}
               </a>
               <a
-                href="https://blog.stevenvallejo.com"
+                href="https://schole.stevenvallejo.com"
                 target="_blank"
                 rel="noopener noreferrer"
                 className={styles.ctaGhost}
@@ -54,7 +54,7 @@ export default function Portrait() {
                 {t.blogCta}
               </a>
               <a
-                href="https://services.stevenvallejo.com"
+                href="https://praxis.stevenvallejo.com"
                 target="_blank"
                 rel="noopener noreferrer"
                 className={styles.ctaGhost}
@@ -91,7 +91,7 @@ export default function Portrait() {
             <h2 className={styles.blogTitle}>{t.blogTitle}</h2>
             <p className={styles.blogLead}>{t.blogLead}</p>
             <a
-              href="https://blog.stevenvallejo.com"
+              href="https://schole.stevenvallejo.com"
               target="_blank"
               rel="noopener noreferrer"
               className={styles.ctaPrimary}

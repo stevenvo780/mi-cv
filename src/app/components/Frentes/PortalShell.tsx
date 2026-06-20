@@ -132,7 +132,7 @@ export default function PortalShell() {
                 : 'Philosophy applied to the machine. Essays on how we think, how we decide and how we build intelligence. I write at the intersection, for the reader who already has both grounds.'}
             </p>
             <a
-              href="https://blog.stevenvallejo.com"
+              href="https://schole.stevenvallejo.com"
               target="_blank"
               rel="noopener noreferrer"
               className="blog-card-cta"
@@ -240,7 +240,7 @@ export default function PortalShell() {
               aria-label={locale === 'es' ? 'Contacto y redes' : 'Contact and social'}
             >
               <a
-                href="https://services.stevenvallejo.com"
+                href="https://praxis.stevenvallejo.com"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="close-link"
@@ -264,7 +264,7 @@ export default function PortalShell() {
                 LinkedIn ↗
               </a>
               <a
-                href="https://blog.stevenvallejo.com"
+                href="https://schole.stevenvallejo.com"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="close-link"

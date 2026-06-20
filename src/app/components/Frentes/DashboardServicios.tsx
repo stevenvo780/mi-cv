@@ -5,7 +5,7 @@
  * Tabs/chips that filter the 6 services from src/data/servicios.ts by
  * category (ia / desarrollo / marca / todos). Client-side state only.
  * Grid of rich cards: title, 1-line description, price badge, CTA to
- * services.stevenvallejo.com. Fully bilingual ES/EN.
+ * praxis.stevenvallejo.com. Fully bilingual ES/EN.
  *
  * Design: Cloud Atlas tokens. No canvas here — the ambient background
  * is a subtle radial gradient. prefers-reduced-motion respected via brand.css.
@@ -376,7 +376,7 @@ export default function DashboardServicios() {
               <span aria-hidden="true">↗</span>
             </a>
             <span className="svc-cta-note">
-              services.stevenvallejo.com
+              praxis.stevenvallejo.com
             </span>
           </div>
         </div>

@@ -43,7 +43,7 @@ export default function BrandLogo({
           gradientUnits="userSpaceOnUse"
         >
           <stop offset="0" stopColor="#e0a85e" />
-          <stop offset="0.35" stopColor="#cf6a3c" />
+          <stop offset="0.40" stopColor="#c0522a" />
           <stop offset="1" stopColor="#43b5a6" />
         </linearGradient>
         <radialGradient id={cosmos} cx="0.32" cy="0.26" r="0.95">
@@ -89,7 +89,7 @@ export default function BrandLogo({
       />
 
       <circle cx="50" cy="32" r="2.6" fill="#6fd3c4" />
-      <circle cx="14" cy="32" r="2.1" fill="#cf6a3c" />
+      <circle cx="14" cy="32" r="2.1" fill="#c0522a" />
 
       <circle cx="32" cy="32" r="3" fill={`url(#${core})`} />
       <circle
