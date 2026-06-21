@@ -33,7 +33,6 @@
  */
 
 import React from 'react';
-import Image from 'next/image';
 import dynamic from 'next/dynamic';
 import { type Producto, type FrenteId } from '@/data/frentes';
 import { type FieldVariant } from './SectionBackgrounds';
@@ -198,37 +197,30 @@ export function GalleryCard({
 
   const inner = (
     <>
-      {hasCover ? (
-        <div className="gc-plate">
-          <Image
-            src={cover}
-            alt={p.nombre}
-            fill
-            // Brand covers and portraits are PNG assets with baked-in text —
-            // skip Next.js re-compression so no JPEG artefacts degrade the type.
-            // Portrait PNGs are 2160x2700 @2x; og_product PNGs 2400x1260 @2x —
-            // already sharp at every viewport size we serve.
-            unoptimized
-            sizes={
-              layout === 'showcase'
-                ? '(max-width: 1120px) 100vw, 1120px'
-                : // grid: 2-col portrait cards — retina needs ~1080px each column
-                  '(max-width: 560px) 100vw, (max-width: 1280px) 50vw, 640px'
-            }
-            style={{ objectFit: 'cover' }}
-            priority={index < 3}
-          />
-          <div className="gc-veil" aria-hidden="true" />
-        </div>
-      ) : (
-        // Fallback only if a cover is ever missing — keeps the name visible.
-        <div className="gc-plate gc-plate--empty">
+      {/* Decorative background: the brand cover/portrait as a low-opacity CSS
+          background-image so it is purely visual — text overlay on top is the
+          real, indexable, accessible content. */}
+      <div
+        className={`gc-plate${hasCover ? '' : ' gc-plate--empty'}`}
+        style={hasCover ? { backgroundImage: `url('${cover}')` } : undefined}
+        aria-hidden="true"
+      >
+        {!hasCover && (
           <span className="gc-fallback-name">{p.nombre}</span>
-        </div>
-      )}
+        )}
+        <div className="gc-veil" />
+      </div>
 
-      {/* Name carried for screen readers / SEO — the image shows it visually. */}
-      <h3 className="gc-sr-name">{p.nombre}</h3>
+      {/* Real HTML text overlay — the hero content for a11y, SEO and mobile. */}
+      <div className="gc-text-overlay">
+        <h3 className="gc-nombre">{p.nombre}</h3>
+        {p.subtitulo && (
+          <p className="gc-sub">{p.subtitulo[locale]}</p>
+        )}
+        {p.badge && (
+          <span className="gc-badge">{p.badge[locale]}</span>
+        )}
+      </div>
 
       {/* Minimal status ribbon (top-left). One line, only when it adds info. */}
       {(p.tipo === 'ponencia' || p.status === 'soon') && (
@@ -565,28 +557,40 @@ export const GALLERY_CSS = `
     box-shadow: 0 18px 60px rgba(0,0,0,0.45);
   }
 
-  /* ── The image plate ── */
+  /* ── The image plate — decorative background only ──
+     The brand cover/portrait image sits as a CSS background-image at reduced
+     opacity (30%) so the real HTML text overlay on top is always legible.
+     Never a Next.js <Image> here: we want the bg purely decorative so Google
+     indexes the text, not compressed pixels. */
   .gc-plate {
     position: absolute;
     inset: 0;
     overflow: hidden;
-    background: var(--bg-2);
-  }
-  .gc-plate :global(img),
-  .gc-plate img {
+    background-color: var(--bg-card);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    /* Decorative opacity: image is a subtle texture, not the hero. */
+    opacity: 1; /* full element; the pseudo/veil handles the image dim */
     transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
-    transform: scale(1.001); /* avoid 1px clip seam on zoom */
   }
-  /* Soft veil only at the very edges so overlaid chips stay legible
-     without washing out the baked-in artwork. */
+  /* Dim the background image via a semi-transparent overlay so text on top
+     always meets WCAG AA contrast against the dark palette. */
   .gc-veil {
     position: absolute;
     inset: 0;
     z-index: 1;
     pointer-events: none;
+    /* Strong dark base so the bg image reads at ~25-35% opacity effectively */
     background:
-      linear-gradient(to bottom, rgba(11,20,23,0.0) 62%, rgba(11,20,23,0.42) 100%),
-      radial-gradient(120% 80% at 50% 50%, rgba(11,20,23,0) 70%, rgba(11,20,23,0.18) 100%);
+      rgba(11,20,23,0.68),
+      linear-gradient(to bottom, rgba(11,20,23,0.0) 35%, rgba(11,20,23,0.55) 100%);
+  }
+
+  /* Hover: subtle scale of the background image for kinetic feedback */
+  .gc-card:hover .gc-plate,
+  .gc-card:focus-visible .gc-plate {
+    transform: scale(1.06);
   }
 
   /* Fallback when a cover is missing (defensive — all 17 exist today). */
@@ -605,17 +609,72 @@ export const GALLERY_CSS = `
     color: var(--text);
     padding: 0 1rem;
     text-align: center;
+    position: relative;
+    z-index: 2;
   }
 
-  /* Name kept for assistive tech / SEO; image renders it visually. */
-  .gc-sr-name {
+  /* ── Text overlay — the REAL content ──
+     Sits above the decorative bg image (z-index 2, above the veil at 1).
+     On 375px the name must be readable HTML text, not baked-in pixels. */
+  .gc-text-overlay {
     position: absolute;
-    width: 1px; height: 1px;
-    padding: 0; margin: -1px;
-    overflow: hidden;
-    clip: rect(0 0 0 0);
-    white-space: nowrap;
-    border: 0;
+    inset: 0;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 1.1rem 1rem 3rem; /* bottom clears the gc-live affordance */
+    gap: 0.3rem;
+  }
+  /* Greek wordmark: Cormorant Garamond, high contrast against dark veil */
+  .gc-nombre {
+    font-family: var(--font-cormorant, 'Cormorant Garamond', Georgia, serif);
+    font-size: clamp(1.4rem, 3.5vw, 2.1rem);
+    font-weight: 700;
+    color: #fff;
+    margin: 0;
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+    text-shadow: 0 1px 8px rgba(0,0,0,0.7);
+  }
+  .gc-sub {
+    font-family: var(--font-jetbrains, 'JetBrains Mono', monospace);
+    font-size: clamp(0.65rem, 1.4vw, 0.78rem);
+    color: var(--teal-light, #6fd3c4);
+    margin: 0;
+    line-height: 1.4;
+    letter-spacing: 0.04em;
+    opacity: 0.92;
+  }
+  .gc-badge {
+    display: inline-block;
+    font-family: var(--font-jetbrains, 'JetBrains Mono', monospace);
+    font-size: 0.60rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--gc-badge, var(--teal));
+    border: 1px solid currentColor;
+    border-radius: 999px;
+    padding: 0.18rem 0.55rem;
+    align-self: flex-start;
+    opacity: 0.88;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    background: rgba(11,20,23,0.32);
+  }
+  /* Showcase (full-width banner): bump up the type a bit */
+  .gc-showcase .gc-nombre {
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+  }
+  .gc-showcase .gc-text-overlay {
+    padding: 1.5rem 1.6rem 4rem;
+  }
+  /* Mobile 375px: names must be readable HTML text at this size */
+  @media (max-width: 400px) {
+    .gc-nombre { font-size: 1.3rem; }
+    .gc-sub    { font-size: 0.62rem; }
+    .gc-text-overlay { padding: 0.9rem 0.9rem 2.6rem; }
   }
 
   /* ── Status ribbon (top-left), one line, minimal ── */
@@ -692,10 +751,6 @@ export const GALLERY_CSS = `
   .gc-showcase:focus-visible {
     transform: translateY(-4px);
   }
-  .gc-card:hover .gc-plate img,
-  .gc-card:focus-visible .gc-plate img {
-    transform: scale(1.06);
-  }
   .gc-card:hover .gc-live,
   .gc-card:focus-visible .gc-live {
     opacity: 1;
@@ -728,7 +783,7 @@ export const GALLERY_CSS = `
   @media (prefers-reduced-motion: reduce) {
     .gc-card,
     .gc-card.reveal,
-    .gc-plate img,
+    .gc-plate,
     .gc-live,
     .gc-live-arrow {
       transition: none !important;
@@ -736,8 +791,8 @@ export const GALLERY_CSS = `
     }
     .gc-card:hover,
     .gc-card:focus-visible { transform: none; }
-    .gc-card:hover .gc-plate img,
-    .gc-card:focus-visible .gc-plate img { transform: scale(1.001); }
+    .gc-card:hover .gc-plate,
+    .gc-card:focus-visible .gc-plate { transform: none; }
     .gc-live { opacity: 1; transform: none; }
   }
 `;
