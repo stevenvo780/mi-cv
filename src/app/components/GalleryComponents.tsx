@@ -301,7 +301,18 @@ export function GalleryCard({
       {/* Plate outline container */}
       <div className="gc-grid-plate" style={{ borderColor: 'rgba(255, 255, 255, 0.1)' }}>
         {/* Top-right watermark symbol */}
-        <span className="gc-grid-watermark" style={{ color: brandMeta.paleta.acento }}>
+        <span
+          className="gc-grid-watermark"
+          style={{
+            color: brandMeta.paleta.acento,
+            ...(p.id === 'eikon' ? {
+              fontSize: '12rem',
+              top: '-1.5rem',
+              right: '-1.0rem',
+              opacity: 0.08
+            } : {})
+          }}
+        >
           {brandMeta.simbolo}
         </span>
 
@@ -319,7 +330,15 @@ export function GalleryCard({
             {brandMeta.has_logo && brandMeta.logo_path ? (
               <img src={brandMeta.logo_path} className="gc-grid-chip-logo" alt={p.nombre} />
             ) : (
-              <span className="gc-grid-chip-symbol" style={{ background: brandMeta.gradiente_hero, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' } as React.CSSProperties}>
+              <span
+                className="gc-grid-chip-symbol"
+                style={{
+                  background: brandMeta.gradiente_hero,
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  ...(p.id === 'eikon' ? { fontSize: '1.65rem' } : {})
+                } as React.CSSProperties}
+              >
                 {brandMeta.simbolo}
               </span>
             )}
@@ -764,7 +783,7 @@ export const GALLERY_CSS = `
     top: -1.2rem;
     right: -0.8rem;
     font-family: var(--font-cormorant), Georgia, serif;
-    font-size: 11rem;
+    font-size: 12rem;
     font-weight: 700;
     line-height: 1;
     opacity: 0.055;
