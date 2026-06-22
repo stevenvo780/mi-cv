@@ -519,20 +519,23 @@ export function GallerySection({
         {/* The remaining products in their normal layout (grid or showcase). */}
         {rest.length > 0 && (
           <div className={`gs-grid gs-grid--${restLayout}`}>
-            {rest.map((p, i) => (
-              <GalleryCard
-                key={p.id}
-                producto={p}
-                locale={locale}
-                accent={accent}
-                borderAlpha={borderAlpha}
-                bgAlpha={bgAlpha}
-                badgeColor={badgeColor}
-                // Offset reveal index so banner + grid stagger continues smoothly.
-                index={banners.length + i}
-                layout={restLayout}
-              />
-            ))}
+            {rest.map((p, i) => {
+              const isLastAndOdd = rest.length % 2 !== 0 && i === rest.length - 1;
+              return (
+                <GalleryCard
+                  key={p.id}
+                  producto={p}
+                  locale={locale}
+                  accent={accent}
+                  borderAlpha={borderAlpha}
+                  bgAlpha={bgAlpha}
+                  badgeColor={badgeColor}
+                  // Offset reveal index so banner + grid stagger continues smoothly.
+                  index={banners.length + i}
+                  layout={isLastAndOdd ? 'showcase' : restLayout}
+                />
+              );
+            })}
           </div>
         )}
       </div>
@@ -649,6 +652,10 @@ export const GALLERY_CSS = `
     grid-template-columns: repeat(2, 1fr);
     align-items: start;
     gap: 1.5rem;
+  }
+  /* Force any auto-reaccommodated showcase cards in grid to take full width (12 cols equivalent) */
+  .gs-grid--grid > .gc-showcase {
+    grid-column: span 2;
   }
   /* One product: single column — the showcase card takes the full width. */
   .gs-grid--showcase {

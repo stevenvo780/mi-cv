@@ -404,6 +404,7 @@ export const productos: Producto[] = [
     },
     status: 'soon',
     badge: { es: 'Próximamente', en: 'Coming soon' },
+    banner: true,
   },
 
   /* ===================== ENTERPRISE ===================== */
