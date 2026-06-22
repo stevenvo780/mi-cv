@@ -234,9 +234,9 @@ export function GalleryCard({
             </span>
           </div>
           <div className="gc-showcase-title-block">
-            <h2 className="gc-showcase-title" style={{ background: brandMeta.gradiente_hero, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' } as React.CSSProperties}>
+            <h4 className="gc-showcase-title" style={{ background: brandMeta.gradiente_hero, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' } as React.CSSProperties}>
               {p.nombre}
-            </h2>
+            </h4>
             {brandMeta.subtitulo && (
               <p className="gc-showcase-tagline">{brandMeta.subtitulo}</p>
             )}
@@ -347,9 +347,9 @@ export function GalleryCard({
 
         {/* Body area */}
         <div className="gc-grid-body">
-          <h2 className="gc-grid-title" style={{ background: brandMeta.gradiente_hero, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' } as React.CSSProperties}>
+          <h4 className="gc-grid-title" style={{ background: brandMeta.gradiente_hero, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' } as React.CSSProperties}>
             {p.nombre}
-          </h2>
+          </h4>
           <div className="gc-grid-accent-line" style={{ background: brandMeta.gradiente_hero }}></div>
           <p className="gc-grid-desc">
             {p.descripcion[locale]}
@@ -489,11 +489,11 @@ export function GallerySection({
       )}
       <div className="gs-content">
         <div className="gs-header reveal">
-          <p className="gs-eyebrow" style={{ color: accent }}>
+          <h3 className="gs-eyebrow" style={{ color: accent }}>
             <span className="brand-sec-no">{secNo}</span>
             &nbsp;&nbsp;{name}
-          </p>
-          <h3 className="gs-tagline">{tagline}</h3>
+          </h3>
+          <p className="gs-tagline">{tagline}</p>
         </div>
 
         {/* Banner row(s): each flagged product as a full-width horizontal
