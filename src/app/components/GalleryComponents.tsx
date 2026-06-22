@@ -36,6 +36,8 @@ import React from 'react';
 import dynamic from 'next/dynamic';
 import { type Producto, type FrenteId } from '@/data/frentes';
 import { type FieldVariant } from './SectionBackgrounds';
+import { BRAND_METADATA } from '@/data/brandMetadata';
+
 
 // Decorative ambient background — client-only, never blocks paint.
 const SectionField = dynamic(() => import('./SectionBackgrounds'), { ssr: false });
@@ -181,45 +183,95 @@ export function GalleryCard({
   // `featured` only styles the standalone showcase card now. In the uniform grid
   // every plate is identical, so a featured flag must NOT add an accent edge there.
   const isFeatured = p.featured === true && layout !== 'grid';
-  // In the grid (≥2), every card is a UNIFORM PORTRAIT plate — no featured span,
-  // no half-height items. Prefer the 4:5 portrait art; fall back to the landscape
-  // cover only if a portrait wasn't generated for this product.
-  const cover =
-    layout === 'grid'
-      ? BRAND_COVER_PORTRAIT[p.id] ?? BRAND_COVER[p.id]
-      : BRAND_COVER[p.id];
-  // The plate IS the card; if (rare) a cover is missing, render a text fallback.
-  const hasCover = Boolean(cover);
 
   const liveLabel = locale === 'es' ? 'Ver en vivo' : 'View live';
   const soonLabel = locale === 'es' ? 'Próximamente' : 'Coming soon';
   const talkLabel = locale === 'es' ? 'Ponencia' : 'Talk';
 
-  const inner = (
-    <>
-      {/* Decorative background: the brand cover/portrait as a low-opacity CSS
-          background-image so it is purely visual — text overlay on top is the
-          real, indexable, accessible content. */}
-      <div
-        className={`gc-plate${hasCover ? '' : ' gc-plate--empty'}`}
-        style={hasCover ? { backgroundImage: `url('${cover}')` } : undefined}
-        aria-hidden="true"
-      >
-        {!hasCover && (
-          <span className="gc-fallback-name">{p.nombre}</span>
-        )}
-        <div className="gc-veil" />
-      </div>
+  // Load Eikon brand metadata
+  const meta = BRAND_METADATA[p.id];
+  const brandMeta = meta || {
+    nombre_producto: p.nombre,
+    nombre_corporativo: p.frente === 'enterprise' ? 'Prizma' : 'Pinakothḗke',
+    simbolo: '◈',
+    paleta: {
+      bg: '#0b1417',
+      primario: '#0b1417',
+      acento: accent,
+      acento_2: '#8d7cc0',
+      acento_3: '#A3E4D7',
+      texto: '#e8e0d4',
+      texto_muted: '#8fa3a8',
+      surface: '#131e22',
+    },
+    gradiente_hero: 'linear-gradient(135deg, #e0a85e 0%, #c0522a 40%, #43b5a6 100%)',
+    gradiente_bg: 'radial-gradient(ellipse at 50% 18%, #1a2830 0%, #0b1417 62%)',
+    tagline: p.subtitulo ? p.subtitulo[locale] : '',
+    titulo: p.nombre,
+    subtitulo: p.subtitulo ? p.subtitulo[locale] : '',
+    copy: p.descripcion[locale],
+    has_logo: false,
+    logo_path: null,
+  };
 
-      {/* Real HTML text overlay — the hero content for a11y, SEO and mobile. */}
-      <div className="gc-text-overlay">
-        <h3 className="gc-nombre">{p.nombre}</h3>
-        {p.subtitulo && (
-          <p className="gc-sub">{p.subtitulo[locale]}</p>
-        )}
-        {p.badge && (
-          <span className="gc-badge">{p.badge[locale]}</span>
-        )}
+  const isShowcase = layout === 'showcase';
+
+  const inner = isShowcase ? (
+    <div className="gc-showcase-container">
+      {/* Background radial gradient */}
+      <div className="gc-card-bg" style={{ background: brandMeta.gradiente_bg }} />
+      <div className="gc-card-noise" />
+      <div className="gc-card-orb gc-card-orb-1" style={{ background: brandMeta.paleta.acento }} />
+      <div className="gc-card-orb gc-card-orb-2" style={{ background: brandMeta.paleta.acento_2 }} />
+      
+      {/* Landscape layout contents */}
+      <div className="gc-showcase-layout">
+        <section className="gc-showcase-brand">
+          <div className="gc-showcase-kicker-wrap">
+            <span className="gc-showcase-kicker-line" style={{ background: brandMeta.gradiente_hero }}></span>
+            <span className="gc-showcase-kicker-text" style={{ color: brandMeta.paleta.acento }}>
+              {brandMeta.nombre_corporativo.toUpperCase()}
+            </span>
+          </div>
+          <div className="gc-showcase-title-block">
+            <h2 className="gc-showcase-title" style={{ background: brandMeta.gradiente_hero, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' } as React.CSSProperties}>
+              {p.nombre}
+            </h2>
+            {brandMeta.subtitulo && (
+              <p className="gc-showcase-tagline">{brandMeta.subtitulo}</p>
+            )}
+          </div>
+        </section>
+        
+        <div className="gc-showcase-divider" style={{ borderLeftColor: 'rgba(232, 224, 212, 0.1)' }}></div>
+
+        <section className="gc-showcase-content">
+          <div className="gc-showcase-accent-line" style={{ background: brandMeta.gradiente_hero }}></div>
+          <p className="gc-showcase-desc">
+            {p.descripcion[locale]}
+          </p>
+          <div className="gc-showcase-footer">
+            <span className="gc-showcase-url" style={{ color: brandMeta.paleta.acento }}>
+              {p.url ? p.url.replace(/^https?:\/\//, '') : brandMeta.tagline}
+            </span>
+            {p.badge && (
+              <span className="gc-showcase-badge" style={{ color: brandMeta.paleta.acento }}>
+                {p.badge[locale]}
+              </span>
+            )}
+          </div>
+        </section>
+
+        {/* Big visual glyph mark in background or on right side */}
+        <div className="gc-showcase-symbol-wrap" style={{ borderLeftColor: 'rgba(255,255,255,0.08)' }}>
+          {brandMeta.has_logo && brandMeta.logo_path ? (
+            <img src={brandMeta.logo_path} className="gc-showcase-logo-img" alt={p.nombre} />
+          ) : (
+            <span className="gc-showcase-symbol-text" style={{ background: brandMeta.gradiente_hero, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' } as React.CSSProperties}>
+              {brandMeta.simbolo}
+            </span>
+          )}
+        </div>
       </div>
 
       {/* Minimal status ribbon (top-left). One line, only when it adds info. */}
@@ -237,7 +289,83 @@ export function GalleryCard({
           <span className="gc-live-arrow">↗</span>
         </span>
       )}
-    </>
+    </div>
+  ) : (
+    <div className="gc-grid-container">
+      {/* Background radial gradient */}
+      <div className="gc-card-bg" style={{ background: brandMeta.gradiente_bg }} />
+      <div className="gc-card-noise" />
+      <div className="gc-card-orb gc-card-orb-1" style={{ background: brandMeta.paleta.acento }} />
+      <div className="gc-card-orb gc-card-orb-2" style={{ background: brandMeta.paleta.acento_2 }} />
+
+      {/* Plate outline container */}
+      <div className="gc-grid-plate" style={{ borderColor: 'rgba(255, 255, 255, 0.1)' }}>
+        {/* Top-right watermark symbol */}
+        <span className="gc-grid-watermark" style={{ color: brandMeta.paleta.acento }}>
+          {brandMeta.simbolo}
+        </span>
+
+        {/* Top row */}
+        <div className="gc-grid-header">
+          <div className="gc-grid-eyebrow">
+            <span className="gc-grid-frente" style={{ color: brandMeta.paleta.acento }}>
+              {p.frente === 'filosofia' ? 'Filosofía' :
+               p.frente === 'ciencias' ? 'Ciencias' :
+               p.frente === 'informatica' ? 'Ingeniería' : 'Enterprise'}
+            </span>
+            <span className="gc-grid-casa">{brandMeta.nombre_corporativo}</span>
+          </div>
+          <div className="gc-grid-chip">
+            {brandMeta.has_logo && brandMeta.logo_path ? (
+              <img src={brandMeta.logo_path} className="gc-grid-chip-logo" alt={p.nombre} />
+            ) : (
+              <span className="gc-grid-chip-symbol" style={{ background: brandMeta.gradiente_hero, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' } as React.CSSProperties}>
+                {brandMeta.simbolo}
+              </span>
+            )}
+          </div>
+        </div>
+
+        {/* Body area */}
+        <div className="gc-grid-body">
+          <h2 className="gc-grid-title" style={{ background: brandMeta.gradiente_hero, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' } as React.CSSProperties}>
+            {p.nombre}
+          </h2>
+          <div className="gc-grid-accent-line" style={{ background: brandMeta.gradiente_hero }}></div>
+          <p className="gc-grid-desc">
+            {p.descripcion[locale]}
+          </p>
+        </div>
+
+        {/* Footer area */}
+        <div className="gc-grid-footer" style={{ borderTopColor: 'rgba(255, 255, 255, 0.08)' }}>
+          <span className="gc-grid-url" style={{ color: brandMeta.paleta.acento }}>
+            {p.url ? p.url.replace(/^https?:\/\//, '') : brandMeta.tagline}
+          </span>
+          {p.badge && (
+            <span className="gc-grid-badge">
+              {p.badge[locale]}
+            </span>
+          )}
+        </div>
+      </div>
+
+      {/* Minimal status ribbon (top-left). One line, only when it adds info. */}
+      {(p.tipo === 'ponencia' || p.status === 'soon') && (
+        <span className={`gc-ribbon ${p.status === 'soon' ? 'is-soon' : 'is-talk'}`}>
+          {p.status === 'soon' ? soonLabel : talkLabel}
+        </span>
+      )}
+
+      {/* Live affordance (bottom-right). Real link when standalone; visual cue
+          when the whole card is already a link (grid/featured/showcase). */}
+      {p.url && (
+        <span className="gc-live" aria-hidden="true">
+          {liveLabel}
+          <span className="gc-live-arrow">↗</span>
+        </span>
+      )}
+    </div>
   );
 
   const className = ['reveal', 'gc-card', `gc-${layout}`]
@@ -245,7 +373,7 @@ export function GalleryCard({
     .join(' ');
 
   const style = {
-    '--gc-accent': accent,
+    '--gc-accent': brandMeta.paleta.acento,
     '--gc-border': borderAlpha,
     '--gc-bg': bgAlpha,
     '--gc-badge': badgeColor,
@@ -518,7 +646,7 @@ export const GALLERY_CSS = `
   }
 
   /* ────────────────────────────────────────────────
-     CARD — the plate IS the card. Image = hero.
+     CARD — the plate IS the card. Responsive HTML.
   ──────────────────────────────────────────────── */
   .gc-card {
     position: relative;
@@ -557,124 +685,421 @@ export const GALLERY_CSS = `
     box-shadow: 0 18px 60px rgba(0,0,0,0.45);
   }
 
-  /* ── The image plate — decorative background only ──
-     The brand cover/portrait image sits as a CSS background-image at reduced
-     opacity (30%) so the real HTML text overlay on top is always legible.
-     Never a Next.js <Image> here: we want the bg purely decorative so Google
-     indexes the text, not compressed pixels. */
-  .gc-plate {
+  /* ── Card BG & Ambient watermarks ── */
+  .gc-card-bg {
     position: absolute;
     inset: 0;
-    overflow: hidden;
-    background-color: var(--bg-card);
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    /* Decorative opacity: image is a subtle texture, not the hero. */
-    opacity: 1; /* full element; the pseudo/veil handles the image dim */
-    transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+    z-index: 0;
+    pointer-events: none;
+    transition: opacity 0.5s ease;
   }
-  /* Dim the background image via a semi-transparent overlay so text on top
-     always meets WCAG AA contrast against the dark palette. */
-  .gc-veil {
+  .gc-card-noise {
     position: absolute;
     inset: 0;
     z-index: 1;
+    opacity: 0.04;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260' viewBox='0 0 260 260'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.72' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='260' height='260' filter='url(%23n)' opacity='.7'/%3E%3C/svg%3E");
+    background-size: 260px 260px;
+    mix-blend-mode: soft-light;
     pointer-events: none;
-    /* Strong dark base so the bg image reads at ~25-35% opacity effectively */
-    background:
-      rgba(11,20,23,0.68),
-      linear-gradient(to bottom, rgba(11,20,23,0.0) 35%, rgba(11,20,23,0.55) 100%);
+  }
+  .gc-card-orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(75px);
+    opacity: 0.11;
+    pointer-events: none;
+    z-index: 1;
+    transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.6s ease;
+  }
+  .gc-card-orb-1 {
+    width: 60%;
+    height: 60%;
+    top: -20%;
+    right: -10%;
+  }
+  .gc-card-orb-2 {
+    width: 50%;
+    height: 50%;
+    bottom: -15%;
+    left: 10%;
   }
 
-  /* Hover: subtle scale of the background image for kinetic feedback */
-  .gc-card:hover .gc-plate,
-  .gc-card:focus-visible .gc-plate {
-    transform: scale(1.06);
+  /* ────────────────────────────────────────────────
+     PORTRAIT CARD (GRID)
+     aspect-ratio 4:5
+  ──────────────────────────────────────────────── */
+  .gc-grid-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
   }
-
-  /* Fallback when a cover is missing (defensive — all 17 exist today). */
-  .gc-plate--empty {
+  .gc-grid-plate {
+    position: absolute;
+    inset: 0.9rem;
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 8px;
+    background: linear-gradient(180deg, rgba(11,20,23,0.18) 0%, rgba(11,20,23,0.55) 60%, rgba(11,20,23,0.85) 100%);
+    display: flex;
+    flex-direction: column;
+    padding: 1.25rem 1.25rem 1.1rem;
+    z-index: 2;
+    overflow: hidden;
+    transition: border-color 0.32s ease, background 0.32s ease;
+  }
+  .gc-grid-plate::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--gc-accent);
+    opacity: 0.9;
+  }
+  
+  .gc-grid-watermark {
+    position: absolute;
+    top: -1.2rem;
+    right: -0.8rem;
+    font-family: var(--font-cormorant), Georgia, serif;
+    font-size: 11rem;
+    font-weight: 700;
+    line-height: 1;
+    opacity: 0.055;
+    pointer-events: none;
+    user-select: none;
+    z-index: 1;
+    transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.6s ease;
+  }
+  
+  .gc-grid-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.8rem;
+    z-index: 2;
+  }
+  .gc-grid-eyebrow {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+  .gc-grid-frente {
+    font-family: var(--font-jetbrains), monospace;
+    font-size: 0.64rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+  .gc-grid-casa {
+    font-family: var(--font-jetbrains), monospace;
+    font-size: 0.52rem;
+    color: var(--text-muted, #8fa3a8);
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+  }
+  .gc-grid-chip {
+    flex-shrink: 0;
+    width: 2.3rem;
+    height: 2.3rem;
     display: flex;
     align-items: center;
     justify-content: center;
-    background:
-      radial-gradient(120% 120% at 30% 20%, var(--gc-bg, rgba(67,181,166,0.06)), transparent 70%),
-      var(--bg-card-2);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 6px;
+    background: rgba(255,255,255,0.03);
+    transition: transform 0.4s ease, border-color 0.4s ease;
   }
-  .gc-fallback-name {
-    font-size: clamp(1.2rem, 3vw, 2rem);
-    font-weight: 800;
-    letter-spacing: -0.02em;
-    color: var(--text);
-    padding: 0 1rem;
-    text-align: center;
-    position: relative;
-    z-index: 2;
+  .gc-grid-chip-logo {
+    max-width: 80%;
+    max-height: 80%;
+    object-fit: contain;
+    filter: brightness(1.05);
+  }
+  .gc-grid-chip-symbol {
+    font-family: var(--font-cormorant), Georgia, serif;
+    font-size: 1.35rem;
+    font-weight: 700;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    color: #fff;
   }
 
-  /* ── Text overlay — the REAL content ──
-     Sits above the decorative bg image (z-index 2, above the veil at 1).
-     On 375px the name must be readable HTML text, not baked-in pixels. */
-  .gc-text-overlay {
-    position: absolute;
-    inset: 0;
-    z-index: 2;
+  .gc-grid-body {
+    flex: 1 1 auto;
     display: flex;
     flex-direction: column;
-    justify-content: flex-end;
-    padding: 1.1rem 1rem 3rem; /* bottom clears the gc-live affordance */
-    gap: 0.3rem;
+    justify-content: center;
+    padding: 0.4rem 0;
+    z-index: 2;
   }
-  /* Greek wordmark: Cormorant Garamond, high contrast against dark veil */
-  .gc-nombre {
-    font-family: var(--font-cormorant, 'Cormorant Garamond', Georgia, serif);
-    font-size: clamp(1.4rem, 3.5vw, 2.1rem);
-    font-weight: 700;
+  .gc-grid-title {
+    font-family: var(--font-cormorant), Georgia, serif;
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: -0.015em;
+    font-size: clamp(1.7rem, 4vw, 2.3rem);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
     color: #fff;
-    margin: 0;
-    line-height: 1.1;
-    letter-spacing: -0.01em;
-    text-shadow: 0 1px 8px rgba(0,0,0,0.7);
+    padding-bottom: 0.08em;
   }
-  .gc-sub {
-    font-family: var(--font-jetbrains, 'JetBrains Mono', monospace);
-    font-size: clamp(0.65rem, 1.4vw, 0.78rem);
-    color: var(--teal-light, #6fd3c4);
-    margin: 0;
-    line-height: 1.4;
-    letter-spacing: 0.04em;
-    opacity: 0.92;
+  .gc-grid-accent-line {
+    width: 2.2rem;
+    height: 3px;
+    border-radius: 1px;
+    margin-top: 0.4rem;
   }
-  .gc-badge {
-    display: inline-block;
-    font-family: var(--font-jetbrains, 'JetBrains Mono', monospace);
-    font-size: 0.60rem;
+  .gc-grid-desc {
+    font-size: clamp(0.70rem, 2vw, 0.80rem);
+    font-weight: 300;
+    line-height: 1.45;
+    color: var(--text, #e8e0d4);
+    opacity: 0.88;
+    margin-top: 0.75rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 5;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    max-height: 5.8rem;
+  }
+
+  .gc-grid-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.8rem;
+    padding-top: 0.6rem;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    z-index: 2;
+  }
+  .gc-grid-url {
+    font-family: var(--font-jetbrains), monospace;
+    font-size: 0.62rem;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+  }
+  .gc-grid-badge {
+    font-family: var(--font-jetbrains), monospace;
+    font-size: 0.52rem;
     font-weight: 600;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    color: var(--gc-badge, var(--teal));
+    color: var(--text-muted, #8fa3a8);
+  }
+
+  /* ────────────────────────────────────────────────
+     LANDSCAPE CARD (SHOWCASE BANNER)
+     aspect-ratio 1200 / 630
+  ──────────────────────────────────────────────── */
+  .gc-showcase-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+  }
+  .gc-showcase-layout {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    grid-template-columns: 1fr 1px 1.2fr 0.8fr;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    padding: 2.2rem 2.8rem;
+    gap: 1.5rem;
+  }
+  
+  .gc-showcase-brand {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+  .gc-showcase-kicker-wrap {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .gc-showcase-kicker-line {
+    width: 1.2rem;
+    height: 2px;
+    border-radius: 1px;
+  }
+  .gc-showcase-kicker-text {
+    font-family: var(--font-jetbrains), monospace;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+  }
+  .gc-showcase-title-block {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+  .gc-showcase-title {
+    font-family: var(--font-cormorant), Georgia, serif;
+    font-size: clamp(2.0rem, 5vw, 3.2rem);
+    font-weight: 900;
+    line-height: 1.05;
+    letter-spacing: -0.015em;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    color: #fff;
+    padding-bottom: 0.05em;
+  }
+  .gc-showcase-tagline {
+    font-family: var(--font-inter), sans-serif;
+    font-size: clamp(0.85rem, 2vw, 1.0rem);
+    color: var(--text-muted, #8fa3a8);
+    line-height: 1.35;
+    font-weight: 300;
+  }
+
+  .gc-showcase-divider {
+    height: 55%;
+    border-left: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .gc-showcase-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+    padding-right: 0.5rem;
+  }
+  .gc-showcase-accent-line {
+    width: 1.8rem;
+    height: 3px;
+    border-radius: 1px;
+  }
+  .gc-showcase-desc {
+    font-size: clamp(0.78rem, 2vw, 0.88rem);
+    line-height: 1.5;
+    color: var(--text, #e8e0d4);
+    opacity: 0.9;
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .gc-showcase-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.8rem;
+    margin-top: 0.4rem;
+  }
+  .gc-showcase-url {
+    font-family: var(--font-jetbrains), monospace;
+    font-size: 0.70rem;
+    font-weight: 600;
+  }
+  .gc-showcase-badge {
+    font-family: var(--font-jetbrains), monospace;
+    font-size: 0.58rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
     border: 1px solid currentColor;
-    border-radius: 999px;
-    padding: 0.18rem 0.55rem;
-    align-self: flex-start;
-    opacity: 0.88;
-    backdrop-filter: blur(4px);
-    -webkit-backdrop-filter: blur(4px);
-    background: rgba(11,20,23,0.32);
+    border-radius: 99px;
+    padding: 0.12rem 0.5rem;
+    opacity: 0.85;
+    background: rgba(11,20,23,0.3);
   }
-  /* Showcase (full-width banner): bump up the type a bit */
-  .gc-showcase .gc-nombre {
-    font-size: clamp(1.8rem, 4vw, 2.8rem);
+
+  .gc-showcase-symbol-wrap {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-left: 1.5rem;
+    border-left: 1px solid rgba(255,255,255,0.08);
   }
-  .gc-showcase .gc-text-overlay {
-    padding: 1.5rem 1.6rem 4rem;
+  .gc-showcase-logo-img {
+    max-width: 90%;
+    max-height: 80%;
+    object-fit: contain;
   }
-  /* Mobile 375px: names must be readable HTML text at this size */
-  @media (max-width: 400px) {
-    .gc-nombre { font-size: 1.3rem; }
-    .gc-sub    { font-size: 0.62rem; }
-    .gc-text-overlay { padding: 0.9rem 0.9rem 2.6rem; }
+  .gc-showcase-symbol-text {
+    font-family: var(--font-cormorant), Georgia, serif;
+    font-size: 7.5rem;
+    font-weight: 700;
+    line-height: 1;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    color: #fff;
+  }
+
+  /* ────────────────────────────────────────────────
+     RESPONSIVE BREAKPOINTS FOR DYNAMIC HTML CARDS
+  ──────────────────────────────────────────────── */
+  @media (max-width: 900px) {
+    .gc-showcase-layout {
+      grid-template-columns: 1.2fr 1px 1.5fr;
+      padding: 1.8rem 2.2rem;
+    }
+    .gc-showcase-symbol-wrap {
+      display: none;
+    }
+  }
+
+  @media (max-width: 680px) {
+    /* Showcase layouts collapse to vertical stacked flex layout on small viewports */
+    .gc-showcase-layout {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: stretch;
+      padding: 1.4rem;
+      gap: 0.8rem;
+    }
+    .gc-showcase-divider {
+      display: none;
+    }
+    .gc-showcase-brand {
+      gap: 0.4rem;
+    }
+    .gc-showcase-content {
+      gap: 0.5rem;
+    }
+    .gc-showcase-accent-line {
+      display: none;
+    }
+    .gc-showcase-desc {
+      -webkit-line-clamp: 3;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .gc-grid-plate {
+      inset: 0.5rem;
+      padding: 0.9rem;
+    }
+    .gc-grid-watermark {
+      font-size: 8rem;
+      top: -1rem;
+      right: -0.5rem;
+    }
+    .gc-grid-chip {
+      width: 2rem;
+      height: 2rem;
+    }
+    .gc-grid-chip-symbol {
+      font-size: 1.1rem;
+    }
+    .gc-grid-title {
+      font-size: clamp(1.4rem, 4vw, 1.8rem);
+    }
+    .gc-grid-desc {
+      -webkit-line-clamp: 4;
+      margin-top: 0.5rem;
+      font-size: 0.7rem;
+    }
   }
 
   /* ── Status ribbon (top-left), one line, minimal ── */
@@ -682,7 +1107,7 @@ export const GALLERY_CSS = `
     position: absolute;
     top: 0.85rem;
     left: 0.85rem;
-    z-index: 2;
+    z-index: 5;
     font-family: var(--font-mono);
     font-size: 0.64rem;
     font-weight: 600;
@@ -710,7 +1135,7 @@ export const GALLERY_CSS = `
     position: absolute;
     right: 0.85rem;
     bottom: 0.85rem;
-    z-index: 2;
+    z-index: 5;
     display: inline-flex;
     align-items: center;
     gap: 0.3rem;
@@ -745,12 +1170,35 @@ export const GALLERY_CSS = `
     box-shadow:
       0 22px 60px rgba(0,0,0,0.55),
       0 0 0 1px var(--gc-accent, var(--teal)),
-      0 0 30px -8px var(--gc-bg, transparent);
+      0 0 30px -8px var(--gc-border, transparent);
   }
   .gc-showcase:hover,
   .gc-showcase:focus-visible {
     transform: translateY(-4px);
   }
+  
+  /* Micro-interactions inside card on hover */
+  .gc-card:hover .gc-grid-chip,
+  .gc-card:focus-visible .gc-grid-chip {
+    transform: scale(1.06);
+    border-color: var(--gc-accent);
+  }
+  .gc-card:hover .gc-grid-watermark,
+  .gc-card:focus-visible .gc-grid-watermark {
+    transform: scale(1.05) translate(-2px, 2px);
+    opacity: 0.08;
+  }
+  .gc-card:hover .gc-card-orb-1,
+  .gc-card:focus-visible .gc-card-orb-1 {
+    transform: scale(1.15) translate(-5%, -5%);
+    opacity: 0.16;
+  }
+  .gc-card:hover .gc-card-orb-2,
+  .gc-card:focus-visible .gc-card-orb-2 {
+    transform: scale(1.15) translate(5%, 5%);
+    opacity: 0.16;
+  }
+
   .gc-card:hover .gc-live,
   .gc-card:focus-visible .gc-live {
     opacity: 1;
@@ -783,7 +1231,10 @@ export const GALLERY_CSS = `
   @media (prefers-reduced-motion: reduce) {
     .gc-card,
     .gc-card.reveal,
-    .gc-plate,
+    .gc-grid-plate,
+    .gc-grid-chip,
+    .gc-grid-watermark,
+    .gc-card-orb,
     .gc-live,
     .gc-live-arrow {
       transition: none !important;
@@ -791,8 +1242,9 @@ export const GALLERY_CSS = `
     }
     .gc-card:hover,
     .gc-card:focus-visible { transform: none; }
-    .gc-card:hover .gc-plate,
-    .gc-card:focus-visible .gc-plate { transform: none; }
+    .gc-card:hover .gc-grid-chip,
+    .gc-card:hover .gc-grid-watermark,
+    .gc-card:hover .gc-card-orb { transform: none; }
     .gc-live { opacity: 1; transform: none; }
   }
 `;
