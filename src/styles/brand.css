@@ -9,6 +9,7 @@
 :root {
   /* ── Core backgrounds ── */
   --bg:        #0b1417;
+  --surface:   #131e22;
   --bg-2:      #0f1c20;
   --bg-card:   #152028;
   --bg-card-2: #152028;
