@@ -44,6 +44,9 @@ const T = {
 
     galleryTitle: 'Portafolio de productos',
     gallerySub: 'Cada proyecto es una tesis: sobre lógica, sistemas complejos o software que genera caja.',
+    searchPlaceholder: 'Buscar producto, dominio o tema…',
+    searchClear: 'Limpiar búsqueda',
+    noResults: 'Sin resultados. Probá con otro término.',
 
     links: {
       cvFilosofo:  { label: 'CV Filósofo',      sub: 'filosofo.stevenvallejo.com',    url: 'https://filosofo.stevenvallejo.com' },
@@ -75,6 +78,9 @@ const T = {
 
     galleryTitle: 'Product portfolio',
     gallerySub: 'Each project is a thesis: on logic, complex systems or software that drives revenue.',
+    searchPlaceholder: 'Search product, domain or topic…',
+    searchClear: 'Clear search',
+    noResults: 'No results. Try another term.',
 
     links: {
       cvFilosofo:  { label: 'CV Philosopher',       sub: 'filosofo.stevenvallejo.com',    url: 'https://filosofo.stevenvallejo.com' },
@@ -103,14 +109,32 @@ export default function LinktreeHome() {
   const params = useParams();
   const locale: Locale = params?.locale === 'es' ? 'es' : 'en';
   const t = T[locale];
+  const [query, setQuery] = React.useState('');
   useReveal();
 
-  // Group products by frente for gallery sections
+  // Accent- and case-insensitive search over name / tagline / description / tag / front / domain.
+  const norm = (s: string) => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+  const nq = norm(query.trim());
+  const matches = (p: (typeof productos)[number]) => {
+    if (!nq) return true;
+    const hay = norm([
+      p.nombre,
+      p.subtitulo?.[locale] ?? '',
+      p.descripcion[locale],
+      p.badge?.[locale] ?? '',
+      frentesMeta[p.frente].nombre[locale],
+      p.url ?? '',
+    ].join(' '));
+    return nq.split(/\s+/).every((tok) => hay.includes(tok));
+  };
+
+  // Group products by frente for gallery sections (filtered by the search query).
   const productsByFrente = FRENTE_SECTIONS.map((fs) => ({
     ...fs,
-    items: productos.filter((p) => p.frente === fs.id),
+    items: productos.filter((p) => p.frente === fs.id && matches(p)),
     meta: frentesMeta[fs.id],
   }));
+  const visibleFrentes = productsByFrente.filter((fs) => fs.items.length > 0);
 
   return (
     <main id="home" className="lt-root">
@@ -319,6 +343,50 @@ export default function LinktreeHome() {
           margin: 0 auto;
           line-height: 1.6;
         }
+        /* ── Search ── */
+        .lt-search {
+          display: flex;
+          align-items: center;
+          gap: 0.55rem;
+          max-width: 30rem;
+          margin: 1.6rem auto 0;
+          padding: 0.68rem 1rem;
+          background: rgba(255,255,255,0.03);
+          border: 1px solid var(--line);
+          border-radius: 999px;
+          transition: border-color .18s, background .18s;
+        }
+        .lt-search:focus-within {
+          border-color: var(--teal);
+          background: rgba(67,181,166,0.06);
+        }
+        .lt-search-ico { color: var(--muted); flex-shrink: 0; }
+        .lt-search:focus-within .lt-search-ico { color: var(--teal); }
+        .lt-search-input {
+          flex: 1;
+          min-width: 0;
+          background: transparent;
+          border: 0;
+          outline: none;
+          color: var(--text, #e8e0d4);
+          font-size: 0.95rem;
+          font-family: inherit;
+        }
+        .lt-search-input::placeholder { color: var(--muted); }
+        .lt-search-input::-webkit-search-cancel-button { display: none; }
+        .lt-search-clear {
+          flex-shrink: 0;
+          background: none; border: 0; cursor: pointer;
+          color: var(--muted); font-size: 1.25rem; line-height: 1;
+          padding: 0 0.15rem;
+        }
+        .lt-search-clear:hover { color: var(--text, #e8e0d4); }
+        .lt-no-results {
+          text-align: center;
+          color: var(--muted);
+          padding: 3rem 1rem;
+          font-size: 1rem;
+        }
 
         /* ── Divider between gallery sections ── */
         .lt-gallery-divider {
@@ -498,9 +566,28 @@ export default function LinktreeHome() {
           <div className="lt-gallery-hd reveal">
             <h2>{t.galleryTitle}</h2>
             <p>{t.gallerySub}</p>
+            <div className="lt-search" role="search">
+              <svg className="lt-search-ico" width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="2" />
+                <line x1="16.5" y1="16.5" x2="21" y2="21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+              </svg>
+              <input
+                type="search"
+                className="lt-search-input"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder={t.searchPlaceholder}
+                aria-label={t.searchPlaceholder}
+              />
+              {query && (
+                <button type="button" className="lt-search-clear" onClick={() => setQuery('')} aria-label={t.searchClear}>×</button>
+              )}
+            </div>
           </div>
 
-          {productsByFrente.map((fs, idx) => (
+          {visibleFrentes.length === 0 ? (
+            <p className="lt-no-results">{t.noResults}</p>
+          ) : visibleFrentes.map((fs, idx) => (
             <React.Fragment key={fs.id}>
               {idx > 0 && <div className="lt-gallery-divider" aria-hidden="true" />}
               <GallerySection
