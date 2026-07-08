@@ -42,6 +42,7 @@ export default function CustomNavbar() {
         .nav-search svg { color:var(--muted,#8fa3a8); flex-shrink:0; }
         .nav-search:focus-within svg { color:var(--teal,#43b5a6); }
         .nav-search input { flex:1; min-width:0; background:transparent; border:0; outline:none;
+          -webkit-appearance:none; appearance:none; border-radius:0; box-shadow:none;
           color:var(--text,#e8e0d4); font-size:13px; font-family:inherit; }
         .nav-search input::placeholder { color:var(--muted,#8fa3a8); }
         .nav-search input::-webkit-search-cancel-button { display:none; }
