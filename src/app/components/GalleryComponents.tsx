@@ -264,13 +264,9 @@ export function GalleryCard({
 
         {/* Big visual glyph mark in background or on right side */}
         <div className="gc-showcase-symbol-wrap" style={{ borderLeftColor: 'rgba(255,255,255,0.08)' }}>
-          {brandMeta.has_logo && brandMeta.logo_path ? (
-            <img src={brandMeta.logo_path} className="gc-showcase-logo-img" alt={p.nombre} />
-          ) : (
-            <span className="gc-showcase-symbol-text" style={{ background: brandMeta.gradiente_hero, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' } as React.CSSProperties}>
-              {brandMeta.simbolo}
-            </span>
-          )}
+          <span className="gc-showcase-symbol-text" style={{ background: brandMeta.gradiente_hero, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' } as React.CSSProperties}>
+            {brandMeta.simbolo}
+          </span>
         </div>
       </div>
 
@@ -327,21 +323,17 @@ export function GalleryCard({
             <span className="gc-grid-casa">{brandMeta.nombre_corporativo}</span>
           </div>
           <div className="gc-grid-chip">
-            {brandMeta.has_logo && brandMeta.logo_path ? (
-              <img src={brandMeta.logo_path} className="gc-grid-chip-logo" alt={p.nombre} />
-            ) : (
-              <span
-                className="gc-grid-chip-symbol"
-                style={{
-                  background: brandMeta.gradiente_hero,
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  ...(p.id === 'eikon' ? { fontSize: '1.65rem' } : {})
-                } as React.CSSProperties}
-              >
-                {brandMeta.simbolo}
-              </span>
-            )}
+            <span
+              className="gc-grid-chip-symbol"
+              style={{
+                background: brandMeta.gradiente_hero,
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                ...(p.id === 'eikon' ? { fontSize: '1.65rem' } : {})
+              } as React.CSSProperties}
+            >
+              {brandMeta.simbolo}
+            </span>
           </div>
         </div>
 
