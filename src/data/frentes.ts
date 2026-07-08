@@ -179,10 +179,10 @@ export const productos: Producto[] = [
       es: 'PWA offline para moderar debates académicos y competitivos: gestiona turnos, cronómetro, puntuación y detección de falacias, e incluye un simulador de dinámicas con autómata celular (canvas 2D) heredado de la investigación en sistemas complejos.',
       en: 'Offline PWA to moderate academic and competitive debates: manages turns, timer, scoring and fallacy detection, and bundles a dynamics simulator with a cellular automaton (2D canvas) inherited from the complex-systems research.',
     },
-    url: 'https://agon.stevenvallejo.com',
+    url: 'https://debates.cafeteriadelcaos.com',
     repo: 'https://github.com/stevenvo780/debatesuite',
     status: 'live',
-    badge: { es: 'PWA offline', en: 'Offline PWA' },
+    badge: { es: 'En vivo · Cafetería del Caos', en: 'Live · Cafetería del Caos' },
   },
 
   /* ===================== CIENCIAS ===================== */
@@ -471,7 +471,7 @@ export const productos: Producto[] = [
 export const productTags: Record<string, string[]> = {
   agora: ['lógica formal', 'plataforma académica', 'filosofía analítica', 'SAT solver', 'ST', 'auto.logic', 'verificación', 'humanidades', 'elenxos', 'razonamiento'],
   clavis: ['paideía', 'humanidades digitales', 'griego clásico', 'griego', 'morfología', 'neurofilosofía', 'filosofía de la ciudad', 'MDX', 'educación', 'filosofía', 'lecturas'],
-  debatesuite: ['agón', 'debate', 'retórica', 'moderación', 'falacias', 'argumentación', 'autómata celular', 'PWA', 'filosofía', 'oratoria'],
+  debatesuite: ['agón', 'debate', 'debates', 'cafetería del caos', 'retórica', 'moderación', 'falacias', 'argumentación', 'autómata celular', 'PWA', 'filosofía', 'oratoria'],
   'estructuras-preontologicas': ['filosofía de la ciencia', 'ontología', 'complejidad', 'tesis doctoral', 'preontología', 'EDI', 'emergencia', 'ciencias de la complejidad', 'metafísica', 'investigación'],
   complexlab: ['kósmos', 'ciencia', 'complejidad', 'emergencia', 'caos', 'redes', 'agentes', 'simulación', 'sistemas complejos', 'autómatas', 'orden natural'],
   aporia: ['áporía', 'CMS', 'editorial', 'papers', 'publicación académica', 'investigación', 'ciencia', 'paradojas', 'Neon', 'Postgres'],
