@@ -149,7 +149,7 @@ export default function LinktreeHome() {
   const visibleFrentes = productsByFrente.filter((fs) => fs.items.length > 0);
 
   return (
-    <main id="home" className="lt-root">
+    <main id="home" className={`lt-root ${query.trim() ? 'lt-searching' : ''}`}>
       <style dangerouslySetInnerHTML={{ __html: `
         /* ── ROOT ── */
         .lt-root {
@@ -158,6 +158,12 @@ export default function LinktreeHome() {
           display: flex;
           flex-direction: column;
         }
+
+        /* Al buscar: ocultar el hero (header) y el bloque de lore para
+           presentar solo los resultados — que sea evidente que hubo búsqueda. */
+        .lt-searching .lt-hero,
+        .lt-searching .lt-lore-row { display: none !important; }
+        .lt-searching .lt-gallery { padding-top: 1.75rem; }
 
         /* ────────────────────────────────────────────────
            HERO
