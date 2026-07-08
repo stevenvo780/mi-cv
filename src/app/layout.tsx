@@ -6,7 +6,7 @@ import '@fortawesome/fontawesome-svg-core/styles.css';
 config.autoAddCss = false;
 import localFont from 'next/font/local';
 import { Inter, JetBrains_Mono, Cormorant_Garamond } from 'next/font/google';
-import { Viewport } from 'next';
+import type { Metadata, Viewport } from 'next';
 
 const geistSans = localFont({
   src: './fonts/GeistVF.woff',
@@ -37,6 +37,70 @@ const cormorant = Cormorant_Garamond({
   variable: '--font-cormorant',
   display: 'swap',
 });
+
+// Metadata global del sitio
+export const metadata: Metadata = {
+  metadataBase: new URL('https://www.stevenvallejo.com'),
+  title: {
+    default: 'Steven Vallejo — Mouseîon | Portal maestro de CV y catálogo',
+    template: '%s · Steven Vallejo — Mouseîon',
+  },
+  description:
+    'Steven Vallejo: portal maestro de CV y catálogo del ecosistema Mouseîon. ' +
+    'Filosofía, ingeniería y ciencia reunidas en un solo lugar (Prizma, Pinakothḗke, Agora).',
+  keywords: [
+    'Steven Vallejo',
+    'Mouseîon',
+    'Prizma',
+    'Pinakothḗke',
+    'Agora',
+    'portfolio',
+    'CV',
+    'filosofía',
+    'ingeniería',
+    'ciencia',
+  ],
+  authors: [{ name: 'Steven Vallejo', url: 'https://www.stevenvallejo.com' }],
+  creator: 'Steven Vallejo',
+  publisher: 'Mouseîon',
+  alternates: {
+    canonical: 'https://www.stevenvallejo.com',
+    languages: { en: 'https://www.stevenvallejo.com' },
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true, 'max-image-preview': 'large' },
+  },
+  openGraph: {
+    type: 'website',
+    locale: 'en_US',
+    url: 'https://www.stevenvallejo.com',
+    siteName: 'Mouseîon',
+    title: 'Steven Vallejo — Mouseîon | Portal maestro de CV y catálogo',
+    description:
+      'Portal maestro de Steven Vallejo y catálogo del ecosistema Mouseîon ' +
+      '(Prizma, Pinakothḗke, Agora).',
+    images: [
+      {
+        url: '/og-image.png',
+        width: 1200,
+        height: 630,
+        alt: 'Steven Vallejo — Mouseîon',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Steven Vallejo — Mouseîon',
+    description:
+      'Portal maestro de CV y catálogo del ecosistema Mouseîon ' +
+      '(Prizma, Pinakothḗke, Agora).',
+    images: ['/og-image.png'],
+    creator: '@stevenvallejo780',
+  },
+  category: 'portfolio',
+};
 
 export const viewport: Viewport = {
   width: 'device-width',
