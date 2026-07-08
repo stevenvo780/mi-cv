@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
 import Script from 'next/script';
 import CustomNavbar from '../components/Navbar';
+import { SearchProvider } from '../components/SearchContext';
 import LocaleLangSync from '../components/LocaleLangSync';
 
 const baseUrl = 'https://stevenvallejo.com';
@@ -268,8 +269,10 @@ export default function LocaleLayout({
         strategy="beforeInteractive"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
       />
-      <CustomNavbar />
-      {children}
+      <SearchProvider>
+        <CustomNavbar />
+        {children}
+      </SearchProvider>
     </>
   );
 }

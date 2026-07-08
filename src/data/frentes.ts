@@ -445,6 +445,33 @@ export const productos: Producto[] = [
   },
 ];
 
+/**
+ * Search topics per product (product id → keywords). Feeds the site search so
+ * queries like "ciencia", "griego", "logística" or "RAG" surface the right
+ * product even when the term isn't in the name or one-line description.
+ * TODO: enriquecer automáticamente escaneando el contenido de cada sub-repo.
+ */
+export const productTags: Record<string, string[]> = {
+  agora: ['lógica formal', 'plataforma académica', 'filosofía analítica', 'SAT solver', 'ST', 'auto.logic', 'verificación', 'humanidades', 'elenxos', 'razonamiento'],
+  clavis: ['paideía', 'humanidades digitales', 'griego clásico', 'griego', 'morfología', 'neurofilosofía', 'filosofía de la ciudad', 'MDX', 'educación', 'filosofía', 'lecturas'],
+  debatesuite: ['agón', 'debate', 'retórica', 'moderación', 'falacias', 'argumentación', 'autómata celular', 'PWA', 'filosofía', 'oratoria'],
+  'estructuras-preontologicas': ['filosofía de la ciencia', 'ontología', 'complejidad', 'tesis doctoral', 'preontología', 'EDI', 'emergencia', 'ciencias de la complejidad', 'metafísica', 'investigación'],
+  complexlab: ['kósmos', 'ciencia', 'complejidad', 'emergencia', 'caos', 'redes', 'agentes', 'simulación', 'sistemas complejos', 'autómatas', 'orden natural'],
+  aporia: ['áporía', 'CMS', 'editorial', 'papers', 'publicación académica', 'investigación', 'ciencia', 'paradojas', 'Neon', 'Postgres'],
+  'nlp-to-logic': ['órganon', 'lógica formal', 'NLP', 'lenguaje natural', 'SAT solver', 'CDCL', 'ST', 'autologic', 'razonamiento', 'formalización'],
+  stevenai: ['daímon', 'inteligencia artificial', 'IA', 'RAG', 'LLM', 'Jarvis', 'Ollama', 'agentes', 'MCP', 'GPU', 'ChromaDB', 'chat local', 'OCR'],
+  stevendevbox: ['téchne', 'devtools', 'OSS', 'código abierto', 'terminal', 'Hyprland', 'Linux', 'Wayland', 'herramientas', 'monitor de sistema'],
+  communityos: ['koinonía', 'comunidades', 'Discord', 'multi-tenant', 'eventos', 'ranking', 'biblioteca', 'bot', 'NestJS', 'gamificación'],
+  devkits: ['érgon', 'starter kits', 'PYME', 'CRM', 'hours tracker', 'VPN', 'plantillas', 'landing comercial'],
+  'devkits-hours': ['chrónos', 'horas', 'freelance', 'cuentas de cobro', 'facturación', 'tiempo', 'Colombia', 'tarifa', 'SaaS'],
+  'devkits-crm': ['xenía', 'CRM', 'PYME', 'kanban', 'ventas', 'pipeline', 'contactos', 'cotizaciones', 'facturas', 'Colombia'],
+  scrapekit: ['nómos', 'scraping', 'legal', 'legislación', 'documentos', 'búsqueda full-text', 'Colombia', 'República Dominicana', 'FastAPI', 'indexador'],
+  warehouse: ['apothḗke', 'inventario', 'almacén', 'stock', 'órdenes', 'logística', 'gestión', 'roles', 'analítica'],
+  eikon: ['eikón', 'imagen de marca', 'logos', 'identidad visual', 'iconsets', 'favicons', 'paletas', 'WCAG', 'generador', 'MCP', 'branding', 'diseño', 'marca'],
+  prizma: ['suite empresarial', 'POS', 'facturación DIAN', 'crédito', 'WhatsApp', 'marketing', 'e-commerce', 'logística', 'CRM', 'microservicios', 'Cloud Run', 'talanton', 'pistis', 'iris', 'hermes', 'talaria'],
+  graf: ['pedidos', 'domicilios', 'logística', 'última milla', 'delivery', 'clientes', 'comercio', 'plataforma', 'producción'],
+};
+
 /* ---------------------------------------------------------------- */
 /* Helpers                                                           */
 /* ---------------------------------------------------------------- */
