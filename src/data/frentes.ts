@@ -102,15 +102,15 @@ export const frentesMeta: Record<FrenteId, FrenteMeta> = {
   },
   enterprise: {
     id: 'enterprise',
-    nombre: { es: 'Enterprise', en: 'Enterprise' },
-    secNo: '04',  // keeps last (1 product → showcase)
+    nombre: { es: 'Empresarial', en: 'Enterprise' },
+    secNo: '04',
     tagline: {
-      es: 'Software empresarial de producción: la suite Prizma.',
-      en: 'Production business software: the Prizma suite.',
+      es: 'Software empresarial en producción, con clientes reales.',
+      en: 'Production business software, with real clients.',
     },
     descripcion: {
-      es: 'El frente empresarial: Prizma, suite modular para PYME y comercio (POS con facturación DIAN, crédito sin interés, marketing por WhatsApp, e-commerce conversacional y CRM). NestJS + Next.js sobre Cloud Run.',
-      en: 'The business front: Prizma, a modular suite for SMBs and commerce (POS with e-invoicing, interest-free credit, WhatsApp marketing, conversational e-commerce and CRM). NestJS + Next.js on Cloud Run.',
+      es: 'El frente empresarial: software en producción con clientes reales — Prizma (suite modular para PYME), Graf (pedidos y logística de domicilios) y Deméter (gestión operativa para distribuidoras de alimentos).',
+      en: 'The business front: production software with real clients — Prizma (modular SMB suite), Graf (orders & last-mile delivery) and Deméter (operations platform for food distributors).',
     },
   },
 };
@@ -443,6 +443,23 @@ export const productos: Producto[] = [
     badge: { es: 'En producción · con clientes', en: 'In production · live clients' },
     featured: true,
   },
+  {
+    id: 'demeter',
+    frente: 'enterprise',
+    nombre: 'Deméter',
+    subtitulo: {
+      es: 'Gestión operativa para distribuidoras de alimentos',
+      en: 'Ops platform for food distributors',
+    },
+    descripcion: {
+      es: 'Plataforma de gestión operativa para distribuidoras de alimentos: del pedido a la ruta sin digitar a mano — recepción de pedidos, armado de rutas, despacho, control de cartera y facturación electrónica DIAN, multi-empresa. En producción.',
+      en: 'Operations platform for food distributors: from order to route with no manual entry — order intake, route building, dispatch, receivables and DIAN e-invoicing, multi-company. In production.',
+    },
+    url: 'https://demeter.humanizar.cloud',
+    status: 'live',
+    badge: { es: 'En producción · distribución', en: 'In production · distribution' },
+    featured: true,
+  },
 ];
 
 /**
@@ -470,6 +487,7 @@ export const productTags: Record<string, string[]> = {
   eikon: ['eikón', 'imagen de marca', 'logos', 'identidad visual', 'iconsets', 'favicons', 'paletas', 'WCAG', 'generador', 'MCP', 'branding', 'diseño', 'marca'],
   prizma: ['suite empresarial', 'POS', 'facturación DIAN', 'crédito', 'WhatsApp', 'marketing', 'e-commerce', 'logística', 'CRM', 'microservicios', 'Cloud Run', 'talanton', 'pistis', 'iris', 'hermes', 'talaria'],
   graf: ['pedidos', 'domicilios', 'logística', 'última milla', 'delivery', 'clientes', 'comercio', 'plataforma', 'producción'],
+  demeter: ['distribución', 'alimentos', 'pedidos', 'rutas', 'facturación DIAN', 'cartera', 'inventario', 'HORECA', 'logística', 'multi-empresa', 'despacho'],
 };
 
 /* ---------------------------------------------------------------- */

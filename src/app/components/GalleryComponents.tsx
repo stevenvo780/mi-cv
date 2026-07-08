@@ -192,7 +192,7 @@ export function GalleryCard({
   const meta = BRAND_METADATA[p.id];
   const brandMeta = meta || {
     nombre_producto: p.nombre,
-    nombre_corporativo: p.frente === 'enterprise' ? 'Prizma' : 'Pinakothḗke',
+    nombre_corporativo: p.frente === 'enterprise' ? 'Empresarial' : 'Pinakothḗke',
     simbolo: '◈',
     paleta: {
       bg: '#0b1417',
