@@ -41,9 +41,12 @@ export default function CustomNavbar() {
         .nav-search:focus-within { border-color:var(--teal,#43b5a6); background:rgba(67,181,166,0.08); }
         .nav-search svg { color:var(--muted,#8fa3a8); flex-shrink:0; }
         .nav-search:focus-within svg { color:var(--teal,#43b5a6); }
-        .nav-search input { flex:1; min-width:0; background:transparent; border:0; outline:none;
-          -webkit-appearance:none; appearance:none; border-radius:0; box-shadow:none;
-          color:var(--text,#e8e0d4); font-size:13px; font-family:inherit; }
+        .nav-search input { flex:1; min-width:0;
+          -webkit-appearance:none !important; appearance:none !important;
+          border:0 !important; background:transparent !important; border-radius:0 !important;
+          box-shadow:none !important; outline:none !important; padding:0 !important; margin:0 !important;
+          color:var(--text,#e8e0d4); font-size:13px; font-family:inherit; height:auto; line-height:normal; }
+        .nav-search input:focus, .nav-search input:focus-visible { box-shadow:none !important; border:0 !important; outline:none !important; }
         .nav-search input::placeholder { color:var(--muted,#8fa3a8); }
         .nav-search input::-webkit-search-cancel-button { display:none; }
         @media (max-width: 575.98px) { .nav-search { width:128px; margin-left:6px; } }
