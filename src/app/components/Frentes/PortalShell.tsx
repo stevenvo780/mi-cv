@@ -264,6 +264,14 @@ export default function PortalShell() {
                 LinkedIn ↗
               </a>
               <a
+                href="https://www.instagram.com/stev_vallejo/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="close-link"
+              >
+                Instagram ↗
+              </a>
+              <a
                 href="https://schole.stevenvallejo.com"
                 target="_blank"
                 rel="noopener noreferrer"

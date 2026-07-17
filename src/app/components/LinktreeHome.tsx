@@ -58,6 +58,7 @@ const T = {
     social: [
       { label: 'GitHub', url: 'https://github.com/stevenvo780' },
       { label: 'LinkedIn', url: 'https://www.linkedin.com/in/steven-vallejo/' },
+      { label: 'Instagram', url: 'https://www.instagram.com/stev_vallejo/' },
     ],
 
     foot: 'Pensar antes de construir: ese es todo el método.',
@@ -89,6 +90,7 @@ const T = {
     social: [
       { label: 'GitHub', url: 'https://github.com/stevenvo780' },
       { label: 'LinkedIn', url: 'https://www.linkedin.com/in/steven-vallejo/' },
+      { label: 'Instagram', url: 'https://www.instagram.com/stev_vallejo/' },
     ],
 
     foot: 'Think before you build: that is the whole method.',
