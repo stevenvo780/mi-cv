@@ -199,6 +199,7 @@ export default function LocaleLayout({
     sameAs: [
       'https://github.com/stevenvo780',
       'https://www.linkedin.com/in/stevenvo780',
+      'https://www.instagram.com/stev_vallejo/',
     ],
     knowsAbout: [
       'Node.js',
