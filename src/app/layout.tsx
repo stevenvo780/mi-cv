@@ -7,6 +7,7 @@ config.autoAddCss = false;
 import localFont from 'next/font/local';
 import { Inter, JetBrains_Mono, Cormorant_Garamond } from 'next/font/google';
 import type { Metadata, Viewport } from 'next';
+import { headers } from 'next/headers';
 
 const geistSans = localFont({
   src: './fonts/GeistVF.woff',
@@ -118,6 +119,10 @@ export const viewport: Viewport = {
  * production build). The [locale] layout layers locale-specific <head> metadata
  * and the navbar on top of this shell.
  */
+// Server-side source of truth for <html lang>. The middleware sets x-locale
+// from the URL segment; anything else (error pages, metadata routes) keeps "en".
+const HTML_LANG: Record<string, string> = { es: 'es-ES', en: 'en-US' };
+
 export default function RootLayout({
   children,
 }: {
@@ -125,7 +130,7 @@ export default function RootLayout({
 }) {
   return (
     <html
-      lang="en"
+      lang={HTML_LANG[headers().get('x-locale') ?? ''] ?? 'en'}
       className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} ${jetbrainsMono.variable} ${cormorant.variable}`}
       prefix="og: http://ogp.me/ns#"
       suppressHydrationWarning
