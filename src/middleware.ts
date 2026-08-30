@@ -48,5 +48,17 @@ export function middleware(request: NextRequest) {
     );
   }
 
+  // The root layout renders <html lang> on the server, so it needs to know the
+  // active locale before React runs. Without this header it fell back to a
+  // hardcoded "en" and every /es page was served to crawlers as English.
+  const activeLocale = locales.find(
+    (locale) => pathname === `/${locale}` || pathname.startsWith(`/${locale}/`)
+  );
+  if (activeLocale) {
+    const headers = new Headers(request.headers);
+    headers.set('x-locale', activeLocale);
+    return NextResponse.next({ request: { headers } });
+  }
+
   return NextResponse.next();
 }
