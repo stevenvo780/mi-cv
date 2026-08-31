@@ -391,6 +391,23 @@ export const productos: Producto[] = [
     badge: { es: 'Próximamente', en: 'Coming soon' },
   },
   {
+    id: 'cauce-v3',
+    frente: 'informatica',
+    nombre: 'Cauce V3',
+    subtitulo: {
+      es: 'Director orquestador de la flota agéntica',
+      en: 'Orchestrating director of the agent fleet',
+    },
+    descripcion: {
+      es: 'Mi proyecto estrella en ingeniería: orquestador de la flota agéntica que opera Cauce V3 (este mismo portafolio y todo el ecosistema Humanizar). Despliegues, monitoreo, contratos de entrega entre agentes y un CRM multi-tenant en producción. Es la mano derecha que mantiene viva la flota.',
+      en: 'My flagship engineering project: the orchestrating director of the agent fleet that operates Cauce V3 (this very portfolio and the entire Humanizar ecosystem). Deployments, monitoring, delivery contracts between agents, and a multi-tenant CRM in production. The right hand that keeps the fleet alive.',
+    },
+    url: 'https://cauce-v3-humanizar-tech.vercel.app',
+    status: 'live',
+    badge: { es: 'Proyecto estrella en ingeniería', en: 'Flagship engineering project' },
+    banner: true,
+  },
+  {
     id: 'eikon',
     frente: 'informatica',
     nombre: 'Eikón',
@@ -405,7 +422,6 @@ export const productos: Producto[] = [
     url: 'https://eikon.humanizar.cloud',
     status: 'live',
     badge: { es: 'Generador de marca', en: 'Brand generator' },
-    banner: true,
   },
 
   /* ===================== ENTERPRISE ===================== */
@@ -485,6 +501,7 @@ export const productTags: Record<string, string[]> = {
   scrapekit: ['nómos', 'scraping', 'legal', 'legislación', 'documentos', 'búsqueda full-text', 'Colombia', 'República Dominicana', 'FastAPI', 'indexador'],
   warehouse: ['apothḗke', 'inventario', 'almacén', 'stock', 'órdenes', 'logística', 'gestión', 'roles', 'analítica'],
   eikon: ['eikón', 'imagen de marca', 'logos', 'identidad visual', 'iconsets', 'favicons', 'paletas', 'WCAG', 'generador', 'MCP', 'branding', 'diseño', 'marca'],
+  'cauce-v3': ['cauce', 'cauce v3', 'flota agéntica', 'agentes', 'orquestador', 'director de flota', 'multi-tenant', 'CRM', 'CRM agéntico', 'humandroid', 'humanizar', 'flagship engineering'],
   prizma: ['suite empresarial', 'POS', 'facturación DIAN', 'crédito', 'WhatsApp', 'marketing', 'e-commerce', 'logística', 'CRM', 'microservicios', 'Cloud Run', 'talanton', 'pistis', 'iris', 'hermes', 'talaria'],
   graf: ['pedidos', 'domicilios', 'logística', 'última milla', 'delivery', 'clientes', 'comercio', 'plataforma', 'producción'],
   demeter: ['distribución', 'alimentos', 'pedidos', 'rutas', 'facturación DIAN', 'cartera', 'inventario', 'HORECA', 'logística', 'multi-empresa', 'despacho'],

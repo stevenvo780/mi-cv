@@ -1,6 +1,11 @@
 import type { MetadataRoute } from 'next';
 
 const baseUrl = 'https://www.stevenvallejo.com';
+const crossLinks = {
+  humanizar: 'https://humanizar.tech',
+  praxis: 'https://praxis.stevenvallejo.com',
+  cauceV3: 'https://humanizar.tech/cauce-v3',
+};
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const lastModified = new Date();
@@ -55,6 +60,38 @@ export default function sitemap(): MetadataRoute.Sitemap {
       });
     });
   });
+
+  // Cross-link entries — Steven requested that stevenvallejo ↔ humanizar (and vice versa)
+  // refer each other, so both can be discovered through either sitemap.
+  sitemapEntries.push(
+    {
+      url: crossLinks.humanizar,
+      lastModified,
+      changeFrequency: 'weekly',
+      priority: 0.7,
+      alternates: {
+        languages: { es: crossLinks.humanizar, en: crossLinks.humanizar },
+      },
+    },
+    {
+      url: crossLinks.praxis,
+      lastModified,
+      changeFrequency: 'weekly',
+      priority: 0.7,
+      alternates: {
+        languages: { es: crossLinks.praxis, en: crossLinks.praxis },
+      },
+    },
+    {
+      url: crossLinks.cauceV3,
+      lastModified,
+      changeFrequency: 'weekly',
+      priority: 0.7,
+      alternates: {
+        languages: { es: crossLinks.cauceV3, en: crossLinks.cauceV3 },
+      },
+    },
+  );
 
   return sitemapEntries;
 }
