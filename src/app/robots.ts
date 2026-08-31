@@ -11,7 +11,10 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ['/api/', '/admin/'],
       },
     ],
-    sitemap: `${baseUrl}/sitemap.xml`,
+    sitemap: [
+      `${baseUrl}/sitemap.xml`,
+      'https://humanizar.tech/sitemap.xml',
+    ],
     host: baseUrl,
   };
 }

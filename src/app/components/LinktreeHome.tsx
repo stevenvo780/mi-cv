@@ -54,6 +54,8 @@ const T = {
       cvInfo:      { label: 'CV Informático',    sub: 'informatico.stevenvallejo.com', url: 'https://informatico.stevenvallejo.com' },
       prizma:      { label: 'Prizma',            sub: 'Suite corporativa · Prizma',    url: 'https://prizma.stevenvallejo.com' },
       agora:       { label: 'Ágora',             sub: 'agora.elenxos.com',             url: 'https://agora.elenxos.com' },
+      humanizar:   { label: 'Humanizar · Fleet', sub: 'humanizar.tech',                url: 'https://humanizar.tech' },
+      cauce:       { label: 'Cauce V3 · Flagship', sub: 'humanizar.tech/cauce-v3',     url: 'https://cauce-v3-humanizar-tech.vercel.app' },
       services:    { label: 'Servicios',         sub: 'praxis.stevenvallejo.com',      url: 'https://praxis.stevenvallejo.com' },
       blog:        { label: 'Blog · Scholḗ',     sub: 'schole.stevenvallejo.com',      url: 'https://schole.stevenvallejo.com' },
       lore:        { label: 'Mi historia',       sub: '/lore',                         url: '/es/lore' },
@@ -89,6 +91,8 @@ const T = {
       cvInfo:      { label: 'CV Computer Scientist', sub: 'informatico.stevenvallejo.com', url: 'https://informatico.stevenvallejo.com' },
       prizma:      { label: 'Prizma',                sub: 'Corporate suite · Prizma',      url: 'https://prizma.stevenvallejo.com' },
       agora:       { label: 'Agora',                 sub: 'agora.elenxos.com',             url: 'https://agora.elenxos.com' },
+      humanizar:   { label: 'Humanizar · Fleet',     sub: 'humanizar.tech',                url: 'https://humanizar.tech' },
+      cauce:       { label: 'Cauce V3 · Flagship',   sub: 'humanizar.tech/cauce-v3',       url: 'https://cauce-v3-humanizar-tech.vercel.app' },
       services:    { label: 'Services',              sub: 'praxis.stevenvallejo.com',      url: 'https://praxis.stevenvallejo.com' },
       blog:        { label: 'Blog · Scholḗ',         sub: 'schole.stevenvallejo.com',      url: 'https://schole.stevenvallejo.com' },
       lore:        { label: 'My story',              sub: '/lore',                         url: '/en/lore' },
@@ -632,6 +636,19 @@ export default function LinktreeHome() {
             {s.label} ↗
           </a>
         ))}
+      </nav>
+
+      {/* ─── CROSS-LINK CHIPS ─────────────────────────────────────── */}
+      {/*
+        Steven requested that stevenvallejo ↔ humanizar (and vice versa) cross-link.
+        These chips render the ecosystem nodes so a visitor landing on either
+        domain can reach the other from the linktree.
+      */}
+      <nav className="lt-social" aria-label={locale === 'es' ? 'Ecosistema' : 'Ecosystem'}>
+        <a href={t.links.humanizar.url} target="_blank" rel="noopener noreferrer" className="lt-social-chip">{t.links.humanizar.label} ↗</a>
+        <a href={t.links.cauce.url} target="_blank" rel="noopener noreferrer" className="lt-social-chip">{t.links.cauce.label} ↗</a>
+        <a href={t.links.services.url} target="_blank" rel="noopener noreferrer" className="lt-social-chip">{t.links.services.label} ↗</a>
+        <a href="https://humanizar.co" target="_blank" rel="noopener noreferrer" className="lt-social-chip">Humanizar.co ↗</a>
       </nav>
 
       {/* ─── CONTACT CTA ────────────────────────────────────────── */}
