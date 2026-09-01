@@ -402,7 +402,7 @@ export const productos: Producto[] = [
       es: 'Mi proyecto estrella en ingeniería: orquestador de la flota agéntica que opera Cauce V3 (este mismo portafolio y todo el ecosistema Humanizar). Despliegues, monitoreo, contratos de entrega entre agentes y un CRM multi-tenant en producción. Es la mano derecha que mantiene viva la flota.',
       en: 'My flagship engineering project: the orchestrating director of the agent fleet that operates Cauce V3 (this very portfolio and the entire Humanizar ecosystem). Deployments, monitoring, delivery contracts between agents, and a multi-tenant CRM in production. The right hand that keeps the fleet alive.',
     },
-    url: 'https://cauce-v3-humanizar-tech.vercel.app',
+    url: 'https://humanizar.tech',
     status: 'live',
     badge: { es: 'Proyecto estrella en ingeniería', en: 'Flagship engineering project' },
     banner: true,
