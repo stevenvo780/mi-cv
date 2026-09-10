@@ -2,7 +2,7 @@
   "achievements.title": "Projects",
   "achievements.description.critertec": "Educational tech agency. As Systems Administrator, I operate and secure the infrastructure that keeps its digital solutions running in production.",
   "achievements.description.soyDigital": "Dominican Government portal (INDOTEL) for developing digital skills at national scale. I built the offline frontend with automatic sync so field registration worked even without a stable connection.",
-  "achievements.description.indieLevels": "Video game studio in Medellín building titles for clients worldwide. As Backend Developer, I develop and maintain the studio's product services and APIs.",
+  "achievements.description.indieLevels": "Video game studio in Medellín building titles for clients worldwide. As Backend Developer I developed and maintained the studio's product services and APIs (Jun 2021 — Sep 2025).",
   "achievements.description.humanizar": "Multi-tenant enterprise SaaS ecosystem I built: e-commerce (Graf), point-of-sale with DIAN e-invoicing (Sinergia POS), credit fintech (FIAR), and messaging, orchestrated with NestJS microservices.",
   "achievements.description.cafeteriadelcaos": "Cafeteria is an intellectual virtual community on Discord.",
   "achievements.description.agora": "AI-agent SaaS platform I built as a poly-repo of separate services (Next.js frontend, Cloud Run backend, a real-time socket.io hub and Docker workers) to isolate concerns and deploy each part independently. Design decisions: an extensible tool registry, BYOK, typed contracts validated with Zod, secrets encrypted with AES-256-GCM, and a custom MCP server. Deployed and running.",
