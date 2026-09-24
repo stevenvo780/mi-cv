@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Regenera las fuentes auto-alojadas de src/app/fonts:
 #   1. Los subconjuntos de la home (*-home*.woff2 y cormorant-hero.woff2), que carga [locale]/(home)/fonts.ts.
-#   2. Las fuentes del layout raíz (*-latin.woff2 salvo geist-sans-latin), que usan el portal y el 404 de [locale].
+#   2. Las fuentes del layout raíz (*-latin.woff2), que usan el portal y el 404 de [locale].
 #
 # 1. Home. Por qué existen (spec §3.2 y §5.2): el LCP de laboratorio móvil cuenta todos los bytes que llegan antes
 # del h1, y las fuentes de Google completas pesaban 184 KB. Cada archivo lleva solo los pesos que usa la home y
@@ -9,10 +9,12 @@
 # aquí y volver a ejecutar el script. Lo detectan `npm test` (tests/content/fonts.test.ts recorre el texto de la
 # home en ES y EN) y el e2e "tiene cada carácter en el subconjunto de su familia", que además mira la familia.
 #
-# 2. Layout raíz (y geist-sans-latin, del 404 de [locale]). Sustituyen a next/font/google, que falla en algunos builds limpios (spec §8). Son las mismas
-# fuentes que servía Google Fonts con subsets: ['latin']: variables, con el rango unicode "latin" de Google, sus
-# mismas features y sin hinting. Contornos, métricas y features coinciden con los archivos de Google (comprobado
-# con fontTools), así que el portal se ve igual.
+# 2. Layout raíz. Cormorant, JetBrains Mono e Inter sustituyen a next/font/google, que falla en algunos builds
+# limpios (spec §8). Son las mismas fuentes que servía Google Fonts con subsets: ['latin']: variables, con el rango
+# unicode "latin" de Google, sus mismas features y sin hinting; contornos, métricas y features coinciden con los
+# archivos de Google (comprobado con fontTools). Además del rango latin llevan los caracteres que el portal pinta con
+# esa familia y que la fuente tiene (flechas, «ḗ», símbolos de las fichas): los vigila el e2e de las subpáginas, que
+# recorre el texto de cada frente y de lore. Geist (geist-sans-latin) es la del 404 de [locale].
 #
 # Requisitos: python3 con fonttools 4.63.0 y brotli (p. ej. `python3 -m venv v && v/bin/pip install
 # fonttools==4.63.0 brotli`; exporta PY=v/bin/python). Red para descargar los TTF de google/fonts.
@@ -90,18 +92,21 @@ LATIN='U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+
 # Las features que conserva Google Fonts en esas fuentes (sin versalitas, alternativas estilísticas ni onum).
 GF_FEATURES=ccmp,locl,mark,mkmk,kern,liga,calt,clig,rlig,rvrn,rclt,curs,frac,numr,dnom,lnum,pnum,tnum
 
-latin() { # <entrada> <salida>
-  $PY -m fontTools.subset "$1" --flavor=woff2 --unicodes="$LATIN" --layout-features="$GF_FEATURES" --no-hinting \
+latin() { # <entrada> <salida> [unicodes que pinta el portal, además del rango latin]
+  $PY -m fontTools.subset "$1" --flavor=woff2 --unicodes="$LATIN${3:+,$3}" --layout-features="$GF_FEATURES" --no-hinting \
     --name-IDs='*' --output-file="$OUT/$2" 2>/dev/null
   printf '%-40s %6d B\n' "$2" "$(wc -c < "$OUT/$2")"
 }
 
 # Google sirve Inter solo con el eje wght (opsz fijado en su valor por defecto, 14) cuando se pide wght@100..900.
 $PY -m fontTools.varLib.instancer "$TMP/inter.ttf" opsz=14 -q -o "$TMP/inter-14.ttf"
-latin "$TMP/cg.ttf" cormorant-garamond-latin.woff2
+# Cormorant: Ω ∞ ◇ de las fichas de símbolo (no tiene ε, Π, ◎ ni «ḗ»; los demás símbolos no están en ninguna fuente).
+latin "$TMP/cg.ttf" cormorant-garamond-latin.woff2 'U+03A9,U+221E,U+25C7'
 latin "$TMP/cgi.ttf" cormorant-garamond-italic-latin.woff2
-latin "$TMP/jb.ttf" jetbrains-mono-latin.woff2
-latin "$TMP/inter-14.ttf" inter-latin.woff2
+# JetBrains Mono: ← (volver a la home) y ↗ (enlaces en vivo). No tiene «ḗ» ni «Ḗ» (Pinakothḗke en versalitas).
+latin "$TMP/jb.ttf" jetbrains-mono-latin.woff2 'U+2190,U+2197'
+# Inter: «ḗ» (Pinakothḗke, Apothḗke, Scholḗ), → de las descripciones y ↗.
+latin "$TMP/inter-14.ttf" inter-latin.woff2 'U+1E17,U+2192,U+2197'
 
 # Geist (geist@1.7.2, variable), del 404 de [locale]: rango latin más «ḗ» y las flechas, con todas sus features.
 $PY -m fontTools.subset "$TMP/geist.ttf" --flavor=woff2 --layout-features='*' --name-IDs='*' \

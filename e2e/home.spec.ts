@@ -11,7 +11,7 @@ const SHOTS = '/workspace/.scratch-steven-redesign/shots';
 // Subconjuntos de fuente de la home ([locale]/(home)/fonts.ts, spec §3.2 y §5.2), generados por scripts/subset-fonts.sh.
 const HOME_FONTS = ['cormorant-hero', 'cormorant-home', 'cormorant-home-italic', 'geist-home', 'jetbrains-home'] as const;
 type HomeFont = (typeof HOME_FONTS)[number];
-const fontBytes = (name: HomeFont) => readFileSync(`src/app/fonts/${name}.woff2`);
+const fontBytes = (name: string) => readFileSync(`src/app/fonts/${name}.woff2`);
 const sha1 = (b: Buffer) => createHash('sha1').update(b).digest('hex');
 // fontkit viene compilado dentro de next (lo usa next/font/local); next está fijado a 16.3.6.
 const fontkit = createRequire(`${process.cwd()}/package.json`)('next/dist/compiled/@next/font/dist/fontkit').default;
@@ -49,6 +49,51 @@ async function scrollToEnd(page: Page) {
   });
   await page.waitForLoadState('networkidle');
   await page.waitForTimeout(500);
+}
+
+/**
+ * Texto que pinta cada familia dentro de `root`, por «familia|estilo» (la primera familia de la pila computada):
+ * nodos de texto visibles con su text-transform, `content` de ::before/::after y placeholders.
+ */
+function paintedText(page: Page, root: string) {
+  return page.evaluate((root) => {
+    const acc: Record<string, string> = {};
+    const add = (el: Element, text: string, pseudo: string | null = null) => {
+      const cs = getComputedStyle(el, pseudo);
+      const key = `${cs.fontFamily.split(',')[0].trim().replace(/["']/g, '')}|${cs.fontStyle}`;
+      acc[key] = (acc[key] ?? '') + (cs.textTransform === 'uppercase' ? text.toUpperCase() : text);
+    };
+    const walker = document.createTreeWalker(document.querySelector(root)!, NodeFilter.SHOW_TEXT);
+    for (let n = walker.nextNode(); n; n = walker.nextNode()) {
+      const el = n.parentElement!;
+      if (el.closest('script, style, noscript') || !el.checkVisibility()) continue;
+      add(el, n.textContent ?? '');
+    }
+    for (const el of document.querySelectorAll(`${root} *`)) {
+      for (const pseudo of ['::before', '::after']) {
+        const content = getComputedStyle(el, pseudo).content;
+        if (content.startsWith('"')) add(el, JSON.parse(content) as string, pseudo);
+      }
+      if (el instanceof HTMLInputElement && el.placeholder) add(el, el.placeholder);
+    }
+    return acc;
+  }, root);
+}
+
+/** Por archivo de fuente, los caracteres pintados sin glifo en él, salvo los que se aceptan del sistema. */
+function missingGlyphs(used: Record<string, string>, files: Record<string, string>, systemGlyphs: Partial<Record<string, string>>) {
+  const missing: Record<string, string> = {};
+  for (const [key, text] of Object.entries(used)) {
+    const file = files[key];
+    if (!file) {
+      missing[key] = `familia inesperada: ${[...new Set(text)].join('')}`;
+      continue;
+    }
+    const glyphs = new Set(openFont(fontBytes(file)).characterSet);
+    const lack = [...new Set(text)].filter((c) => !/\s/.test(c) && !glyphs.has(c.codePointAt(0)!) && !systemGlyphs[file]?.includes(c));
+    if (lack.length) missing[file] = (missing[file] ?? '') + lack.join('');
+  }
+  return missing;
 }
 
 for (const locale of ['es', 'en'] as const) {
@@ -179,39 +224,7 @@ for (const locale of ['es', 'en'] as const) {
     };
     const SYSTEM_GLYPHS: Partial<Record<HomeFont, string>> = { 'cormorant-home': 'ḗ', 'geist-home': 'ḗ', 'jetbrains-home': '→' };
     await page.goto(`/${locale}`);
-    const used = await page.evaluate(() => {
-      const acc: Record<string, string> = {};
-      const add = (el: Element, text: string, pseudo: string | null = null) => {
-        const cs = getComputedStyle(el, pseudo);
-        const key = `${cs.fontFamily.split(',')[0].trim().replace(/"/g, '')}|${cs.fontStyle}`;
-        acc[key] = (acc[key] ?? '') + (cs.textTransform === 'uppercase' ? text.toUpperCase() : text);
-      };
-      const walker = document.createTreeWalker(document.querySelector('.home')!, NodeFilter.SHOW_TEXT);
-      for (let n = walker.nextNode(); n; n = walker.nextNode()) {
-        const el = n.parentElement!;
-        if (el.closest('script, style') || !el.checkVisibility()) continue;
-        add(el, n.textContent ?? '');
-      }
-      for (const el of document.querySelectorAll('.home *')) {
-        for (const pseudo of ['::before', '::after']) {
-          const content = getComputedStyle(el, pseudo).content;
-          if (content.startsWith('"')) add(el, JSON.parse(content) as string, pseudo);
-        }
-        if (el instanceof HTMLInputElement && el.placeholder) add(el, el.placeholder);
-      }
-      return acc;
-    });
-    const missing: Record<string, string> = {};
-    for (const [key, text] of Object.entries(used)) {
-      const file = FILES[key];
-      if (!file) {
-        missing[key] = `familia inesperada: ${[...new Set(text)].join('')}`;
-        continue;
-      }
-      const glyphs = new Set(openFont(fontBytes(file)).characterSet);
-      const lack = [...new Set(text)].filter((c) => !/\s/.test(c) && !glyphs.has(c.codePointAt(0)!) && !SYSTEM_GLYPHS[file]?.includes(c));
-      if (lack.length) missing[file] = lack.join('');
-    }
+    const missing = missingGlyphs(await paintedText(page, '.home'), FILES, SYSTEM_GLYPHS);
     expect(missing, 'regenera los subconjuntos con bash scripts/subset-fonts.sh').toEqual({});
   });
 }
@@ -259,6 +272,21 @@ test('el menú móvil es un landmark y se cierra al elegir una sección o con Es
 // Red contra errores y violaciones de CSP en el portal, que ahora se bloquean (no solo se informan): los dos
 // idiomas, todos los frentes y lore, con lo que monta en diferido tras la hidratación.
 const FRENTES = ['filosofia', 'informatica', 'ciencias', 'enterprise'];
+// Fuentes del layout raíz que pinta el portal, por «familia|estilo» (scripts/subset-fonts.sh, sección 2).
+const PORTAL_FONTS: Record<string, string> = {
+  'inter|normal': 'inter-latin',
+  // Inter solo trae la cara recta: la nota al pie de lore, en cursiva, la inclina el navegador con esos glifos.
+  'inter|italic': 'inter-latin',
+  'jetbrains|normal': 'jetbrains-mono-latin',
+  'cormorant|normal': 'cormorant-garamond-latin',
+  'cormorant|italic': 'cormorant-garamond-italic-latin',
+};
+// Lo que la fuente de origen no tiene y pinta una fuente del sistema: símbolos de las fichas y «ḗ» (Pinakothḗke) en
+// Cormorant, y «Ḗ»/«ḗ» en JetBrains Mono. Lo demás que falte se añade en scripts/subset-fonts.sh.
+const PORTAL_SYSTEM_GLYPHS: Record<string, string> = {
+  'cormorant-garamond-latin': 'εΠ⚔◈⊢◉⚙◎▣⏱▦⬡ḗ',
+  'jetbrains-mono-latin': 'Ḗḗ',
+};
 for (const locale of ['es', 'en'] as const) {
   test(`/${locale}: las subpáginas funcionan, con su canonical y sin errores ni violaciones de CSP`, async ({ page }) => {
     const violations = await watchCsp(page);
@@ -275,6 +303,8 @@ for (const locale of ['es', 'en'] as const) {
       await expect(page.locator('meta[name="theme-color"]')).toHaveAttribute('content', '#0b1417');
       await scrollToEnd(page);
       expect([...errors, ...(await violations())], path).toEqual([]);
+      // Cada carácter que pinta tiene glifo en la fuente de su familia (salvo los que la fuente de origen no tiene).
+      expect(missingGlyphs(await paintedText(page, 'body'), PORTAL_FONTS, PORTAL_SYSTEM_GLYPHS), path).toEqual({});
       // --font-cormorant es una sola familia con caras rectas y cursivas: el texto recto del portal (Lore pinta
       // --font-serif a 600) usa la cara recta, no una cursiva sintetizada.
       const cormorant = await page.evaluate(async () => {
