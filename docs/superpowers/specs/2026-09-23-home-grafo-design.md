@@ -8,6 +8,7 @@
 - Tarea 7 del Plan 2 (endurecimiento de `GraphScene`): §3.3 (rango de la niebla y luminancia de las aristas en reposo) y §4.4 (espera del regulador: tope y olvido de las bajadas).
 - Tarea 5 del Plan 2 (e2e del 3D, ronda de fix 1): §3.4 (encuadre en retrato), §3.3 (blanco en Contacto en T1), §5 (cifras) y §6 (qué cubre el proyecto `3d`).
 - Lighthouse en móvil cumple desde la ronda de fix 2 de la Tarea 14: Performance 99 en `/es` y `/en` y LCP de laboratorio de 1.7 a 1.9 s, con el objetivo de LCP en ≤ 2.5 s (§5.2).
+- Tarea 6 del Plan 2 (Lighthouse final con el 3D integrado, pulido visual y spec al día): §1 (estado), §2.2 (clic sobre un nodo), §3.1 (fondo del canvas y contraste del h1 con el 3D), §3.3 (etiquetas, bokeh sin DOF, `postprocessing` diferido, correcciones de GLSL y bloom en reposo), §4.1 (`worker-src`), §4.3 (capa decorativa), §4.4 (API, sonda, puente, parámetros de prueba, niveles, draw calls, raycast y cámara), §4.6, §4.8 (portal), §5, §5.1, §5.3 (Lighthouse final y ruta 3D, nueva), §6 y §8. Todo lo que el Plan 2 cambió respecto al diseño está anotado en su sección con «Plan 2».
 
 ## 1. Objetivo
 
@@ -23,6 +24,7 @@ Criterios de éxito:
    - Best Practices 100.
    - Performance ≥ 95 en móvil y ≥ 98 en escritorio.
    - **Estado al 2026-09-24 (Tarea 14, ronda 2):** se cumple todo. Performance 99 en móvil (`/es` y `/en`) y 100 en escritorio; SEO, Accesibilidad y Best Practices, 100 (§5.2).
+   - **Estado al cerrar el Plan 2 (Tarea 6, con el 3D integrado):** se cumple todo. Performance 98 en móvil (`/es` y `/en`, LCP de 2.18 s) y 100 en escritorio; SEO, Accesibilidad y Best Practices, 100 en las 20 corridas (§5.3).
 4. **Cero regresiones** en `/[locale]/[frente]` y `/[locale]/lore`.
 
 Fuera de alcance:
@@ -60,6 +62,7 @@ Si una cifra no puede derivarse de un dato, no se muestra.
 
 - **Hover o puntero cerca de un nodo:** se resalta el vecindario (distancia 1) y salen pulsos hacia los vecinos.
 - **Clic o Enter:** abre una tarjeta DOM accesible (`role="dialog"` no modal o popover) con nombre, tipo, años y enlace.
+  - **Desviación del Plan 2 (Tarea 4):** no hay tarjeta ni Enter sobre el canvas. El nodo resaltado muestra una ficha DOM (`role="tooltip"`: tipo, nombre, rol, años y «Clic para abrir» si hay destino), y el clic la activa: un producto abre su URL en otra pestaña, un frente navega a `/[locale]/[frente]` y el resto lleva al ítem del DOM que lo representa (`[data-node]`, o su sección). El canvas no es enfocable (`.stage` es `aria-hidden`, §4.8): el camino de teclado es el de la línea siguiente, que recorre el mismo contenido en HTML.
 - **Teclado:** al enfocar un ítem de la lista de productos o de la línea de tiempo se envía `focusNode(id)` y la cámara lo encuadra.
 - **Móvil:** la misma narrativa. El grafo va a ancho completo (no `sticky` lateral) con el nivel de calidad T1.
 - **`prefers-reduced-motion: reduce`:** se muestra el póster estático con un botón "Explorar en 3D" que carga la escena sin autoplay.
@@ -73,7 +76,12 @@ Tokens de la home en `src/styles/home.css` (capa `@layer home`), en OKLCH con re
 - **Fondos:**
   - `--ink-0: #05090b` (fondo).
   - `--ink-1: #0b1417` (superficie; el antiguo `--bg`).
-  - Halo radial `rgb(35 67 90 / .06–.25)` detrás del grafo.
+  - Halo radial `rgb(35 67 90 / .06–.25)` detrás del grafo. En `home.css` es `.home .stage::before`: `inset: -10%` y `radial-gradient(60% 55% at 50% 48%, rgb(35 67 90 / 0.28), rgb(35 67 90 / 0.08) 45%, transparent 70%)`.
+  - **Fondo del canvas (Tarea 6 del Plan 2):** es la página detrás del póster, `--ink-0` con ese halo, compuesto en sRGB como lo hace el navegador (`scene/background.ts`, con los parámetros del CSS). Así el fundido póster → canvas (600 ms) solo cambia el grafo.
+    - Antes era un halo gaussiano propio que pasaba por el ACES: hundía `--ink-0` a negro y saturaba el halo, más claro y más azul que el de la página. Al fundirse, el escenario se azulaba: en móvil, todo él, esquinas incluidas. Diferencia máxima medida entre el canvas y la página en el hero: 39 niveles en T3 y 49 en T1.
+    - Ahora el fondo no lleva el tone mapping de three (`toneMapped: false`). Con compositor (T2 y T3), el EffectPass aplica viñeta y ACES a toda la imagen, así que el fondo sale con las inversas exactas de los dos (`inverseAces(col) / vignette(vUv)`, `uPost = 1`) y llega a la pantalla con el color de la página. La viñeta sigue oscureciendo el grafo hacia los bordes, pero no el fondo.
+    - Medido en el e2e (`graph3d.spec.ts`, en todo el escenario, en pausa y sin las capas del grafo): 3 niveles como mucho en T3 (el grano del EffectPass) y 2 en T1. Con la animación, la atenuación de cada sección (`dim`) sigue bajando el halo, como antes: (0.3 + 0.4 · dim) / 0.7, que es 1 en el hero.
+    - `background.test.ts` ata el shader a sus fuentes: el halo a `home.css`, el ACES al chunk de three 0.186 y la viñeta al shader de `postprocessing`. Si alguno cambia, el test falla.
 - **Texto:**
   - `--text: #e8e0d4`.
   - `--text-strong: #f6f1e8` para display.
@@ -89,6 +97,8 @@ Tokens de la home en `src/styles/home.css` (capa `@layer home`), en OKLCH con re
   - El texto pequeño que no va en un panel (kicker del hero, etiquetas de Método, fechas de Trayectoria, etiqueta y aviso del buscador, redes) lleva su propio scrim, y Herramientas va en una cabecera con scrim como `.sec-head`. Colocando cada elemento sobre las 24 zonas más claras del póster, a 1440 y a 390 px, el peor caso es 5.57:1 (`--muted`). Lo vigila un e2e: ningún texto de menos de 24 px queda sin fondo.
   - El scrim ligero de escritorio (0.74) solo se usa si el navegador aplica `backdrop-filter`; sin desenfoque se queda en 0.86.
   - El nombre del h1 es texto grande sin scrim: va en los flancos oscuros del grafo (16.5:1 en su posición inicial) con una sombra oscura. El Plan 2 debe repetir la medida con el canvas y el bloom encendidos.
+    - **Medido en la Tarea 6 del Plan 2** (Chrome con SwiftShader, `?gl=force`, la animación en marcha: 12 capturas en 3 s por posición). Se toma el píxel más claro del escenario bajo los glifos del h1 (máscara del propio texto, sin la sombra), en la posición inicial y tras bajar 150 y 300 px en escritorio (1440 × 900, T3 con bloom) o 100 y 200 px en móvil (390 × 844, T1). Resultado con el canvas: de 16.4:1 a 17.3:1 en escritorio y de 16.6:1 a 17.7:1 en móvil. Con el póster: de 16.4:1 a 17.8:1. Ningún píxel de glifo baja de 3:1.
+    - Midiendo la caja de cada línea en vez de los glifos, satélites y pulsos entran en ella (3.0:1 en escritorio y 1.1:1 en móvil, en el hueco de los descendentes): rozan el nombre, pero no pasan bajo el texto.
 
 ### 3.2 Tipografía (`next/font`)
 
@@ -120,13 +130,15 @@ Tokens de la home en `src/styles/home.css` (capa `@layer home`), en OKLCH con re
   - Impostor de esfera SDF sobre quad instanciado, con normal reconstruida desde las UV.
   - Borde fresnel.
   - Iridiscencia de película delgada aproximada con una paleta coseno según el ángulo de visión.
-  - Bokeh: círculo de confusión calculado en el vertex según la profundidad.
+  - Bokeh: círculo de confusión calculado en el vertex según la profundidad. **Plan 2:** en todos los niveles; es el único desenfoque de la escena (no hay `DepthOfFieldEffect`, ver Postprocesado).
 - **Hubs (empresas, productos, frentes):**
   - `InstancedMesh` de icosaedro.
   - Refracción simulada: muestreo de un gradiente o envmap pre-difuminado en espacio de pantalla, sin `transmission`.
   - Fresnel y borde tintado del color del frente.
 - **Aristas:**
   - Una cinta instanciada por arista, con Bézier cuadrática evaluada en el vertex shader.
+    - **Correcciones de GLSL de la Tarea 3 del Plan 2** (compilando los shaders en SwiftShader): el índice de la cinta del plan (a, a+1, a+2…) dejaba los triángulos en sentido horario con la extrusión del vertex shader, y `FrontSide` descartaba todas las aristas. Ahora el índice es antihorario y sale de `scene/ribbon.ts` (`ribbonIndex`), con un test en CPU que reproduce la extrusión y falla con el orden antiguo. Además, `layout` es palabra reservada en GLSL ES 3.00, el dialecto con el que three compila en WebGL2: el parámetro de `layoutPos` se llama `row`, y un test busca palabras reservadas en todos los shaders.
+    - Los ocho shaders (fondo, nodos, hubs y aristas) están en un solo `scene/shaders.ts`, con un bloque común (§4.6).
   - Grosor constante en píxeles y antialiasing analítico.
     - Una cinta de menos de 1 px de semiancho se dibuja a 1 px y su línea base se atenúa en proporción (la de los pulsos tenues de la capa decorativa, también). Así conserva la energía de su ancho real y el rasterizador no la deja a trozos.
   - Alfa base ~0.15.
@@ -140,12 +152,16 @@ Tokens de la home en `src/styles/home.css` (capa `@layer home`), en OKLCH con re
       - Con el encuadre en retrato de §3.4, la lemniscata ocupa menos pantalla en T1 y el haz es más denso: la mayor región blanca de Contacto pasa a 61–103 px (6 corridas, límite del e2e 200 px), y en el resto de poses de T1, a 12 px como mucho.
     - **Convergencia de los satélites en cada pose** (Tarea 5, `e2e/graph3d.spec.ts`, SwiftShader, en pausa, sin pulsos y sin hubs ni nodos delante, el peor caso): en T3 (1440 × 900, con bloom y 8k satélites) ningún píxel llega a blanco puro en ninguna de las seis poses; en T1, como mucho 11 px (en Contacto). En la escena real, T3 no tiene ningún píxel blanco puro en ninguna pose.
   - Pulsos `glow = exp(-k (t - fract(time*speed*w + seed))^2)` en HDR. Al resaltar un nodo, recorren sus aristas desde él hacia los vecinos (§2.2).
+- **Capa decorativa (Plan 2):** satélites conectados a su nodo padre, ninguno suelto (§4.3). Cada satélite es un sprite como los nodos pequeños, con el color de su padre, y una o dos aristas decorativas: a su padre y al satélite anterior del mismo padre.
+- **Sin etiquetas en el canvas (Plan 2):** la etiqueta del nodo activo es la ficha DOM del puntero (§2.2 y §4.4, paso 5), en HTML y con las fuentes de la página: la escena no dibuja texto.
 - **Postprocesado (según nivel):**
-  - Bloom con umbral (mipmap blur, media resolución).
-  - Viñeta y grano sutil.
+  - `postprocessing` se carga de forma diferida (`import()` destructurado, 16.6 KB gz; §5.1) y solo en T2 y T3. En T1 no se descarga: el halo de los nodos va en su shader (`uGlow`) y el tone mapping, por fragmento.
+  - Bloom con umbral (mipmap blur, media resolución). Umbral 0.85.
+    - En reposo, lo que pasa del umbral son los pulsos (de 800 a 1 700 px por frame a 960 × 600, según el nivel, con luminancia de 2.8 a 11.7) y, en unos 30 px, el borde fresnel de los hubs y el núcleo del nodo propio (casi blanco): de 19 a 38 px de 576 000 en la escena completa, luminancia de hasta 2.5 (arnés de SwiftShader de la Tarea 7, medido de nuevo en la Tarea 6). Se deja así: bajarlos del umbral apagaría el cristal de los hubs en todos los niveles, y su bloom no se distingue a la vista. Con hover, el vecindario resaltado sube y sí lo dispara.
+  - Viñeta y grano sutil. El fondo se adelanta a la viñeta y al ACES del EffectPass (§3.1), así que la viñeta solo oscurece el grafo.
   - Niebla en el shader, según la profundidad de vista: 0 delante del plano de foco y en él; detrás sube con smoothstep hasta 0.7 a 0.8 unidades del plano (`fogOf` en `scene/shaders.ts`). Atenúa el alfa de los nodos, la intensidad de las aristas y el color de los hubs, y se retira en proporción al resaltado: nada en el nodo activo y sus aristas, a medias en sus vecinos.
     - **Tarea 7 del Plan 2:** el shader empezaba 0.4 unidades por delante del foco (en el propio plano ya valía ≈ 0.14). Se ajustó el shader a esta sección, porque delante no debe haber niebla, y se acortó la rampa de 1.4 a 0.8 unidades para que la mitad trasera conserve la profundidad que ya tenía. Medido en SwiftShader (T1, foco 4.4), brillo del centro de cada nodo semántico con niebla frente a sin ella, antes → ahora: delante 0.99 → 1.00; foco ± 0.2 0.86 → 0.98; detrás 0.69 → 0.77; más de 0.45 detrás 0.65 → 0.67. Con 1.0 unidades la parte de atrás perdía profundidad (0.83 y 0.76), y con 0.6 quedaba más apagada que antes (0.67 y 0.56). Además, así el canvas se acerca al póster, que no tiene niebla.
-  - DOF real solo en T3.
+  - DOF real solo en T3. **Desviación del Plan 2:** no hay `DepthOfFieldEffect` en ningún nivel. El desenfoque es el bokeh del sprite (círculo de confusión en el vertex), en todos los niveles. Es una decisión del plan: ninguna tarea montó el efecto, y `GraphScene` no lo importa de `postprocessing`.
 - **Prohibido:** campo de estrellas o partículas sin aristas. Toda la capa decorativa son nodos conectados.
 
 ### 3.4 Movimiento
@@ -198,6 +214,7 @@ Tokens de la home en `src/styles/home.css` (capa `@layer home`), en OKLCH con re
   - Lo que la guía pide y no se añade: los `*.google.<TLD>` por país, porque la CSP no admite comodines en el TLD y habría que listar los 187 dominios de `google.com/supported_domains` (unos 8 KB más en cada respuesta), y `pagead2.googlesyndication.com` y `frame-src https://www.googletagmanager.com`, que la guía pide solo para las propiedades vinculadas a Google Ads.
   - Previews de Vercel: también se construyen en producción y reciben esta CSP. Con `VERCEL_ENV=preview` se añaden los orígenes que la documentación de Vercel pide para la Vercel Toolbar: `https://vercel.live` en `script-src`, `style-src`, `img-src`, `font-src`, `connect-src` y un `frame-src 'self' https://vercel.live`, además de `https://vercel.com` (img), `https://assets.vercel.com` (font) y `wss://ws-us3.pusher.com` (connect). Producción no los lleva.
   - `worker-src 'self' blob:`: con `next build --webpack`, el worker del Plan 2 (`new Worker(new URL(..., import.meta.url))`) sale como chunk del mismo origen y debería bastar `'self'`. `blob:` se queda hasta que la Tarea 5 del Plan 2 lo compruebe con el worker real; si no hace falta, se quita.
+    - **Estado tras el Plan 2:** sigue `blob:`. La Tarea 5 comprueba cero violaciones de CSP con el worker real, pero con esta directiva; nadie ha probado a quitarla. Lo que sí consta: el worker es un chunk del mismo origen (`/_next/static/chunks/<id>.<hash>.js`) y ningún chunk del 3D contiene `blob` (comprobado en el build de la Tarea 6). Quitarlo pide volver a pasar el proyecto `3d` del e2e con la CSP nueva.
 
 ### 4.2 SEO
 
@@ -242,6 +259,7 @@ Tokens de la home en `src/styles/home.css` (capa `@layer home`), en OKLCH con re
 
 - **Fuentes** (`src/graph/sources.ts`): `productos` y `frentesMeta` (`frentes.ts`), `experience.json`, `achievements.json`, `tools.json` (es/en), más relaciones curadas en `src/graph/relations.ts` (producto→tecnología, concepto→producto, empresa→producto). Objetivo: 150–300 nodos semánticos.
 - **Capa decorativa:** subgrafo procedural determinista (semilla fija) de 1.5k–8k nodos según el nivel de calidad. Nodos satélite unidos a los semánticos más cercanos. Se genera en el worker desde la semilla, no se transfiere.
+  - **Plan 2 (`scene/data.ts`, `buildSceneData`):** cada satélite tiene un nodo padre semántico, elegido con probabilidad proporcional a su peso^1.5 (más alrededor de lo importante), y va desplazado de él. Se une a su padre y al satélite anterior del mismo padre: una o dos aristas decorativas por satélite, ninguno suelto. Toma el color de su padre y se mueve con él (misma posición animada, `nodePos`), también en los morphs. Al cambiar de nivel se recorta la capa con `decorEdgePrefix`, sin regenerarla: nunca pasa de la del nivel con el que arrancó.
 - **`scripts/build-graph.mts`** (se ejecuta en `prebuild` y también bajo demanda):
   - **L0:** d3-force-3d (`numDimensions: 3`) con semilla fija.
   - **L1:** L0 plegado a dos hemisferios por dominio.
@@ -264,7 +282,17 @@ Tokens de la home en `src/styles/home.css` (capa `@layer home`), en OKLCH con re
 - **`src/graph/scene/GraphScene.ts`:** clase de three.js puro (`three@0.186.x` y `postprocessing` compatible), independiente del entorno (worker o hilo principal).
   - API: `init(canvas, {width, height, dpr, tier})`, `resize`, `setPointer(x, y)`, `setScroll(section, progress)`, `setMotion(on)`, `focusNode(id)`, `setVisible(bool)`, `dispose()`.
   - Eventos emitidos: `ready`, `hover {id, x, y}`, `tier`.
+  - **Lo construido (Plan 2):** `init({canvas, width, height, dpr, tier, motion, graph})`, `resize(width, height, dpr)`, `setPointer(x, y, inside)` (`inside` = el puntero no está sobre contenido), `setScroll(s)` con `s` continuo (índice de sección + progreso, §4.5), `setMotion(on)`, `focusNode(index | null)`, `setVisible(visible)` y `dispose()`. Eventos: `ready`, `hover {index, x, y}`, `hover-end`, `tier` y `error` (p. ej. `webgl-context-lost`). El protocolo con el hilo principal está en `runtime/protocol.ts` y lo aplica `runtime/dispatch.ts`, con un `switch` exhaustivo.
+  - **Endurecimiento (Tarea 7 del Plan 2):**
+    - el compositor solo se activa con sus programas ya compilados (`compileAsync` sobre la escena y los pases del bloom), así que el primer frame con bloom no compila en síncrono, tampoco al subir de T1 a T2;
+    - sin compositor, el renderer vuelve a borrar (`autoClear`), también si el montaje falla;
+    - `focusNode` con un índice que no sea un entero en [0, N) equivale a `null`;
+    - en pausa, la escena pinta hasta que llegan todas las magnitudes amortiguadas (`scene/damping.ts`) y entonces para;
+    - `setVisible(false)` cancela el rAF, y al volver el reloj no salta; `pick()` no reserva memoria por frame;
+    - `dispose()` es idempotente, retira los listeners de pérdida de contexto e ignora los mensajes y los cambios de nivel que lleguen después;
+    - los colores del fondo salen de `palette.ts` (hoy, a través de `background.ts`, §3.1).
 - **`src/graph/worker/graph.worker.ts`:** recibe un `OffscreenCanvas` transferido y reenvía mensajes a `GraphScene`. Sin SharedArrayBuffer.
+  - **Plan 2:** lo que llega antes de que la escena esté lista espera en un buzón (`runtime/inbox.ts`) que guarda el último mensaje de cada tipo y se abre al terminar `init`. El mismo buzón lo usa el fallback en el hilo principal. Webpack lo emite como worker clásico que carga sus chunks con `importScripts` (§5.1).
 - **Póster (RSC, `src/components/home/Stage.tsx`):** lo pinta el servidor, no la isla. Es `<img src={POSTER_ASSET} fetchpriority="low" decoding="async">` con `object-fit: cover`, que equivale al `xMidYMid slice` del SVG, dentro de `.stage` (`aria-hidden`).
   - No va inline porque inline entraba dos veces en el HTML (marcado y payload RSC, ~10 KB gz).
   - Chrome no lo toma como candidato a LCP porque cubre todo el viewport: el LCP sigue siendo el nombre del h1, y lo comprueba un e2e.
@@ -277,30 +305,39 @@ Tokens de la home en `src/styles/home.css` (capa `@layer home`), en OKLCH con re
      - no hay WebGL2 con `failIfMajorPerformanceCaveat`;
      - el renderer es software (swiftshader, llvmpipe…).
      Libera el contexto de la prueba.
+     - **Plan 2:** la sonda corre en la isla (`GraphStage`), en su propio `requestIdleCallback` (timeout 1.5 s), después de que la puerta la haya cargado: la puerta no la importa (enmienda H1). Con movimiento reducido no se llama y se muestra «Explorar en 3D».
+     - **Coste medido (Tarea 6):** en la traza de Lighthouse (Chrome 149 sin GPU, que crea el contexto WebGL2 por SwiftShader aunque se pida `failIfMajorPerformanceCaveat`), el chunk de `GraphStage` se evalúa en 0.6 ms y la sonda ocupa una tarea de 4.1 ms, sin CPU ralentizada. Ni con la ralentización ×4 de móvil llega a tarea larga (50 ms), así que no suma TBT (§5.3). No lo medí con una GPU real: crear el contexto ahí puede costar más.
+     - **Parámetros de URL para pruebas:** `?gl=force` se salta la sonda (la escena arranca también con renderer software), `?gl=off` la desactiva (se queda el póster) y `?worker=off` fuerza el fallback en el hilo principal. Los usan los e2e (§6) y las medidas de esta spec.
   2. Disparador: primera interacción (`pointermove`, `touchstart`, `scroll`, `keydown`) o `requestIdleCallback` tras `load` (timeout 1.5 s).
   3. `transferControlToOffscreen` y arranque del worker.
      - Sin OffscreenCanvas con WebGL2, o si el worker falla antes de `ready`: `GraphScene` en el hilo principal con `renderer.compileAsync()`. La sonda solo prueba WebGL2 en un canvas del hilo principal, así que `offscreenWebGL2` (`probe.ts`) prueba también el OffscreenCanvas: Safari 16.4–16.x lo tiene solo 2D.
      - Lo orquesta `src/graph/runtime/launch.ts` (`launchScene`). Los mensajes se encolan desde el primer momento en las dos vías, también mientras se descarga three. Al pasar del worker al hilo principal, la escena nueva arranca con la pausa y el tamaño vigentes y recibe el último mensaje de cada tipo. Si el hilo principal también falla, avisa en consola (`[grafo] fallback sin escena:`) y se queda el póster.
      - Crossfade de 600 ms póster → canvas al recibir `ready`.
   4. Puente de eventos: puntero normalizado agrupado por rAF, `ResizeObserver`, progreso de scroll, `visibilitychange` e `IntersectionObserver`.
+     - **Plan 2:** sin `IntersectionObserver`: el escenario es `sticky` a pantalla completa y siempre está visible. Además del puntero (con `inside` falso sobre el contenido: enlaces, paneles, tarjetas, barra, pie y controles del grafo), el `ResizeObserver`, el scroll (`useSectionProgress`) y `visibilitychange`, el puente envía el foco (`focusin`/`focusout` sobre un `[data-node]` → `focus`) y activa el nodo resaltado con un clic fuera del contenido (§2.2).
   5. Tooltip y tarjeta DOM del nodo en coordenadas proyectadas por el worker.
+     - **Plan 2:** solo la ficha (`role="tooltip"`), sin tarjeta (§2.2). Ella y los botones de pausa y de «Explorar en 3D» van por un portal dentro de `.home` con `position: fixed` (§4.8).
 - **Niveles de calidad:**
 
   | Nivel | Uso | DPR | Capa decorativa | Efectos |
   |---|---|---|---|---|
   | T0 | Póster | — | — | — |
-  | T1 | Móvil | 1 | 1.5k | Halo en shader, sin bloom |
+  | T1 | Móvil | 1 | 1.5k | Halo en shader, sin bloom (no descarga `postprocessing`) |
   | T2 | Por defecto | 1.25–1.5 | 4k | Bloom a media resolución |
-  | T3 | Escritorio con GPU dedicada | ≤ 2 | 8k | Bloom + DOF |
+  | T3 | Escritorio con GPU dedicada | ≤ 2 | 8k | Bloom (sin DOF: bokeh en el sprite, como en T1 y T2; §3.3) |
 
   - Regulador: mediana del tiempo de frame cada 90 frames. Baja de nivel si > 20 ms y sube si < 10 ms sostenido durante 5 s.
     - El tiempo de frame se mide de dos formas (`src/graph/runtime/quality.ts`). Para bajar cuenta el intervalo entre frames: incluye la GPU, que va asíncrona, y cualquier atasco, pero nunca baja del refresco de la pantalla (16.7 ms a 60 Hz). Para subir cuenta el coste del frame en CPU (update más envío del render), siempre que el intervalo no sea lento. Con el intervalo solo, en una pantalla de 60 Hz no se podría volver a subir.
     - Ese coste no ve la GPU, así que una subida puede no aguantar. Para que un equipo limitado por la GPU no oscile entre dos niveles, la primera vuelta a un nivel espera 5 s y cada bajada posterior desde él duplica la espera (10 s, 20 s, 40 s), con un tope de 60 s.
     - Tras 60 s en un nivel sin bajar de él se olvidan las bajadas desde ese nivel y desde los de debajo. Las del nivel de arriba se conservan: estar estable en un nivel no dice nada del siguiente. Además, un `resize` que cambia el tamaño o el DPR las olvida todas; el reajuste interno al cambiar de nivel no cuenta.
   - 30 fps tras 8 s sin input.
+  - Nivel inicial (`initialTier`): T1 con puntero grueso o menos de 900 px de ancho; T3 con 8 núcleos o más y al menos 1280 px; T2 en el resto.
 - **Draw calls objetivo:** ≤ 6 (nodos SDF, hubs, aristas, etiquetas opcionales, postprocesado).
+  - **Plan 2:** sin etiquetas, la escena son 4 draw calls (fondo, aristas, nodos y hubs). Con bloom se añaden los pases del compositor: el de luminancia y el desenfoque mipmap a media resolución, y el EffectPass final (bloom, viñeta, grano y tone mapping).
 - **Raycast:** fuerza bruta en el worker contra las esferas de los nodos semánticos.
+  - **Plan 2:** en pantalla. Proyecta cada nodo semántico (su posición en la forma, sin la respiración) y elige el más cercano al puntero dentro de un radio fijo más medio tamaño del nodo. Sin reservas de memoria por frame (un `Vector3` reutilizado).
 - **Cámara:** spline CatmullRom por sección; el progreso de scroll la mueve con amortiguación.
+  - **Plan 2:** sin spline. Cada sección tiene una pose (`SECTION_POSE` en `scene/choreography.ts`: distancia, giro, inclinación, objetivo, desplazamiento lateral y atenuación). `frameAt` pasa de una a la siguiente con `smoothstep(0.55, 1, progreso)`, y `GraphScene.update()` amortigua cada magnitud (`scene/damping.ts`). En retrato se aleja 1/aspecto salvo en el hero (§3.4).
 
 ### 4.5 Scroll
 
@@ -323,8 +360,9 @@ src/components/graph/GraphStageLazy.tsx  puerta mínima de la ruta crítica (enm
 src/components/graph/GraphStage.tsx    isla cliente: sonda, worker o fallback, puente de eventos, tooltip, pausa (.graph-motion) y «Explorar en 3D»
 src/graph/{model,sources,relations,layouts,codec,palette,camera0,layout-names,random,poster,artifacts}.ts
 src/graph/runtime/{protocol,probe,quality,loader,dispatch,inbox,launch}.ts   sin three: también los importa el hilo principal
-src/graph/scene/{GraphScene,shaders,data,choreography}.ts        three.js (solo en el worker o en el fallback)
-src/graph/worker/graph.worker.ts       llega con la Tarea 4 del Plan 2
+src/graph/scene/GraphScene.ts          three.js y postprocessing (solo en el worker o en el fallback)
+src/graph/scene/{shaders,data,choreography,damping,ribbon,background}.ts   sin three: GLSL, datos de GPU, poses por sección, amortiguación, índice de la cinta y fondo (§3.1)
+src/graph/worker/graph.worker.ts       worker con OffscreenCanvas (Tarea 4 del Plan 2)
 src/graph/generated/{poster,stats}.ts  (generados, versionados)
 src/lib/site.ts                        SITE, locales, helpers de alternates
 src/content/home.ts                    textos es/en de la home (una sola fuente i18n para la home)
@@ -334,8 +372,10 @@ src/styles/home.css
 scripts/build-graph.mts
 scripts/data-date.ts                   DATA_DATE (último commit de los datos; clon superficial)
 scripts/subset-fonts.sh                regenera los subconjuntos de la home y las fuentes del layout raíz
-tests/graph/*.test.ts                  vitest
+tests/graph/**/*.test.ts               vitest (también runtime/, scene/ y worker/)
 e2e/home.spec.ts                       Playwright
+e2e/graph3d.spec.ts                    Playwright, proyecto `3d` (SwiftShader; §6)
+e2e/pixels.ts                          PNG y regiones conexas para los e2e por píxeles del 3D
 e2e/fixtures.ts                        test y expect de Playwright sin hits reales a GA (§6)
 ```
 
@@ -351,8 +391,11 @@ e2e/fixtures.ts                        test y expect de Playwright sin hits real
 
 ### 4.8 Accesibilidad
 
-- **Grafo:** va en `.stage`, una capa fija con `aria-hidden="true"` y sin `<figure>`. Hoy contiene el póster; el Plan 2 monta ahí el canvas. La leyenda visible está en el hero (`.hero-caption`): "Este grafo es mi trayectoria: N nodos, M relaciones reales" y el enlace "Verlo como lista" → `#frentes`.
+- **Grafo:** va en `.stage`, una capa fija con `aria-hidden="true"` y sin `<figure>`. Contiene el póster y, encima, el canvas del Plan 2 (§4.4). La leyenda visible está en el hero (`.hero-caption`): "Este grafo es mi trayectoria: N nodos, M relaciones reales" y el enlace "Verlo como lista" → `#frentes`.
 - **Botón de pausa:** visible, con `aria-pressed` (WCAG 2.2.2). Llega con el Plan 2 (Tarea 4).
+  - **Lo construido (Plan 2):** los controles y la ficha del nodo no pueden ir en `.stage`, que es `aria-hidden` (enmienda H3), así que `GraphStage` los monta con un portal dentro de `.home`, con `position: fixed`: el botón de pausa (o, con movimiento reducido, «Explorar el grafo en 3D») abajo a la derecha, y la ficha (`role="tooltip"`) en las coordenadas que proyecta la escena. El botón solo aparece mientras la escena carga o está viva: con el póster (sin GPU, Lighthouse) no hay controles.
+  - La pausa se guarda en `localStorage` (`mouseion:motion`), pone `html[data-motion="paused"]` (también detiene las animaciones CSS) y manda `motion` a la escena, que deja de pintar al llegar a su pose.
+  - En móvil (390 × 844), el botón queda sobre el borde inferior de la tarjeta del hero, debajo de «Verlo como lista», sin tapar texto.
 - **Menú móvil:** por debajo de 900 px el índice es un `<details>` dentro de un `<nav>` (landmark, como `.topnav` en escritorio). Se cierra al elegir una sección, al tocar fuera y con Escape (que devuelve el foco al botón), con un script inline emitido desde el RSC: sin chunk cliente. Es `type="module"` para que no bloquee el parser (§5.2). Lo prueba un e2e en tablet y móvil.
 - **Reduced motion:** póster; la escena solo arranca a demanda y sin autoplay.
 - **Objetivos táctiles:** ≥ 24 px y foco visible.
@@ -363,13 +406,13 @@ e2e/fixtures.ts                        test y expect de Playwright sin hits real
 
 | Métrica | Límite |
 |---|---|
-| JS de la ruta crítica de la home: los scripts pedidos antes del evento `load` (enmienda H1 del Plan 2) | ≤ 130 KB gz = 133 120 B (antes ~200 KB). Con la puerta del grafo (Plan 2, Tarea 4), 132 947 B con webpack (§4.1): margen de 173 B (§5.1). Tras la ronda de fix 1 de la Tarea 5, 132 948 B (margen de 172 B). Antes de la puerta, 132 462 B |
-| 3D: chunk de `GraphStage`, worker y sus chunks (lo que la puerta pide después de `load` o con la primera interacción) | ≤ 175 KB gz = 179 200 B. Medido en la Tarea 4 del Plan 2 (ronda de fix 1): 171 534 B con bloom (niveles T2 y T3) y 154 976 B sin él (T1, móvil). Lo mide el e2e `graph3d.spec.ts` (Tarea 5): 171 672 B en 6 archivos con bloom, margen de 7 528 B (+138 B por la mezcla de las aristas de §3.3). Tras el encuadre en retrato (§3.4), 171 754 B, margen de 7 446 B |
+| JS de la ruta crítica de la home: los scripts pedidos antes del evento `load` (enmienda H1 del Plan 2) | ≤ 130 KB gz = 133 120 B (antes ~200 KB). Con la puerta del grafo (Plan 2, Tarea 4), 132 947 B con webpack (§4.1): margen de 173 B (§5.1). Tras la ronda de fix 1 de la Tarea 5, 132 948 B (margen de 172 B). **Final del Plan 2 (Tarea 6), 132 943 B: margen de 177 B.** Antes de la puerta, 132 462 B |
+| 3D: chunk de `GraphStage`, worker y sus chunks (lo que la puerta pide después de `load` o con la primera interacción) | ≤ 175 KB gz = 179 200 B. Medido en la Tarea 4 del Plan 2 (ronda de fix 1): 171 534 B con bloom (niveles T2 y T3) y 154 976 B sin él (T1, móvil). Lo mide el e2e `graph3d.spec.ts` (Tarea 5): 171 672 B en 6 archivos con bloom, margen de 7 528 B (+138 B por la mezcla de las aristas de §3.3). Tras el encuadre en retrato (§3.4), 171 754 B, margen de 7 446 B. **Final del Plan 2 (Tarea 6), con el fondo de §3.1: 172 720 B, margen de 6 480 B** (+966 B, el GLSL del fondo y sus inversas en el chunk de la escena, que pasa a 11 431 B); sin `postprocessing` (T1), 156 162 B |
 | Datos del grafo | ≤ 60 KB gz |
-| LCP | ≤ 2.5 s en laboratorio móvil (Lighthouse, mediana de 5). Antes decía 1.8 s, que era una estimación de la investigación y no un requisito de Steven. Medido: 1.7–1.9 s en móvil y 0.5–0.6 s en escritorio (§5.2) |
-| TBT | ≤ 100 ms |
-| CLS | ≤ 0.02 |
-| Errores de consola | 0 |
+| LCP | ≤ 2.5 s en laboratorio móvil (Lighthouse, mediana de 5). Antes decía 1.8 s, que era una estimación de la investigación y no un requisito de Steven (ruling de la Tarea 14 del Plan 1, enmienda H2 del Plan 2). Medido: 1.7–1.9 s en móvil y 0.5–0.6 s en escritorio (§5.2). Al cerrar el Plan 2: mediana de 2.18 s en móvil (de 1.80 a 2.47 s por corrida) y 0.48 s en escritorio (§5.3) |
+| TBT | ≤ 100 ms. Al cerrar el Plan 2: medianas de 6.5 y 8.5 ms en móvil (hasta 11 ms por corrida) y 0 en escritorio, también con la escena 3D en marcha (§5.3) |
+| CLS | ≤ 0.02. Al cerrar el Plan 2: 0.0002 como mucho |
+| Errores de consola | 0. Al cerrar el Plan 2: 0 en las corridas de Lighthouse (póster y 3D) y en el e2e, también en el proyecto `3d` |
 | Violaciones de CSP | 0 |
 
 - La home no usa `next/link`, y tampoco el 404 de `[locale]`, que viaja en el árbol RSC de cada página: su módulo cliente cuesta ~3.5 KB gz.
@@ -378,7 +421,7 @@ e2e/fixtures.ts                        test y expect de Playwright sin hits real
 ### 5.1 Margen del presupuesto de JS
 
 - **Qué cuenta (enmienda H1 del Plan 2):** los scripts pedidos antes del evento `load`. El e2e lo decide con el Resource Timing de la página, por URL y sin filtrar por `initiatorType` (el runtime de webpack llega por `<link rel="preload">`); un script sin entrada cuenta como crítico. El e2e también exige que la puerta pida algo después de `load` e imprime lo que queda fuera.
-- **Medido con la puerta del grafo (Plan 2, Tarea 4):** 132 947 B de 133 120 B. Quedan **173 B, el 0.13 %** (132 944 B antes de recortar `postprocessing`: el runtime de webpack lista el hash de cada chunk, y al cambiar los del 3D cambia unos bytes, el ruido que se describe abajo). La puerta añade 300 B al chunk de la página (995 B frente a 695) y el runtime de webpack crece unos 180 B, porque lista los chunks nuevos del 3D (el de `GraphStage`, el del worker, los dos de three, el de `GraphScene` y el de `postprocessing`). Después de `load` se pide el chunk de `GraphStage`, 5 510 B (5 101 B antes de `launchScene`, que llegó en la ronda de fix 1 sin mover la ruta crítica), que va al presupuesto del 3D. Tras la ronda de fix 1 de la Tarea 5, 132 948 B (margen de 172 B): el encuadre en retrato (§3.4) cambia el chunk de la escena y, con él, el hash que lista el runtime. El chunk de `GraphStage` pasa a 5 549 B: también lleva `choreography.ts`, que importa `useSectionProgress`.
+- **Medido con la puerta del grafo (Plan 2, Tarea 4):** 132 947 B de 133 120 B. Quedan **173 B, el 0.13 %** (132 944 B antes de recortar `postprocessing`: el runtime de webpack lista el hash de cada chunk, y al cambiar los del 3D cambia unos bytes, el ruido que se describe abajo). La puerta añade 300 B al chunk de la página (995 B frente a 695) y el runtime de webpack crece unos 180 B, porque lista los chunks nuevos del 3D (el de `GraphStage`, el del worker, los dos de three, el de `GraphScene` y el de `postprocessing`). Después de `load` se pide el chunk de `GraphStage`, 5 510 B (5 101 B antes de `launchScene`, que llegó en la ronda de fix 1 sin mover la ruta crítica), que va al presupuesto del 3D. Tras la ronda de fix 1 de la Tarea 5, 132 948 B (margen de 172 B): el encuadre en retrato (§3.4) cambia el chunk de la escena y, con él, el hash que lista el runtime. El chunk de `GraphStage` pasa a 5 549 B: también lleva `choreography.ts`, porque `useSectionProgress` la importa (para `SECTIONS`). En la Tarea 6, 132 943 B (margen de 177 B) y el chunk de `GraphStage`, 5 550 B: el fondo nuevo (§3.1) solo cambia el chunk de la escena, cuyo hash lista el runtime (de 132 948 a 132 943 B en los builds de la tarea).
 - **Medido en el fix de la revisión final** (gzip nivel 6 de cada script, igual que el e2e): 132 462 B de 133 120 B, con 658 B de margen. En la Tarea 14 eran 132 501 B (ronda 2) y 132 505 B (ronda 1): el chunk del layout bajó 41 B al quitar los objetos de `next/font/google`. El script inline del menú móvil no cuenta: no es una respuesta de tipo script.
 - **El framework ocupa el 98.8 %** (medido antes de la puerta del grafo): el runtime de Next, React DOM, el runtime de webpack y `main-app` suman 130 867 B. El código propio de la home eran 1 595 B: el chunk del layout de `[locale]` (cargador de GA y objetos de `next/font` del layout raíz, 900 B) y el de la página (`ProductSearch`, 695 B). No queda código propio cuyo recorte dé un margen real.
 - **Ruido de 2 a 3 B por build:** el runtime de webpack lista los ids de los chunks que solo llevan CSS, y esos ids cambian al añadir o quitar módulos. Las fuentes de la home añadieron uno y el runtime creció 3 B. `ProductSearch` sin `useId` ni input controlado compensó 6 B.
@@ -387,7 +430,7 @@ e2e/fixtures.ts                        test y expect de Playwright sin hits real
   - Cualquier cambio que añada código cliente a la home, o que suba `next`, `react` o `react-dom`, puede pasarse del límite aunque no haya una regresión propia. Antes de fusionarlo, se vuelve a medir con `npm run build && npm run e2e`. El test imprime el total y el margen.
   - Si el test falla, se recorta o se aplaza el código cliente nuevo. El límite no se sube en el test: cambiarlo lo decide Steven, y se cambia en esta tabla.
   - El Plan 2 monta en la home la isla del grafo. Con `next/dynamic` (`ssr: false`), su chunk y el de `GraphStage` se descargarían tras la hidratación aunque el 3D no llegara a arrancar, y con 658 B no cabían. La enmienda H1 del Plan 2 lo resuelve así: `GraphStageLazy` es una puerta mínima que solo hace `import('./GraphStage')` tras la primera interacción o el idle después de `load`; este presupuesto cuenta los scripts pedidos antes de `load`, y `GraphStage` y el worker van al presupuesto del 3D (≤ 175 KB gz). Implementado y medido en la Tarea 4 del Plan 2 (arriba). Con 173 B de margen, la puerta no admite más código: lo nuevo del 3D va en `GraphStage` o en el worker.
-  - Coste si la decisión es errónea: JS diferido que Lighthouse todavía ve como TBT. Lo mide la Tarea 6 del Plan 2.
+  - Coste si la decisión es errónea: JS diferido que Lighthouse todavía ve como TBT. Lo mide la Tarea 6 del Plan 2. **Medido:** no suma TBT, ni en la ruta del póster ni con la escena en marcha (§5.3).
 - **Presupuesto del 3D:** GraphScene importa `postprocessing` destructurando en la propia sentencia del `import()`, para que webpack lo recorte a lo que usa (16.6 KB gz frente a 112.8 KB entero; con él entero, el 3D pasaba de 260 KB). Three va en dos chunks (51.5 y 84.8 KB gz) que comparten el worker y el fallback en el hilo principal. El fallback también destructura el `import()` de `GraphScene`: con el namespace entero, webpack dejaba de compartir con el worker el chunk de la escena (10.3 KB gz) y metía en el worker una copia propia. El worker es clásico: webpack reescribe `{ type: 'module' }` a `undefined` y carga sus chunks con `importScripts`.
 
 ### 5.2 Lighthouse en móvil: resuelto en la Tarea 14 (ronda 2)
@@ -423,7 +466,49 @@ e2e/fixtures.ts                        test y expect de Playwright sin hits real
 - **FCP bimodal:** las cuatro fuentes sin precarga tienen prioridad VeryHigh. Si terminan unos milisegundos antes del primer pintado observado, Lantern las mete en el grafo del FCP y da 1.67 s. Si terminan justo después, da 1.06 s. Es una carrera en local que el código no controla sin precargarlas, y mueve la Performance en torno a un punto (97–100).
 - **CLS de 0.0001–0.0002:** al llegar Geist sin precarga, el botón "Mi historia" se mueve unos píxeles, porque el ancho de "Contratar servicios" cambia respecto al de su respaldo ajustado. Lighthouse lo muestra como 0.
 - **TBT:** de 42 a 73 ms en las medianas de las dos tandas, y hasta 99 ms en alguna corrida. Depende de la carga del host: en la ronda 1 llegó a 199 ms.
-- **Margen de JS para el Plan 2:** 658 B. La isla del grafo no cabe montada con `next/dynamic`; el Plan 2 la monta con la puerta de la enmienda H1 (§5.1), y el margen queda en 173 B.
+- **Margen de JS para el Plan 2:** 658 B. La isla del grafo no cabe montada con `next/dynamic`; el Plan 2 la monta con la puerta de la enmienda H1 (§5.1), y el margen queda en 173 B. Al cerrar el Plan 2 (Tarea 6), 177 B.
+
+### 5.3 Lighthouse final con el 3D integrado (Tarea 6 del Plan 2)
+
+**Resultado final** (2026-09-24, `npm run lighthouse` sobre el build final, mediana de 5 corridas, Chrome 149, carga media del host de 60 bajando a 9 sobre 32 núcleos: el e2e acababa de terminar):
+
+| | Performance | LCP | TBT | CLS | A11y / BP / SEO |
+|---|---|---|---|---|---|
+| `/es` móvil | 98 | 2.18 s | 8.5 ms | 0.0002 | 100 / 100 / 100 |
+| `/en` móvil | 98 | 2.18 s | 6.5 ms | 0.0001 | 100 / 100 / 100 |
+| `/es` escritorio | 100 | 0.48 s | 0 ms | 0.0001 | 100 / 100 / 100 |
+| `/en` escritorio | 100 | 0.48 s | 0 ms | 0.0000 | 100 / 100 / 100 |
+
+- Por corrida, en móvil: Performance de 97 a 100, LCP de 1.80 a 2.47 s y TBT de 4 a 11 ms. Escritorio, 100 en todas. A11y, BP y SEO, 100 en las 20 corridas, sin errores de consola.
+- Dos tandas previas de la misma tarea, sobre builds anteriores (la ruta crítica solo cambia en el hash del chunk de la escena que lista el runtime, unos bytes): 98 / 2.18 s en `/es` y 97 / 2.46 s en `/en`; después, 98 / 2.18 s y 100 / 1.80 s. Escritorio, 100 en todas. Contando esas tandas y la mitad del A/B de abajo (40 corridas de móvil del Plan 2), la peor Performance fue 97 y el peor LCP, 2.47 s.
+- Se cumplen los objetivos de §1 y §5 sin tocarlos: Performance ≥ 95 en móvil y ≥ 98 en escritorio, LCP ≤ 2.5 s, TBT ≤ 100 ms y CLS ≤ 0.02.
+
+**Frente al Plan 1 cerrado.** La Tarea 4 midió 100 / 1.81 s en móvil, y esta tarea, 98 / 2.18 s. Para saber si la diferencia venía del código, se hizo un A/B intercalado en móvil (5 + 5 corridas por idioma, a la vez y en el mismo host) entre el Plan 1 cerrado (`b434b7c`, sin el 3D) y el Plan 2 (`9b687ff`):
+
+| | Plan 1 (`b434b7c`) | Plan 2 (`9b687ff`) |
+|---|---|---|
+| `/es` móvil | 98 / 2.18 s / 5.5 ms | 98 / 2.18 s / 5 ms |
+| `/en` móvil | 98 / 2.18 s / 5 ms | 98 / 2.18 s / 5.5 ms |
+
+- Las corridas caen en tres escalones, en las dos versiones: 1.73–1.80 s (FCP de 1.05 s), 2.18 s (FCP de 1.65 s) y 2.46–2.47 s (FCP de 1.65 s). Los dos primeros son el FCP bimodal de «Límites que quedan» (§5.2). El tercero no lo investigué: sale igual sin el 3D.
+- La Tarea 4 midió con el host más cargado (carga de 20 a 26, frente a 6–9 aquí). Que eso cambie cuánto sale cada escalón es una hipótesis que no comprobé.
+
+**Qué hace el 3D con el TBT** (el coste que la enmienda H1 dejaba por medir):
+- **Ruta del póster** (la de Lighthouse sin `?gl`). La puerta pide el chunk de `GraphStage` (5 550 B) justo después de `load`. En la traza (`--save-assets`, sin ralentizar la CPU):
+  - el chunk se evalúa en 0.6 ms;
+  - la sonda ocupa una tarea de 4.1 ms en su `requestIdleCallback`: crea un contexto WebGL2 (el Chrome de Lighthouse lo tiene por SwiftShader), lee el renderer y lo libera; como es software, dice que no y se queda el póster.
+  - Ni con la ralentización ×4 de móvil llegan a los 50 ms de una tarea larga. Las únicas tareas largas de la simulación son la evaluación del framework (55–66 ms) y el análisis del HTML, igual que en el Plan 1, y el TBT es el mismo que sin el 3D (A/B de arriba).
+- **Ruta 3D** (`?gl=force`: el mismo Chrome, con la escena en marcha en el worker; Lighthouse descarga el worker, three y, en escritorio, `postprocessing`, y su captura final muestra el grafo 3D). Mediana de 5 por fila:
+
+  | | Performance | LCP | TBT | CLS | A11y / BP / SEO |
+  |---|---|---|---|---|---|
+  | `/es` móvil (T1) | 100 | 1.80 s | 5.5 ms | 0.0002 | 100 / 100 / 100 |
+  | `/en` móvil (T1) | 98 | 2.18 s | 5 ms | 0.0001 | 100 / 100 / 100 |
+  | `/es` escritorio (T3) | 100 | 0.48 s | 0 ms | 0.0001 | 100 / 100 / 100 |
+  | `/en` escritorio (T3) | 100 | 0.54 s | 0 ms | 0.0000 | 100 / 100 / 100 |
+
+  El TBT no cambia: la escena corre en el worker, y en el hilo principal solo quedan la puerta, `GraphStage`, la prueba del OffscreenCanvas, la transferencia del canvas y el puente de eventos. Sin errores de consola en las 20 corridas. Se midió con el fondo de §3.1 ya ajustado.
+- **No lo probé:** una GPU real (el host no expone la suya a Chrome sin interfaz: con `--use-angle=gl` o `vulkan` no hay contexto), donde crear el contexto de la sonda puede costar más; el fallback en el hilo principal (Safari 16.4, `?worker=off`), donde three compila y pinta en el hilo principal y sí habría TBT, y T2.
 
 ## 6. Pruebas
 
@@ -437,6 +522,11 @@ e2e/fixtures.ts                        test y expect de Playwright sin hits real
    - Cobertura de glifos del contenido de la home frente a sus subconjuntos (revisión final, §3.2).
    - Sonda de GPU (con mocks).
    - Regulador de calidad.
+   - **Plan 2**, sin GPU:
+     - runtime: protocolo y `dispatch` (una aserción por mensaje), buzón, `launchScene` (worker, fallback, relevo y fallos), cargador, sonda (también `offscreenWebGL2`) y regulador con reloj simulado;
+     - escena: `GraphScene` con un doble de `WebGLRenderer` (arranque, compositor, `autoClear`, mezcla de las aristas, fondo, niveles, `dispose`, bucle y precompilación), datos de GPU, coreografía (también el encuadre en retrato), amortiguación, índice de la cinta (extrusión en CPU) y shaders (atributos, palabras reservadas, niebla y respiración);
+     - fondo (`background.test.ts`, Tarea 6): el halo contra `home.css`, el ACES contra el chunk de three y la viñeta contra el shader de `postprocessing`, y que las inversas deshacen los dos;
+     - worker con la escena simulada, la puerta (`GraphStageLazy`) y el progreso de scroll.
 2. **E2E (Playwright, Chrome):**
    - `/es` y `/en`:
      - un solo h1;
@@ -473,9 +563,11 @@ e2e/fixtures.ts                        test y expect de Playwright sin hits real
      - En pausa, la espera hasta que la cámara llega a su pose no es un tiempo fijo: en SwiftShader un frame tarda cientos de ms (más con la suite en paralelo) y avanza como mucho 50 ms del reloj de la escena. Con el fallback cuenta fotogramas del navegador sin pintar; con el worker, espera a que el escenario lleve 3 s sin cambiar.
      - Cada espera se acota a lo que le queda al test (menos 15 s): si falla, su mensaje sale antes que el timeout del test. El proyecto `3d` corre con 6 workers: con los 16 por defecto, SwiftShader saturaba el host (carga de más de 140 en 32 núcleos) y un test llegaba a 1.9 min de sus 3; con 6, el más lento de la suite completa tarda 1 min.
      - Cero errores de consola y de CSP. El aviso `KHR_parallel_shader_compile extension not supported` de SwiftShader es un `warning`, no un error, y no cuenta.
+     - **Fondo del canvas (Tarea 6):** en T3 y T1, en el hero, en pausa y sin las capas del grafo, el canvas se compara píxel a píxel con la página sin el póster (`?gl=off` y la imagen oculta): ningún canal se aparta más de 4 niveles (§3.1). Con el fondo de antes, 39 y 49.
 3. **Lighthouse:**
    - Móvil y escritorio, `/es` y `/en`, mediana de 5 corridas.
    - Ruta del póster (sin GPU) y ruta 3D (Chrome con GPU por SwiftShader forzada) documentadas por separado.
+   - **Tarea 6 del Plan 2:** las dos, en §5.3. La ruta 3D se mide con `?gl=force`: el Chrome de Lighthouse ya crea el contexto WebGL2 por SwiftShader, sin opciones, pero la sonda lo rechaza por ser software.
    - Caché de npm y `TMPDIR` en `/workspace`: el disco raíz del host está lleno.
 4. **Revisión adversarial multiagente** (código, rendimiento, a11y, SEO) antes de la preview.
 
@@ -492,8 +584,9 @@ e2e/fixtures.ts                        test y expect de Playwright sin hits real
 | OffscreenCanvas y WebGL en Safari < 17 | Fallback al hilo principal con `compileAsync`: sin WebGL2 en el OffscreenCanvas (`offscreenWebGL2`) ni siquiera se crea el worker, y un worker que falla antes de `ready` pasa el relevo al hilo principal en vez de dejar el póster (§4.4, paso 3). |
 | Workers con `new URL(..., import.meta.url)` en el build de producción | El build ya es webpack 5 (`next build --webpack`, §4.1), que los emite como chunk propio; lo valida el e2e del Plan 2 (Tarea 5). `next dev` sigue con Turbopack: si ahí el worker no arranca, lo cubre el fallback en el hilo principal. |
 | Compatibilidad `postprocessing` ↔ three | Versiones fijadas exactas. |
+| El fondo del canvas deja de coincidir con la página (§3.1) si cambia el halo de `home.css`, el ACES de three o la viñeta de `postprocessing` | `background.test.ts` lee los tres (el CSS, el chunk de three y el shader de la viñeta) y falla si no coinciden con `background.ts`; el e2e del fondo lo mide en el navegador. |
 | Presupuesto de JS de la home sin margen (173 B con la puerta del grafo, §5.1) | El e2e lo mide en cada build y se vuelve a medir antes de fusionar. El Plan 2 monta `GraphStage` detrás de la puerta mínima de su enmienda H1: lo nuevo del 3D va en `GraphStage` o en el worker, no en la puerta. |
-| El 3D no aparece en Lighthouse | Es intencional: el laboratorio mide la ruta del póster. No hay RUM propio: Vercel Speed Insights no cabe en el presupuesto de JS (su script contaría en §5.1), así que no se instala. El dato de campo sale de CrUX, PageSpeed Insights y el informe de Core Web Vitals de Search Console; el 3D, además, con pruebas manuales en GPU real. |
+| El 3D no aparece en Lighthouse | Es intencional: el laboratorio mide la ruta del póster. No hay RUM propio: Vercel Speed Insights no cabe en el presupuesto de JS (su script contaría en §5.1), así que no se instala. El dato de campo sale de CrUX, PageSpeed Insights y el informe de Core Web Vitals de Search Console; el 3D, además, con pruebas manuales en GPU real. La Tarea 6 del Plan 2 midió también la ruta 3D con `?gl=force` (§5.3): mismas cifras que la del póster. Sigue sin probarse en una GPU real. |
 | Disco raíz del host lleno | Todo lo pesado va a `/workspace`. |
 | Contenido nuevo con un carácter que no está en los subconjuntos de fuente de la home o del portal | En la home, `npm test` falla (`tests/content/fonts.test.ts` recorre el texto de la home en ES y EN) y el e2e de glifos también; en el portal, el e2e de las subpáginas. Los dos nombran el archivo y el carácter. Se añade en `scripts/subset-fonts.sh` y se regenera (hace falta Python con fonttools y brotli); si la fuente de origen no lo tiene, se añade a las excepciones del test. |
 | Google Fonts responde a veces con URLs sin extensión (`/l/font?kit=…`) para Cormorant pedida con pesos sueltos, y `next/font` 16.3.6 aborta el build (`Cannot read properties of null (reading '1')`) | Resuelto en el fix de la revisión final: ninguna fuente usa ya `next/font/google` (§3.2), así que el build no depende de Google Fonts. Se vio en 2 de unos 15 builds limpios y en 1 de 3 con Node 20; tras el cambio, 5 builds limpios seguidos con Node 20 y `npm ci`, los 5 verdes. |

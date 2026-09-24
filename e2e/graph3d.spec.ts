@@ -389,9 +389,51 @@ const MAX_WHITE_REGION = 200;
  */
 const MIN_MARGIN = 0.03;
 
+/**
+ * Diferencia máxima, por canal y en todo el escenario, entre el fondo del canvas y la página detrás del póster (spec
+ * §3.1). Medido tras el ajuste de la Tarea 6 (fondo sin tone mapping y, con compositor, adelantado a la viñeta y al
+ * ACES): 3 niveles en T3 (el grano del EffectPass) y 2 en T1. Con el fondo de antes (halo gaussiano bajo el ACES), 39
+ * en T3 y 49 en T1: el fundido póster → canvas azulaba el escenario, y en móvil también las esquinas.
+ */
+const MAX_BACKGROUND_DIFF = 4;
+
 for (const { tier, viewport } of LEVELS) {
   test.describe(`T${tier} a ${viewport.width}×${viewport.height}`, () => {
     test.use({ viewport });
+
+    test('hero: el fondo del canvas es la página detrás del póster (--ink-0 y el halo de .stage::before)', async ({ page }, info) => {
+      const errors = await watchErrors(page);
+      // La página sin el grafo del póster: solo --ink-0 y el halo.
+      await page.goto('/es?gl=off');
+      await hideContent(page);
+      await page.addStyleTag({ content: '.home .stage-poster img { visibility: hidden !important; }' });
+      const behind = decodePng(await page.locator('.stage').screenshot());
+      // El canvas en el hero (la pose de CAMERA0, la del póster), en pausa y sin las capas del grafo: solo su fondo.
+      await page.addInitScript(instrumentWebGL);
+      await openLive(page, 'gl=force&worker=off');
+      await pause(page);
+      await hideContent(page);
+      await settled(page);
+      const { px } = await frameWith(page, { hide: ['edge', 'node', 'hub'] });
+      const { instances } = await probeOf(page);
+      expect(instances, 'aristas del nivel').toBeGreaterThanOrEqual(GRAPH_STATS.edges + TIERS[tier].decor);
+      expect(instances, 'aristas del nivel').toBeLessThanOrEqual(GRAPH_STATS.edges + 2 * TIERS[tier].decor);
+
+      expect([px.width, px.height]).toEqual([behind.width, behind.height]);
+      let max = 0;
+      let at = 0;
+      for (let i = 0; i < px.data.length; i += 4) {
+        const d = Math.max(Math.abs(px.data[i] - behind.data[i]), Math.abs(px.data[i + 1] - behind.data[i + 1]), Math.abs(px.data[i + 2] - behind.data[i + 2]));
+        if (d > max) [max, at] = [d, i / 4];
+      }
+      const where = { x: at % px.width, y: Math.floor(at / px.width) };
+      const pick = (p: typeof px) => Array.from(p.data.subarray(at * 4, at * 4 + 3));
+      const stats = { diferenciaMaxima: max, en: where, pagina: pick(behind), canvas: pick(px) };
+      console.log(`T${tier} fondo: ${JSON.stringify(stats)}`);
+      info.annotations.push({ type: 'fondo', description: JSON.stringify(stats) });
+      expect(max, `el fondo del canvas se aparta de la página: ${JSON.stringify(stats)}`).toBeLessThanOrEqual(MAX_BACKGROUND_DIFF);
+      expect(errors).toEqual([]);
+    });
 
     for (const section of SECTIONS) {
       const fit = section === 'frentes' ? '' : ' y la forma cabe entera';

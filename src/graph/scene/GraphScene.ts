@@ -39,6 +39,7 @@ import { LAYOUT_NAMES } from '../layout-names';
 import { BACKGROUND_COLOR } from '../palette';
 import type { SceneEvent } from '../runtime/protocol';
 import { QualityGovernor, TIERS, type Tier } from '../runtime/quality';
+import { VIGNETTE } from './background';
 import { frameAt, type FrameContext } from './choreography';
 import { damp, POSE_KEYS, settling, type Damped } from './damping';
 import { buildSceneData, clusterCentroids, helixSpan, type SceneData } from './data';
@@ -121,7 +122,8 @@ export class GraphScene {
     uResolution: { value: new Vector2(1, 1) },
     uWidth: { value: 0.9 },
     uGlow: { value: 0 },
-    uAspect: { value: new Vector2(1, 1) },
+    /** 1 con compositor: el fondo se adelanta a la viñeta y al ACES del EffectPass (BACKGROUND_FRAG). */
+    uPost: { value: 0 },
   };
   private width = 1;
   private height = 1;
@@ -283,7 +285,6 @@ export class GraphScene {
     this.u.uViewportH.value = bh;
     this.u.uPixelRatio.value = this.dpr;
     this.u.uWidth.value = 0.85 * this.dpr;
-    this.u.uAspect.value.set(this.camera.aspect, 1);
     this.dirty = true;
   }
 
@@ -307,7 +308,15 @@ export class GraphScene {
 
     const background = new Mesh(
       new PlaneGeometry(2, 2),
-      new ShaderMaterial({ vertexShader: S.BACKGROUND_VERT, fragmentShader: S.BACKGROUND_FRAG, uniforms: pick('uAspect', 'uDim'), depthTest: false, depthWrite: false }),
+      // Sin tone mapping de three: el fondo trae los colores exactos de la página detrás del póster (background.ts).
+      new ShaderMaterial({
+        vertexShader: S.BACKGROUND_VERT,
+        fragmentShader: S.BACKGROUND_FRAG,
+        uniforms: pick('uDim', 'uPost'),
+        depthTest: false,
+        depthWrite: false,
+        toneMapped: false,
+      }),
     );
     background.frustumCulled = false;
     background.renderOrder = -10;
@@ -421,7 +430,7 @@ export class GraphScene {
       this.renderer.autoClear = this.composer === null;
       composer.addPass(new RenderPass(this.scene, this.camera));
       const bloom = new BloomEffect({ mipmapBlur: true, luminanceThreshold: 0.85, luminanceSmoothing: 0.25, intensity: 1.35, radius: 0.72 });
-      const vignette = new VignetteEffect({ offset: 0.28, darkness: 0.62 });
+      const vignette = new VignetteEffect(VIGNETTE);
       const noise = new NoiseEffect({ blendFunction: BlendFunction.OVERLAY, premultiply: true });
       noise.blendMode.opacity.value = 0.05;
       const tone = new ToneMappingEffect({ mode: ToneMappingMode.ACES_FILMIC });
@@ -454,6 +463,7 @@ export class GraphScene {
     this.renderer.autoClear = composer === null;
     this.renderer.toneMapping = composer ? NoToneMapping : ACESFilmicToneMapping;
     this.u.uGlow.value = composer ? 0 : 1;
+    this.u.uPost.value = composer ? 1 : 0;
     // Aristas. Con compositor, suma aditiva (ONE, ONE) en el búfer lineal: HDR y un solo tone mapping al final. Sin él,
     // cada fragmento llega ya con tone mapping y en sRGB, y en aditivo un haz de aristas superpuestas se quemaba a
     // blanco (la lemniscata de Contacto en móvil, T1). Ahí la mezcla es de pantalla, 1 − (1 − a)(1 − b): una arista

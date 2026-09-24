@@ -21,6 +21,7 @@ import { dispatch } from '@/graph/runtime/dispatch';
 import type { MainToWorker, SceneEvent } from '@/graph/runtime/protocol';
 import { BACKGROUND_COLOR } from '@/graph/palette';
 import { QualityGovernor, type Tier } from '@/graph/runtime/quality';
+import { VIGNETTE } from '@/graph/scene/background';
 import { GraphScene } from '@/graph/scene/GraphScene';
 import * as S from '@/graph/scene/shaders';
 
@@ -387,6 +388,49 @@ describe('GraphScene sin GPU', () => {
       vi.spyOn(console, 'warn').mockImplementation(() => {});
       await mount({ tier: 2 });
       expect(blend(edgeMaterial())).toEqual(SCREEN);
+    });
+  });
+
+  // El fondo del canvas es la página detrás del póster (spec §3.1): sin tone mapping de three y, con compositor,
+  // adelantado a la viñeta y al ACES del EffectPass (uPost = 1). Así el fundido póster → canvas solo cambia el grafo.
+  describe('fondo', () => {
+    const background = () => {
+      let found: ShaderMaterial | undefined;
+      gpu.graphScene!.traverse((o) => {
+        const m = (o as { material?: ShaderMaterial }).material;
+        if (m?.fragmentShader === S.BACKGROUND_FRAG) found = m;
+      });
+      return found!;
+    };
+    const post = () => background().uniforms.uPost.value as number;
+
+    it('no pasa por el tone mapping de three (T1 lo aplicaría en el shader y hundía --ink-0 a negro)', async () => {
+      await mount({ tier: 1 });
+      expect(background().toneMapped).toBe(false);
+      expect(post()).toBe(0);
+    });
+
+    it('con compositor (T2) se adelanta al EffectPass (uPost = 1), con la viñeta de background.ts', async () => {
+      const { scene } = await mount({ tier: 2 });
+      expect(post()).toBe(1);
+      const composer = (scene as unknown as { composer: { passes: { effects?: unknown[] }[] } }).composer;
+      const vignette = composer.passes.flatMap((p) => p.effects ?? []).find((e) => e instanceof pp.VignetteEffect) as pp.VignetteEffect;
+      expect({ offset: vignette.offset, darkness: vignette.darkness }).toEqual(VIGNETTE);
+    });
+
+    it('al bajar de T2 a T1, o si el compositor falla, vuelve a uPost = 0', async () => {
+      const { scene, events } = await mount({ tier: 2 });
+      expect(runUntilTierRequest(scene, SLOW)).toBe(1);
+      await flush();
+      expect(tiers(events)).toEqual([1]);
+      expect(post()).toBe(0);
+
+      vi.spyOn(pp.EffectPass.prototype, 'initialize').mockImplementation(() => {
+        throw new Error('EffectPass no disponible');
+      });
+      vi.spyOn(console, 'warn').mockImplementation(() => {});
+      await mount({ tier: 2 });
+      expect(post()).toBe(0);
     });
   });
 

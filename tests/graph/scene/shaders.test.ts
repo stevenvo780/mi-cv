@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { BACKGROUND_COLOR, HALO_COLOR } from '@/graph/palette';
 import { smoothstep } from '@/graph/scene/choreography';
-import { hexToLinear } from '@/graph/scene/data';
+import { ACES_INPUT, ACES_OUTPUT, STAGE_HALO, VIGNETTE, haloDim, haloFrame } from '@/graph/scene/background';
 import * as S from '@/graph/scene/shaders';
 
 const ATTRS: Record<string, string[]> = {
@@ -18,12 +18,15 @@ describe('shaders', () => {
       for (const a of attrs) expect(src, `${name}:${a}`).toMatch(new RegExp(`attribute\\s+\\w+\\s+${a};`));
     }
   });
-  it('los fragment shaders aplican tone mapping y espacio de color de three', () => {
-    for (const name of ['BACKGROUND_FRAG', 'NODE_FRAG', 'HUB_FRAG', 'EDGE_FRAG']) {
+  it('los fragment shaders del grafo aplican tone mapping y espacio de color de three; el fondo, solo el espacio de color', () => {
+    for (const name of ['NODE_FRAG', 'HUB_FRAG', 'EDGE_FRAG']) {
       const src = (S as Record<string, string>)[name];
       expect(src, name).toContain('#include <tonemapping_fragment>');
       expect(src, name).toContain('#include <colorspace_fragment>');
     }
+    // El fondo trae sus colores exactos (los de la página detrás del póster): el ACES de three los hundía (§3.1).
+    expect(S.BACKGROUND_FRAG).not.toContain('#include <tonemapping_fragment>');
+    expect(S.BACKGROUND_FRAG).toContain('#include <colorspace_fragment>');
   });
   it('nodos, hubs y aristas comparten la misma posición animada (nodePos)', () => {
     for (const name of ['NODE_VERT', 'HUB_VERT', 'EDGE_VERT']) expect((S as Record<string, string>)[name], name).toContain('nodePos(');
@@ -100,15 +103,55 @@ describe('colores del fondo', () => {
     const [r, g, b] = [1, 3, 5].map((i) => parseInt(HALO_COLOR.slice(i, i + 2), 16));
     expect(css).toContain(`rgb(${r} ${g} ${b} /`);
   });
-  it('el fondo de la escena los usa en lineal (hexToLinear), sin literales a mano', () => {
-    const vec = (name: string) => {
-      const m = S.BACKGROUND_FRAG.match(new RegExp(`vec3 ${name} = vec3\\(([^)]+)\\);`));
-      expect(m, name).not.toBeNull();
-      return m![1].split(',').map(Number);
+
+  const num = (src: string, re: RegExp) => {
+    const m = src.match(re);
+    expect(m, String(re)).not.toBeNull();
+    return m![1].split(',').map(Number);
+  };
+  const close = (got: number[], want: readonly number[], digits = 6) => got.forEach((v, i) => expect(v).toBeCloseTo(want[i], digits));
+
+  it('el fondo es la página detrás del póster: --ink-0 y el halo de .stage::before, en sRGB y con su elipse (background.ts)', () => {
+    const src = S.BACKGROUND_FRAG;
+    const srgb = (hex: string) => [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16) / 255);
+    close(num(src, /const vec3 INK = vec3\(([^)]+)\);/), srgb(BACKGROUND_COLOR));
+    close(num(src, /const vec3 HALO = vec3\(([^)]+)\);/), srgb(HALO_COLOR));
+    const { center, radius } = haloFrame();
+    close(num(src, /const vec2 HALO_CENTER = vec2\(([^)]+)\);/), center);
+    close(num(src, /const vec2 HALO_RADIUS = vec2\(([^)]+)\);/), radius);
+    // Las paradas del degradado, en orden: (posición, alfa).
+    const stops = [...src.matchAll(/HALO_STOP_(\d) = vec2\(([^)]+)\);/g)].map((m) => m[2].split(',').map(Number));
+    expect(stops).toEqual(STAGE_HALO.stops.map((s) => [...s]));
+    // Composición en sRGB (como el navegador) y paso a lineal antes del espacio de color de salida.
+    expect(src).toMatch(/srgbToLinear\(mix\(INK, HALO, a\)\)/);
+    // Hero: el halo tal cual; el resto de secciones lo atenúan con uDim, como antes: (0.3 + 0.4 · dim) / 0.7.
+    expect(src).toMatch(/haloAlpha\([^;]*\) \* haloDim\(uDim\);/);
+    const dim = src.match(/float haloDim\(float dim\) \{\s*return \(([\d.]+) \+ ([\d.]+) \* dim\) \/ ([\d.]+);/);
+    expect(dim, 'haloDim en GLSL').not.toBeNull();
+    for (const d of [0, 0.35, 1]) expect((Number(dim![1]) + Number(dim![2]) * d) / Number(dim![3])).toBeCloseTo(haloDim(d), 9);
+    expect(haloDim(1)).toBe(1);
+    expect(haloDim(0.35)).toBeCloseTo(0.44 / 0.7, 9);
+  });
+
+  it('con compositor (uPost), el fondo se adelanta al ACES y a la viñeta del EffectPass, con las inversas exactas', () => {
+    const src = S.BACKGROUND_FRAG;
+    expect(src).toMatch(/if \(uPost > 0\.5\) col = inverseAces\(col\) \/ vignette\(vUv\);/);
+    close(num(src, /const float VIGNETTE_OFFSET = ([\d.]+);/), [VIGNETTE.offset], 9);
+    close(num(src, /const float VIGNETTE_DARKNESS = ([\d.]+);/), [VIGNETTE.darkness], 9);
+    // Las matrices inversas del ACES de three: producto por la directa = identidad (columnas, como mat3 en GLSL).
+    const mat = (name: string) => {
+      const body = src.match(new RegExp(`const mat3 ${name} = mat3\\(([\\s\\S]*?)\\);\\n`))?.[1] ?? '';
+      const n = body.split(',').map(Number);
+      expect(n, name).toHaveLength(9);
+      return [n.slice(0, 3), n.slice(3, 6), n.slice(6, 9)];
     };
-    const close = (got: number[], want: number[]) => got.forEach((v, i) => expect(v).toBeCloseTo(want[i], 6));
-    close(vec('ink'), hexToLinear(BACKGROUND_COLOR));
-    // A 1e-6: los literales de 4 decimales que había (0.0015, 0.0168…) no pasan.
-    close(vec('glow'), hexToLinear(HALO_COLOR));
+    const mul = (a: number[][], b: number[][]) => b.map((col) => [0, 1, 2].map((r) => a[0][r] * col[0] + a[1][r] * col[1] + a[2][r] * col[2]));
+    for (const [inv, dir] of [
+      [mat('ACES_INPUT_INV'), ACES_INPUT],
+      [mat('ACES_OUTPUT_INV'), ACES_OUTPUT],
+    ] as const) {
+      const id = mul(dir.map((c) => [...c]), inv);
+      id.forEach((col, c) => col.forEach((v, r) => expect(v).toBeCloseTo(c === r ? 1 : 0, 6)));
+    }
   });
 });

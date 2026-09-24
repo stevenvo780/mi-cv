@@ -1,9 +1,5 @@
 /* Shaders de la escena del grafo. Colores en espacio lineal; los pulsos salen en HDR (> 1) para el bloom. */
-import { BACKGROUND_COLOR, HALO_COLOR } from '../palette';
-import { hexToLinear } from './data';
-
-/** Color de la paleta (hex sRGB) como literal GLSL en espacio lineal. */
-const linearVec3 = (hex: string) => `vec3(${hexToLinear(hex).map((c) => c.toFixed(6)).join(', ')})`;
+import { backgroundGlsl } from './background';
 
 const COMMON = /* glsl */ `
 uniform sampler2D uLayouts;
@@ -86,17 +82,23 @@ void main() {
 }
 `;
 
+/*
+ * Fondo: la página detrás del póster (spec §3.1, background.ts), --ink-0 con el halo de `.home .stage::before`,
+ * compuesto en sRGB como el navegador. Sin el tone mapping de three (el material va con toneMapped: false): el ACES
+ * hundía --ink-0 a negro y saturaba el halo. Con compositor (uPost = 1), el EffectPass aplica viñeta y ACES a toda la
+ * imagen, así que el fondo sale con sus inversas y llega a la pantalla con el mismo color que la página.
+ */
 export const BACKGROUND_FRAG = /* glsl */ `
-uniform vec2 uAspect;
 uniform float uDim;
+uniform float uPost;
 varying vec2 vUv;
+${backgroundGlsl()}
 void main() {
-  vec2 q = (vUv - 0.5) * uAspect;
-  float halo = exp(-dot(q, q) * 2.6);
-  vec3 ink = ${linearVec3(BACKGROUND_COLOR)};
-  vec3 glow = ${linearVec3(HALO_COLOR)};
-  gl_FragColor = vec4(ink + glow * halo * (0.3 + 0.4 * uDim), 1.0);
-  #include <tonemapping_fragment>
+  vec2 p = vec2(vUv.x, 1.0 - vUv.y);  // como el CSS: y hacia abajo
+  float a = haloAlpha(length((p - HALO_CENTER) / HALO_RADIUS)) * haloDim(uDim);
+  vec3 col = srgbToLinear(mix(INK, HALO, a));
+  if (uPost > 0.5) col = inverseAces(col) / vignette(vUv);
+  gl_FragColor = vec4(col, 1.0);
   #include <colorspace_fragment>
 }
 `;
