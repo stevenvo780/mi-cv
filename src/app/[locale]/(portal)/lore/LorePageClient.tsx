@@ -254,8 +254,8 @@ export default function LorePageClient({ locale }: LorePageClientProps) {
           <a href={homeHref} className="lore-home-link">
             ← {locale === 'es' ? 'Volver al inicio' : 'Back to home'}
           </a>
-          <a href={`/${locale}/compartir`} className="lore-share-link">
-            {locale === 'es' ? 'Tarjeta QR ↗' : 'QR card ↗'}
+          <a href={`/${locale}/compartir`} className="lore-share-link" title={locale === 'es' ? 'QR para mis sitios, CV, servicios, blog y catálogos' : 'QR codes for my sites, résumés, services, blog and catalogs'}>
+            {locale === 'es' ? 'Compartir con QR ↗' : 'Share with QR ↗'}
           </a>
           <p className="lore-foot-note">{t.footNote}</p>
           <p className="lore-foot-brand">

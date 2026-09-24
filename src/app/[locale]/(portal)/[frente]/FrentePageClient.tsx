@@ -193,8 +193,8 @@ export default function FrentePageClient({ locale, frenteId }: FrentePageClientP
           <a href={homeHref} className="fp-home-link">
             ← {locale === 'es' ? 'Volver al inicio' : 'Back to home'}
           </a>
-          <a href={`/${locale}/compartir`} className="fp-share-link">
-            {locale === 'es' ? 'Tarjeta QR ↗' : 'QR card ↗'}
+          <a href={`/${locale}/compartir`} className="fp-share-link" title={locale === 'es' ? 'QR para mis sitios, CV, servicios, blog y catálogos' : 'QR codes for my sites, résumés, services, blog and catalogs'}>
+            {locale === 'es' ? 'Compartir con QR ↗' : 'Share with QR ↗'}
           </a>
           <p className="fp-foot-brand">
             {locale === 'es' ? 'Mouseîon · por Steven Vallejo' : 'Mouseîon · by Steven Vallejo'}

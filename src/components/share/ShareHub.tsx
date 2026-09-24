@@ -5,6 +5,8 @@ import { QRCodeSVG } from 'qrcode.react';
 import { type Locale } from '@/lib/site';
 import { getShareDestinations, SHARE_COPY, type ShareDestination } from '@/lib/shareLinks';
 
+const GROUPS = ['main', 'fronts', 'catalogs', 'contact'] as const;
+
 function ScanCode({ destination, size, alt }: { destination: ShareDestination; size: number; alt: string }) {
   return (
     <div className="share-code" role="img" aria-label={`${alt} ${destination.label}`}>
@@ -26,20 +28,36 @@ export default function ShareHub({ locale }: { locale: Locale }) {
   const destinations = getShareDestinations(locale);
   const [selectedId, setSelectedId] = useState<ShareDestination['id']>('cv');
   const [copyState, setCopyState] = useState<'idle' | 'copied' | 'failed'>('idle');
+  const copyRequestRef = useRef(0);
+  const focusRequestRef = useRef(0);
   const dialogRef = useRef<HTMLDialogElement>(null);
-  const presentButtonRef = useRef<HTMLButtonElement>(null);
+  const modalTriggerRef = useRef<HTMLButtonElement>(null);
+  const optionsRef = useRef<HTMLDivElement>(null);
   const previewColumnRef = useRef<HTMLDivElement>(null);
   const previewRef = useRef<HTMLElement>(null);
   const selected = destinations.find((destination) => destination.id === selectedId) ?? destinations[0];
+  const groupedDestinations = GROUPS.map((group) => ({
+    group,
+    destinations: destinations.filter((destination) => destination.group === group),
+  }));
+
+  function openPresentation(event: React.MouseEvent<HTMLButtonElement>) {
+    modalTriggerRef.current = event.currentTarget;
+    dialogRef.current?.showModal();
+  }
 
   function selectDestination(id: ShareDestination['id']) {
+    copyRequestRef.current += 1;
+    const focusRequest = ++focusRequestRef.current;
+    const focusSource = document.activeElement;
     setSelectedId(id);
     setCopyState('idle');
     if (!window.matchMedia('(max-width: 900px)').matches) return;
 
-    // En una sola columna, el QR queda más abajo que las opciones. Llevamos también el foco
-    // al panel para que teclado y lector de pantalla sigan el contenido seleccionado.
+    // En una sola columna, el QR queda más abajo que las opciones. Saltamos al panel
+    // solo si el usuario no movió el foco antes del siguiente fotograma.
     requestAnimationFrame(() => {
+      if (focusRequestRef.current !== focusRequest || document.activeElement !== focusSource) return;
       previewRef.current?.focus({ preventScroll: true });
       previewColumnRef.current?.scrollIntoView({
         behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
@@ -48,12 +66,23 @@ export default function ShareHub({ locale }: { locale: Locale }) {
     });
   }
 
+  function chooseAnotherDestination() {
+    const selectedOption = optionsRef.current?.querySelector<HTMLButtonElement>('.share-option[aria-pressed="true"]');
+    selectedOption?.focus({ preventScroll: true });
+    selectedOption?.scrollIntoView({
+      behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth',
+      block: 'center',
+    });
+  }
+
   async function copyLink() {
+    const request = ++copyRequestRef.current;
+    const url = selected.url;
     try {
-      await navigator.clipboard.writeText(selected.url);
-      setCopyState('copied');
+      await navigator.clipboard.writeText(url);
+      if (copyRequestRef.current === request) setCopyState('copied');
     } catch {
-      setCopyState('failed');
+      if (copyRequestRef.current === request) setCopyState('failed');
     }
   }
 
@@ -68,25 +97,35 @@ export default function ShareHub({ locale }: { locale: Locale }) {
               <p>{copy.listHint}</p>
             </div>
           </div>
-          <div className="share-options" role="group" aria-label={copy.listTitle}>
-            {destinations.map((destination, index) => (
-              <button
-                type="button"
-                key={destination.id}
-                className="share-option"
-                data-tone={destination.tone}
-                aria-pressed={selected.id === destination.id}
-                aria-controls="share-qr-preview"
-                onClick={() => selectDestination(destination.id)}
-              >
-                <span className="share-option-index" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
-                <span className="share-option-copy">
-                  <span className="share-option-category">{destination.category}</span>
-                  <span className="share-option-title">{destination.label}</span>
-                  <span className="share-option-description">{destination.description}</span>
-                </span>
-                <span className="share-option-arrow" aria-hidden="true">↗</span>
-              </button>
+          <div className="share-options" id="share-options" ref={optionsRef}>
+            {groupedDestinations.map(({ group, destinations: groupDestinations }) => groupDestinations.length > 0 && (
+              <section className="share-option-group" key={group} aria-labelledby={`share-group-${group}`}>
+                <div className="share-option-group-heading">
+                  <h3 id={`share-group-${group}`}>{copy.groups[group]}</h3>
+                  <span className="share-option-group-count" aria-hidden="true">{String(groupDestinations.length).padStart(2, '0')}</span>
+                </div>
+                <div className="share-option-group-list">
+                  {groupDestinations.map((destination) => (
+                    <button
+                      type="button"
+                      key={destination.id}
+                      className="share-option"
+                      data-tone={destination.tone}
+                      aria-pressed={selected.id === destination.id}
+                      aria-controls="share-qr-preview"
+                      onClick={() => selectDestination(destination.id)}
+                    >
+                      <span className="share-option-index" aria-hidden="true">{String(destinations.indexOf(destination) + 1).padStart(2, '0')}</span>
+                      <span className="share-option-copy">
+                        <span className="share-option-category">{destination.category}</span>
+                        <span className="share-option-title">{destination.label}</span>
+                        <span className="share-option-description">{destination.description}</span>
+                      </span>
+                      <span className="share-option-arrow" aria-hidden="true">↗</span>
+                    </button>
+                  ))}
+                </div>
+              </section>
             ))}
           </div>
         </div>
@@ -99,6 +138,9 @@ export default function ShareHub({ locale }: { locale: Locale }) {
               <p>{copy.scan}</p>
             </div>
           </div>
+          <button type="button" className="share-choose-another" aria-controls="share-options" onClick={chooseAnotherDestination}>
+            <span aria-hidden="true">←</span> {copy.chooseAnother}
+          </button>
           <article
             className="share-preview"
             id="share-qr-preview"
@@ -113,14 +155,15 @@ export default function ShareHub({ locale }: { locale: Locale }) {
             </div>
             <div className="share-preview-body">
               <div className="share-preview-orbit" aria-hidden="true" />
-              <div className="share-code-frame">
-                <ScanCode destination={selected} size={320} alt={copy.qrAlt} />
-              </div>
+              <button type="button" className="share-code-trigger" aria-label={`${copy.present}: ${selected.label}`} onClick={openPresentation}>
+                <span className="share-code-frame"><ScanCode destination={selected} size={320} alt={copy.qrAlt} /></span>
+                <span className="share-code-trigger-hint" aria-hidden="true"><span>⛶</span> {copy.present}</span>
+              </button>
               <p className="share-preview-label" aria-live="polite">{selected.label}</p>
               <p className="share-preview-url" title={selected.url}>{selected.url}</p>
             </div>
             <div className="share-preview-actions">
-              <button type="button" className="share-action share-action-primary" onClick={() => dialogRef.current?.showModal()} ref={presentButtonRef}>
+              <button type="button" className="share-action share-action-primary" onClick={openPresentation}>
                 <span aria-hidden="true">⛶</span> {copy.present}
               </button>
               <div className="share-secondary-actions">
@@ -139,7 +182,7 @@ export default function ShareHub({ locale }: { locale: Locale }) {
         className="share-presentation"
         ref={dialogRef}
         aria-labelledby="share-presentation-title"
-        onClose={() => presentButtonRef.current?.focus()}
+        onClose={() => modalTriggerRef.current?.focus()}
       >
         <div className="share-presentation-inner">
           <div className="share-presentation-header">
@@ -152,7 +195,7 @@ export default function ShareHub({ locale }: { locale: Locale }) {
             <p className="share-presentation-eyebrow">{copy.scan}</p>
             <h2 id="share-presentation-title">{selected.label}</h2>
             <div className="share-presentation-code">
-              <ScanCode destination={selected} size={560} alt={copy.qrAlt} />
+              <ScanCode destination={selected} size={700} alt={copy.qrAlt} />
             </div>
             <p className="share-presentation-hint">{copy.presentationHint}</p>
             <p className="share-presentation-url">{selected.url}</p>
