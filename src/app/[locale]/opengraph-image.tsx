@@ -1,6 +1,19 @@
 import { ImageResponse } from 'next/og';
+import { LOCALES } from '@/lib/site';
+
+// Vive en [locale] y no en la raíz de app/ por dos motivos:
+// 1. `metadataBase` solo lo aporta el layout de [locale]; en la raíz no hay layout,
+//    y la URL de og:image se resolvía contra el origin de la petición (localhost en
+//    local, la URL que inyecte Vercel en producción), nunca contra SITE.
+// 2. El proxy redirige toda ruta sin prefijo de locale, así que /opengraph-image
+//    acababa en /en/opengraph-image, que no existía (404).
+// La Tarea 12 sustituye este contenido por el póster del grafo por locale.
 
 export const runtime = 'nodejs';
+
+export function generateStaticParams() {
+  return LOCALES.map((locale) => ({ locale }));
+}
 
 export const alt = 'Steven Vallejo · Mouseîon — Ingeniero de Software & Filósofo';
 export const size = { width: 1200, height: 630 };
