@@ -2,6 +2,28 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
+## Enmiendas del controlador (antes de ejecutar)
+
+> Mandan sobre el resto del documento: si un paso o un snippet las contradice, se sigue la enmienda. Salen del pre-flight del Plan 2 (`.superpowers/sdd/2026-09-23-home-grafo-plan-2/preflight.md`, hallazgos H1–H10, y los Rulings de su `progress.md`) y de la revisión final del Plan 1 (hallazgo I5).
+
+- **H1 (bloqueante): presupuesto de JS y puerta `GraphStageLazy`.**
+  - El presupuesto de ≤ 133 120 B gz es el JS de la ruta crítica: los scripts pedidos antes del evento `load`.
+  - `GraphStageLazy` pasa a ser una puerta mínima: sin `next/dynamic` en el render y sin importar `probe`, `quality`, `dispatch` ni `choreography`. Espera la primera interacción, o `requestIdleCallback` tras `load` (timeout 1.5 s, spec §4.4), y solo entonces hace `import('./GraphStage')`. El snippet de `GraphStageLazy.tsx` del Step 4 de la Tarea 4 queda sustituido por esta puerta.
+  - El chunk de `GraphStage` y el worker cuentan en el presupuesto del 3D (≤ 175 KB gz).
+  - El test de presupuesto de `e2e/home.spec.ts` pasa a contar solo los scripts pedidos antes de `load`: es la decisión que la spec §5.1 pedía traer a su tabla, y la tabla de §5 se actualiza en el mismo commit que cambie el test.
+  - Coste si es erróneo: JS diferido que Lighthouse todavía ve como TBT. La Tarea 6 lo mide.
+- **H2 (bloqueante): LCP.** El objetivo es LCP ≤ 2.5 s en laboratorio móvil (ruling de la Tarea 14 del Plan 1), no 1.8 s. Ya está corregido en las restricciones globales y en el Step 1 de la Tarea 6.
+- **H3: `aria-hidden`.** `.stage` conserva `aria-hidden="true"` (spec §4.8), porque todo lo interactivo (pausa, «Explorar en 3D», tooltip) se porta a `.home`. La Tarea 4 no lo quita.
+- **H4: `postprocessing`.** Sus exports (`EffectComposer`, `BloomEffect`…) los consume la Tarea 3 (`GraphScene.ts`), no la 4: si alguno cambia de nombre, lo adapta la Tarea 3.
+- **H5: selectores.** Todo selector nuevo de `home.css` cuelga de `.home`, como el resto del archivo, también los del Step 6 de la Tarea 4.
+- **H6: test de `dispatch`.** La Tarea 3 añade `tests/graph/runtime/dispatch.test.ts`, con una escena simulada y una aserción por cada variante de `MainToWorker`.
+- **H7: Turbopack.** La contingencia de Turbopack del Step 7 de la Tarea 4 ya no aplica: el build de producción es `next build --webpack` desde la Tarea 14 del Plan 1, y `new Worker(new URL(...), { type: 'module' })` debe compilar sin cambios.
+- **H8: worker huérfano.** En el `catch` de `start()` de `GraphStage.tsx`, `worker?.terminate()` antes de pasar al fallback.
+- **H9: atribución.** La línea `Co-Authored-By` de cada commit es la del modelo que lo escribe, no la literal de los snippets.
+- **H10: halo.** `.home .stage::before` gana una transición de opacidad de 0.6 s, para desvanecerse al ritmo del póster y del canvas.
+- **Orden y archivos reales.** La Tarea 4 no empieza hasta que el Plan 1 esté cerrado. Antes de aplicar los snippets de `Stage.tsx`, `home.css` y `e2e/home.spec.ts`, relee esos archivos y conserva lo que el Plan 1 cambió después de escribir este plan: el póster en archivo, las fuentes propias de la home, los scrims del texto pequeño y los e2e de la revisión final.
+- **I5: el póster sigue siendo `<img>`.** `Stage` (RSC) conserva `<img src={POSTER_ASSET} fetchPriority="low" decoding="async">` y monta la puerta `GraphStageLazy` a su lado. No vuelve el SVG inline (`POSTER_SVG` con `dangerouslySetInnerHTML`): inline viajaba dos veces en el HTML (+10.7 KB gz) y Lighthouse móvil bajaba a 97 / 2.57 s frente a 99 / 1.74 s (spec §5.2, commit 8d2d585). `POSTER_SVG` queda solo para la imagen OG. El snippet del Step 5 de la Tarea 4 ya está corregido.
+
 **Goal:** Montar sobre la home del Plan 1 la escena 3D del grafo (three.js en un Web Worker con OffscreenCanvas): nodos SDF iridiscentes, hubs de cristal, aristas Bézier con pulsos HDR y bloom. El grafo se reorganiza entre las 5 formas según el scroll, reacciona al puntero y al teclado, y puede pausarse. Todo sin tocar el LCP ni el TBT: el laboratorio sigue midiendo la ruta del póster.
 
 **Architecture:**
@@ -25,7 +47,7 @@
   |---|---|
   | JS del hilo principal en la home | ≤ 130 KB gz |
   | JS del worker y sus chunks | ≤ 175 KB gz |
-  | LCP | ≤ 1.8 s |
+  | LCP | ≤ 2.5 s en móvil (enmienda H2) |
   | TBT | ≤ 100 ms |
   | CLS | ≤ 0.02 |
   | Errores de consola | 0 |
@@ -1833,7 +1855,7 @@ Co-Authored-By: Claude Opus 5.5 (1M context) <noreply@anthropic.com>"
 **Files:**
 - Create: `src/graph/worker/graph.worker.ts`, `src/components/home/useSectionProgress.ts`, `src/components/graph/GraphStage.tsx`, `src/components/graph/GraphStageLazy.tsx`
 - Modify:
-  - `src/components/home/Stage.tsx` (monta la isla y quita `aria-hidden` del contenedor)
+  - `src/components/home/Stage.tsx` (conserva el póster `<img>` y `aria-hidden`, y monta la puerta `GraphStageLazy` al lado: enmiendas I5 y H3)
   - `src/components/home/Hero.tsx` (añade `data-section="hero"`)
   - `src/app/[locale]/(home)/page.tsx` (pasa `locale` y `t` a `Stage`)
   - `src/content/home.ts` (bloque `graph` en `HomeCopy` y en ES/EN)
@@ -1973,7 +1995,7 @@ export function useSectionProgress(onChange: (s: number) => void): () => void {
 
 - [ ] **Step 4: Isla `GraphStage`**
 
-`src/components/graph/GraphStageLazy.tsx`:
+`src/components/graph/GraphStageLazy.tsx` (sustituido por la puerta mínima de la enmienda H1: no uses este snippet tal cual):
 
 ```tsx
 'use client';
@@ -2336,14 +2358,21 @@ Si `react-hooks/set-state-in-effect` marca el `setPhase('reduced')`, no aplica: 
 ```tsx
 import GraphStageLazy from '@/components/graph/GraphStageLazy';
 import type { HomeCopy } from '@/content/home';
-import { POSTER_SVG } from '@/graph/generated/poster';
+import { POSTER_ASSET } from '@/graph/generated/stats';
 import type { Locale } from '@/lib/site';
 
-/** Escenario fijo durante todo el scroll: póster SVG (LCP-neutral) y, encima, la escena WebGL cuando procede. */
+/**
+ * Escenario fijo durante todo el scroll. El póster lo pinta el servidor como archivo con hash en /graph (caché
+ * immutable), no como SVG inline (enmienda I5, spec §5.2). Al lado va la puerta GraphStageLazy, que monta la
+ * escena WebGL encima cuando procede. `.stage` conserva aria-hidden (enmienda H3).
+ */
 export default function Stage({ locale, t }: { locale: Locale; t: HomeCopy }) {
   return (
-    <div className="stage" data-stage>
-      <div className="stage-poster" aria-hidden="true" dangerouslySetInnerHTML={{ __html: POSTER_SVG }} />
+    <div className="stage" data-stage aria-hidden="true">
+      <div className="stage-poster">
+        {/* eslint-disable-next-line @next/next/no-img-element -- SVG estático: next/image no aporta nada y añade JS */}
+        <img src={POSTER_ASSET} alt="" width={1600} height={1000} decoding="async" fetchPriority="low" />
+      </div>
       <GraphStageLazy locale={locale} t={t.graph} />
     </div>
   );
@@ -2673,7 +2702,7 @@ test('presupuesto del worker y sus chunks ≤ 175 KB gz', async ({ page, baseURL
 npm run build && npm run e2e
 ```
 
-Resultado esperado: pasan todos los proyectos. Los e2e del Plan 1 siguen verdes (sin `gl=force` el 3D no arranca en headless, así que el presupuesto de JS del hilo principal no cambia).
+Resultado esperado: pasan todos los proyectos, también los e2e del Plan 1. Que el 3D no arranque en headless sin `gl=force` no deja igual el presupuesto de JS: la puerta `GraphStageLazy` se descarga en toda carga de la home y cuenta en el presupuesto de la ruta crítica, que tiene muy poco margen (spec §5.1). Con la enmienda H1, el test de presupuesto cuenta los scripts pedidos antes de `load` y la puerta tiene que caber ahí. El chunk de `GraphStage` y el worker, que llegan tras la primera interacción o el idle, van al presupuesto del 3D (≤ 175 KB gz). Si la puerta no cabe, no se sube el límite: se para y se lleva la decisión a la tabla de §5, que decide Steven.
 - Mira con Read todas las capturas `3d-*.png`. Cada sección debe mostrar su forma: red, dos hemisferios, hélice, clusters, grafo atenuado en Prueba y lemniscata (∞) en Contacto.
 - Si una forma no se reconoce o se ve mal (nodos demasiado grandes o pequeños, aristas invisibles, texto sin contraste), ajusta los parámetros visuales de `SPRITE_PX`, `HUB_SCALE`, `SECTION_POSE` y los shaders, y repite.
 
@@ -2711,9 +2740,9 @@ cat /workspace/.scratch-steven-redesign/lh/summary.json
 Resultado esperado:
 - SEO, Accessibility y Best Practices = 100.
 - Performance ≥ 95 en móvil y ≥ 98 en escritorio.
-- LCP ≤ 1800 ms, TBT ≤ 100 ms, CLS ≤ 0.02.
+- LCP ≤ 2500 ms (enmienda H2), TBT ≤ 100 ms, CLS ≤ 0.02.
 
-Si algo baja respecto al Plan 1, la causa está en el JS nuevo del hilo principal (`GraphStage` y su chunk). Revisa que `GraphStageLazy` siga siendo `ssr: false` y que `GraphStage` no importe three ni `postprocessing` de forma estática.
+Si algo baja respecto al Plan 1, la causa está en el JS nuevo del hilo principal (`GraphStage` y su chunk). Revisa que `GraphStageLazy` siga siendo la puerta mínima de la enmienda H1 (sin `next/dynamic` en el render) y que `GraphStage` no importe three ni `postprocessing` de forma estática.
 
 - [ ] **Step 2: Revisión visual**
 
