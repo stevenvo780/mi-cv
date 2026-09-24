@@ -20,11 +20,7 @@ export function proxy(request: NextRequest) {
     return NextResponse.redirect(new URL(`/${DEFAULT_LOCALE}${pathname}`, request.url));
   }
 
-  // Temporal: el layout raíz aún lee x-locale. La Tarea 2 elimina esta cabecera.
-  const locale = LOCALES.find((l) => pathname === `/${l}` || pathname.startsWith(`/${l}/`))!;
-  const headers = new Headers(request.headers);
-  headers.set('x-locale', locale);
-  return NextResponse.next({ request: { headers } });
+  return NextResponse.next();
 }
 
 export const config = {

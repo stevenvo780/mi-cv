@@ -45,6 +45,7 @@ const securityHeaders = [
 const nextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
+  experimental: { globalNotFound: true },
   async headers() {
     return [{ source: '/:path*', headers: securityHeaders }];
   },

@@ -5,6 +5,12 @@ import FrentePageClient from './FrentePageClient';
 
 const VALID_FRENTES: FrenteId[] = ['filosofia', 'ciencias', 'informatica', 'enterprise'];
 
+export const dynamicParams = false;
+
+export function generateStaticParams() {
+  return VALID_FRENTES.map((frente) => ({ frente }));
+}
+
 export async function generateMetadata({
   params,
 }: {
