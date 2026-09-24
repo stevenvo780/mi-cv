@@ -77,11 +77,12 @@ describe('banda de catálogos en la home', () => {
   it.each(['es', 'en'] as const)('/%s: cada catálogo sale una sola vez, en su tarjeta grande, con cada ítem enlazado', async (locale) => {
     const page = await html(locale);
     expect(page.match(/class="cat reveal"/g)).toHaveLength(catalogos.length);
+    expect(page).not.toContain('class="front-cat"');
     for (const c of catalogos) {
       // Una sola tarjeta por producto: el catálogo ya no se repite en la rejilla de su frente.
       expect(page.match(new RegExp(`data-node="producto:${c.id}"`, 'g')), c.nombre).toHaveLength(1);
-      // Su frente lo enlaza desde la cabecera.
-      expect(page, c.nombre).toContain(`href="#catalogo-${c.id}"`);
+      expect(page, c.nombre).toContain(`id="catalogo-${c.id}"`);
+      expect(page, c.nombre).not.toContain(`href="#catalogo-${c.id}"`);
       for (const i of c.incluye) if (i.url) expect(page, nombreItem(i, locale)).toContain(`href="${i.url.replace(/&/g, '&amp;')}"`);
     }
   });

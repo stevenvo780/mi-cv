@@ -52,8 +52,6 @@ export interface HomeCopy {
     enter: string;
     /** Ítem sin enlace público (un repositorio privado). */
     private: string;
-    /** Enlace del frente a su catálogo, en la cabecera del frente. */
-    ofFront: string;
   };
   contact: { eyebrow: string; title: string; lead: string; email: string; whatsapp: string; story: string; social: string; ecosystem: string; foot: string };
   graph: { pause: string; explore: string; openHint: string; present: string; kinds: Record<NodeKind, string> };
@@ -126,7 +124,6 @@ export const HOME: Record<Locale, HomeCopy> = {
       label: (items, unit) => `Catálogo · ${items} ${unit}`,
       enter: 'Entrar al catálogo',
       private: 'privado',
-      ofFront: 'Su catálogo',
     },
     contact: {
       eyebrow: 'Contacto',
@@ -198,7 +195,6 @@ export const HOME: Record<Locale, HomeCopy> = {
       label: (items, unit) => `Catalog · ${items} ${unit}`,
       enter: 'Enter the catalog',
       private: 'private',
-      ofFront: 'Its catalog',
     },
     contact: {
       eyebrow: 'Contact',

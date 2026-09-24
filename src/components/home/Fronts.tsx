@@ -129,7 +129,6 @@ export default function Fronts({ locale, t }: { locale: Locale; t: HomeCopy }) {
           </article>
           {frenteOrder.map((fid) => {
             const meta = frentesMeta[fid];
-            const frontCatalogs = catalogos.filter((c) => c.frente === fid);
             return (
               <article key={fid} className="front reveal" data-front={fid} data-node={nodeId.frente(fid)} aria-labelledby={`front-${fid}`}>
                 <header className="front-head">
@@ -140,12 +139,6 @@ export default function Fronts({ locale, t }: { locale: Locale; t: HomeCopy }) {
                   <a className="front-link" href={`/${locale}/${fid}`}>
                     {f.openFront} →
                   </a>
-                  {/* El catálogo del frente va arriba, en la banda de catálogos: la cabecera del frente lo enlaza. */}
-                  {frontCatalogs.map((c) => (
-                    <a key={c.id} className="front-cat" href={`#${catalogAnchor(c.id)}`}>
-                      {t.catalogs.ofFront}: <strong>{c.nombre}</strong>
-                    </a>
-                  ))}
                   {/* Sitios del frente que no son productos (CV, blog, servicios): también forman parte del catálogo. */}
                   {frenteLinks[fid] ? (
                     <ul className="front-sites">

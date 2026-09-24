@@ -813,23 +813,6 @@
       position: static;
     }
   }
-  /* Enlace del frente a su catálogo, que va arriba en la banda de catálogos. */
-  .home .front-cat {
-    width: fit-content;
-    padding-block: 0.35rem;
-    font-size: 0.88rem;
-    color: var(--text-soft);
-    text-decoration: none;
-  }
-  .home .front-cat strong {
-    font-weight: 600;
-    color: var(--accent);
-  }
-  .home .front-cat:hover strong {
-    text-decoration: underline;
-    text-underline-offset: 0.2em;
-  }
-
   /* ── Catálogos: sitios que reúnen otros sitios (Paideía, Kósmos, Daímon) ──
      Cada uno es una tarjeta ancha con el color de su propia marca, un borde de luz que la recorre, hojas apiladas
      detrás (contiene más sitios) que se abren en abanico al pasar el puntero, el rótulo «Catálogo · N …» y la lista
