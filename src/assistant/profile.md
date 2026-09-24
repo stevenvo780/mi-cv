@@ -8,7 +8,7 @@ Datos al 2026-09-24. Compilado por scripts/build-assistant-profile.mts (repo mi-
 - Roles: Ingeniero de software y Filósofo.
 - Ubicación: Medellín, Antioquia, Colombia (GMT-5). Trabaja en remoto desde Colombia y presencial o híbrido en Medellín y el Valle de Aburrá.
 - WhatsApp: https://wa.me/573023954534 (+57 302 395 4534, mi asistente personal).
-- Correo: stevenvallejo780@gmail.com.
+- Correo: steven@stevenvallejo.com.
 - GitHub: https://github.com/stevenvo780 · LinkedIn: https://www.linkedin.com/in/steven-vallejo/ · Instagram: https://www.instagram.com/stev_vallejo/ · Medium: https://medium.com/@stevenvallejo780
 - Temas que domina: Node.js, NestJS, TypeScript, PostgreSQL, Docker, Linux, Google Cloud Platform, Cloud Run, APIs REST, Microservicios, Integración de LLMs, RAG, OCR, Automatización de procesos, React, Next.js, Arquitectura de software, Orquestación de agentes de IA, Lógica formal, Filosofía analítica, Epistemología, Filosofía de la mente, Filosofía de la inteligencia artificial, Ética, Argumentación, Lógica simbólica, Teoría de tipos, SAT solving, Sistemas complejos.
 

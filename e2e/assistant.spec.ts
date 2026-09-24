@@ -112,7 +112,7 @@ test('si se alcanza el límite (429), el asistente lo dice y ofrece WhatsApp y c
   const error = dialog.locator('.ask-error');
   await expect(error).toContainText('question limit');
   await expect(error.getByRole('link', { name: 'WhatsApp' })).toHaveAttribute('href', WHATSAPP);
-  await expect(error.getByRole('link', { name: 'Email' })).toHaveAttribute('href', 'mailto:stevenvallejo780@gmail.com');
+  await expect(error.getByRole('link', { name: 'Email' })).toHaveAttribute('href', 'mailto:steven@stevenvallejo.com');
 });
 
 test('desde el menú móvil: el menú se cierra, el panel se abre y al cerrarlo el foco vuelve a «Menú»', async ({ page }, info) => {

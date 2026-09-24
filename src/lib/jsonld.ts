@@ -1,3 +1,4 @@
+import { EMAIL } from '@/lib/ecosystem';
 import { productos } from '@/data/frentes';
 import expEs from '@/locales/es/common/experience.json';
 import { EMPRESAS } from '@/graph/relations';
@@ -44,6 +45,7 @@ export function buildHomeJsonLd(locale: Locale, facts: PersonFacts, dateModified
         '@id': person,
         name: 'Steven Vallejo Ortiz',
         url: SITE,
+        email: EMAIL,
         image: `${page}/opengraph-image`,
         jobTitle: facts.jobTitle,
         description: facts.description,

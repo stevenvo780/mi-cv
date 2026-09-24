@@ -6,7 +6,7 @@ export default function Contact({ locale, t }: { locale: Locale; t: HomeCopy }) 
   const c = t.contact;
   const links: { href: string; label: string; primary?: boolean }[] = [
     { href: 'https://wa.me/573023954534', label: c.whatsapp, primary: true },
-    { href: 'mailto:stevenvallejo780@gmail.com', label: c.email },
+    { href: 'mailto:steven@stevenvallejo.com', label: c.email },
   ];
   return (
     <section id="contacto" className="sec sec-contact" aria-labelledby="contacto-title" data-section="contacto">

@@ -406,7 +406,7 @@ export default function FrenteEnterprise() {
               : 'Full suite available · direct contact'}
           </span>
           <a
-            href="mailto:stevenvallejo780@gmail.com"
+            href="mailto:steven@stevenvallejo.com"
             style={{
               fontFamily: 'var(--font-mono)',
               fontSize: '0.78rem',
