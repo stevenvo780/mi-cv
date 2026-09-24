@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 import { PORTRAIT } from '@/app/components/Portrait/portraitData';
+import { OG_LOCALE, clampDescription, pageAlternates, toLocale } from '@/lib/site';
 import LorePageClient from './LorePageClient';
 
 export async function generateMetadata({
@@ -7,26 +8,16 @@ export async function generateMetadata({
 }: {
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
-  const { locale: raw } = await params;
-  const locale = raw === 'es' ? 'es' : 'en';
-  const t = PORTRAIT[locale];
-  const title = `${locale === 'es' ? 'Mi historia' : 'My story'} | Mouseîon · Steven Vallejo`;
-  const description = t.heroLead;
-
+  const locale = toLocale((await params).locale);
+  const title = locale === 'es' ? 'Mi historia' : 'My story';
+  const description = clampDescription(PORTRAIT[locale].heroLead);
+  const alternates = pageAlternates(locale, '/lore');
   return {
     title,
     description,
-    openGraph: {
-      title,
-      description,
-      type: 'website',
-      url: `https://stevenvallejo.com/${locale}/lore`,
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title,
-      description,
-    },
+    alternates,
+    openGraph: { title, description, type: 'profile', url: alternates.canonical, locale: OG_LOCALE[locale], siteName: 'Mouseîon' },
+    twitter: { card: 'summary_large_image', title, description },
   };
 }
 
@@ -36,6 +27,6 @@ export default async function LorePage({
   params: Promise<{ locale: string }>;
 }) {
   const { locale: raw } = await params;
-  const locale = raw === 'es' ? 'es' : 'en';
+  const locale = toLocale(raw);
   return <LorePageClient locale={locale} />;
 }

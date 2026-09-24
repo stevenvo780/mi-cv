@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { frentesMeta, type FrenteId } from '@/data/frentes';
+import { OG_LOCALE, clampDescription, pageAlternates, toLocale } from '@/lib/site';
 import FrentePageClient from './FrentePageClient';
 
 const VALID_FRENTES: FrenteId[] = ['filosofia', 'ciencias', 'informatica', 'enterprise'];
@@ -16,32 +17,19 @@ export async function generateMetadata({
 }: {
   params: Promise<{ locale: string; frente: string }>;
 }): Promise<Metadata> {
-  const { locale: raw, frente: rawFrente } = await params;
-  const locale = raw === 'es' ? 'es' : 'en';
-  const frente = rawFrente as FrenteId;
-
-  if (!VALID_FRENTES.includes(frente)) {
-    return {};
-  }
-
-  const meta = frentesMeta[frente];
-  const title = `${meta.nombre[locale]} | Mouseîon · Steven Vallejo`;
-  const description = meta.descripcion[locale];
-
+  const { locale: raw, frente } = await params;
+  const locale = toLocale(raw);
+  if (!VALID_FRENTES.includes(frente as FrenteId)) return {};
+  const meta = frentesMeta[frente as FrenteId];
+  const title = meta.nombre[locale];
+  const description = clampDescription(meta.descripcion[locale]);
+  const alternates = pageAlternates(locale, `/${frente}`);
   return {
     title,
     description,
-    openGraph: {
-      title,
-      description,
-      type: 'website',
-      url: `https://stevenvallejo.com/${locale}/${frente}`,
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title,
-      description,
-    },
+    alternates,
+    openGraph: { title, description, type: 'website', url: alternates.canonical, locale: OG_LOCALE[locale], siteName: 'Mouseîon' },
+    twitter: { card: 'summary_large_image', title, description },
   };
 }
 
@@ -51,7 +39,7 @@ export default async function FrentePage({
   params: Promise<{ locale: string; frente: string }>;
 }) {
   const { locale: raw, frente: rawFrente } = await params;
-  const locale = raw === 'es' ? 'es' : 'en';
+  const locale = toLocale(raw);
   const frente = rawFrente as FrenteId;
 
   if (!VALID_FRENTES.includes(frente)) {
