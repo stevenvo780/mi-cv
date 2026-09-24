@@ -170,6 +170,29 @@ test('la búsqueda filtra el portafolio', async ({ page }) => {
   await expect(page.getByText('Sin resultados. Prueba con otro término.')).toBeVisible();
 });
 
+// Por debajo de 900 px el índice es un <details> dentro de un <nav>; se cierra al elegir sección y con Escape.
+test('el menú móvil es un landmark y se cierra al elegir una sección o con Escape', async ({ page }, info) => {
+  test.skip(info.project.name === 'desktop', 'el menú <details> solo se muestra por debajo de 900 px');
+  await page.goto('/es');
+  const nav = page.getByRole('navigation', { name: 'Menú' });
+  await expect(nav).toHaveCount(1);
+  const menu = nav.locator('details.menu');
+  const open = page.locator('.home details.menu[open]');
+  await menu.locator('summary').click();
+  await expect(open).toHaveCount(1);
+  await menu.getByRole('link', { name: 'Frentes' }).click();
+  await expect(page).toHaveURL(/#frentes$/);
+  await expect(open).toHaveCount(0);
+  await menu.locator('summary').click();
+  await expect(open).toHaveCount(1);
+  await page.keyboard.press('Escape');
+  await expect(open).toHaveCount(0);
+  await expect(menu.locator('summary')).toBeFocused();
+  await menu.locator('summary').click();
+  await page.locator('#frentes h2').click();
+  await expect(open).toHaveCount(0);
+});
+
 test('las subpáginas siguen funcionando con su propio canonical', async ({ page }) => {
   for (const path of ['/es/filosofia', '/es/informatica', '/es/ciencias', '/es/enterprise', '/es/lore', '/en/lore']) {
     const errors = collectErrors(page);

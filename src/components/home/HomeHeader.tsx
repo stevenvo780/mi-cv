@@ -2,6 +2,14 @@ import BrandLogo from '@/app/components/BrandLogo';
 import type { HomeCopy } from '@/content/home';
 import type { Locale } from '@/lib/site';
 
+/**
+ * Cierra el menú móvil (<details>) al elegir una sección, al tocar fuera y con Escape (que devuelve el foco al
+ * botón si estaba dentro). Un <details> abierto sigue abierto tras navegar a un ancla y, como la barra es fija,
+ * se quedaba tapando la sección de destino. Script inline y delegado en document: no añade un chunk cliente al
+ * presupuesto de JS de la home (spec §5.1) y la CSP ya admite 'unsafe-inline'.
+ */
+const MENU_SCRIPT = `(()=>{const d=document,q='.home details.menu[open]';d.addEventListener('click',e=>{const m=d.querySelector(q),t=e.target;if(m&&t instanceof Element&&(t.closest('.home .menu a')||!m.contains(t)))m.open=false});d.addEventListener('keydown',e=>{const m=d.querySelector(q);if(e.key!=='Escape'||!m)return;const f=m.contains(d.activeElement);m.open=false;if(f)m.querySelector('summary').focus()})})()`;
+
 export default function HomeHeader({ locale, t }: { locale: Locale; t: HomeCopy }) {
   const other: Locale = locale === 'es' ? 'en' : 'es';
   const items: [string, string][] = [
@@ -38,11 +46,15 @@ export default function HomeHeader({ locale, t }: { locale: Locale; t: HomeCopy 
         <a className="btn btn-solid btn-sm" href="https://praxis.stevenvallejo.com" rel="noopener">
           {t.nav.hire}
         </a>
-        <details className="menu">
-          <summary>{t.nav.menu}</summary>
-          {list}
-        </details>
+        {/* Índice por debajo de 900 px, donde .topnav no se muestra: también es un landmark de navegación. */}
+        <nav className="menu-nav" aria-label={t.nav.menu}>
+          <details className="menu">
+            <summary>{t.nav.menu}</summary>
+            {list}
+          </details>
+        </nav>
       </div>
+      <script dangerouslySetInnerHTML={{ __html: MENU_SCRIPT }} />
     </header>
   );
 }

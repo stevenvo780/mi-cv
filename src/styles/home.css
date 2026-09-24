@@ -196,8 +196,10 @@
     text-decoration: none;
     color: var(--muted);
   }
-  .home .menu {
+  .home .menu-nav {
     display: none;
+  }
+  .home .menu {
     position: relative;
   }
   .home .menu summary {
@@ -232,7 +234,7 @@
     .home .topnav {
       display: none;
     }
-    .home .menu {
+    .home .menu-nav {
       display: block;
     }
   }
