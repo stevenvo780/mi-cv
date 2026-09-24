@@ -18,7 +18,8 @@
 # fonttools==4.63.0 brotli`; exporta PY=v/bin/python). Red para descargar los TTF de google/fonts.
 # Uso: bash scripts/subset-fonts.sh
 #
-# Fuentes de origen (licencia SIL OFL 1.1, sin nombres reservados; mismas versiones que sirve Google Fonts):
+# Fuentes de origen (licencia SIL OFL 1.1, sin nombres reservados, con su texto en src/app/fonts/OFL-<familia>.txt;
+# mismas versiones que sirve Google Fonts):
 #   - Cormorant Garamond 4.001, JetBrains Mono 2.211 e Inter 4.001: github.com/google/fonts en el commit fijado abajo.
 #   - Geist 1.800: node_modules/geist@1.7.2.
 # Todos los archivos conservan la tabla name entera (--name-IDs='*'; por defecto fontTools solo deja los IDs 0–6), así
@@ -40,6 +41,12 @@ curl -sSfL -o "$TMP/cgi.ttf" "$GF/cormorantgaramond/CormorantGaramond-Italic%5Bw
 curl -sSfL -o "$TMP/jb.ttf" "$GF/jetbrainsmono/JetBrainsMono%5Bwght%5D.ttf"
 curl -sSfL -o "$TMP/inter.ttf" "$GF/inter/Inter%5Bopsz,wght%5D.ttf"
 cp node_modules/geist/dist/fonts/geist-sans/Geist-Variable.ttf "$TMP/geist.ttf"
+
+# El texto de la licencia de cada familia va junto a sus archivos (OFL 1.1, condición 2), del mismo origen fijado.
+curl -sSfL -o "$OUT/OFL-cormorant-garamond.txt" "$GF/cormorantgaramond/OFL.txt"
+curl -sSfL -o "$OUT/OFL-jetbrains-mono.txt" "$GF/jetbrainsmono/OFL.txt"
+curl -sSfL -o "$OUT/OFL-inter.txt" "$GF/inter/OFL.txt"
+cp node_modules/geist/LICENSE.txt "$OUT/OFL-geist.txt"
 
 # ── 1. Home ──
 
