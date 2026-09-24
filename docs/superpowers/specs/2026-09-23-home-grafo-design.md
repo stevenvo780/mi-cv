@@ -3,8 +3,8 @@
 - Fecha: 2026-09-23
 - Rama: `redesign/home-grafo`
 - Estado: diseño aprobado por Steven (narrativa, sistema visual, arquitectura y plan de publicación)
-- Actualizada el 2026-09-24 con lo construido en el Plan 1: sus desviaciones están en §2 (fila 3), §3.2, §4.1, §4.3, §4.6, §4.7, §4.8 y §5.
-- **El Plan 1 no está cerrado.** En móvil no se cumplen ni el criterio de éxito 3 (Performance ≥ 95) ni el LCP ≤ 1.8 s de §5. Falta una decisión de Steven (§5.2); hasta entonces, la Tarea 14 sigue abierta.
+- Actualizada el 2026-09-24 con lo construido en el Plan 1: sus desviaciones están en §2 (fila 3), §3.2, §4.1, §4.2, §4.3, §4.4, §4.6, §4.7, §4.8 y §5.
+- Lighthouse en móvil cumple desde la ronda de fix 2 de la Tarea 14: Performance 99 en `/es` y `/en` y LCP de laboratorio de 1.7 a 1.9 s, con el objetivo de LCP en ≤ 2.5 s (§5.2).
 
 ## 1. Objetivo
 
@@ -19,7 +19,7 @@ Criterios de éxito:
    - Accesibilidad 100.
    - Best Practices 100.
    - Performance ≥ 95 en móvil y ≥ 98 en escritorio.
-   - **Estado al 2026-09-24:** se cumple todo menos Performance en móvil (85 en `/es` y 89 en `/en`). Está pendiente de decisión (§5.2).
+   - **Estado al 2026-09-24 (Tarea 14, ronda 2):** se cumple todo. Performance 99 en móvil (`/es` y `/en`) y 100 en escritorio; SEO, Accesibilidad y Best Practices, 100 (§5.2).
 4. **Cero regresiones** en `/[locale]/[frente]` y `/[locale]/lore`.
 
 Fuera de alcance:
@@ -85,11 +85,20 @@ Tokens de la home en `src/styles/home.css` (capa `@layer home`), en OKLCH con re
 
 ### 3.2 Tipografía (`next/font`)
 
-- **Display:** Cormorant Garamond, pesos 500/600, cursiva para acentos. Tracking negativo; `clamp()` hasta ~18vw en el nombre.
-- **UI y cuerpo:** Geist, variable, de `geist@1.7.2`. Se recorta a latín (`src/app/fonts/geist-sans-latin.woff2`, 33 KB frente a los 70 KB del archivo completo) con `pyftsubset` y se carga con `next/font/local` y `adjustFontFallback`. El comando está en `src/app/[locale]/layout.tsx`.
-- **Datos, indicador y etiquetas:** JetBrains Mono.
-- **Precarga:** solo Geist y Cormorant (las del h1 y el cuerpo). JetBrains Mono con `preload: false`.
-- **Una sola familia Cormorant:** next/font 16 publica el nombre real de la familia, así que dos instancias con la misma cara (peso y estilo) hacen que gane la última y el navegador baje una copia sin precargar del mismo archivo. Por eso hay dos instancias sin caras en común: la recta (400–700, un único archivo variable, precargada, `--font-display`) y la cursiva (sin precarga, `--font-cormorant`, que usa el portal). Lo comprueba un e2e.
+- **Display:** Cormorant Garamond, pesos 400/500, cursiva 400 para acentos (epígrafe). Tracking negativo; `clamp()` hasta ~18vw en el nombre.
+- **UI y cuerpo:** Geist (de `geist@1.7.2`), pesos 400 a 600.
+- **Datos, indicador y etiquetas:** JetBrains Mono, pesos 400/500.
+- **Subconjuntos propios de la home** (`src/app/[locale]/(home)/fonts.ts`, con `next/font/local`): las mismas familias OFL, auto-alojadas, con solo los pesos y los caracteres que pinta la home. Son 58 KB en cinco archivos frente a los 184 KB que bajaba con las de Google:
+  - `cormorant-hero.woff2`: el nombre del h1, que es el elemento LCP. Solo sus 16 caracteres, en Cormorant 500 estático: 2.1 KB. **Es la única fuente precargada.**
+  - `cormorant-home.woff2` (400–500 variable, más `lnum`/`tnum` para las cifras) y `cormorant-home-italic.woff2` (400).
+  - `geist-home.woff2` (400–600 variable) y `jetbrains-home.woff2` (400–500 variable).
+  - Ninguno se precarga salvo el del h1. Todos van con `font-display: swap`. Se descartó `optional`: con fuentes sin precarga, en una primera visita con red normal la home se quedaría con las de respaldo.
+  - Las pilas de `home.css` no nombran las familias de Google del layout raíz: si lo hicieran, el navegador las descargaría como respaldo mientras cargan estas.
+  - `scripts/subset-fonts.sh` regenera los cinco archivos con `pyftsubset`, desde orígenes fijados (commit de google/fonts y `geist@1.7.2`) y con salida reproducible byte a byte. Si el contenido trae un carácter nuevo, se añade ahí.
+  - **Paridad de glifos con la versión anterior** (comprobada con CDP): `ḗ` no existe en Cormorant ni en Geist, y `↗` no existe en Geist, así que las pinta una fuente del sistema, igual que antes. `→` tampoco está en el subconjunto mono, porque el subconjunto *latin* de Google no la traía.
+  - Tests: el vitest `tests/content/fonts.test.ts` comprueba que el subconjunto del h1 cubre el nombre y pesa ≤ 6 KB. El e2e comprueba que la home descarga exactamente estos cinco archivos, que solo precarga el del h1 y que cada carácter que pinta tiene glifo en el subconjunto de su familia.
+- **Layout raíz (portal y 404 de `[locale]`):** conserva Geist recortado a latín (`src/app/fonts/geist-sans-latin.woff2`; el comando está en `src/app/[locale]/layout.tsx`), Cormorant, JetBrains Mono e Inter de `next/font/google`, **todas sin precarga**. Una precarga en el layout raíz se descargaría también en la home. El portal pierde la precarga de Cormorant y deja de bajar el Geist que se le precargaba sin usarlo.
+- **Una sola familia Cormorant en el layout raíz:** next/font 16 publica el nombre real de la familia, así que dos instancias con la misma cara (peso y estilo) hacen que gane la última y el navegador baje una copia del mismo archivo con otra URL. Por eso hay dos instancias sin caras en común: la recta (400–700, un único archivo variable, `--font-display`) y la cursiva (`--font-cormorant`, que usa el portal).
 
 ### 3.3 Materiales del grafo
 
@@ -172,7 +181,7 @@ Tokens de la home en `src/styles/home.css` (capa `@layer home`), en OKLCH con re
   - **Person** (`#person`):
     - `jobTitle`, `alumniOf` (Universidad de Antioquia), `worksFor` (Humanizar), `knowsAbout`.
     - `sameAs`: GitHub `https://github.com/stevenvo780`, LinkedIn `https://www.linkedin.com/in/steven-vallejo/`, Instagram.
-  - **ItemList** de productos con URL.
+  - **ItemList** de productos con URL: cada elemento lleva nombre y URL. La descripción ya está en la tarjeta del producto, y el bloque viaja dos veces en el HTML (marcado y payload RSC).
   - Se escapa `<` en el JSON serializado.
 - **Sitemap:** solo `/es`, `/en`, `/{locale}/lore` y `/{locale}/{frente}`, con `alternates.languages` y `lastModified` estable (fecha de build de los datos). Sin `/` ni dominios externos.
 - **Robots:** sin el sitemap de `humanizar.tech`. Se borra `next-sitemap.config.js` y la dependencia.
@@ -205,9 +214,10 @@ Tokens de la home en `src/styles/home.css` (capa `@layer home`), en OKLCH con re
 - **Salidas:**
   - `public/graph/graph.<hash>.bin` (formato GRF1, `<hash>` = 10 hex del SHA-256 de binario y metadatos): cabecera de 16 bytes (magia, N, M, nº de layouts), Float32 × 5 layouts × N × 3, índices de aristas Uint16, y Uint8 para kind, frente y peso de cada nodo y rel y peso de cada arista. El binario no guarda puntos de control.
   - `public/graph/graph.<hash>.json`: ids, kind, etiquetas es/en, frente, URLs, años (`year`, `month`, `yearEnd`) y rol.
-  - Con el hash en el nombre, `/graph/*` se sirve con caché `immutable` y cada build borra los artefactos viejos.
-  - `src/graph/generated/poster.ts`: SVG inline del frame 0 de L0 con la cámara inicial.
-  - `src/graph/generated/stats.ts`: `GRAPH_STATS` (nº de nodos y aristas), `GRAPH_ASSET` (rutas `bin` y `meta` del artefacto con hash) y `DATA_DATE` (fecha del último commit de los datos).
+  - Con el hash en el nombre, `/graph/*` se sirve con caché `immutable` y cada build borra los artefactos viejos (también los pósters).
+  - `public/graph/poster.<hash>.svg` (`<hash>` = 10 hex del SHA-256 del SVG): el póster, que es el frame 0 de L0 con la cámara inicial. La home lo carga como archivo (§4.4).
+  - `src/graph/generated/poster.ts`: el mismo SVG como cadena (`POSTER_SVG`), solo para la imagen OG que se genera en build.
+  - `src/graph/generated/stats.ts`: `GRAPH_STATS` (nº de nodos y aristas), `GRAPH_ASSET` (rutas `bin` y `meta` del artefacto con hash), `POSTER_ASSET` (ruta del póster) y `DATA_DATE` (fecha del último commit de los datos).
 - **Determinismo:** misma entrada ⇒ mismos bytes (se verifica con test).
 - **Presupuestos:** datos ≤ 60 KB gz; póster ≤ 12 KB gz.
 
@@ -218,7 +228,7 @@ Tokens de la home en `src/styles/home.css` (capa `@layer home`), en OKLCH con re
   - Eventos emitidos: `ready`, `hover {id, x, y}`, `tier`.
 - **`src/graph/worker/graph.worker.ts`:** recibe un `OffscreenCanvas` transferido y reenvía mensajes a `GraphScene`. Sin SharedArrayBuffer.
 - **Isla cliente `src/components/graph/GraphStage.tsx`** (cargada con `dynamic(..., {ssr: false})` y renderizada sobre el póster SSR):
-  1. Muestra el póster SVG inline (lo pinta el servidor; no es candidato a LCP).
+  1. Muestra el póster: `<img src={POSTER_ASSET} fetchpriority="low" decoding="async">` con `object-fit: cover`, que equivale al `xMidYMid slice` del SVG. Lo pinta el servidor. No va inline porque inline entraba dos veces en el HTML (marcado y payload RSC, ~10 KB gz). Chrome no lo toma como candidato a LCP porque cubre todo el viewport: el LCP sigue siendo el nombre del h1, y lo comprueba un e2e. Frente a `<svg><use href="…#p">` midió igual (§5.2), y `<img>` no depende de que el navegador resuelva degradados de un documento externo.
   2. Ejecuta la sonda de GPU `src/graph/probe.ts`. Devuelve falso si:
      - `reduced-motion`;
      - `saveData`;
@@ -257,7 +267,10 @@ Tokens de la home en `src/styles/home.css` (capa `@layer home`), en OKLCH con re
 
 ```
 src/app/[locale]/layout.tsx            html/body, fonts, metadata base, static params
-src/app/[locale]/(home)/page.tsx       RSC: compone las secciones, JSON-LD (grupo (home), con home.css)
+src/app/[locale]/(home)/layout.tsx     home.css y variables de las fuentes de la home
+src/app/[locale]/(home)/fonts.ts       subconjuntos de fuente de la home (next/font/local; §3.2)
+src/app/[locale]/(home)/page.tsx       RSC: compone las secciones, JSON-LD (grupo (home))
+src/app/fonts/*.woff2                  Geist recortado del layout raíz y subconjuntos de la home
 src/app/[locale]/(portal)/...          frentes y lore (grupo (portal), con bootstrap y brand.css)
 src/app/[locale]/opengraph-image.tsx   OG por locale
 src/components/home/*.tsx              HomeHeader, Stage, Hero, Method, Path, Fronts, Proof, Contact, HomeFooter, SectionHead, ProductSearch (cliente); MotionToggle (cliente) y useSectionProgress llegan con el Plan 2
@@ -272,6 +285,7 @@ src/content/proof.ts                   cifras de Prueba derivadas de los datos (
 src/content/timeline.ts                línea de tiempo canónica de Trayectoria
 src/styles/home.css
 scripts/build-graph.mts
+scripts/subset-fonts.sh                regenera los subconjuntos de fuente de la home
 tests/graph/*.test.ts                  vitest
 e2e/home.spec.ts                       Playwright
 ```
@@ -293,49 +307,61 @@ e2e/home.spec.ts                       Playwright
 
 | Métrica | Límite |
 |---|---|
-| JS en el hilo principal de la home | ≤ 130 KB gz = 133 120 B (antes ~200 KB). En la Tarea 14, 132 505 B con webpack (§4.1): margen de 615 B (§5.1) |
+| JS en el hilo principal de la home | ≤ 130 KB gz = 133 120 B (antes ~200 KB). Tras la ronda 2 de la Tarea 14, 132 501 B con webpack (§4.1): margen de 619 B (§5.1) |
 | Worker | ≤ 175 KB gz |
 | Datos del grafo | ≤ 60 KB gz |
-| LCP | ≤ 1.8 s (en móvil no se cumple: §5.2) |
+| LCP | ≤ 2.5 s en laboratorio móvil (Lighthouse, mediana de 5). Antes decía 1.8 s, que era una estimación de la investigación y no un requisito de Steven. Medido: 1.7–1.9 s en móvil y 0.5–0.6 s en escritorio (§5.2) |
 | TBT | ≤ 100 ms |
 | CLS | ≤ 0.02 |
 | Errores de consola | 0 |
 | Violaciones de CSP | 0 |
 
 - La home no usa `next/link`, y tampoco el 404 de `[locale]`, que viaja en el árbol RSC de cada página: su módulo cliente cuesta ~3.5 KB gz.
+- Peso de la home en `/es` tras la ronda 2 de la Tarea 14: HTML de 31.8 KB gz (antes 43.9), fuentes de 58 KB (antes 184) y 251 KB transferidos en total. Todo lo que se descarga antes del LCP observado cuenta en el LCP simulado (§5.2).
 
 ### 5.1 Margen del presupuesto de JS
 
-- **Medido en la Tarea 14** (gzip nivel 6 de cada script, igual que el e2e): 132 505 B de 133 120 B. Quedan **615 B, el 0.46 %**.
-- **El framework ocupa el 98.3 %:** el runtime de Next, React DOM, el runtime de webpack y `main-app` suman 130 862 B. El código propio de la home son 1 643 B: el chunk del layout de `[locale]` (cargador de GA y objetos de `next/font`) y el de la página (`ProductSearch`). No queda código propio cuyo recorte dé un margen real.
+- **Medido en la Tarea 14, ronda 2** (gzip nivel 6 de cada script, igual que el e2e): 132 501 B de 133 120 B. Quedan **619 B, el 0.47 %**. En la ronda 1 eran 132 505 B.
+- **El framework ocupa el 98.8 %:** el runtime de Next, React DOM, el runtime de webpack y `main-app` suman 130 865 B. El código propio de la home son 1 636 B: el chunk del layout de `[locale]` (cargador de GA y objetos de `next/font` del layout raíz, 941 B) y el de la página (`ProductSearch`, 695 B). No queda código propio cuyo recorte dé un margen real.
+- **Ruido de 2 a 3 B por build:** el runtime de webpack lista los ids de los chunks que solo llevan CSS, y esos ids cambian al añadir o quitar módulos. Las fuentes de la home añadieron uno y el runtime creció 3 B. `ProductSearch` sin `useId` ni input controlado compensó 6 B.
 - **No hay otro bundler de reserva:** con Turbopack, solo el framework ya pesa 134 143 B (§4.1).
 - **Reglas mientras el margen siga así:**
   - Cualquier cambio que añada código cliente a la home, o que suba `next`, `react` o `react-dom`, puede pasarse del límite aunque no haya una regresión propia. Antes de fusionarlo, se vuelve a medir con `npm run build && npm run e2e`. El test imprime el total y el margen.
   - Si el test falla, se recorta o se aplaza el código cliente nuevo. El límite no se sube en el test: cambiarlo lo decide Steven, y se cambia en esta tabla.
   - El Plan 2 monta en la home `GraphStageLazy` (`next/dynamic` con `ssr: false`). Su chunk y el de `GraphStage` se descargan en el hilo principal tras la hidratación, aunque el 3D no llegue a arrancar. Por eso cuentan en este presupuesto, y con 615 B es muy probable que no quepan. No se ha medido: el Plan 2 aún no está implementado. El Plan 2 tiene que resolverlo, o traer la decisión a esta tabla, antes de montar la isla.
 
-### 5.2 Lighthouse en móvil: sin cumplir y pendiente de decisión
+### 5.2 Lighthouse en móvil: resuelto en la Tarea 14 (ronda 2)
 
-**Medido en la Tarea 14** (2026-09-24, `npm run lighthouse`, mediana de 5 corridas, en un host con carga media de 65 a 97 sobre 32 núcleos):
-- SEO, Accesibilidad y Best Practices = 100 en las cuatro combinaciones.
-- Escritorio cumple todo: Performance 100, LCP de 0.63 s (`/es`) y 0.75 s (`/en`), TBT 0 y CLS 0.
-- Móvil **no** cumple ni Performance ≥ 95 (§1, criterio 3) ni LCP ≤ 1.8 s: `/es` da 85 y 3.58 s, y `/en` da 89 y 3.48 s. CLS 0. El TBT (199 ms en `/es`, 104 ms en `/en`) sube y baja con la carga del host: en otras tandas quedó entre 54 y 95 ms.
+**Resultado final** (2026-09-24, `npm run lighthouse`, mediana de 5 corridas, host con carga media de 58 a 71 sobre 32 núcleos):
 
-**La causa no es el host:** es el peso de la página. Lo muestran las pruebas de la ronda de fix 1 de la Tarea 14 (`/es`, 3 corridas por caso):
-- El LCP de laboratorio lo simula Lantern (RTT de 150 ms, 1.6 Mbps y CPU ×4) a partir de la carga real, y cuenta toda petición que termine antes del LCP observado. El LCP observado es el `span.hero-last` del h1. En local todas las peticiones terminan antes que él: en la tanda final, el último byte llega a los 231 ms y el LCP a los 258 ms.
-  - Entran el HTML (45 KB), el CSS (8 KB), el JS (139 KB transferidos) y las cinco fuentes (189 KB).
-- Sin ralentización de CPU (`--throttling.cpuSlowdownMultiplier=1`), la home actual da un LCP de 2.88 a 3.36 s y una Performance de 90 a 94. Ni sin CPU lenta llega al objetivo.
-- Sin ninguna fuente web, la Performance sube a 98–99 y el LCP queda en 2.22–2.31 s.
-- Sin fuentes y sin ralentización de CPU, el LCP da 1.82–2.17 s (mediana de 2.14 s). Ninguna corrida bajó de 1.8 s.
-- **Conclusión:**
-  - Las fuentes del diseño bajan la Performance de ~98 a 85–89.
-  - El LCP ≤ 1.8 s no se alcanza ni sin fuentes: el JS del App Router (§5.1) y el HTML con el payload RSC bastan para pasarlo.
+| | Performance | LCP | TBT | CLS | A11y / BP / SEO |
+|---|---|---|---|---|---|
+| `/es` móvil | 99 | 1.81 s | 73 ms | 0.0002 | 100 / 100 / 100 |
+| `/en` móvil | 99 | 1.74 s | 67 ms | 0.0001 | 100 / 100 / 100 |
+| `/es` escritorio | 100 | 0.56 s | 0 ms | 0.0001 | 100 / 100 / 100 |
+| `/en` escritorio | 100 | 0.56 s | 0 ms | 0.0000 | 100 / 100 / 100 |
 
-**Decisión pendiente de Steven.** Sin ella, la Tarea 14 y el Plan 1 siguen abiertos. Opciones:
-- **(a)** Medir el LCP móvil en campo con Vercel Speed Insights y dejar el laboratorio móvil como referencia. Cambia el criterio 3 y el LCP de esta tabla; no toca código.
-- **(b)** Auto-alojar y recortar todas las fuentes, o quitar alguna del diseño. Es la vía hacia Performance ≥ 95: sin ninguna fuente se midió 98–99, y cuánto se acerque dependerá de los KB que queden. No lleva el LCP a ≤ 1.8 s.
-- **(c)** Activar `experimental.inlineCss`. Se probó en dos variantes (2 y 3 corridas) y dio 89–94 y un LCP de 2.9 a 3.6 s, así que por sí sola no cumple. Además es global: el HTML de `/es/lore` pasa de 8.7 a 84.9 KB gz.
-- **(d)** Cambiar a una arquitectura de hidratación que saque el JS del framework de la carga inicial. Es la única que ataca el LCP ≤ 1.8 s, pero cambia §4.1 y §4.4. Sin medir.
+- Una segunda tanda completa dio lo mismo: 99 / 1.74 s / 56 ms en `/es` y 99 / 1.91 s / 42 ms en `/en`, con escritorio en 100.
+- En las 20 corridas de móvil de las dos tandas, la peor Performance fue 97 y el peor LCP, 2.51 s.
+- Antes de la ronda 2 era 85 / 3.58 s en `/es` y 89 / 3.48 s en `/en`. En un A/B intercalado con la misma carga del host, la versión anterior dio 89–93 y 3.46 s.
+
+**Cómo calcula Lighthouse el LCP de móvil.** Lantern simula la carga (RTT de 150 ms, 1.6 Mbps, CPU ×4) a partir de la real y cuenta toda petición que termine antes del LCP observado. En local, el LCP observado llega a los 100–260 ms y para entonces ya se ha descargado casi todo, así que el LCP simulado depende del peso total de la página. El elemento LCP es `span.hero-last` (el apellido en el h1).
+
+**Qué se hizo** (A/B intercalados en móvil, solo la categoría Performance):
+1. **Fuentes** (§3.2): 58 KB en cinco subconjuntos propios frente a 184 KB de Google, con el nombre del h1 como única precarga (2.1 KB). Performance pasó de 90 a 95 y el LCP de 3.44 a 2.61 s (3 + 3 corridas).
+2. **Póster en archivo aparte** (§4.3 y §4.4): el HTML bajó de 43.9 a 33.2 KB gz. Así sale de la tercera ronda de TCP del modelo de Lantern, y el FCP simulado baja de 1.67 a 1.07 s. Con el póster inline se midió 97 / 2.57 s; con `<svg><use>`, 100 / 1.71 s; con `<img>`, 99 / 1.74 s (4 + 4 + 4). En una segunda tanda de 5 + 5 empataron: 99 / 1.85 s frente a 99 / 1.81 s en `/es`, y 99 / 1.92 s frente a 99 / 1.97 s en `/en`. Se eligió `<img>`, con mejor mediana conjunta de LCP en `/es` (1.74 s frente a 1.81 s) y sin la dependencia de los degradados externos.
+3. **JSON-LD** (§4.2): el ItemList ya no repite las descripciones (−2.6 KB gz de HTML). El HTML de `/es` queda en 31.8 KB gz.
+
+**Qué se midió y no se aplicó:**
+- **CSS incrustado** (`home.css` en un `<style>` del layout (home)): el `<style>` también va dos veces (marcado y payload RSC), y el HTML sube a 39.9 KB gz. Además siguen dos hojas en la ruta crítica: la del layout raíz y la del `@font-face` de la home. Midió igual: 100 / 1.81 s frente a 100 / 1.81 s (4 + 4).
+- **`data-search` de las tarjetas** (3.7 KB gz entre sus dos copias): quitarlo obliga al cliente a reconstruir el texto de búsqueda, y el JS no puede subir (§5.1).
+- **GA:** en 62 corridas no hubo ninguna petición a gtag. La traza de Lighthouse termina hacia los 2.6 s y el respaldo de §4.7 salta 5 s después de `load`. Se mantiene.
+
+**Límites que quedan:**
+- **FCP bimodal:** las cuatro fuentes sin precarga tienen prioridad VeryHigh. Si terminan unos milisegundos antes del primer pintado observado, Lantern las mete en el grafo del FCP y da 1.67 s. Si terminan justo después, da 1.06 s. Es una carrera en local que el código no controla sin precargarlas, y mueve la Performance en torno a un punto (97–100).
+- **CLS de 0.0001–0.0002:** al llegar Geist sin precarga, el botón "Mi historia" se mueve unos píxeles, porque el ancho de "Contratar servicios" cambia respecto al de su respaldo ajustado. Lighthouse lo muestra como 0.
+- **TBT:** de 42 a 73 ms en las medianas de las dos tandas, y hasta 99 ms en alguna corrida. Depende de la carga del host: en la ronda 1 llegó a 199 ms.
+- **Margen de JS para el Plan 2:** 619 B. La isla del grafo sigue sin caber (§5.1).
 
 ## 6. Pruebas
 
@@ -353,7 +379,8 @@ e2e/home.spec.ts                       Playwright
      - canonical y hreflang con www;
      - JSON-LD parseable con los tipos esperados;
      - cero errores de consola;
-     - póster presente;
+     - póster cargado desde su archivo con hash, y el LCP en el h1;
+     - fuentes: solo los subconjuntos de la home, una precarga (la del h1) y cada carácter con glifo en su familia;
      - botón de pausa operable;
      - navegación por teclado a nodos;
      - enlaces internos 200.
@@ -381,3 +408,5 @@ e2e/home.spec.ts                       Playwright
 | Presupuesto de JS de la home sin margen (615 B, §5.1) | El e2e lo mide en cada build y se vuelve a medir antes de fusionar. El Plan 2 resuelve el chunk de `GraphStage` antes de montarlo en la home. |
 | El 3D no aparece en Lighthouse | Es intencional: el laboratorio mide la ruta del póster. El 3D se valida con RUM (Vercel Speed Insights) y con pruebas manuales en GPU real. |
 | Disco raíz del host lleno | Todo lo pesado va a `/workspace`. |
+| Contenido nuevo con un carácter que no está en los subconjuntos de fuente de la home | El e2e de glifos falla y nombra el archivo y el carácter. Se añade en `scripts/subset-fonts.sh` y se regenera (hace falta Python con fonttools y brotli). |
+| Google Fonts responde a veces con URLs sin extensión (`/l/font?kit=…`) para Cormorant pedida con pesos sueltos, y `next/font` 16.3.6 aborta el build (`Cannot read properties of null (reading '1')`) | Se vio 2 veces en unos 15 builds, y 2 de 48 peticiones a mano. Reintentar el build. Arreglo posible, no aplicado porque cambia las caras que declara el portal: pedir la Cormorant del layout raíz con `weight: 'variable'`. |
