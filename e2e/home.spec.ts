@@ -36,6 +36,7 @@ for (const locale of ['es', 'en'] as const) {
       await expect(page.locator('link[rel="alternate"][hreflang="es"]')).toHaveAttribute('href', `${SITE}/es`);
       await expect(page.locator('link[rel="alternate"][hreflang="en"]')).toHaveAttribute('href', `${SITE}/en`);
       await expect(page.locator('link[rel="alternate"][hreflang="x-default"]')).toHaveAttribute('href', `${SITE}/en`);
+      await expect(page.locator('meta[name="theme-color"]')).toHaveAttribute('content', '#05090b');
       await expect(page.locator('script[type="application/ld+json"]')).toHaveCount(1);
       const ld = JSON.parse((await page.locator('script[type="application/ld+json"]').textContent()) ?? '{}');
       expect(ld['@graph'].map((n: { '@type': string }) => n['@type'])).toEqual(['WebSite', 'ProfilePage', 'Person', 'ItemList']);
@@ -207,6 +208,8 @@ test('las subpáginas siguen funcionando con su propio canonical', async ({ page
     expect(res!.status(), path).toBe(200);
     await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', `${SITE}${path}`);
     expect(await page.locator('meta[property="og:image"]').count(), path).toBeGreaterThan(0);
+    // theme-color del portal (#0b1417, su fondo), no el de la home.
+    await expect(page.locator('meta[name="theme-color"]')).toHaveAttribute('content', '#0b1417');
     expect(errors, path).toEqual([]);
   }
 });

@@ -84,10 +84,10 @@ export const metadata: Metadata = {
   formatDetection: { email: false, address: false, telephone: false },
 };
 
+// theme-color va en cada grupo, con el fondo de su página: (home)/layout.tsx y (portal)/layout.tsx.
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
-  themeColor: '#05090b',
   colorScheme: 'dark',
 };
 
