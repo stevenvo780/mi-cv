@@ -1,11 +1,11 @@
 import { ImageResponse } from 'next/og';
 import { HOME } from '@/content/home';
 import { POSTER_SVG } from '@/graph/generated/poster';
-import { LOCALES, toLocale } from '@/lib/site';
+import { LOCALES, OG_IMAGE_ALT, toLocale } from '@/lib/site';
 
 export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';
-export const alt = 'Steven Vallejo Ortiz — Mouseîon';
+export const alt = OG_IMAGE_ALT;
 
 export function generateStaticParams() {
   return LOCALES.map((locale) => ({ locale }));

@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { frentesMeta, type FrenteId } from '@/data/frentes';
-import { OG_LOCALE, clampDescription, localeUrl, pageAlternates, toLocale } from '@/lib/site';
+import { OG_LOCALE, clampDescription, ogImage, pageAlternates, shareTitle, toLocale } from '@/lib/site';
 import FrentePageClient from './FrentePageClient';
 
 const VALID_FRENTES: FrenteId[] = ['filosofia', 'ciencias', 'informatica', 'enterprise'];
@@ -24,22 +24,22 @@ export async function generateMetadata({
   const title = meta.nombre[locale];
   const description = clampDescription(meta.descripcion[locale]);
   const alternates = pageAlternates(locale, `/${frente}`);
-  const ogImage = `${localeUrl(locale)}/opengraph-image`;
+  const image = ogImage(locale);
   return {
     title,
     description,
     alternates,
     openGraph: {
-      title,
+      title: shareTitle(title),
       description,
       type: 'website',
       url: alternates.canonical,
       locale: OG_LOCALE[locale],
       alternateLocale: OG_LOCALE[locale === 'es' ? 'en' : 'es'],
       siteName: 'Mouseîon',
-      images: [{ url: ogImage, width: 1200, height: 630 }],
+      images: [image],
     },
-    twitter: { card: 'summary_large_image', title, description, images: [ogImage] },
+    twitter: { card: 'summary_large_image', title: shareTitle(title), description, images: [{ url: image.url, alt: image.alt }] },
   };
 }
 

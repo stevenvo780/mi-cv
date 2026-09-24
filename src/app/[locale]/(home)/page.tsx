@@ -11,7 +11,7 @@ import Stage from '@/components/home/Stage';
 import { HOME } from '@/content/home';
 import { DATA_DATE } from '@/graph/generated/stats';
 import { buildHomeJsonLd, serializeJsonLd } from '@/lib/jsonld';
-import { OG_LOCALE, localeUrl, pageAlternates, toLocale } from '@/lib/site';
+import { OG_LOCALE, ogImage, pageAlternates, toLocale } from '@/lib/site';
 
 export const dynamic = 'error';
 
@@ -27,7 +27,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   const locale = toLocale((await params).locale);
   const { meta } = HOME[locale];
   const alternates = pageAlternates(locale);
-  const ogImage = `${localeUrl(locale)}/opengraph-image`;
+  const image = ogImage(locale);
   return {
     title: { absolute: meta.title },
     description: meta.description,
@@ -40,9 +40,9 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
       siteName: 'Mouseîon',
       locale: OG_LOCALE[locale],
       alternateLocale: [OG_LOCALE[locale === 'es' ? 'en' : 'es']],
-      images: [{ url: ogImage, width: 1200, height: 630 }],
+      images: [image],
     },
-    twitter: { card: 'summary_large_image', title: meta.title, description: meta.description, images: [ogImage] },
+    twitter: { card: 'summary_large_image', title: meta.title, description: meta.description, images: [{ url: image.url, alt: image.alt }] },
   };
 }
 

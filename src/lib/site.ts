@@ -34,6 +34,22 @@ export function pageAlternates(locale: Locale, path = '') {
   };
 }
 
+/** Texto alternativo de la imagen OG (opengraph-image.tsx), que se emite como og:image:alt y twitter:image:alt. */
+export const OG_IMAGE_ALT = 'Steven Vallejo Ortiz — Mouseîon';
+
+/** La og:image de cada locale, que declaran de forma explícita la home, los frentes y lore. */
+export function ogImage(locale: Locale) {
+  return { url: `${localeUrl(locale)}/opengraph-image`, width: 1200, height: 630, alt: OG_IMAGE_ALT };
+}
+
+/**
+ * og:title y twitter:title de las subpáginas: el título corto con el nombre. La plantilla '%s · Mouseîon' solo se
+ * aplica a <title>; sin esto, la tarjeta de LinkedIn o WhatsApp decía solo «Filosofía».
+ */
+export function shareTitle(title: string): string {
+  return `${title} · Steven Vallejo Ortiz`;
+}
+
 export function clampDescription(text: string, max = 155): string {
   if (text.length <= max) return text;
   const cut = text.slice(0, max - 1);
