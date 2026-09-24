@@ -314,7 +314,7 @@ e2e/home.spec.ts                       Playwright
 
 - **Grafo:** va en `.stage`, una capa fija con `aria-hidden="true"` y sin `<figure>`. Hoy contiene el póster; el Plan 2 monta ahí el canvas. La leyenda visible está en el hero (`.hero-caption`): "Este grafo es mi trayectoria: N nodos, M relaciones reales" y el enlace "Verlo como lista" → `#frentes`.
 - **Botón de pausa:** visible, con `aria-pressed` (WCAG 2.2.2). Llega con el Plan 2 (Tarea 4).
-- **Menú móvil:** por debajo de 900 px el índice es un `<details>` dentro de un `<nav>` (landmark, como `.topnav` en escritorio). Se cierra al elegir una sección, al tocar fuera y con Escape (que devuelve el foco al botón), con un script inline emitido desde el RSC: sin chunk cliente. Lo prueba un e2e en tablet y móvil.
+- **Menú móvil:** por debajo de 900 px el índice es un `<details>` dentro de un `<nav>` (landmark, como `.topnav` en escritorio). Se cierra al elegir una sección, al tocar fuera y con Escape (que devuelve el foco al botón), con un script inline emitido desde el RSC: sin chunk cliente. Es `type="module"` para que no bloquee el parser (§5.2). Lo prueba un e2e en tablet y móvil.
 - **Reduced motion:** póster; la escena solo arranca a demanda y sin autoplay.
 - **Objetivos táctiles:** ≥ 24 px y foco visible.
 - **Estructura:** orden de headings h1 → h2 por sección → h3 por frente o empresa (y en Herramientas) → h4 en tarjetas y grupos del stack.
@@ -359,6 +359,8 @@ e2e/home.spec.ts                       Playwright
 | `/en` escritorio | 100 | 0.56 s | 0 ms | 0.0000 | 100 / 100 / 100 |
 
 - Una segunda tanda completa dio lo mismo: 99 / 1.74 s / 56 ms en `/es` y 99 / 1.91 s / 42 ms en `/en`, con escritorio en 100.
+- **Tras el fix de la revisión final** (`npm run lighthouse`, mediana de 5, carga media del host de 18 a 23): `/es` móvil 98 / 2.18 s / 40 ms, `/en` móvil 100 / 1.73 s / 31 ms y escritorio 100 / 0.49 s / 0 ms en los dos; A11y, BP y SEO, 100; CLS ≤ 0.0002. El LCP de `/es` sigue en la carrera de las fuentes sin precarga que describe «Límites que quedan»: en 3 de las 5 corridas terminaron 1–2 ms antes del LCP observado y entraron en el grafo (2.18 s); en las otras 2, justo después (1.81 y 1.96 s).
+- **Un script inline clásico en la barra empeora el LCP simulado.** La primera versión del script del menú móvil (§4.8) bloqueaba el parser hasta que llegaba el CSS: Chrome pintaba antes la barra sola (FCP ≈ 50 ms, LCP ≈ 100 ms) y la descarga de `geist-home` y `jetbrains-home` entraba siempre en el grafo del LCP. Resultado: 97 / 2.49 s en `/es` y 97 / 2.52 s en `/en`. Como `type="module"` (diferido) vuelve FCP = LCP. Todo script que se añada antes del h1 tiene que ser diferido.
 - En las 20 corridas de móvil de las dos tandas, la peor Performance fue 97 y el peor LCP, 2.51 s.
 - Antes de la ronda 2 era 85 / 3.58 s en `/es` y 89 / 3.48 s en `/en`. En un A/B intercalado con la misma carga del host, la versión anterior dio 89–93 y 3.46 s.
 
