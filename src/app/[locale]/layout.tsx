@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import { notFound } from 'next/navigation';
 import { GeistSans } from 'geist/font/sans';
 import { Cormorant_Garamond, Inter, JetBrains_Mono } from 'next/font/google';
+import Analytics from '@/components/Analytics';
 import { LOCALES, SITE, isLocale } from '@/lib/site';
 
 const display = Cormorant_Garamond({
@@ -63,7 +64,10 @@ export default async function LocaleLayout({
       lang={locale}
       className={`${GeistSans.variable} ${display.variable} ${cormorant.variable} ${jetbrains.variable} ${inter.variable}`}
     >
-      <body>{children}</body>
+      <body>
+        {children}
+        <Analytics />
+      </body>
     </html>
   );
 }

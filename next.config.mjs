@@ -10,12 +10,27 @@
  * They live in next.config.mjs rather than vercel.json so they also apply under
  * `next dev` and `next start`, and so they survive a move off Vercel.
  *
- * CSP is Report-Only on purpose. The exact inline/script surface of this app has
- * not been measured yet, and an enforcing policy that blanks the page is worse
- * than no policy at all. Promote to `Content-Security-Policy` once a run shows
- * no violations; the value below is already the enforcing one, so the promotion
- * is a rename and not a rewrite.
+ * CSP en modo enforcing solo en producción: `next dev` necesita eval para Fast Refresh.
+ * 'unsafe-inline' en script-src es necesario para los payloads RSC inline de una página
+ * estática (un nonce obligaría a render dinámico). GA solo se carga tras interacción.
  */
+const isProd = process.env.NODE_ENV === 'production';
+
+const csp = [
+  "default-src 'self'",
+  "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com",
+  "style-src 'self' 'unsafe-inline'",
+  "img-src 'self' data: blob: https:",
+  "font-src 'self'",
+  "connect-src 'self' https://www.google-analytics.com https://*.google-analytics.com https://*.analytics.google.com https://www.googletagmanager.com",
+  "worker-src 'self' blob:",
+  "frame-ancestors 'none'",
+  "base-uri 'self'",
+  "form-action 'self'",
+  "object-src 'none'",
+  'upgrade-insecure-requests',
+].join('; ');
+
 const securityHeaders = [
   { key: 'X-Frame-Options', value: 'DENY' },
   { key: 'X-Content-Type-Options', value: 'nosniff' },
@@ -24,21 +39,7 @@ const securityHeaders = [
     key: 'Permissions-Policy',
     value: 'camera=(), microphone=(), geolocation=(), interest-cohort=()',
   },
-  {
-    key: 'Content-Security-Policy-Report-Only',
-    value: [
-      "default-src 'self'",
-      "script-src 'self' 'unsafe-inline'",
-      "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-      "font-src 'self' data: https://fonts.gstatic.com",
-      "img-src 'self' data: blob: https:",
-      "connect-src 'self' https:",
-      "frame-ancestors 'none'",
-      "base-uri 'self'",
-      "form-action 'self'",
-      "object-src 'none'",
-    ].join('; '),
-  },
+  ...(isProd ? [{ key: 'Content-Security-Policy', value: csp }] : []),
 ];
 
 /** @type {import('next').NextConfig} */
