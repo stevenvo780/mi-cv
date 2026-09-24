@@ -3,7 +3,8 @@
 - Fecha: 2026-09-23
 - Rama: `redesign/home-grafo`
 - Estado: diseño aprobado por Steven (narrativa, sistema visual, arquitectura y plan de publicación)
-- Actualizada el 2026-09-24 al cerrar el Plan 1: sus desviaciones están en §2 (fila 3), §3.2, §4.1, §4.3, §4.6, §4.7, §4.8 y §5.
+- Actualizada el 2026-09-24 con lo construido en el Plan 1: sus desviaciones están en §2 (fila 3), §3.2, §4.1, §4.3, §4.6, §4.7, §4.8 y §5.
+- **El Plan 1 no está cerrado.** En móvil no se cumplen ni el criterio de éxito 3 (Performance ≥ 95) ni el LCP ≤ 1.8 s de §5. Falta una decisión de Steven (§5.2); hasta entonces, la Tarea 14 sigue abierta.
 
 ## 1. Objetivo
 
@@ -18,6 +19,7 @@ Criterios de éxito:
    - Accesibilidad 100.
    - Best Practices 100.
    - Performance ≥ 95 en móvil y ≥ 98 en escritorio.
+   - **Estado al 2026-09-24:** se cumple todo menos Performance en móvil (85 en `/es` y 89 en `/en`). Está pendiente de decisión (§5.2).
 4. **Cero regresiones** en `/[locale]/[frente]` y `/[locale]/lore`.
 
 Fuera de alcance:
@@ -139,7 +141,7 @@ Tokens de la home en `src/styles/home.css` (capa `@layer home`), en OKLCH con re
   - Se eliminan `src/app/opengraph-image.tsx` y `public/og-image.png` en favor de la OG por locale. `robots.ts`, `sitemap.ts`, `icon.svg` y `favicon.ico` siguen en `src/app/`.
 - **Proxy:** `src/middleware.ts` → `src/proxy.ts`. Solo redirige `/` según `Accept-Language` y fuerza el prefijo de locale. Sin `console.log`.
 - **Lint:** ESLint 9 con configuración plana (`eslint.config.mjs`), `eslint-config-next@16`, script `"lint": "eslint ."`.
-- **Build con webpack:** el script `build` es `next build --webpack`. Con Turbopack, el bundler por defecto de Next 16, la home cargaba 135 478 B gz de JS. Solo el framework (runtime de Next, React DOM y los componentes cliente internos del App Router) ya sumaba 134 143 B gz, por encima del presupuesto de §5 (130 KB = 133 120 B), y los flags experimentales de Turbopack no lo reducen. Con webpack la home carga 132 505 B gz (129.4 KB). `next dev` sigue con Turbopack.
+- **Build con webpack:** el script `build` es `next build --webpack`. Con Turbopack, el bundler por defecto de Next 16, la home cargaba 135 478 B gz de JS. Solo el framework (runtime de Next, React DOM y los componentes cliente internos del App Router) ya sumaba 134 143 B gz, por encima del presupuesto de §5 (130 KB = 133 120 B), y los flags experimentales de Turbopack no lo reducen. Con webpack la home carga 132 505 B gz (129.4 KB), con un margen de solo 615 B (§5.1). `next dev` sigue con Turbopack.
 - **Bootstrap:** `bootstrap.min.css` y `react-bootstrap` solo en las rutas que usan el `Navbar` actual (layout de frente y lore). La home tiene su propio encabezado.
 - **Cabeceras:** `poweredByHeader: false`. CSP aplicada (no Report-Only):
 
@@ -291,21 +293,49 @@ e2e/home.spec.ts                       Playwright
 
 | Métrica | Límite |
 |---|---|
-| JS en el hilo principal de la home | ≤ 130 KB gz (antes ~200 KB; al cerrar el Plan 1, 129.4 KB con webpack, §4.1) |
+| JS en el hilo principal de la home | ≤ 130 KB gz = 133 120 B (antes ~200 KB). En la Tarea 14, 132 505 B con webpack (§4.1): margen de 615 B (§5.1) |
 | Worker | ≤ 175 KB gz |
 | Datos del grafo | ≤ 60 KB gz |
-| LCP | ≤ 1.8 s |
+| LCP | ≤ 1.8 s (en móvil no se cumple: §5.2) |
 | TBT | ≤ 100 ms |
 | CLS | ≤ 0.02 |
 | Errores de consola | 0 |
 | Violaciones de CSP | 0 |
 
 - La home no usa `next/link`, y tampoco el 404 de `[locale]`, que viaja en el árbol RSC de cada página: su módulo cliente cuesta ~3.5 KB gz.
-- **Medido al cerrar el Plan 1** (2026-09-24, `npm run lighthouse`, mediana de 5 corridas, en un host con carga media de 65 a 97 sobre 32 núcleos):
-  - SEO, Accesibilidad y Best Practices = 100 en las cuatro combinaciones.
-  - Escritorio cumple todo: Performance 100, LCP de 0.63 s (`/es`) y 0.75 s (`/en`), TBT 0 y CLS 0.
-  - Móvil **no** cumple ni Performance ≥ 95 ni LCP ≤ 1.8 s: `/es` 85 y 3.58 s, `/en` 89 y 3.48 s. El TBT móvil (199 ms en `/es`, 104 ms en `/en`) sube y baja con la carga del host: en otras tandas quedó entre 54 y 95 ms. CLS 0.
-  - Sin ninguna fuente web, la misma home marcó en una corrida 98 y un LCP de 2.33 s: el JS del framework (~130 KB gz) y el HTML (~44 KB gz) entran igualmente en el grafo del LCP simulado. Queda pendiente de decisión; los datos están en el reporte de la Tarea 14.
+
+### 5.1 Margen del presupuesto de JS
+
+- **Medido en la Tarea 14** (gzip nivel 6 de cada script, igual que el e2e): 132 505 B de 133 120 B. Quedan **615 B, el 0.46 %**.
+- **El framework ocupa el 98.3 %:** el runtime de Next, React DOM, el runtime de webpack y `main-app` suman 130 862 B. El código propio de la home son 1 643 B: el chunk del layout de `[locale]` (cargador de GA y objetos de `next/font`) y el de la página (`ProductSearch`). No queda código propio cuyo recorte dé un margen real.
+- **No hay otro bundler de reserva:** con Turbopack, solo el framework ya pesa 134 143 B (§4.1).
+- **Reglas mientras el margen siga así:**
+  - Cualquier cambio que añada código cliente a la home, o que suba `next`, `react` o `react-dom`, puede pasarse del límite aunque no haya una regresión propia. Antes de fusionarlo, se vuelve a medir con `npm run build && npm run e2e`. El test imprime el total y el margen.
+  - Si el test falla, se recorta o se aplaza el código cliente nuevo. El límite no se sube en el test: cambiarlo lo decide Steven, y se cambia en esta tabla.
+  - El Plan 2 monta en la home `GraphStageLazy` (`next/dynamic` con `ssr: false`). Su chunk y el de `GraphStage` se descargan en el hilo principal tras la hidratación, aunque el 3D no llegue a arrancar. Por eso cuentan en este presupuesto, y con 615 B es muy probable que no quepan. No se ha medido: el Plan 2 aún no está implementado. El Plan 2 tiene que resolverlo, o traer la decisión a esta tabla, antes de montar la isla.
+
+### 5.2 Lighthouse en móvil: sin cumplir y pendiente de decisión
+
+**Medido en la Tarea 14** (2026-09-24, `npm run lighthouse`, mediana de 5 corridas, en un host con carga media de 65 a 97 sobre 32 núcleos):
+- SEO, Accesibilidad y Best Practices = 100 en las cuatro combinaciones.
+- Escritorio cumple todo: Performance 100, LCP de 0.63 s (`/es`) y 0.75 s (`/en`), TBT 0 y CLS 0.
+- Móvil **no** cumple ni Performance ≥ 95 (§1, criterio 3) ni LCP ≤ 1.8 s: `/es` da 85 y 3.58 s, y `/en` da 89 y 3.48 s. CLS 0. El TBT (199 ms en `/es`, 104 ms en `/en`) sube y baja con la carga del host: en otras tandas quedó entre 54 y 95 ms.
+
+**La causa no es el host:** es el peso de la página. Lo muestran las pruebas de la ronda de fix 1 de la Tarea 14 (`/es`, 3 corridas por caso):
+- El LCP de laboratorio lo simula Lantern (RTT de 150 ms, 1.6 Mbps y CPU ×4) a partir de la carga real, y cuenta toda petición que termine antes del LCP observado. El LCP observado es el `span.hero-last` del h1. En local todas las peticiones terminan antes que él: en la tanda final, el último byte llega a los 231 ms y el LCP a los 258 ms.
+  - Entran el HTML (45 KB), el CSS (8 KB), el JS (139 KB transferidos) y las cinco fuentes (189 KB).
+- Sin ralentización de CPU (`--throttling.cpuSlowdownMultiplier=1`), la home actual da un LCP de 2.88 a 3.36 s y una Performance de 90 a 94. Ni sin CPU lenta llega al objetivo.
+- Sin ninguna fuente web, la Performance sube a 98–99 y el LCP queda en 2.22–2.31 s.
+- Sin fuentes y sin ralentización de CPU, el LCP da 1.82–2.17 s (mediana de 2.14 s). Ninguna corrida bajó de 1.8 s.
+- **Conclusión:**
+  - Las fuentes del diseño bajan la Performance de ~98 a 85–89.
+  - El LCP ≤ 1.8 s no se alcanza ni sin fuentes: el JS del App Router (§5.1) y el HTML con el payload RSC bastan para pasarlo.
+
+**Decisión pendiente de Steven.** Sin ella, la Tarea 14 y el Plan 1 siguen abiertos. Opciones:
+- **(a)** Medir el LCP móvil en campo con Vercel Speed Insights y dejar el laboratorio móvil como referencia. Cambia el criterio 3 y el LCP de esta tabla; no toca código.
+- **(b)** Auto-alojar y recortar todas las fuentes, o quitar alguna del diseño. Es la vía hacia Performance ≥ 95: sin ninguna fuente se midió 98–99, y cuánto se acerque dependerá de los KB que queden. No lleva el LCP a ≤ 1.8 s.
+- **(c)** Activar `experimental.inlineCss`. Se probó en dos variantes (2 y 3 corridas) y dio 89–94 y un LCP de 2.9 a 3.6 s, así que por sí sola no cumple. Además es global: el HTML de `/es/lore` pasa de 8.7 a 84.9 KB gz.
+- **(d)** Cambiar a una arquitectura de hidratación que saque el JS del framework de la carga inicial. Es la única que ataca el LCP ≤ 1.8 s, pero cambia §4.1 y §4.4. Sin medir.
 
 ## 6. Pruebas
 
@@ -348,5 +378,6 @@ e2e/home.spec.ts                       Playwright
 | OffscreenCanvas y WebGL en Safari < 17 | Fallback al hilo principal con `compileAsync`. |
 | Turbopack y workers con `new URL(..., import.meta.url)` | Validarlo en F0 con un worker trivial. Alternativa: webpack (`next build --webpack`). |
 | Compatibilidad `postprocessing` ↔ three | Versiones fijadas exactas. |
+| Presupuesto de JS de la home sin margen (615 B, §5.1) | El e2e lo mide en cada build y se vuelve a medir antes de fusionar. El Plan 2 resuelve el chunk de `GraphStage` antes de montarlo en la home. |
 | El 3D no aparece en Lighthouse | Es intencional: el laboratorio mide la ruta del póster. El 3D se valida con RUM (Vercel Speed Insights) y con pruebas manuales en GPU real. |
 | Disco raíz del host lleno | Todo lo pesado va a `/workspace`. |

@@ -47,15 +47,18 @@ for (const locale of ['es', 'en'] as const) {
       for (const href of hrefs) expect((await request.get(href)).status(), href).toBe(200);
     });
 
+    // Presupuesto de la spec §5. El margen es de unos cientos de bytes y el framework ocupa el 98 % (spec §5.1):
+    // si falla, no es ruido. El límite no se sube aquí; cambiarlo lo decide Steven en la spec.
     test('JS del hilo principal ≤ 130 KB gz', async ({ page, baseURL }) => {
+      const BUDGET = 130 * 1024;
       const scripts: Promise<number>[] = [];
       page.on('response', (r) => {
         if (r.request().resourceType() === 'script' && r.url().startsWith(baseURL!)) scripts.push(r.body().then((b) => gzipSync(b).length));
       });
       await page.goto(`/${locale}`, { waitUntil: 'networkidle' });
       const total = (await Promise.all(scripts)).reduce((a, b) => a + b, 0);
-      console.log(`JS /${locale}: ${(total / 1024).toFixed(1)} KB gz`);
-      expect(total).toBeLessThanOrEqual(130 * 1024);
+      console.log(`JS /${locale}: ${total} B gz (${(total / 1024).toFixed(1)} KB), margen ${BUDGET - total} B`);
+      expect(total, `JS de /${locale}: ${total} B gz frente a ${BUDGET} B (spec §5.1)`).toBeLessThanOrEqual(BUDGET);
     });
   });
 }
