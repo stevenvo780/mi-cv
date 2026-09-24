@@ -32,6 +32,8 @@ export interface Producto {
   status: ProductStatus;
   /** Short business/model/type tag, bilingual. */
   badge?: LocalizedText;
+  /** Card identity for projects outside the Eikon brand catalog. */
+  cardIdentity?: { label: LocalizedText; symbol: string };
   /** Visually featured (e.g. the technical jewel, the PRISMA slot). */
   featured?: boolean;
   /** Secondary card shown nested under a primary product. */
@@ -105,14 +107,14 @@ export const frentesMeta: Record<FrenteId, FrenteMeta> = {
   filosofia: {
     id: 'filosofia',
     nombre: { es: 'Filosofía', en: 'Philosophy' },
-    secNo: '02',  // 3 products: Ágora (banner) + Paideía + Agón (grid-portrait)
+    secNo: '02',  // 5 products: Ágora (banner) + Paideía + Koinonía UdeA + Gobierno UdeA + Agón
     tagline: {
       es: 'El criterio que da forma a todo lo demás.',
       en: 'The judgment that shapes everything else.',
     },
     descripcion: {
-      es: 'Filosofía analítica, lógica formal y simbólica, filosofía de la mente y de la IA, y filosofía de la ciudad. El registro humanístico que da criterio a la ingeniería.',
-      en: 'Analytic philosophy, formal and symbolic logic, philosophy of mind and of AI, and philosophy of the city. The humanistic register that gives engineering its judgment.',
+      es: 'Filosofía analítica, lógica formal y simbólica, filosofía de la mente y de la IA, filosofía de la ciudad y proyectos de deliberación y gobierno universitario. El registro humanístico que da criterio a la ingeniería.',
+      en: 'Analytic philosophy, formal and symbolic logic, philosophy of mind and of AI, philosophy of the city, and projects in deliberation and university governance. The humanistic register that gives engineering its judgment.',
     },
   },
   ciencias: {
@@ -156,7 +158,7 @@ export const frentesMeta: Record<FrenteId, FrenteMeta> = {
   },
 };
 
-// Ordered descending by product count: informatica(11) > filosofia(3) > ciencias(2) > enterprise(1)
+// Ordered descending by product count: informatica(11) > filosofia(5) > ciencias(2) > enterprise(1)
 export const frenteOrder: FrenteId[] = [
   'informatica',
   'filosofia',
@@ -170,8 +172,8 @@ export const frenteOrder: FrenteId[] = [
 export const productos: Producto[] = [
   /* ===================== FILOSOFÍA ===================== */
   // Ágora es de las "grandes": va PRIMERO y como BANNER full-width (showcase
-  // horizontal con su og_product), no como card de grid. Debajo, Paideía + Agón
-  // siguen en el grid 2-col portrait normal.
+  // horizontal con su og_product), no como card de grid. Debajo, Paideía,
+  // Koinonía UdeA, Gobierno UdeA y Agón siguen en el grid 2-col portrait.
   {
     id: 'agora',
     frente: 'filosofia',
@@ -240,6 +242,48 @@ export const productos: Producto[] = [
         url: 'https://medium.com/@stevenvallejo780/filosof%C3%ADa-y-programaci%C3%B3n-una-exploraci%C3%B3n-profunda-de-paradigmas-y-arquitecturas-199df6786331',
       },
     ],
+  },
+  {
+    id: 'koinonia-udea',
+    frente: 'filosofia',
+    nombre: 'Koinonía UdeA',
+    subtitulo: {
+      es: 'Gobernanza estudiantil independiente',
+      en: 'Independent student governance',
+    },
+    descripcion: {
+      es: 'Plataforma libre de gobernanza colectiva para el estudiantado del Instituto de Filosofía de la UdeA. Organiza problemas, deliberaciones, decisiones verificables e iniciativas con seguimiento. Es un proyecto independiente: no representa oficialmente a la Universidad.',
+      en: 'Open-source collective governance platform for students of the UdeA Institute of Philosophy. It organizes issues, deliberations, verifiable decisions and initiatives with follow-through. This is an independent project and does not officially represent the university.',
+    },
+    url: 'https://koinonia-udea.stevenvallejo.com/',
+    repo: 'https://github.com/stevenvo780/koinonia',
+    status: 'live',
+    badge: { es: 'Software libre', en: 'Open source' },
+    cardIdentity: {
+      label: { es: 'Proyecto independiente', en: 'Independent project' },
+      symbol: 'Κ',
+    },
+  },
+  {
+    id: 'gobierno-universitario-udea',
+    frente: 'filosofia',
+    nombre: 'Gobierno Universitario UdeA',
+    subtitulo: {
+      es: 'Gobernanza universitaria · informe IEP',
+      en: 'University governance · IEP report',
+    },
+    descripcion: {
+      es: 'Visualización del informe de 2015 del Instituto de Estudios Políticos de la Universidad de Antioquia sobre gobierno universitario. Presenta actores, estructura del Consejo Superior Universitario y tensiones políticas entre 2010 y 2013. La investigación corresponde al equipo del IEP.',
+      en: 'Visualization of the Universidad de Antioquia Institute of Political Studies 2015 report on university governance. It presents the actors, the University Superior Council structure and political tensions from 2010 to 2013. The research belongs to the IEP team.',
+    },
+    url: 'https://formacion-ciudadana-udea.vercel.app/',
+    repo: 'https://github.com/stevenvo780/FormacionCiudadanaUdea',
+    status: 'live',
+    badge: { es: 'Visualización de investigación', en: 'Research visualization' },
+    cardIdentity: {
+      label: { es: 'Informe del IEP', en: 'IEP report' },
+      symbol: 'U',
+    },
   },
   {
     id: 'debatesuite',
@@ -632,6 +676,8 @@ export const productos: Producto[] = [
 export const productTags: Record<string, string[]> = {
   agora: ['lógica formal', 'plataforma académica', 'filosofía analítica', 'SAT solver', 'ST', 'auto.logic', 'verificación', 'humanidades', 'elenxos', 'razonamiento'],
   clavis: ['paideía', 'catálogo', 'catalog', 'humanidades digitales', 'griego clásico', 'griego', 'morfología', 'neurofilosofía', 'filosofía de la ciudad', 'MDX', 'educación', 'filosofía', 'lecturas', 'ponencias', 'ensayos'],
+  'koinonia-udea': ['koinonía', 'UdeA', 'Universidad de Antioquia', 'Instituto de Filosofía', 'gobernanza estudiantil', 'deliberación', 'decisiones', 'iniciativas', 'software libre'],
+  'gobierno-universitario-udea': ['gobierno universitario', 'gobernanza', 'UdeA', 'Universidad de Antioquia', 'IEP', 'Instituto de Estudios Políticos', 'Consejo Superior Universitario', 'CSU', 'divulgación', 'visualización'],
   debatesuite: ['agón', 'debate', 'debates', 'cafetería del caos', 'retórica', 'moderación', 'falacias', 'argumentación', 'autómata celular', 'PWA', 'filosofía', 'oratoria'],
   'estructuras-preontologicas': ['filosofía de la ciencia', 'ontología', 'complejidad', 'tesis doctoral', 'preontología', 'EDI', 'emergencia', 'ciencias de la complejidad', 'metafísica', 'investigación'],
   complexlab: ['kósmos', 'catálogo', 'catalog', 'ciencia', 'complejidad', 'emergencia', 'caos', 'redes', 'agentes', 'simulación', 'sistemas complejos', 'autómatas', 'orden natural'],

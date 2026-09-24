@@ -125,7 +125,7 @@ export const BRAND_COVER_PORTRAIT: Record<string, string> = {
 /* ------------------------------------------------------------------ */
 /* Frente accent palette                                               */
 /* ------------------------------------------------------------------ */
-// Ordered descending by product count: informatica(11) > filosofia(3) > ciencias(2) > enterprise(1)
+// Ordered descending by product count: informatica(11) > filosofia(5) > ciencias(2) > enterprise(1)
 export const FRENTE_SECTIONS: Array<{
   id: FrenteId;
   accent: string;
@@ -191,8 +191,8 @@ export function GalleryCard({
   const meta = BRAND_METADATA[p.id];
   const brandMeta = meta || {
     nombre_producto: p.nombre,
-    nombre_corporativo: p.frente === 'enterprise' ? 'Empresarial' : 'Pinakothḗke',
-    simbolo: '◈',
+    nombre_corporativo: p.cardIdentity?.label[locale] ?? (p.frente === 'enterprise' ? 'Empresarial' : 'Pinakothḗke'),
+    simbolo: p.cardIdentity?.symbol ?? '◈',
     paleta: {
       bg: '#0b1417',
       primario: '#0b1417',

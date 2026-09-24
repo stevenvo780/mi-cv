@@ -878,7 +878,7 @@ Un usuario edita documentos, corre terminales Linux reales en el navegador y con
 
 ¿Tienes una idea o un dolor de cabeza? Cuéntamelo en una llamada corta y sales con un plan claro y un precio fijo. Sin compromiso —escríbeme ahora.
 
-## Catálogo de trabajos (https://www.stevenvallejo.com): cuatro frentes · 21 trabajos
+## Catálogo de trabajos (https://www.stevenvallejo.com): cuatro frentes · 23 trabajos
 
 Cada trabajo es un sitio o un proyecto propio. «En línea» enlaza su versión actual; «próximamente» aún no tiene dominio propio.
 
@@ -907,7 +907,7 @@ El frente del ingeniero: más de 12 años de backend, IA agéntica, lógica comp
 
 ### Frente Filosofía — El criterio que da forma a todo lo demás.
 
-Filosofía analítica, lógica formal y simbólica, filosofía de la mente y de la IA, y filosofía de la ciudad. El registro humanístico que da criterio a la ingeniería.
+Filosofía analítica, lógica formal y simbólica, filosofía de la mente y de la IA, filosofía de la ciudad y proyectos de deliberación y gobierno universitario. El registro humanístico que da criterio a la ingeniería.
 
 - Ágora (Plataforma académica · Elenxos) [Plataforma académica]: Plataforma académica en vivo (Elenxos): traduce el caos en estructuras lógicas. Integra ST (lenguaje lógico con SAT solver CDCL propio, 6 333 tests), auto.logic (NLP → lógica formal por reglas, 11 perfiles) y colaboración en tiempo real para razonamiento compartido. NestJS + Next.js sobre Docker. (sitio: https://agora.elenxos.com · en línea)
 - Paideía (Catálogo de cursos, ponencias y ensayos) [Humanidades digitales]: No es una app suelta: es la capa que organiza el trabajo de humanidades. Reúne los cursos de Griego Clásico, Neurofilosofía y Filosofía de la Ciudad, con sus documentos navegables y un buscador, y enlaza las ponencias interactivas, la tesis doctoral y los ensayos, cada uno publicado en su propio sitio. (sitio: https://paideia.stevenvallejo.com · código: https://github.com/stevenvo780/clavis · en línea)
@@ -916,6 +916,8 @@ Filosofía analítica, lógica formal y simbólica, filosofía de la mente y de 
   - Ponencias (8): ¿Silicio o Tejido? — mente y materia <https://neurocarbon.stevenvallejo.com/> · La ciudad bien asignada — Medellín <https://autopoesis.stevenvallejo.com/> · La retórica como téchne <https://retorica.stevenvallejo.com/> · Redes Neuronales — Hinton <https://hinton.stevenvallejo.com/> · Refutación de Simmias y Cebes (Fedón) <https://fedon.stevenvallejo.com/> · Fenomenología urbana de Medellín <https://fenomenologiaurbana.stevenvallejo.com/> · Fragmentar el futuro — Yuk Hui <https://ponencia-yuk-hui-critertec-a963d21e.vercel.app/> · La arquitectura de lo ausente — Russell <https://russell.stevenvallejo.com/>
   - Tesis doctoral (1): Estructuras Pre-Ontológicas <https://preontologia.stevenvallejo.com/>
   - Ensayos (3): Ignosticismo — análisis filosófico crítico <https://medium.com/@stevenvallejo780/ignosticismo-an%C3%A1lisis-filos%C3%B3fico-cr%C3%ADtico-0cb2a411569f> · Crítica y dialéctica del Gnosticismo <https://medium.com/@stevenvallejo780/cr%C3%ADtica-y-dial%C3%A9ctica-del-gnosticismo-6173e5768a0c> · Filosofía y Programación <https://medium.com/@stevenvallejo780/filosof%C3%ADa-y-programaci%C3%B3n-una-exploraci%C3%B3n-profunda-de-paradigmas-y-arquitecturas-199df6786331>
+- Koinonía UdeA (Gobernanza estudiantil independiente) [Software libre]: Plataforma libre de gobernanza colectiva para el estudiantado del Instituto de Filosofía de la UdeA. Organiza problemas, deliberaciones, decisiones verificables e iniciativas con seguimiento. Es un proyecto independiente: no representa oficialmente a la Universidad. (sitio: https://koinonia-udea.stevenvallejo.com/ · código: https://github.com/stevenvo780/koinonia · en línea)
+- Gobierno Universitario UdeA (Gobernanza universitaria · informe IEP) [Visualización de investigación]: Visualización del informe de 2015 del Instituto de Estudios Políticos de la Universidad de Antioquia sobre gobierno universitario. Presenta actores, estructura del Consejo Superior Universitario y tensiones políticas entre 2010 y 2013. La investigación corresponde al equipo del IEP. (sitio: https://formacion-ciudadana-udea.vercel.app/ · código: https://github.com/stevenvo780/FormacionCiudadanaUdea · en línea)
 - Agón (Moderador de debates) [En vivo · Cafetería del Caos]: PWA offline para moderar debates académicos y competitivos: gestiona turnos, cronómetro, puntuación y detección de falacias, e incluye un simulador de dinámicas con autómata celular (canvas 2D) heredado de la investigación en sistemas complejos. (sitio: https://debates.cafeteriadelcaos.com · código: https://github.com/stevenvo780/debatesuite · en línea)
 - Enlaces del frente: CV Filósofo https://filosofo.stevenvallejo.com · Blog · Scholḗ https://schole.stevenvallejo.com
 
