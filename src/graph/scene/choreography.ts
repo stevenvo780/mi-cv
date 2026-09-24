@@ -1,16 +1,13 @@
 import type { LayoutName } from '../layout-names';
 import { CAMERA0 } from '../camera0';
 
-/** Orden de las secciones en el DOM (atributo data-section). */
-export const SECTIONS = ['hero', 'metodo', 'trayectoria', 'frentes', 'prueba', 'contacto'] as const;
+/** Orden de las secciones en el DOM (atributo data-section): hero, catálogo y contacto. */
+export const SECTIONS = ['hero', 'frentes', 'contacto'] as const;
 export type SectionId = (typeof SECTIONS)[number];
 
 export const SECTION_LAYOUT: Record<SectionId, LayoutName> = {
   hero: 'red',
-  metodo: 'hemisferios',
-  trayectoria: 'helice',
   frentes: 'clusters',
-  prueba: 'clusters',
   contacto: 'lemniscata',
 };
 
@@ -28,10 +25,7 @@ export interface Pose {
 
 export const SECTION_POSE: Record<SectionId, Pose> = {
   hero: { distance: CAMERA0.distance, yaw: CAMERA0.yaw, pitch: CAMERA0.pitch, target: [0, 0, 0], shiftX: 0, dim: 1 },
-  metodo: { distance: 3.9, yaw: 0, pitch: -0.08, target: [0, 0, 0], shiftX: 0, dim: 0.8 },
-  trayectoria: { distance: 3.2, yaw: 0.9, pitch: -0.32, target: [0, 0, 0], shiftX: 0.55, dim: 0.9 },
   frentes: { distance: 2.7, yaw: 0.35, pitch: -0.2, target: [0, 0, 0], shiftX: 0.6, dim: 0.9 },
-  prueba: { distance: 4.9, yaw: 1.25, pitch: -0.3, target: [0, 0, 0], shiftX: 0, dim: 0.35 },
   contacto: { distance: 3.4, yaw: 0, pitch: 0, target: [0, 0, 0], shiftX: 0, dim: 1 },
 };
 
@@ -39,7 +33,10 @@ export interface FrameContext {
   aspect: number;
   /** Centroides de los 4 frentes en la forma "clusters", en el orden de la sección Frentes. */
   clusterCenters: [number, number, number][];
-  /** Altura mínima y máxima de las empresas en la forma "hélice". */
+  /**
+   * Altura mínima y máxima de las empresas en la forma "hélice". Ninguna sección la usa desde que la home es un catálogo
+   * (sin Trayectoria): queda porque GraphScene la sigue pasando.
+   */
   helixSpan: [number, number];
 }
 
@@ -58,7 +55,6 @@ const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 const lerp3 = (a: readonly number[], b: readonly number[], t: number): [number, number, number] => [lerp(a[0], b[0], t), lerp(a[1], b[1], t), lerp(a[2], b[2], t)];
 
 function sectionTarget(section: SectionId, progress: number, ctx: FrameContext): [number, number, number] {
-  if (section === 'trayectoria') return [0, lerp(ctx.helixSpan[0], ctx.helixSpan[1], progress), 0];
   if (section === 'frentes') {
     const f = Math.min(progress * 4, 3.999);
     const k = Math.floor(f);
@@ -73,11 +69,10 @@ function sectionTarget(section: SectionId, progress: number, ctx: FrameContext):
  * Distancia de la pose al aspecto del escenario. Las de SECTION_POSE están pensadas para apaisado, donde manda el alto
  * (el fov de la cámara es vertical). En retrato manda el ancho, que es `aspect` veces el alto: la cámara se aleja
  * 1/aspect y el ancho visible queda como el alto visible con aspecto 1, así que la forma cabe a lo ancho como cabe a lo
- * alto (a 390 × 844, sin esto, la lemniscata de Contacto, los hemisferios de Método y la hélice de Trayectoria tocaban
- * los dos lados; lo comprueba e2e/graph3d.spec.ts). Frentes queda como en apaisado: de cerca, en el cluster activo.
- * El hero no se aleja: es la cámara del póster (CAMERA0), cuyo `slice` en retrato también recorta por los lados, y el
- * canvas tiene que coincidir con él al fundirse. El suelo de aspecto solo evita la distancia infinita de un escenario
- * sin ancho.
+ * alto (a 390 × 844, sin esto, la lemniscata de Contacto tocaba los dos lados; lo comprueba e2e/graph3d.spec.ts).
+ * Frentes queda como en apaisado: de cerca, en el cluster activo. El hero no se aleja: es la cámara del póster
+ * (CAMERA0), cuyo `slice` en retrato también recorta por los lados, y el canvas tiene que coincidir con él al fundirse.
+ * El suelo de aspecto solo evita la distancia infinita de un escenario sin ancho.
  */
 function poseDistance(section: SectionId, aspect: number): number {
   const d = SECTION_POSE[section].distance;

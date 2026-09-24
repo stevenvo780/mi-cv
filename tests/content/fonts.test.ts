@@ -5,8 +5,6 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 import HomePage from '@/app/[locale]/(home)/page';
 import { HOME } from '@/content/home';
-import { buildProofFigures } from '@/content/proof';
-import { buildTimeline } from '@/content/timeline';
 import { frenteOrder, frentesMeta, productos } from '@/data/frentes';
 import { LOCALES, type Locale } from '@/lib/site';
 
@@ -85,15 +83,13 @@ describe('cobertura de glifos del contenido de la home', () => {
     expect(missing.join(''), `caracteres sin glifo en geist-home.woff2: ${REGENERATE}`).toBe('');
   });
 
-  // Titulares, nombres de producto, de frente y de empresa, y cifras: van en Cormorant (cormorant-home.woff2).
+  // Titulares y nombres de producto y de frente: van en Cormorant (cormorant-home.woff2).
   it.each(LOCALES)('los nombres y titulares de /%s están en el subconjunto de Cormorant', (locale) => {
     const t = HOME[locale];
     const texts = [
-      t.method.title, t.path.title, t.fronts.title, t.proof.title, t.proof.stackTitle, t.contact.title,
+      t.fronts.title, t.contact.title,
       ...productos.map((p) => p.nombre),
       ...frenteOrder.map((f) => frentesMeta[f].nombre[locale]),
-      ...buildTimeline().map((e) => e.company[locale]),
-      ...buildProofFigures().map((f) => f.value[locale]),
     ];
     const missing = chars(texts.join(' ')).filter((c) => !SYSTEM.has(c) && !display.has(c.codePointAt(0)!));
     expect(missing.join(''), `caracteres sin glifo en cormorant-home.woff2: ${REGENERATE}`).toBe('');

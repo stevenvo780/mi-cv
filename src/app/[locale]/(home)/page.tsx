@@ -4,9 +4,6 @@ import Fronts from '@/components/home/Fronts';
 import Hero from '@/components/home/Hero';
 import HomeFooter from '@/components/home/HomeFooter';
 import HomeHeader from '@/components/home/HomeHeader';
-import Method from '@/components/home/Method';
-import Path from '@/components/home/Path';
-import Proof from '@/components/home/Proof';
 import Stage from '@/components/home/Stage';
 import { HOME } from '@/content/home';
 import { DATA_DATE } from '@/graph/generated/stats';
@@ -49,7 +46,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {
   const locale = toLocale((await params).locale);
   const t = HOME[locale];
-  const jsonLd = buildHomeJsonLd(locale, { jobTitle: t.meta.jobTitle, description: t.meta.description, knowsAbout: t.meta.knowsAbout }, DATA_DATE);
+  const jsonLd = buildHomeJsonLd(locale, { jobTitle: t.meta.jobTitle, description: t.meta.person, knowsAbout: t.meta.knowsAbout }, DATA_DATE);
   return (
     <div className="home">
       <a className="skip" href="#contenido">
@@ -58,11 +55,8 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
       <HomeHeader locale={locale} t={t} />
       <main id="contenido">
         <Stage locale={locale} t={t} />
-        <Hero locale={locale} t={t} />
-        <Method t={t} />
-        <Path locale={locale} t={t} />
+        <Hero t={t} />
         <Fronts locale={locale} t={t} />
-        <Proof locale={locale} t={t} />
         <Contact locale={locale} t={t} />
       </main>
       <HomeFooter locale={locale} t={t} />

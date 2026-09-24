@@ -21,12 +21,11 @@ export const cormorantHero = localFont({
   adjustFontFallback: false,
 });
 
-/** Cormorant Garamond 400–500 (titulares, nombres, cifras) y su cursiva 400 (epígrafe). */
+/** Cormorant Garamond 400–500 (titulares, nombres, cifras). La home no pinta cursivas. */
 export const cormorantHome = localFont({
-  src: [
-    { path: '../../fonts/cormorant-home.woff2', weight: '400 500', style: 'normal' },
-    { path: '../../fonts/cormorant-home-italic.woff2', weight: '400', style: 'italic' },
-  ],
+  src: '../../fonts/cormorant-home.woff2',
+  weight: '400 500',
+  style: 'normal',
   variable: '--font-home-display',
   display: 'swap',
   preload: false,

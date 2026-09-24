@@ -1,28 +1,34 @@
 import type { HomeCopy } from '@/content/home';
 import { GRAPH_STATS } from '@/graph/generated/stats';
-import type { Locale } from '@/lib/site';
 
-export default function Hero({ locale, t }: { locale: Locale; t: HomeCopy }) {
+/** Sitios hermanos que abre el hero: servicios y los dos CV, cada uno en su propio subdominio. */
+const SITES = {
+  services: 'https://praxis.stevenvallejo.com',
+  cvEngineer: 'https://informatico.stevenvallejo.com',
+  cvPhilosopher: 'https://filosofo.stevenvallejo.com',
+} as const;
+
+export default function Hero({ t }: { t: HomeCopy }) {
+  const h = t.hero;
   return (
     <section className="hero" aria-labelledby="hero-title" data-section="hero">
-      <p className="hero-kicker">{t.hero.kicker}</p>
+      <p className="hero-kicker">{h.kicker}</p>
       <h1 id="hero-title" className="hero-title">
-        <span className="hero-first">{t.hero.first}</span> <span className="hero-last">{t.hero.last}</span>
+        <span className="hero-first">{h.first}</span> <span className="hero-last">{h.last}</span>
       </h1>
       <div className="hero-meta">
-        <p className="hero-role">{t.hero.role}</p>
-        <p className="hero-lead">{t.hero.lead}</p>
+        <p className="hero-role">{h.role}</p>
+        <p className="hero-lead">{h.lead}</p>
         <div className="hero-actions">
-          <a className="btn btn-solid" href="https://praxis.stevenvallejo.com" rel="noopener">
-            {t.hero.ctaHire}
-          </a>
-          {/* <a> y no next/link: /lore es del grupo (portal); ver la nota de page.tsx. */}
-          <a className="btn btn-ghost" href={`/${locale}/lore`}>
-            {t.hero.ctaStory}
-          </a>
+          {(['services', 'cvEngineer', 'cvPhilosopher'] as const).map((key) => (
+            <a key={key} className={key === 'services' ? 'btn btn-solid' : 'btn btn-ghost'} href={SITES[key]} rel="noopener">
+              {h[key]}
+              <span aria-hidden="true">↗</span>
+            </a>
+          ))}
         </div>
         <p className="hero-caption">
-          {t.hero.figcaption(GRAPH_STATS.nodes, GRAPH_STATS.edges)} · <a href="#frentes">{t.hero.listLink}</a>
+          {h.figcaption(GRAPH_STATS.nodes, GRAPH_STATS.edges)} · <a href="#frentes">{h.listLink}</a>
         </p>
       </div>
     </section>

@@ -14,10 +14,7 @@ const MENU_SCRIPT = `(()=>{const d=document,q='.home details.menu[open]';d.addEv
 export default function HomeHeader({ locale, t }: { locale: Locale; t: HomeCopy }) {
   const other: Locale = locale === 'es' ? 'en' : 'es';
   const items: [string, string][] = [
-    ['#metodo', t.nav.method],
-    ['#trayectoria', t.nav.path],
-    ['#frentes', t.nav.fronts],
-    ['#prueba', t.nav.proof],
+    ['#frentes', t.nav.catalog],
     ['#contacto', t.nav.contact],
   ];
   const list = (
@@ -45,7 +42,8 @@ export default function HomeHeader({ locale, t }: { locale: Locale; t: HomeCopy 
           {t.nav.language}
         </a>
         <a className="btn btn-solid btn-sm" href="https://praxis.stevenvallejo.com" rel="noopener">
-          {t.nav.hire}
+          {t.nav.services}
+          <span aria-hidden="true">↗</span>
         </a>
         {/* Índice por debajo de 900 px, donde .topnav no se muestra: también es un landmark de navegación. */}
         <nav className="menu-nav" aria-label={t.nav.menu}>

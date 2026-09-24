@@ -55,7 +55,8 @@ async function openLive(page: Page, query = 'gl=force') {
 async function scrollToSection(page: Page, section: string) {
   await page.evaluate((s) => document.querySelector(`[data-section="${s}"]`)!.scrollIntoView({ block: 'center' }), section);
 }
-const WALK = ['metodo', 'trayectoria', 'frentes', 'prueba', 'contacto'] as const;
+/** Las secciones después del hero, en el orden del DOM: cada una con su forma (clusters, lemniscata). */
+const WALK = SECTIONS.filter((s) => s !== 'hero');
 
 async function findNode(page: Page) {
   const { width, height } = page.viewportSize()!;
@@ -148,7 +149,7 @@ test('la pausa detiene la animación y persiste', async ({ page }) => {
   await expect(page.locator('.graph-motion')).toHaveAttribute('aria-pressed', 'true', { timeout: waitCap(60_000) });
 });
 
-test('el scroll recorre las cinco formas sin errores', async ({ page }) => {
+test('el scroll recorre la forma de cada sección sin errores', async ({ page }) => {
   const errors = await watchErrors(page);
   await openLive(page);
   // Con la animación en marcha, como la ve quien visita la página: morph de cada forma, pulsos, respiración y regulador

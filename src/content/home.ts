@@ -1,6 +1,4 @@
-import aboutEs from '@/locales/es/common/about.json';
-import aboutEn from '@/locales/en/common/about.json';
-import { frenteOrder } from '@/data/frentes';
+import { frenteOrder, productos } from '@/data/frentes';
 import type { NodeKind } from '@/graph/model';
 import type { Locale } from '@/lib/site';
 
@@ -17,28 +15,22 @@ export function countWord(locale: Locale, n: number): string {
 }
 
 export interface HomeCopy {
-  meta: { title: string; description: string; jobTitle: string[]; knowsAbout: string[] };
-  nav: { skip: string; menu: string; method: string; path: string; fronts: string; proof: string; contact: string; language: string; hire: string };
-  hero: { kicker: string; first: string; last: string; role: string; lead: string; ctaHire: string; ctaStory: string; figcaption: (nodes: number, edges: number) => string; listLink: string };
-  method: { eyebrow: string; title: string; lead: string; paragraphs: string[]; epigraph: string; logic: string; engineering: string };
-  path: { eyebrow: string; title: string; lead: string };
-  fronts: { eyebrow: string; title: string; lead: string; searchLabel: string; searchPlaceholder: string; noResults: string; openFront: string; visit: string; code: string; soon: string };
-  proof: { eyebrow: string; title: string; lead: string; stackTitle: string; stackLead: string };
-  contact: {
-    eyebrow: string;
-    title: string;
+  meta: { title: string; description: string; person: string; jobTitle: string[]; knowsAbout: string[] };
+  nav: { skip: string; menu: string; catalog: string; contact: string; language: string; services: string };
+  hero: {
+    kicker: string;
+    first: string;
+    last: string;
+    role: string;
     lead: string;
-    hire: string;
-    email: string;
-    whatsapp: string;
-    cvPhilosopher: string;
+    services: string;
     cvEngineer: string;
-    blog: string;
-    story: string;
-    social: string;
-    ecosystem: string;
-    foot: string;
+    cvPhilosopher: string;
+    figcaption: (nodes: number, edges: number) => string;
+    listLink: string;
   };
+  fronts: { eyebrow: string; title: string; lead: string; searchLabel: string; searchPlaceholder: string; noResults: string; openFront: string; visit: string; code: string; soon: string };
+  contact: { eyebrow: string; title: string; lead: string; email: string; whatsapp: string; story: string; social: string; ecosystem: string; foot: string };
   graph: { pause: string; explore: string; openHint: string; present: string; kinds: Record<NodeKind, string> };
 }
 
@@ -60,53 +52,38 @@ const KNOWS_EN = [
 export const HOME: Record<Locale, HomeCopy> = {
   es: {
     meta: {
-      title: 'Steven Vallejo Ortiz — Ingeniero de software y filósofo',
+      title: 'Steven Vallejo Ortiz — Portafolio y catálogo de proyectos',
       description:
-        'Ingeniero de software y filósofo. Backend, IA agéntica y lógica formal: explora mi trayectoria como un grafo vivo de empresas, productos e ideas.',
+        'Catálogo de mis trabajos: productos SaaS, laboratorios de lógica y sistemas complejos, IA y humanidades digitales. Cada uno enlaza a su propio sitio.',
+      person: 'Ingeniero de software y filósofo. Backend, IA agéntica y lógica formal.',
       jobTitle: ['Ingeniero de software', 'Filósofo'],
       knowsAbout: KNOWS_ES,
     },
     nav: {
       skip: 'Saltar al contenido',
       menu: 'Menú',
-      method: 'Método',
-      path: 'Trayectoria',
-      fronts: 'Frentes',
-      proof: 'Prueba',
+      catalog: 'Catálogo',
       contact: 'Contacto',
       language: 'English',
-      hire: 'Contratar',
+      services: 'Servicios',
     },
     hero: {
       kicker: 'Mouseîon · stevenvallejo.com',
       first: 'Steven',
       last: 'Vallejo Ortiz',
       role: 'Ingeniero de software · Filósofo',
-      lead: 'Pensar antes de construir. Sistemas que sostienen lo que dicen que hacen.',
-      ctaHire: 'Contratar servicios',
-      ctaStory: 'Mi historia',
-      figcaption: (nodes, edges) => `Este grafo es mi trayectoria: ${nodes} nodos, ${edges} relaciones reales`,
-      listLink: 'Verlo como lista',
-    },
-    method: {
-      eyebrow: '01 · Método',
-      title: 'Dos lenguajes, un método',
-      lead: 'La lógica y la ingeniería son, para mí, la misma disciplina: definir con precisión, distinguir lo necesario de lo accesorio y construir lo que se sostiene.',
-      paragraphs: [aboutEs['about.p1'], aboutEs['about.p2'], aboutEs['about.p3']],
-      epigraph: '«La abstracción no es alejarse del problema. Es verlo desde la altura exacta.»',
-      logic: 'Lógica · Filosofía',
-      engineering: 'Ingeniería · Sistemas',
-    },
-    path: {
-      eyebrow: '02 · Trayectoria',
-      title: 'Del servidor a la flota de agentes',
-      lead: 'De la infraestructura y los videojuegos a plataformas que facturan, y a la flota de agentes que hoy opera este portafolio.',
+      lead: 'Todos mis trabajos, cada uno en su propio sitio.',
+      services: 'Servicios',
+      cvEngineer: 'CV Informático',
+      cvPhilosopher: 'CV Filósofo',
+      figcaption: (nodes, edges) => `Este grafo es el mapa de mis trabajos: ${nodes} nodos, ${edges} relaciones reales`,
+      listLink: 'Verlo como catálogo',
     },
     fronts: {
-      eyebrow: '03 · Frentes',
-      title: `${countWord('es', frenteOrder.length)} frentes, un mismo criterio`,
-      lead: 'Cada producto es una tesis sobre lógica, sistemas complejos o software que genera caja.',
-      searchLabel: 'Buscar en el portafolio',
+      eyebrow: `${countWord('es', frenteOrder.length)} frentes · ${productos.length} trabajos`,
+      title: 'Catálogo · todos mis trabajos',
+      lead: 'Cada uno es un sitio o un proyecto propio: entra directo a su versión actual.',
+      searchLabel: 'Buscar en el catálogo',
       searchPlaceholder: 'Producto, tecnología o tema…',
       noResults: 'Sin resultados. Prueba con otro término.',
       openFront: 'Explorar el frente',
@@ -114,23 +91,12 @@ export const HOME: Record<Locale, HomeCopy> = {
       code: 'Código',
       soon: 'Próximamente',
     },
-    proof: {
-      eyebrow: '04 · Prueba',
-      title: 'Evidencia, no adjetivos',
-      lead: 'Cifras tomadas de los propios proyectos. Lo que no se puede verificar no aparece aquí.',
-      stackTitle: 'Herramientas',
-      stackLead: 'Lo que he usado en producción y en investigación, agrupado por familia.',
-    },
     contact: {
-      eyebrow: '05 · Contacto',
-      title: 'Construyamos algo que se sostenga',
-      lead: 'Consultoría, desarrollo a medida, IA aplicada o una conversación sobre lógica: escríbeme.',
-      hire: 'Contratar servicios',
-      email: 'Escribir un correo',
+      eyebrow: 'Contacto',
+      title: 'Hablemos',
+      lead: 'Un proyecto, una consultoría o una conversación sobre lógica: escríbeme por donde prefieras.',
+      email: 'Correo',
       whatsapp: 'WhatsApp',
-      cvPhilosopher: 'CV de filósofo',
-      cvEngineer: 'CV de ingeniero',
-      blog: 'Blog · Scholḗ',
       story: 'Mi historia',
       social: 'Redes',
       ecosystem: 'Ecosistema',
@@ -146,53 +112,38 @@ export const HOME: Record<Locale, HomeCopy> = {
   },
   en: {
     meta: {
-      title: 'Steven Vallejo Ortiz — Software engineer & philosopher',
+      title: 'Steven Vallejo Ortiz — Portfolio and project catalog',
       description:
-        'Software engineer and philosopher. Backend, agentic AI and formal logic: explore my path as a living graph of companies, products and ideas.',
+        'Catalog of my work: SaaS products, logic and complex-systems labs, AI and digital humanities. Each one links to its own site.',
+      person: 'Software engineer and philosopher. Backend, agentic AI and formal logic.',
       jobTitle: ['Software engineer', 'Philosopher'],
       knowsAbout: KNOWS_EN,
     },
     nav: {
       skip: 'Skip to content',
       menu: 'Menu',
-      method: 'Method',
-      path: 'Path',
-      fronts: 'Fronts',
-      proof: 'Proof',
+      catalog: 'Catalog',
       contact: 'Contact',
       language: 'Español',
-      hire: 'Hire me',
+      services: 'Services',
     },
     hero: {
       kicker: 'Mouseîon · stevenvallejo.com',
       first: 'Steven',
       last: 'Vallejo Ortiz',
       role: 'Software engineer · Philosopher',
-      lead: 'Think before you build. Systems that hold up what they say they do.',
-      ctaHire: 'Hire me',
-      ctaStory: 'My story',
-      figcaption: (nodes, edges) => `This graph is my path: ${nodes} nodes, ${edges} real relations`,
-      listLink: 'See it as a list',
-    },
-    method: {
-      eyebrow: '01 · Method',
-      title: 'Two languages, one method',
-      lead: 'To me, logic and engineering are the same discipline: define precisely, tell the essential from the accessory, and build what holds.',
-      paragraphs: [aboutEn['about.p1'], aboutEn['about.p2'], aboutEn['about.p3']],
-      epigraph: '“Abstraction is not stepping away from the problem. It is seeing it from the exact height.”',
-      logic: 'Logic · Philosophy',
-      engineering: 'Engineering · Systems',
-    },
-    path: {
-      eyebrow: '02 · Path',
-      title: 'From the server room to the agent fleet',
-      lead: 'From infrastructure and video games to platforms that bill, and to the agent fleet that runs this portfolio today.',
+      lead: 'All my work, each piece on a site of its own.',
+      services: 'Services',
+      cvEngineer: 'Engineering CV',
+      cvPhilosopher: 'Philosophy CV',
+      figcaption: (nodes, edges) => `This graph maps my work: ${nodes} nodes, ${edges} real relations`,
+      listLink: 'See it as a catalog',
     },
     fronts: {
-      eyebrow: '03 · Fronts',
-      title: `${countWord('en', frenteOrder.length)} fronts, one standard`,
-      lead: 'Each product is a thesis on logic, complex systems or software that makes money.',
-      searchLabel: 'Search the portfolio',
+      eyebrow: `${countWord('en', frenteOrder.length)} fronts · ${productos.length} works`,
+      title: 'Catalog · all my work',
+      lead: 'Each one is a site or a project of its own: go straight to its current version.',
+      searchLabel: 'Search the catalog',
       searchPlaceholder: 'Product, technology or topic…',
       noResults: 'No results. Try another term.',
       openFront: 'Explore the front',
@@ -200,23 +151,12 @@ export const HOME: Record<Locale, HomeCopy> = {
       code: 'Code',
       soon: 'Coming soon',
     },
-    proof: {
-      eyebrow: '04 · Proof',
-      title: 'Evidence, not adjectives',
-      lead: 'Figures taken from the projects themselves. If it cannot be verified, it is not here.',
-      stackTitle: 'Tools',
-      stackLead: 'What I have used in production and research, grouped by family.',
-    },
     contact: {
-      eyebrow: '05 · Contact',
-      title: 'Let’s build something that holds',
-      lead: 'Consulting, custom development, applied AI or a conversation about logic: write to me.',
-      hire: 'Hire me',
-      email: 'Send an email',
+      eyebrow: 'Contact',
+      title: 'Let’s talk',
+      lead: 'A project, some consulting or a conversation about logic: write to me wherever suits you.',
+      email: 'Email',
       whatsapp: 'WhatsApp',
-      cvPhilosopher: 'Philosopher CV',
-      cvEngineer: 'Engineer CV',
-      blog: 'Blog · Scholḗ',
       story: 'My story',
       social: 'Social',
       ecosystem: 'Ecosystem',

@@ -84,10 +84,7 @@
   .home h2,
   .home h3,
   .home h4,
-  .home p,
-  .home dl,
-  .home dd,
-  .home blockquote {
+  .home p {
     margin: 0;
   }
   .home h1,
@@ -96,8 +93,7 @@
   .home h4 {
     font-weight: 500;
   }
-  .home ul,
-  .home ol {
+  .home ul {
     margin: 0;
     padding: 0;
     list-style: none;
@@ -254,6 +250,7 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    gap: 0.4em;
     min-height: 2.75rem;
     padding: 0.7rem 1.35rem;
     border-radius: 999px;
@@ -422,6 +419,12 @@
       grid-row: 4;
     }
   }
+  /* En el móvil el panel del hero ocupa todo el ancho: se despega del botón fijo «Explorar el grafo en 3D». */
+  @media (max-width: 480px) {
+    .home .hero {
+      padding-bottom: 4.5rem;
+    }
+  }
 
   /* ── Secciones ── */
   .home .sec {
@@ -467,11 +470,10 @@
      póster, un núcleo de nodo casi blanco (rgb 239 236 227): sin scrim, --muted quedaba en 2.2:1; con él, ≥ 5.4:1.
      Con movimiento reducido el póster no se atenúa, así que ese es el peor caso. */
   .home .hero-kicker,
-  .home .method-side,
-  .home .timeline-dates,
   .home .search-label,
   .home .search-empty:not(:empty),
-  .home .social a {
+  .home .social a,
+  .home .contact-story a {
     width: fit-content;
     padding: 0.3em 0.65em;
     background: var(--scrim);
@@ -484,133 +486,6 @@
     border: 1px solid var(--line);
     border-radius: var(--radius);
     backdrop-filter: var(--blur);
-  }
-
-  /* ── Método ── */
-  .home .method-grid {
-    display: grid;
-    grid-template-columns: 1fr minmax(0, var(--measure)) 1fr;
-    gap: clamp(1rem, 3vw, 2.5rem);
-    align-items: center;
-  }
-  .home .method-side {
-    font-family: var(--f-mono);
-    font-size: 0.78rem;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-  }
-  .home .method-logic {
-    justify-self: end;
-    text-align: right;
-    color: var(--gold);
-  }
-  .home .method-eng {
-    justify-self: start;
-    color: var(--teal-2);
-  }
-  .home .method-body {
-    display: grid;
-    gap: 1rem;
-  }
-  .home .method-epigraph {
-    max-width: 46rem;
-    margin: clamp(2.5rem, 6vh, 4rem) auto 0;
-    text-align: center;
-    font-family: var(--f-display);
-    font-style: italic;
-    font-size: clamp(1.5rem, 2.8vw, 2.3rem);
-    line-height: 1.25;
-    color: var(--gold-2);
-  }
-  @media (max-width: 900px) {
-    .home .method-grid {
-      grid-template-columns: 1fr;
-    }
-    .home .method-logic {
-      justify-self: start;
-      text-align: left;
-    }
-  }
-
-  /* ── Trayectoria ── */
-  .home .path-layout {
-    display: grid;
-    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
-    gap: clamp(2rem, 5vw, 5rem);
-    align-items: start;
-  }
-  .home .path-head {
-    position: sticky;
-    top: 7rem;
-  }
-  .home .timeline {
-    position: relative;
-    display: grid;
-    gap: 1.25rem;
-  }
-  .home .timeline::before {
-    content: '';
-    position: absolute;
-    left: 0.45rem;
-    top: 0.5rem;
-    bottom: 0.5rem;
-    width: 1px;
-    background: linear-gradient(var(--teal), var(--gold) 55%, transparent);
-  }
-  .home .timeline-item {
-    position: relative;
-    display: grid;
-    gap: 0.6rem;
-    padding-left: 2rem;
-  }
-  .home .timeline-item::before {
-    content: '';
-    position: absolute;
-    left: 0.2rem;
-    top: 0.45rem;
-    width: 0.55rem;
-    height: 0.55rem;
-    border-radius: 50%;
-    background: var(--ink-0);
-    border: 1px solid var(--teal-2);
-    box-shadow: 0 0 12px rgb(111 211 196 / 0.5);
-  }
-  .home .timeline-dates {
-    font-family: var(--f-mono);
-    font-size: 0.78rem;
-    letter-spacing: 0.08em;
-    color: var(--muted);
-  }
-  .home .timeline-body {
-    display: grid;
-    gap: 0.35rem;
-  }
-  .home .timeline-body h3 {
-    font-family: var(--f-display);
-    font-size: clamp(1.5rem, 2.3vw, 2rem);
-    line-height: 1.1;
-    color: var(--text-strong);
-  }
-  .home .timeline-role {
-    font-size: 0.95rem;
-    color: var(--teal-2);
-  }
-  .home .timeline-place {
-    font-size: 0.85rem;
-    color: var(--muted);
-  }
-  .home .timeline-note {
-    margin-top: 0.4rem;
-    font-size: 0.95rem;
-    color: var(--text-soft);
-  }
-  @media (max-width: 900px) {
-    .home .path-layout {
-      grid-template-columns: 1fr;
-    }
-    .home .path-head {
-      position: static;
-    }
   }
 
   /* ── Frentes ── */
@@ -699,6 +574,17 @@
     text-decoration: none;
     color: var(--accent);
   }
+  .home .front-sites {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 1.1rem;
+  }
+  .home .front-sites a {
+    display: inline-block;
+    padding-block: 0.35rem;
+    font-size: 0.88rem;
+    color: var(--text-strong);
+  }
   .home .cards {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(min(100%, 19rem), 1fr));
@@ -776,104 +662,6 @@
     }
   }
 
-  /* ── Prueba ── */
-  /* Tabla de papel: filas completas de 4 (2 en pantallas estrechas) y cifras en una sola línea. */
-  .home .figures {
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    overflow: hidden;
-    border-top: 1px solid var(--line-strong);
-    background: var(--scrim);
-    border-radius: 0 0 var(--radius) var(--radius);
-    backdrop-filter: var(--blur);
-  }
-  .home .figure {
-    display: flex;
-    flex-direction: column-reverse;
-    justify-content: flex-end;
-    gap: 0.5rem;
-    padding: 1.6rem 1.4rem;
-    border-right: 1px solid var(--line);
-    border-bottom: 1px solid var(--line);
-  }
-  .home .figure:nth-child(4n) {
-    border-right: 0;
-  }
-  .home .figure dd {
-    font-family: var(--f-display);
-    font-size: clamp(2rem, 3.6vw, 3.4rem);
-    line-height: 1;
-    white-space: nowrap;
-    font-variant-numeric: lining-nums tabular-nums;
-    color: var(--text-strong);
-  }
-  .home .figure dt {
-    font-size: 0.9rem;
-    color: var(--text-soft);
-  }
-  /* Título y entradilla de Herramientas con el mismo scrim que .sec-head (spec §3.1). */
-  .home .stack-head {
-    width: fit-content;
-    max-width: var(--measure);
-    margin: clamp(3rem, 7vh, 4.5rem) 0 1.5rem;
-    padding: 1.1rem 1.4rem;
-    background: var(--scrim);
-    border-radius: var(--radius);
-    backdrop-filter: var(--blur);
-  }
-  .home .stack-title {
-    font-family: var(--f-display);
-    font-size: clamp(1.8rem, 3vw, 2.6rem);
-    color: var(--text-strong);
-  }
-  .home .stack-lead {
-    margin-top: 0.6rem;
-    color: var(--text-soft);
-  }
-  /* Columnas en vez de rejilla: los grupos tienen alturas muy distintas y así no quedan huecos. */
-  .home .stack {
-    columns: 4 16rem;
-    column-gap: 1rem;
-  }
-  .home .stack-group {
-    break-inside: avoid;
-    margin-bottom: 1rem;
-    padding: 1.1rem 1.2rem;
-    background: var(--scrim);
-    border: 1px solid var(--line);
-    border-radius: 14px;
-    backdrop-filter: var(--blur);
-  }
-  .home .stack-group h4 {
-    margin-bottom: 0.75rem;
-    font-family: var(--f-mono);
-    font-size: 0.74rem;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--teal-2);
-  }
-  .home .chips {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.4rem;
-  }
-  @media (max-width: 900px) {
-    .home .figures {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-    .home .figure:nth-child(2n) {
-      border-right: 0;
-    }
-    .home .figure dd {
-      font-size: clamp(1.8rem, 8vw, 3.2rem);
-    }
-  }
-  @media (max-width: 480px) {
-    .home .figure {
-      padding: 1.25rem 1rem;
-    }
-  }
-
   /* ── Contacto y pie ── */
   .home .contact-list {
     display: grid;
@@ -927,6 +715,17 @@
     letter-spacing: 0.12em;
     text-transform: uppercase;
     color: var(--text-soft);
+  }
+  .home .contact-story {
+    margin-top: 1.25rem;
+  }
+  .home .contact-story a {
+    display: inline-block;
+    font-size: 0.85rem;
+    color: var(--muted);
+  }
+  .home .contact-story a:hover {
+    color: var(--gold-2);
   }
   .home .footer {
     position: relative;

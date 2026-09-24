@@ -9,7 +9,7 @@ const SITE = 'https://www.stevenvallejo.com';
 const SHOTS = '/workspace/.scratch-steven-redesign/shots';
 
 // Subconjuntos de fuente de la home ([locale]/(home)/fonts.ts, spec §3.2 y §5.2), generados por scripts/subset-fonts.sh.
-const HOME_FONTS = ['cormorant-hero', 'cormorant-home', 'cormorant-home-italic', 'geist-home', 'jetbrains-home'] as const;
+const HOME_FONTS = ['cormorant-hero', 'cormorant-home', 'geist-home', 'jetbrains-home'] as const;
 type HomeFont = (typeof HOME_FONTS)[number];
 const fontBytes = (name: string) => readFileSync(`src/app/fonts/${name}.woff2`);
 const sha1 = (b: Buffer) => createHash('sha1').update(b).digest('hex');
@@ -214,7 +214,7 @@ for (const locale of ['es', 'en'] as const) {
 }
 
 for (const locale of ['es', 'en'] as const) {
-  // Solo los cinco subconjuntos propios, una vez cada uno: ninguna fuente de Google del layout raíz (son del portal)
+  // Solo los cuatro subconjuntos propios, una vez cada uno: ninguna fuente de Google del layout raíz (son del portal)
   // ni copias duplicadas. Solo se precarga el del h1, el elemento LCP (spec §5.2).
   test(`/${locale} descarga solo sus subconjuntos de fuente y precarga solo el del h1`, async ({ page }) => {
     const fonts: Promise<{ url: string; hash: string }>[] = [];
@@ -238,7 +238,6 @@ for (const locale of ['es', 'en'] as const) {
     const FILES: Record<string, HomeFont> = {
       'cormorantHero|normal': 'cormorant-hero',
       'cormorantHome|normal': 'cormorant-home',
-      'cormorantHome|italic': 'cormorant-home-italic',
       'geistHome|normal': 'geist-home',
       'jetbrainsHome|normal': 'jetbrains-home',
     };
@@ -277,7 +276,7 @@ test('el menú móvil es un landmark y se cierra al elegir una sección o con Es
   const open = page.locator('.home details.menu[open]');
   await menu.locator('summary').click();
   await expect(open).toHaveCount(1);
-  await menu.getByRole('link', { name: 'Frentes' }).click();
+  await menu.getByRole('link', { name: 'Catálogo' }).click();
   await expect(page).toHaveURL(/#frentes$/);
   await expect(open).toHaveCount(0);
   await menu.locator('summary').click();

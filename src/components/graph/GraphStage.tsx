@@ -186,9 +186,9 @@ export default function GraphStage({ locale, t }: { locale: Locale; t: HomeCopy[
         window.location.assign(`/${locale}/${node.frente}`);
         return;
       }
+      // Un nodo sin tarjeta propia (yo, empresa, herramienta, concepto) lleva al hero o al catálogo.
       const target =
-        document.querySelector(`[data-node="${CSS.escape(node.id)}"]`) ??
-        document.getElementById(node.kind === 'self' ? 'metodo' : node.kind === 'empresa' ? 'trayectoria' : 'prueba');
+        document.querySelector(`[data-node="${CSS.escape(node.id)}"]`) ?? document.getElementById(node.kind === 'self' ? 'hero-title' : 'frentes');
       const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       target?.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'center' });
     },

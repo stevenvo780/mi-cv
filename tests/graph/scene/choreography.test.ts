@@ -1,6 +1,8 @@
+import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
+import HomePage from '@/app/[locale]/(home)/page';
 import { CAMERA0 } from '@/graph/camera0';
-import { SECTIONS, SECTION_POSE, frameAt, type FrameContext } from '@/graph/scene/choreography';
+import { SECTIONS, SECTION_LAYOUT, SECTION_POSE, frameAt, type FrameContext } from '@/graph/scene/choreography';
 
 /** Plano lejano de la cámara de GraphScene (`new PerspectiveCamera(fov, 1, 0.05, 60)`): el grafo (radio 1) cabe delante. */
 const CAMERA_FAR = 60 - 1;
@@ -20,10 +22,20 @@ describe('coreografía', () => {
   it('al inicio: forma red, sin mezcla y la pose del hero (= cámara del póster)', () => {
     const f = frameAt(0, ctx);
     expect(f.from).toBe('red');
-    expect(f.to).toBe('hemisferios');
+    expect(f.to).toBe('clusters');
     expect(f.mix).toBe(0);
     expect(f.pose.distance).toBeCloseTo(SECTION_POSE.hero.distance);
     expect(f.pose.yaw).toBeCloseTo(SECTION_POSE.hero.yaw);
+  });
+
+  // La coreografía del 3D recorre SECTIONS: tiene que ser el orden real del DOM (hero, catálogo y contacto), sin las
+  // secciones de CV que se quitaron (Método, Trayectoria, Prueba).
+  it.each(['es', 'en'] as const)('/%s: las secciones de la home son las de la coreografía, en su orden', async (locale) => {
+    const html = renderToStaticMarkup(await HomePage({ params: Promise.resolve({ locale }) }));
+    expect([...html.matchAll(/data-section="([^"]+)"/g)].map((m) => m[1])).toEqual([...SECTIONS]);
+    expect(html).not.toMatch(/id="(metodo|trayectoria|prueba)"/);
+    const nav = [...html.matchAll(/<a href="#([^"]+)"/g)].map((m) => m[1]);
+    expect(new Set(nav)).toEqual(new Set(['frentes', 'contacto']));
   });
 
   it('la mezcla hacia la siguiente forma empieza pasado el 55 % de la sección', () => {
@@ -44,10 +56,15 @@ describe('coreografía', () => {
     }
   });
 
-  it('trayectoria: la cámara sube por la hélice con el progreso', () => {
-    const k = SECTIONS.indexOf('trayectoria');
-    expect(frameAt(k, ctx).pose.target[1]).toBeCloseTo(-0.8);
-    expect(frameAt(k + 0.5, ctx).pose.target[1]).toBeCloseTo(0.05);
+  it('una forma por sección de la home: el grafo en el hero, los clusters en el catálogo y la lemniscata en contacto', () => {
+    expect(SECTIONS).toEqual(['hero', 'frentes', 'contacto']);
+    expect(SECTIONS.map((s) => SECTION_LAYOUT[s])).toEqual(['red', 'clusters', 'lemniscata']);
+    // En el centro de cada sección, la forma de esa sección, sin mezcla con la siguiente.
+    for (const [k, section] of SECTIONS.entries()) {
+      const f = frameAt(k + 0.3, ctx);
+      expect(f.from, section).toBe(SECTION_LAYOUT[section]);
+      expect(f.mix, section).toBe(0);
+    }
   });
 
   it('frentes: la cámara visita los 4 clusters en orden', () => {
@@ -85,7 +102,7 @@ describe('coreografía', () => {
     expect(f.pose.pitch).toBe(CAMERA0.pitch);
   });
 
-  it('en retrato sigue siendo continuo en las fronteras (del hero, sin alejar, a Método, alejado)', () => {
+  it('en retrato sigue siendo continuo en las fronteras (del hero, sin alejar, al catálogo, alejado)', () => {
     const portrait = { ...ctx, aspect: 0.5 };
     for (let k = 1; k < SECTIONS.length; k++) {
       expect(frameAt(k - 1e-6, portrait).pose.distance).toBeCloseTo(frameAt(k, portrait).pose.distance, 3);
@@ -94,7 +111,7 @@ describe('coreografía', () => {
   });
 
   it('un escenario sin ancho (aspecto 0) no deja la cámara en el infinito', () => {
-    const d = frameAt(SECTIONS.indexOf('prueba'), { ...ctx, aspect: 0 }).pose.distance;
+    const d = frameAt(SECTIONS.indexOf('contacto'), { ...ctx, aspect: 0 }).pose.distance;
     expect(Number.isFinite(d)).toBe(true);
     expect(d).toBeLessThan(CAMERA_FAR);
   });

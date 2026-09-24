@@ -52,10 +52,9 @@ cp node_modules/geist/LICENSE.txt "$OUT/OFL-geist.txt"
 
 # ── 1. Home ──
 
-# Pesos que usa home.css: Cormorant 400 y 500 (cursiva solo 400), JetBrains 400 y 500, Geist 400 a 600.
+# Pesos que usa home.css: Cormorant 400 y 500 (sin cursiva), JetBrains 400 y 500, Geist 400 a 600.
 $PY -m fontTools.varLib.instancer "$TMP/cg.ttf" wght=500 -q -o "$TMP/cg-500.ttf"
 $PY -m fontTools.varLib.instancer "$TMP/cg.ttf" wght=400:500 -q -o "$TMP/cg-400-500.ttf"
-$PY -m fontTools.varLib.instancer "$TMP/cgi.ttf" wght=400 -q -o "$TMP/cgi-400.ttf"
 $PY -m fontTools.varLib.instancer "$TMP/jb.ttf" wght=400:500 -q -o "$TMP/jb-400-500.ttf"
 $PY -m fontTools.varLib.instancer "$TMP/geist.ttf" wght=400:600 -q -o "$TMP/geist-400-600.ttf"
 
@@ -79,8 +78,6 @@ subset "$TMP/cg-500.ttf" cormorant-hero.woff2 'Steven Vallejo Ortiz'
 subset "$TMP/geist-400-600.ttf" geist-home.woff2 "$ASCII$ES«»·§–—‘’“”…→↗"
 # Titulares, nombres de producto y cifras. (Cormorant no tiene «ḗ»: la pinta la serif del sistema, como siempre.)
 subset "$TMP/cg-400-500.ttf" cormorant-home.woff2 "$ASCII$ES·îÎ–—‘’“”…" lnum,tnum
-# Cursiva: solo el epígrafe de Método.
-subset "$TMP/cgi-400.ttf" cormorant-home-italic.woff2 "$ALNUM$ES.,;:!?'\"()-«»“”‘’–—…"
 # Etiquetas, fechas y chips del stack: sin la puntuación ASCII que no usan (sus ligaduras de código pesan). Sin «→»:
 # el subconjunto latin de Google no lo trae, así que la home siempre lo pintó con la mono del sistema. «▶» es el del
 # botón de pausa del grafo cuando está pausado; su «❚❚» no está en ninguna de las fuentes de origen (la del sistema).
