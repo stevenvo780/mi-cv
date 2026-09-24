@@ -11,8 +11,6 @@
  *   variant="flowfield"     §03 Ciencias    — curl-noise flow field, full-bleed
  *   variant="prism"         §04 Enterprise  — prism refracting a spectral fan
  *
- * (The hero keeps its existing GameOfLife canvas in LinktreeHome.)
- *
  * Performance contract — every field obeys all of these:
  *   · single requestAnimationFrame loop; cancelled on unmount.
  *   · IntersectionObserver gates the loop — no work scheduled while off-screen.

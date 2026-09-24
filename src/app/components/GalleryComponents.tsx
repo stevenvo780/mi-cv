@@ -2,7 +2,6 @@
 /**
  * GalleryComponents — shared product gallery primitives.
  * Used by:
- *   - LinktreeHome (home page)
  *   - /[locale]/[frente]/page.tsx (per-frente landing)
  *
  * Design thesis (2026-06-15):
