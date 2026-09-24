@@ -6,7 +6,7 @@ import { TIERS } from '../src/graph/runtime/quality';
 import { SECTIONS } from '../src/graph/scene/choreography';
 // Sin hits reales a GA: medición en 204 y gtag.js de pega (e2e/fixtures.ts).
 import { expect, test } from './fixtures';
-import { brighter, count, decodePng, regions, white } from './pixels';
+import { brighter, count, decodePng, margins, regions, white } from './pixels';
 
 const SHOTS = '/workspace/.scratch-steven-redesign/shots';
 
@@ -27,12 +27,35 @@ async function watchErrors(page: Page) {
   return errors;
 }
 
+/**
+ * Tope de una espera: `cap`, o menos si al test le queda menos presupuesto (con RESERVE_MS de margen). Así, si la espera
+ * falla, su mensaje sale antes que el timeout del test; si no, el fallo llega como «Test timeout of … exceeded» sin decir
+ * qué se esperaba. `test.info().timeout` se lee en cada llamada: vale también con test.slow() o test.setTimeout().
+ */
+function waitCap(cap: number) {
+  const left = testStart + test.info().timeout - Date.now() - RESERVE_MS;
+  if (left <= 0) throw new Error(`sin presupuesto para otra espera: quedan ${left + RESERVE_MS} ms del test`);
+  return Math.min(cap, left);
+}
+let testStart = 0;
+test.beforeEach(() => {
+  testStart = Date.now();
+});
+/** Margen para el cierre del test (capturas, fixture de medición) y para el propio mensaje de la espera. */
+const RESERVE_MS = 15_000;
+
 async function openLive(page: Page, query = 'gl=force') {
   await page.goto(`/es?${query}`);
   await page.mouse.move(320, 240);
-  await expect(page.locator('.stage[data-state="live"]')).toBeAttached({ timeout: 60_000 });
+  await expect(page.locator('.stage[data-state="live"]')).toBeAttached({ timeout: waitCap(60_000) });
   await page.waitForTimeout(1500);
 }
+
+/** Lleva la sección al centro de la ventana (el progreso de la sección, a la mitad). */
+async function scrollToSection(page: Page, section: string) {
+  await page.evaluate((s) => document.querySelector(`[data-section="${s}"]`)!.scrollIntoView({ block: 'center' }), section);
+}
+const WALK = ['metodo', 'trayectoria', 'frentes', 'prueba', 'contacto'] as const;
 
 async function findNode(page: Page) {
   const { width, height } = page.viewportSize()!;
@@ -61,8 +84,9 @@ async function pause(page: Page) {
  * se mira la imagen; con `?worker=off`, `settled` cuenta frames.
  */
 async function stillStage(page: Page) {
+  const start = Date.now();
   let last = await page.locator('.stage').screenshot();
-  let since = Date.now();
+  let since = start;
   await expect
     .poll(
       async () => {
@@ -72,12 +96,15 @@ async function stillStage(page: Page) {
         last = next;
         return Date.now() - since >= STILL_MS;
       },
-      { message: 'la escena en pausa no llegó a quedarse quieta', timeout: 150_000, intervals: [0] },
+      { message: 'la escena en pausa no llegó a quedarse quieta', timeout: waitCap(STILL_CAP_MS), intervals: [0] },
     )
     .toBe(true);
+  console.log(`stillStage: quieta tras ${((Date.now() - start) / 1000).toFixed(1)} s`);
   return last;
 }
 const STILL_MS = 3000;
+/** Medido con la suite completa (proyecto 3d con 6 workers): de 27 a 50 s por llamada. */
+const STILL_CAP_MS = 120_000;
 
 /** Deja en la página solo el escenario: el contenido pasa a opacidad 0 (sigue en su sitio y recibe el puntero). */
 async function hideContent(page: Page) {
@@ -118,22 +145,39 @@ test('la pausa detiene la animación y persiste', async ({ page }) => {
   expect(a.equals(b)).toBe(true);
   await page.reload();
   await page.mouse.move(320, 240);
-  await expect(page.locator('.graph-motion')).toHaveAttribute('aria-pressed', 'true', { timeout: 60_000 });
+  await expect(page.locator('.graph-motion')).toHaveAttribute('aria-pressed', 'true', { timeout: waitCap(60_000) });
 });
 
 test('el scroll recorre las cinco formas sin errores', async ({ page }) => {
   const errors = await watchErrors(page);
   await openLive(page);
-  // En pausa, para capturar cada forma cuando la cámara llega a su pose (stillStage).
-  await pause(page);
-  for (const section of ['metodo', 'trayectoria', 'frentes', 'prueba', 'contacto']) {
+  // Con la animación en marcha, como la ve quien visita la página: morph de cada forma, pulsos, respiración y regulador
+  // de calidad mientras la página se desplaza. Las capturas de cada forma en su pose van en los tests de abajo.
+  await expect(page.locator('.graph-motion')).toHaveAttribute('aria-pressed', 'false');
+  for (const section of WALK) {
     await page.locator(`[data-section="${section}"]`).scrollIntoViewIfNeeded();
-    await page.evaluate((s) => document.querySelector(`[data-section="${s}"]`)!.scrollIntoView({ block: 'center' }), section);
-    await stillStage(page);
-    await page.screenshot({ path: `${SHOTS}/3d-${section}.png` });
+    await scrollToSection(page, section);
+    await page.waitForTimeout(2200);
   }
+  await expect(page.locator('.stage[data-state="live"]'), 'la escena sigue viva al final del recorrido').toBeAttached();
   expect(errors).toEqual([]);
 });
+
+// Una captura por forma, cada una en su test: esperar a que la cámara llegue a cada pose cuesta de 27 a 50 s por forma
+// en SwiftShader con la suite completa, y las cinco seguidas en un solo test llegaron a 2.7 min, el 90 % de su timeout.
+for (const section of WALK) {
+  test(`forma de ${section}: captura de la página cuando la cámara llega a su pose`, async ({ page }) => {
+    const errors = await watchErrors(page);
+    await openLive(page);
+    // En pausa, la escena solo pinta hasta que la cámara llega a la pose de la sección: stillStage espera a que se
+    // quede quieta.
+    await pause(page);
+    await scrollToSection(page, section);
+    await stillStage(page);
+    await page.screenshot({ path: `${SHOTS}/3d-${section}.png` });
+    expect(errors).toEqual([]);
+  });
+}
 
 test('el foco de teclado en un producto mueve la cámara hacia su nodo', async ({ page }) => {
   await openLive(page);
@@ -169,9 +213,9 @@ test.describe('reduced motion', () => {
     await page.goto('/es');
     await page.mouse.move(300, 300);
     const explore = page.locator('.graph-explore');
-    await expect(explore).toBeVisible({ timeout: 20_000 });
+    await expect(explore).toBeVisible({ timeout: waitCap(20_000) });
     await explore.click();
-    await expect(page.locator('.stage[data-state="live"]')).toBeAttached({ timeout: 60_000 });
+    await expect(page.locator('.stage[data-state="live"]')).toBeAttached({ timeout: waitCap(60_000) });
     await expect(page.locator('.graph-motion')).toHaveAttribute('aria-pressed', 'true');
   });
 });
@@ -287,7 +331,7 @@ async function settled(page: Page) {
         const p = await probeOf(page);
         return p.ticks - Math.max(p.drawTick, since);
       },
-      { message: 'la escena en pausa no llegó a su pose', timeout: 150_000 },
+      { message: 'la escena en pausa no llegó a su pose', timeout: waitCap(120_000) },
     )
     .toBeGreaterThanOrEqual(QUIET_TICKS);
 }
@@ -300,7 +344,7 @@ async function frameWith(page: Page, setup: Partial<Pick<GlProbe, 'hide' | 'edge
   await page.evaluate((s) => Object.assign((window as ProbeWindow).__glProbe!, { hide: [], edgeInstances: null, rest: false }, s), setup);
   // Un puntero sobre la barra (contenido: inside = false, sin paralaje ni hover) marca la escena como sucia: un frame.
   await page.mouse.move(4 + (nudge++ % 2), 4);
-  await expect.poll(async () => (await probeOf(page)).frames, { timeout: 30_000 }).toBeGreaterThan(frames);
+  await expect.poll(async () => (await probeOf(page)).frames, { message: 'la escena no pintó el frame pedido', timeout: waitCap(30_000) }).toBeGreaterThan(frames);
   await settled(page);
   const png = await page.locator('.stage').screenshot();
   return { png, px: decodePng(png) };
@@ -317,36 +361,47 @@ const LEVELS = [
 /** Píxeles que una capa sube al menos esto en algún canal: se ve (el fondo es casi negro). */
 const VISIBLE = 8;
 /**
- * Parte del escenario que cada capa de aristas tiene que pintar. Medido: del 1.2 % al 23 % según pose y nivel (lo
- * mínimo, las semánticas en reposo del hero en T3, un grafo pequeño en el centro). Con la cinta del revés (el fallo de
- * la T3 del plan) ninguna llega al 0.01 %; con la línea base decorativa a 0 o con aristas decorativas de longitud 0
- * (puntos), las decorativas en reposo se quedan por debajo del 0.1 %.
+ * Parte del escenario que cada capa de aristas tiene que pintar. Medido: del 0.96 % al 18 % según pose y nivel (lo
+ * mínimo, las decorativas en reposo de Prueba en T1: atenuada a 0.35 y, en retrato, con la cámara alejada; §3.4). Con la
+ * cinta del revés (el fallo de la T3 del plan) ninguna llega al 0.01 %; con la línea base decorativa a 0 o con aristas
+ * decorativas de longitud 0 (puntos), las decorativas en reposo se quedan por debajo del 0.1 % (medidos con la cámara
+ * de antes; alejarla solo puede bajarlos).
  */
 const MIN_SHARE = 0.005;
 /**
- * Parte de lo que pintan las decorativas en reposo que va en regiones de ≥ 16 px de lado. Medido: 0.69–0.99 (lo mínimo
- * en Prueba en T1, atenuada a 0.35). Con aristas decorativas de longitud 0 (puntos), 0.
+ * Parte de lo que pintan las decorativas en reposo que va en regiones de ≥ 16 px de lado. Medido: 0.88–0.99 (lo mínimo
+ * en Contacto en T1). Con aristas decorativas de longitud 0 (puntos), 0.
  */
 const MIN_FILAMENTS = 0.5;
 /**
  * Mayor región conexa de blanco puro (los tres canales ≥ 250) que se tolera: ≈ un disco de 16 px. Medido con la mezcla
- * de las aristas de la spec §3.3: 0 px en T3 y, en T1, 4 px como mucho salvo en Contacto, de 28 a 74 px (pulsos sobre
- * el haz de la lemniscata). Con la mezcla aditiva de antes, Contacto en T1 llegaba a 769–896 px.
+ * de las aristas de la spec §3.3: 0 px en T3 y, en T1, 12 px como mucho salvo en Contacto, de 61 a 103 px en 6 corridas
+ * (pulsos sobre el haz de la lemniscata, más denso en pantalla desde que en retrato la cámara se aleja; antes, de 28 a
+ * 74 px). Con la mezcla aditiva de antes, Contacto en T1 llegaba a 769–896 px.
  */
 const MAX_WHITE_REGION = 200;
+/**
+ * Margen mínimo entre la forma (aristas semánticas en reposo) y cada borde del escenario, en fracción de su lado: la forma
+ * cabe entera. Medido: en T1 (390 × 844), de 28 px (Contacto, a los lados) en adelante, y en T3 (1440 × 900), de 108 px
+ * (Trayectoria, arriba) en adelante. Con las distancias de apaisado también en retrato (antes de la ronda 1 de la Tarea
+ * 5), en T1 Método, Trayectoria y Contacto tocaban los dos lados (0 px) y Prueba quedaba a 9 px. Frentes no entra: la
+ * cámara visita de cerca el cluster de la sección activa (spec §2, L3) y deja otro contra un borde, en T1 y en T3.
+ */
+const MIN_MARGIN = 0.03;
 
 for (const { tier, viewport } of LEVELS) {
   test.describe(`T${tier} a ${viewport.width}×${viewport.height}`, () => {
     test.use({ viewport });
 
     for (const section of SECTIONS) {
-      test(`pose ${section}: se pintan las aristas, también las de los satélites, y nada se quema a blanco`, async ({ page }, info) => {
+      const fit = section === 'frentes' ? '' : ' y la forma cabe entera';
+      test(`pose ${section}: se pintan las aristas, también las de los satélites, nada se quema a blanco${fit}`, async ({ page }, info) => {
         const errors = await watchErrors(page);
         await page.addInitScript(instrumentWebGL);
         await openLive(page, 'gl=force&worker=off');
         await pause(page);
         await hideContent(page);
-        await page.evaluate((s) => document.querySelector(`[data-section="${s}"]`)!.scrollIntoView({ block: 'center' }), section);
+        await scrollToSection(page, section);
         await settled(page);
 
         // La misma pose (en pausa el reloj no corre: pulsos y respiración quietos), con y sin cada capa. «En reposo»,
@@ -370,7 +425,10 @@ for (const { tier, viewport } of LEVELS) {
         // Aristas visibles en la escena real, con pulsos y con nodos y hubs delante.
         const inScene = count(brighter(full.px, withoutEdges.px, VISIBLE));
         // En reposo: la línea base de las semánticas, sobre el fondo, y lo que añaden las decorativas a las semánticas.
-        const semanticPx = count(brighter(semanticRest.px, background.px, VISIBLE));
+        const semanticMask = brighter(semanticRest.px, background.px, VISIBLE);
+        const semanticPx = count(semanticMask);
+        // Encuadre: distancia de las aristas semánticas en reposo (la forma, sin el halo de satélites) a cada borde.
+        const framing = margins(semanticMask, semanticRest.px.width);
         const decorMask = brighter(rest.px, semanticRest.px, VISIBLE);
         const decorPx = count(decorMask);
         // Filamentos que unen cada satélite con su nodo, no puntos: píxeles de regiones conexas de ≥ 16 px de lado.
@@ -390,6 +448,7 @@ for (const { tier, viewport } of LEVELS) {
           blancoMayor: burnt[0]?.area ?? 0,
           blancoTotal: burnt.reduce((n, r) => n + r.area, 0),
           blancoMayorEnReposoSinNodos: burntRest[0]?.area ?? 0,
+          margenes: framing,
         };
         console.log(`T${tier} ${section}: ${JSON.stringify(stats)}`);
         info.annotations.push({ type: 'píxeles', description: JSON.stringify(stats) });
@@ -399,6 +458,12 @@ for (const { tier, viewport } of LEVELS) {
         expect(decorPx / area, 'aristas decorativas en reposo').toBeGreaterThan(MIN_SHARE);
         expect(filaments / decorPx, 'la capa decorativa son filamentos conectados, no puntos').toBeGreaterThan(MIN_FILAMENTS);
         expect(burnt[0]?.area ?? 0, `zona quemada a blanco en ${JSON.stringify(burnt[0])}`).toBeLessThanOrEqual(MAX_WHITE_REGION);
+        if (fit) {
+          const minX = MIN_MARGIN * full.px.width;
+          const minY = MIN_MARGIN * full.px.height;
+          const fits = !!framing && Math.min(framing.left, framing.right) >= minX && Math.min(framing.top, framing.bottom) >= minY;
+          expect(fits, `la forma cabe en el escenario con ${Math.ceil(minX)} × ${Math.ceil(minY)} px de margen: ${JSON.stringify(framing)}`).toBe(true);
+        }
         expect(errors).toEqual([]);
       });
     }
@@ -417,7 +482,7 @@ test('presupuesto del 3D (chunk de GraphStage, worker y sus chunks) ≤ 175 KB g
   });
   await page.goto('/es?gl=force');
   await page.mouse.move(320, 240);
-  await expect(page.locator('.stage[data-state="live"]')).toBeAttached({ timeout: 60_000 });
+  await expect(page.locator('.stage[data-state="live"]')).toBeAttached({ timeout: waitCap(60_000) });
   await page.waitForTimeout(1500);
   // Lo que empezó antes de load. El worker y lo que importa no están en el Resource Timing de la página: cuentan.
   const critical = new Set(

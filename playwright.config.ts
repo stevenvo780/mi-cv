@@ -28,6 +28,10 @@ export default defineConfig({
       name: '3d',
       testMatch: /graph3d\.spec\.ts/,
       timeout: 180_000,
+      // Cada test pinta en CPU (SwiftShader, varios hilos por navegador). Con los 16 workers por defecto a la vez, un
+      // test del proyecto tardaba hasta 1.9 min (el 63 % del timeout) y la carga del host pasaba de 140 en 32 núcleos;
+      // con 6, el más lento tarda 1 min y el proyecto entero, lo mismo (2 min).
+      workers: 6,
       use: {
         viewport: { width: 1440, height: 900 },
         // LAUNCH ya lleva el ejecutable y la regla que deja sin DNS los hosts de medición: se conservan.

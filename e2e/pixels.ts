@@ -138,3 +138,26 @@ export function regions(mask: Uint8Array, width: number): Region[] {
 }
 
 export const count = (mask: Uint8Array) => mask.reduce((n, v) => n + v, 0);
+
+/** Distancia de lo pintado a cada borde (px): 0 = toca el borde, así que la forma sale cortada. Null si no hay nada. */
+export interface Margins {
+  left: number;
+  right: number;
+  top: number;
+  bottom: number;
+}
+
+export function margins(mask: Uint8Array, width: number): Margins | null {
+  const height = mask.length / width;
+  let [x0, y0, x1, y1] = [width, height, -1, -1];
+  for (let p = 0; p < mask.length; p++) {
+    if (!mask[p]) continue;
+    const x = p % width;
+    const y = (p - x) / width;
+    if (x < x0) x0 = x;
+    if (x > x1) x1 = x;
+    if (y < y0) y0 = y;
+    if (y > y1) y1 = y;
+  }
+  return x1 < 0 ? null : { left: x0, right: width - 1 - x1, top: y0, bottom: height - 1 - y1 };
+}

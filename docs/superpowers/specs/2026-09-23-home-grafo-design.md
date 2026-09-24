@@ -6,7 +6,7 @@
 - Actualizada el 2026-09-24 con lo construido en el Plan 1 y con el fix de su revisión final: las desviaciones están en §2 (filas 0 y 3), §3.1, §3.2, §4.1, §4.2, §4.3, §4.4, §4.6, §4.7, §4.8, §5, §6 y §8.
 - Tarea 3 del Plan 2 (shaders y `GraphScene`, ronda de fix 1): lo que concreta o cambia está en §3.3 (aristas y niebla), §3.4 (respiración), §4.4 (regulador) y §4.6 (archivos).
 - Tarea 7 del Plan 2 (endurecimiento de `GraphScene`): §3.3 (rango de la niebla y luminancia de las aristas en reposo) y §4.4 (espera del regulador: tope y olvido de las bajadas).
-- Tarea 5 del Plan 2 (e2e del 3D, ronda de fix 1): §3.4 (encuadre en retrato), §3.3 (blanco en Contacto en T1) y §5 (cifras).
+- Tarea 5 del Plan 2 (e2e del 3D, ronda de fix 1): §3.4 (encuadre en retrato), §3.3 (blanco en Contacto en T1), §5 (cifras) y §6 (qué cubre el proyecto `3d`).
 - Lighthouse en móvil cumple desde la ronda de fix 2 de la Tarea 14: Performance 99 en `/es` y `/en` y LCP de laboratorio de 1.7 a 1.9 s, con el objetivo de LCP en ≤ 2.5 s (§5.2).
 
 ## 1. Objetivo
@@ -156,6 +156,7 @@ Tokens de la home en `src/styles/home.css` (capa `@layer home`), en OKLCH con re
   - Antes, a 390 × 844, la lemniscata de Contacto no se reconocía (un haz horizontal cortado por los dos lados), y Método y Trayectoria también tocaban los dos lados.
   - El hero conserva `CAMERA0`: es la cámara del póster, cuyo `slice` en retrato también recorta por los lados, y el canvas tiene que coincidir con él al fundirse.
   - Frentes queda como en apaisado: la cámara visita de cerca el cluster activo (§2, L3) y deja otro contra un borde, en retrato y en apaisado.
+  - El e2e lo comprueba por píxeles: en T1 (390 × 844) y T3 (1440 × 900), las aristas semánticas en reposo de cada pose, salvo Frentes, quedan al menos a un 3 % del lado de cada borde (§6).
 - **Respiración:** ruido simplex por instancia en el vertex shader. Es simplex 2D: cada instancia recorre en el tiempo su propia fila del campo, una por eje, con 0.016 de amplitud (misma RMS que la versión con senos del plan).
 - **Morphs:** `mix(layoutA, layoutB, smoothstep(progress))` en el vertex shader. Duración percibida 1.2–1.8 s, ligada al scroll con amortiguación.
 - **Aparición de texto:** CSS con `animation-timeline: view()` dentro de `@supports`. El estado por defecto es visible. El `<h1>` nunca arranca oculto.
@@ -465,10 +466,12 @@ e2e/fixtures.ts                        test y expect de Playwright sin hits real
    - **Grafo 3D (Plan 2, Tarea 5):** el proyecto `3d` de Playwright lanza Chrome con WebGL por SwiftShader (`--use-angle=swiftshader`) y solo ejecuta `e2e/graph3d.spec.ts`; los demás proyectos lo ignoran. Comprueba:
      - que la escena arranca en el worker, pinta y se anima, y que el fallback (`?worker=off`) pinta en el hilo principal;
      - el hover con su ficha, la pausa (la escena se queda quieta y la preferencia persiste al recargar), el foco de teclado en un producto (mueve la cámara con la escena en pausa y sin desplazar la página) y el movimiento reducido (póster y «Explorar en 3D», que arranca en pausa);
-     - las cinco formas por scroll, con capturas cuando la cámara llega a cada pose;
+     - el recorrido por las cinco secciones con la animación en marcha (morph, pulsos y regulador de calidad), sin errores y con la escena viva al final;
+     - una captura de la página por forma, cada una en su test, cuando la cámara llega a su pose (en pausa);
      - el presupuesto del 3D (§5), con el mismo Resource Timing que el de la ruta crítica;
-     - por píxeles, en las seis poses y en T3 (1440 × 900) y T1 (390 × 844), que las aristas se ven en la escena real, que las semánticas y las decorativas se ven en reposo (sin pulsos) y que las decorativas son filamentos y no puntos, y que ninguna zona se quema a blanco (la mayor región de blanco puro, ≤ 200 px; §3.3). Para eso envuelve WebGL2 desde un script de inicio: omite capas y anula los pulsos sin tocar el código del sitio. Solo ve el hilo principal, así que esta parte usa el fallback, con la misma escena y los mismos shaders que el worker.
+     - por píxeles, en las seis poses y en T3 (1440 × 900) y T1 (390 × 844), que las aristas se ven en la escena real, que las semánticas y las decorativas se ven en reposo (sin pulsos) y que las decorativas son filamentos y no puntos, que ninguna zona se quema a blanco (la mayor región de blanco puro, ≤ 200 px; §3.3) y, salvo en Frentes, que la forma cabe entera (las aristas semánticas en reposo, al menos a un 3 % del lado de cada borde; §3.4). Para eso envuelve WebGL2 desde un script de inicio: omite capas y anula los pulsos sin tocar el código del sitio. Solo ve el hilo principal, así que esta parte usa el fallback, con la misma escena y los mismos shaders que el worker.
      - En pausa, la espera hasta que la cámara llega a su pose no es un tiempo fijo: en SwiftShader un frame tarda cientos de ms (más con la suite en paralelo) y avanza como mucho 50 ms del reloj de la escena. Con el fallback cuenta fotogramas del navegador sin pintar; con el worker, espera a que el escenario lleve 3 s sin cambiar.
+     - Cada espera se acota a lo que le queda al test (menos 15 s): si falla, su mensaje sale antes que el timeout del test. El proyecto `3d` corre con 6 workers: con los 16 por defecto, SwiftShader saturaba el host (carga de más de 140 en 32 núcleos) y un test llegaba a 1.9 min de sus 3; con 6, el más lento de la suite completa tarda 1 min.
      - Cero errores de consola y de CSP. El aviso `KHR_parallel_shader_compile extension not supported` de SwiftShader es un `warning`, no un error, y no cuenta.
 3. **Lighthouse:**
    - Móvil y escritorio, `/es` y `/en`, mediana de 5 corridas.
