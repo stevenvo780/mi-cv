@@ -8,7 +8,9 @@
     "start": "next start",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run"
+    "test": "vitest run",
+    "graph:build": "tsx scripts/build-graph.mts",
+    "prebuild": "npm run graph:build"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.6.0",
@@ -31,6 +33,7 @@
     "eslint": "9.39.5",
     "eslint-config-next": "16.3.6",
     "puppeteer-core": "^25.1.0",
+    "tsx": "4.23.15",
     "typescript": "5.9.3",
     "vitest": "5.0.1"
   }
