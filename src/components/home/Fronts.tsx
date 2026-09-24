@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import type { HomeCopy } from '@/content/home';
 import { frenteOrder, frentesMeta, productTags, productos } from '@/data/frentes';
 import { nodeId } from '@/graph/sources';
@@ -23,9 +22,10 @@ export default function Fronts({ locale, t }: { locale: Locale; t: HomeCopy }) {
                   <p className="eyebrow">§ {meta.secNo}</p>
                   <h3 id={`front-${fid}`}>{meta.nombre[locale]}</h3>
                   <p className="front-tagline">{meta.tagline[locale]}</p>
-                  <Link className="front-link" href={`/${locale}/${fid}`}>
+                  {/* <a> y no next/link: los frentes son del grupo (portal); ver la nota de page.tsx. */}
+                  <a className="front-link" href={`/${locale}/${fid}`}>
                     {f.openFront} →
-                  </Link>
+                  </a>
                 </header>
                 <ul className="cards">
                   {productos

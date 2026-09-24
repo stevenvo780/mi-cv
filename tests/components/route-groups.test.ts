@@ -1,0 +1,99 @@
+// La home (grupo (home), con home.css en `@layer home`) y el portal (grupo (portal), con bootstrap,
+// globals.css y brand.css sin capa) comparten el layout raíz [locale]/layout.tsx. Una navegación en
+// cliente (next/link) entre ambos deja cargada la hoja del grupo de origen, y como las reglas sin capa
+// ganan siempre a las de una capa, la página de destino se rompe (spec §1.4: cero regresiones en
+// /[locale]/[frente] y /[locale]/lore). Por eso los enlaces que cruzan de un grupo a otro son <a>
+// (navegación de documento) y next/link solo enlaza páginas del mismo grupo.
+import { createElement, type ComponentType, type ReactNode } from 'react';
+import { renderToStaticMarkup } from 'react-dom/server';
+import { describe, expect, it, vi } from 'vitest';
+import FrentePageClient from '@/app/[locale]/(portal)/[frente]/FrentePageClient';
+import LorePageClient from '@/app/[locale]/(portal)/lore/LorePageClient';
+import CustomNavbar from '@/app/components/Navbar';
+import HomePage from '@/app/[locale]/(home)/page';
+import { frenteOrder } from '@/data/frentes';
+
+// next/link se sustituye por un <a> marcado: así el HTML distingue la navegación en cliente de la de documento.
+vi.mock('next/link', async () => {
+  const { createElement: h } = await import('react');
+  function Link({ href, prefetch, replace, scroll, ...rest }: Record<string, unknown>) {
+    void prefetch;
+    void replace;
+    void scroll;
+    return h('a', { ...rest, href: String(href), 'data-client-nav': '' });
+  }
+  return { default: Link };
+});
+
+vi.mock('next/navigation', () => ({
+  useParams: () => ({ locale: 'es' }),
+  usePathname: () => '/es/lore',
+  useRouter: () => ({ push: () => {}, replace: () => {}, prefetch: () => {}, back: () => {}, forward: () => {}, refresh: () => {} }),
+}));
+
+type Anchor = { href: string; client: boolean };
+
+function anchors(html: string): Anchor[] {
+  return [...html.matchAll(/<a\b([^>]*)>/g)].map(([, attrs]) => ({
+    href: /\bhref="([^"]*)"/.exec(attrs)?.[1] ?? '',
+    client: /\bdata-client-nav=""/.test(attrs),
+  }));
+}
+
+/** Grupo de rutas al que lleva un enlace interno: `/es`, `/en` (con o sin ancla) es la home; el resto, el portal. */
+function group(href: string): 'home' | 'portal' {
+  return /^\/(es|en)\/?(#.*)?$/.test(href) ? 'home' : 'portal';
+}
+
+const internal = (list: Anchor[]) => list.filter((a) => a.href.startsWith('/'));
+
+async function renderHome(locale: 'es' | 'en') {
+  const tree = await HomePage({ params: Promise.resolve({ locale }) });
+  return renderToStaticMarkup(tree);
+}
+
+function render<P extends object>(component: ComponentType<P>, props: P): string {
+  return renderToStaticMarkup(createElement(component, props) as ReactNode);
+}
+
+describe('enlaces entre los grupos de rutas (home) y (portal)', () => {
+  it.each(['es', 'en'] as const)('la home (%s) solo usa next/link hacia la propia home', async (locale) => {
+    const links = internal(anchors(await renderHome(locale)));
+    const client = links.filter((a) => a.client);
+    expect(client.length).toBeGreaterThan(0); // el mock está activo: marca y cambio de idioma
+    expect(client.filter((a) => group(a.href) !== 'home')).toEqual([]);
+
+    const toPortal = links.filter((a) => group(a.href) === 'portal');
+    const targets = new Set(toPortal.map((a) => a.href));
+    expect(targets).toEqual(new Set([`/${locale}/lore`, ...frenteOrder.map((fid) => `/${locale}/${fid}`)]));
+    expect(toPortal.filter((a) => a.client)).toEqual([]);
+  });
+
+  it('el portal solo usa next/link dentro del portal', () => {
+    const pages = [
+      render(CustomNavbar, {}),
+      render(LorePageClient, { locale: 'es' }),
+      ...frenteOrder.map((frenteId) => render(FrentePageClient, { locale: 'es', frenteId })),
+    ];
+    for (const html of pages) {
+      const links = internal(anchors(html));
+      const toHome = links.filter((a) => group(a.href) === 'home');
+      expect(toHome.length).toBeGreaterThan(0);
+      expect(toHome.filter((a) => a.client)).toEqual([]);
+    }
+    // La navegación interna del portal (Navbar → /lore) sigue siendo en cliente.
+    expect(anchors(pages[0]).some((a) => a.client && a.href === '/es/lore')).toBe(true);
+  });
+});
+
+describe('landmarks de la home', () => {
+  it.each(['es', 'en'] as const)('el <footer> (%s) es hermano de <main>, no descendiente', async (locale) => {
+    const html = await renderHome(locale);
+    expect(html.match(/<main\b/g)).toHaveLength(1);
+    expect(html.match(/<footer\b/g)).toHaveLength(1);
+    expect(html.indexOf('<footer')).toBeGreaterThan(html.indexOf('</main>'));
+    // El pie sigue dentro del contenedor .home, que es quien le da el sistema visual.
+    expect(html.indexOf('<footer')).toBeLessThan(html.lastIndexOf('</div>'));
+    expect(html).toMatch(/<\/main><footer class="footer">/);
+  });
+});

@@ -1,6 +1,5 @@
 'use client';
 
-import Link from 'next/link';
 import BrandLogo from '@/app/components/BrandLogo';
 import { useReveal } from '@/app/components/Frentes/useReveal';
 import {
@@ -28,6 +27,7 @@ export default function FrentePageClient({ locale, frenteId }: FrentePageClientP
 
   useReveal();
 
+  // La home es otro grupo de rutas: sus enlaces son <a>, no next/link (ver src/app/[locale]/(home)/page.tsx).
   const homeHref = `/${locale}`;
 
   return (
@@ -148,9 +148,9 @@ export default function FrentePageClient({ locale, frenteId }: FrentePageClientP
       >
         {/* ── HERO ── */}
         <div className="fp-hero reveal">
-          <Link href={homeHref} className="fp-back">
+          <a href={homeHref} className="fp-back">
             ← {locale === 'es' ? 'Volver al inicio' : 'Back to home'}
-          </Link>
+          </a>
           <div className="fp-logo">
             <BrandLogo size={38} title="Mouseîon" />
           </div>
@@ -179,9 +179,9 @@ export default function FrentePageClient({ locale, frenteId }: FrentePageClientP
 
         {/* ── FOOTER ── */}
         <footer className="fp-foot reveal">
-          <Link href={homeHref} className="fp-home-link">
+          <a href={homeHref} className="fp-home-link">
             ← {locale === 'es' ? 'Volver al inicio' : 'Back to home'}
-          </Link>
+          </a>
           <p className="fp-foot-brand">
             {locale === 'es' ? 'Mouseîon · por Steven Vallejo' : 'Mouseîon · by Steven Vallejo'}
           </p>

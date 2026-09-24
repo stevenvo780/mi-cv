@@ -49,8 +49,9 @@ export default function CustomNavbar() {
       ` }} />
     <Navbar expand="lg" className="sticky-top" style={{ scrollBehavior: 'smooth' }}>
       <Container>
+        {/* La marca y "Inicio" llevan a la home, que es otro grupo de rutas: <a> (sin as={Link}) para que
+            sea una navegación de documento. Ver la nota de src/app/[locale]/(home)/page.tsx. */}
         <Navbar.Brand
-          as={Link}
           href={`/${locale}`}
           className="d-inline-flex align-items-center gap-2"
         >
@@ -91,7 +92,7 @@ export default function CustomNavbar() {
         <Navbar.Toggle aria-controls="navbar-nav" />
         <Navbar.Collapse id="navbar-nav">
           <Nav className="me-auto">
-            <Nav.Link as={Link} href={`/${locale}`}>
+            <Nav.Link href={`/${locale}`}>
               {t('navbar.home')}
             </Nav.Link>
             <Nav.Link as={Link} href={loreHref}>

@@ -1,7 +1,6 @@
 'use client';
 
 import React from 'react';
-import Link from 'next/link';
 import BrandLogo from '@/app/components/BrandLogo';
 import { useReveal } from '@/app/components/Frentes/useReveal';
 import { PORTRAIT, type Locale } from '@/app/components/Portrait/portraitData';
@@ -14,6 +13,7 @@ export default function LorePageClient({ locale }: LorePageClientProps) {
   const t = PORTRAIT[locale];
   useReveal();
 
+  // La home es otro grupo de rutas: sus enlaces son <a>, no next/link (ver src/app/[locale]/(home)/page.tsx).
   const homeHref = `/${locale}`;
 
   return (
@@ -205,9 +205,9 @@ export default function LorePageClient({ locale }: LorePageClientProps) {
       <div className="lore-wrap">
         {/* ── HERO ── */}
         <div className="lore-hero reveal">
-          <Link href={homeHref} className="lore-back">
+          <a href={homeHref} className="lore-back">
             ← {locale === 'es' ? 'Volver al inicio' : 'Back to home'}
-          </Link>
+          </a>
           <div className="lore-logo">
             <BrandLogo size={40} title="Steven Vallejo" />
           </div>
@@ -240,9 +240,9 @@ export default function LorePageClient({ locale }: LorePageClientProps) {
 
         {/* ── CLOSING FOOTER ── */}
         <footer className="lore-foot reveal">
-          <Link href={homeHref} className="lore-home-link">
+          <a href={homeHref} className="lore-home-link">
             ← {locale === 'es' ? 'Volver al inicio' : 'Back to home'}
-          </Link>
+          </a>
           <p className="lore-foot-note">{t.footNote}</p>
           <p className="lore-foot-brand">
             {locale === 'es' ? 'Mouseîon · por Steven Vallejo' : 'Mouseîon · by Steven Vallejo'}
