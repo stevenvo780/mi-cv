@@ -16,7 +16,15 @@ export async function generateMetadata({
     title,
     description,
     alternates,
-    openGraph: { title, description, type: 'profile', url: alternates.canonical, locale: OG_LOCALE[locale], siteName: 'Mouseîon' },
+    openGraph: {
+      title,
+      description,
+      type: 'profile',
+      url: alternates.canonical,
+      locale: OG_LOCALE[locale],
+      alternateLocale: OG_LOCALE[locale === 'es' ? 'en' : 'es'],
+      siteName: 'Mouseîon',
+    },
     twitter: { card: 'summary_large_image', title, description },
   };
 }
