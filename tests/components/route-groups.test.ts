@@ -44,9 +44,9 @@ function anchors(html: string): Anchor[] {
   }));
 }
 
-/** Grupo de rutas al que lleva un enlace interno: `/es`, `/en` (con o sin ancla) es la home; el resto, el portal. */
+/** Las rutas raíz y de compartir usan el grupo (home); lore y los frentes usan (portal). */
 function group(href: string): 'home' | 'portal' {
-  return /^\/(es|en)\/?(#.*)?$/.test(href) ? 'home' : 'portal';
+  return /^\/(es|en)(?:\/compartir)?\/?(#.*)?$/.test(href) ? 'home' : 'portal';
 }
 
 const internal = (list: Anchor[]) => list.filter((a) => a.href.startsWith('/'));
@@ -67,6 +67,7 @@ describe('enlaces entre los grupos de rutas (home) y (portal)', () => {
     const links = internal(anchors(await renderHome(locale)));
     expect(links.length).toBeGreaterThan(0);
     expect(links.filter((a) => a.client)).toEqual([]);
+    expect(links.some((a) => a.href === `/${locale}/compartir`)).toBe(true);
 
     const toPortal = links.filter((a) => group(a.href) === 'portal');
     const targets = new Set(toPortal.map((a) => a.href));

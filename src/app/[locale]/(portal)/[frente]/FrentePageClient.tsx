@@ -129,6 +129,17 @@ export default function FrentePageClient({ locale, frenteId }: FrentePageClientP
           background: var(--teal-light);
           transform: translateY(-1px);
         }
+        .fp-share-link {
+          width: fit-content;
+          font-family: var(--font-mono);
+          font-size: 0.72rem;
+          letter-spacing: 0.08em;
+          color: var(--teal-light) !important;
+          text-decoration: none !important;
+        }
+        .fp-share-link:hover {
+          color: var(--gold) !important;
+        }
         .fp-foot-brand {
           font-family: var(--font-mono);
           font-size: 0.70rem;
@@ -181,6 +192,9 @@ export default function FrentePageClient({ locale, frenteId }: FrentePageClientP
         <footer className="fp-foot reveal">
           <a href={homeHref} className="fp-home-link">
             ← {locale === 'es' ? 'Volver al inicio' : 'Back to home'}
+          </a>
+          <a href={`/${locale}/compartir`} className="fp-share-link">
+            {locale === 'es' ? 'Tarjeta QR ↗' : 'QR card ↗'}
           </a>
           <p className="fp-foot-brand">
             {locale === 'es' ? 'Mouseîon · por Steven Vallejo' : 'Mouseîon · by Steven Vallejo'}

@@ -1302,6 +1302,32 @@
     padding-block: 0.4rem;
     color: var(--text-soft);
   }
+  .home .footer a.footer-share {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    margin-inline: auto;
+    padding: 0.48rem 0.78rem;
+    border: 1px solid var(--line-strong);
+    border-radius: 999px;
+    font-family: var(--f-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+    text-decoration: none;
+    transition: border-color 0.2s ease, color 0.2s ease, background-color 0.2s ease;
+  }
+  .home .footer a.footer-share:hover,
+  .home .footer a.footer-share:focus-visible {
+    border-color: var(--gold);
+    background: rgb(224 168 94 / 0.08);
+    color: var(--gold-2);
+  }
+  @media (max-width: 720px) {
+    .home .footer a.footer-share {
+      order: 3;
+      margin-inline: 0;
+    }
+  }
 
   /* ── Escena 3D (Plan 2): canvas encima del póster, fundido al recibir `ready`, controles y tooltip ── */
   .home .stage-host {

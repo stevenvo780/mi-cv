@@ -194,6 +194,17 @@ export default function LorePageClient({ locale }: LorePageClientProps) {
           background: var(--teal-light);
           transform: translateY(-1px);
         }
+        .lore-share-link {
+          width: fit-content;
+          font-family: var(--font-mono);
+          font-size: 0.72rem;
+          letter-spacing: 0.08em;
+          color: var(--teal-light) !important;
+          text-decoration: none !important;
+        }
+        .lore-share-link:hover {
+          color: var(--gold) !important;
+        }
 
         /* ── REDUCED MOTION ── */
         @media (prefers-reduced-motion: reduce) {
@@ -242,6 +253,9 @@ export default function LorePageClient({ locale }: LorePageClientProps) {
         <footer className="lore-foot reveal">
           <a href={homeHref} className="lore-home-link">
             ← {locale === 'es' ? 'Volver al inicio' : 'Back to home'}
+          </a>
+          <a href={`/${locale}/compartir`} className="lore-share-link">
+            {locale === 'es' ? 'Tarjeta QR ↗' : 'QR card ↗'}
           </a>
           <p className="lore-foot-note">{t.footNote}</p>
           <p className="lore-foot-brand">

@@ -11,6 +11,13 @@ export default function HomeFooter({ locale, t }: { locale: Locale; t: HomeCopy 
       <p className="footer-brand">
         <BrandLogo size={22} /> <span>{c.foot}</span>
       </p>
+      <a className="footer-share" href={`/${locale}/compartir`}>
+        <svg aria-hidden="true" viewBox="0 0 20 20" width="17" height="17" fill="none">
+          <path d="M2 2h6v6H2zM12 2h6v6h-6zM2 12h6v6H2z" stroke="currentColor" strokeWidth="1.4" />
+          <path d="M4 4h2v2H4zM14 4h2v2h-2zM4 14h2v2H4zM12 12h2v2h-2zM16 12h2v2h-2zM12 16h2v2h-2zM16 16h2v2h-2z" fill="currentColor" />
+        </svg>
+        <span>{locale === 'es' ? 'Tarjeta QR' : 'QR card'}</span>
+      </a>
       <nav aria-label={c.ecosystem}>
         <ul>
           {frenteOrder.map((fid) => (

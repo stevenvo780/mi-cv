@@ -24,6 +24,7 @@
     "geist": "1.7.2",
     "next": "16.3.6",
     "postprocessing": "6.39.5",
+    "qrcode.react": "4.2.0",
     "react": "19.3.0",
     "react-bootstrap": "2.10.10",
     "react-dom": "19.3.0",
