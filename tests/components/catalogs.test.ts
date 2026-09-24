@@ -63,11 +63,14 @@ describe('datos de los catálogos', () => {
 });
 
 describe('banda de catálogos en la home', () => {
-  it.each(['es', 'en'] as const)('/%s: cifras derivadas de los datos, nunca escritas a mano', async (locale) => {
+  it.each(['es', 'en'] as const)('/%s: las tarjetas conservan sus cifras sin la entradilla redundante', async (locale) => {
     const page = await html(locale);
-    expect(page).toContain(HOME[locale].catalogs.title(catalogos.length, trabajosEnCatalogos(catalogos)));
+    expect(page).toContain(`data-front="catalogos" aria-label="${HOME[locale].catalogs.eyebrow}"`);
+    expect(page).not.toContain('class="cats-head');
+    expect(page).not.toContain('class="cats-lead');
+    expect(page).not.toContain('catalogos-title');
+    expect(page).not.toContain(locale === 'es' ? 'trabajos dentro' : 'works inside');
     for (const c of catalogos) expect(page, c.nombre).toContain(HOME[locale].catalogs.label(c.incluye.length, c.unidad[locale]));
-    expect(HOME.es.catalogs.title(3, 59)).toBe('Tres catálogos, 59 trabajos dentro');
     expect(HOME.en.catalogs.label(23, 'projects')).toBe('Catalog · 23 projects');
   });
 

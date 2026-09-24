@@ -23,7 +23,7 @@ interface Tip {
 
 /** Zonas donde el puntero pertenece al contenido y no al grafo. */
 const CONTENT =
-  'a, button, input, select, textarea, summary, label, [role="button"], .panel, .card, .cat, .cats-head, .sec-head, .hero-meta, .front-head, .contact-list, .stack-group, .figures, .search, .topbar, .footer, .graph-motion, .graph-explore';
+  'a, button, input, select, textarea, summary, label, [role="button"], .panel, .card, .cat, .sec-head, .hero-meta, .front-head, .contact-list, .stack-group, .figures, .search, .topbar, .footer, .graph-motion, .graph-explore';
 const MOTION_KEY = 'mouseion:motion';
 
 /** El escenario (`.stage`) que contiene la isla: su `data-state="live"` funde el póster con el canvas (home.css). */

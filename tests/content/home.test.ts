@@ -37,12 +37,11 @@ describe('copy de la home', () => {
       expect(fronts.title).toBe(locale === 'es' ? 'Catálogo · todos mis trabajos' : 'Catalog · all my work');
     }
   });
-  // La banda de catálogos: sus cifras son parámetros (salen de `incluye`); los textos fijos no llevan ninguna.
-  it('la banda de catálogos no escribe cifras a mano: las recibe', () => {
+  // Las cifras de las tarjetas llegan desde `incluye`; los textos fijos no llevan ninguna.
+  it('las tarjetas de los catálogos reciben las cifras desde los datos', () => {
     for (const locale of ['es', 'en'] as const) {
       const { catalogs } = HOME[locale];
       for (const text of Object.values(catalogs)) if (typeof text === 'string') expect(text, `${locale}: ${text}`).not.toMatch(/\d/);
-      expect(catalogs.title(4, 7)).toMatch(locale === 'es' ? /^Cuatro catálogos, 7 / : /^Four catalogs, 7 /);
       expect(catalogs.label(12, 'x')).toBe(locale === 'es' ? 'Catálogo · 12 x' : 'Catalog · 12 x');
     }
   });

@@ -834,38 +834,6 @@
      Cada uno es una tarjeta ancha con el color de su propia marca, un borde de luz que la recorre, hojas apiladas
      detrás (contiene más sitios) que se abren en abanico al pasar el puntero, el rótulo «Catálogo · N …» y la lista
      entera de lo que reúne. Todo en CSS: la home no admite JS nuevo (spec §5.1). */
-  .home .cats {
-    display: grid;
-    gap: clamp(2.5rem, 5vh, 3.5rem);
-  }
-  .home .cats-head {
-    max-width: 46rem;
-    padding: 1.4rem 1.6rem;
-    background: var(--scrim);
-    border: 1px solid var(--line);
-    border-top: 2px solid var(--gold);
-    border-radius: var(--radius);
-    backdrop-filter: var(--blur);
-  }
-  .home .cats-head .eyebrow {
-    margin-bottom: 0.75rem;
-    color: var(--gold-2);
-  }
-  .home .cats-head h3 {
-    font-family: var(--f-display);
-    font-size: clamp(2.1rem, 4.2vw, 3.6rem);
-    font-variant-numeric: lining-nums;
-    line-height: 1;
-    letter-spacing: -0.02em;
-    color: var(--text-strong);
-    text-wrap: balance;
-  }
-  .home .cats-lead {
-    margin-top: 1rem;
-    font-size: clamp(1rem, 1.3vw, 1.12rem);
-    color: var(--text-soft);
-    text-wrap: pretty;
-  }
   .home .cats-list {
     display: grid;
     gap: clamp(3.5rem, 7.5vh, 4.75rem);

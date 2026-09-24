@@ -11,7 +11,6 @@ import {
   nombreItem,
   productTags,
   productos,
-  trabajosEnCatalogos,
 } from '@/data/frentes';
 import { nodeId } from '@/graph/sources';
 import type { Locale } from '@/lib/site';
@@ -114,8 +113,6 @@ function CatalogTile({ c, locale, t }: { c: Catalogo; locale: Locale; t: HomeCop
 
 export default function Fronts({ locale, t }: { locale: Locale; t: HomeCopy }) {
   const f = t.fronts;
-  // Trabajos distintos: el que está en dos catálogos cuenta una vez (cada tarjeta sí cuenta todo lo que reúne).
-  const items = trabajosEnCatalogos(catalogos);
   return (
     <section id="frentes" className="sec sec-fronts" aria-labelledby="frentes-title" data-section="frentes">
       <div className="sec-inner">
@@ -123,12 +120,7 @@ export default function Fronts({ locale, t }: { locale: Locale; t: HomeCopy }) {
         <ProductSearch targetId="frentes-list" label={f.searchLabel} placeholder={f.searchPlaceholder} noResults={f.noResults} />
         <div id="frentes-list" className="fronts">
           {/* data-front: el buscador oculta la banda entera cuando ningún catálogo coincide (applySearchFilter). */}
-          <article className="cats" data-front="catalogos" aria-labelledby="catalogos-title">
-            <header className="cats-head reveal">
-              <p className="eyebrow">{t.catalogs.eyebrow}</p>
-              <h3 id="catalogos-title">{t.catalogs.title(catalogos.length, items)}</h3>
-              <p className="cats-lead">{t.catalogs.lead}</p>
-            </header>
+          <article className="cats" data-front="catalogos" aria-label={t.catalogs.eyebrow}>
             <ul className="cats-list">
               {catalogos.map((c) => (
                 <CatalogTile key={c.id} c={c} locale={locale} t={t} />

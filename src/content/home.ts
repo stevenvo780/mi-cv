@@ -47,8 +47,6 @@ export interface HomeCopy {
   /** Banda de los catálogos, al principio del catálogo. Las cifras llegan de los datos (`incluye` de cada catálogo). */
   catalogs: {
     eyebrow: string;
-    title: (catalogs: number, items: number) => string;
-    lead: string;
     /** Rótulo de cada catálogo: «Catálogo · 23 proyectos». */
     label: (items: number, unit: string) => string;
     enter: string;
@@ -125,8 +123,6 @@ export const HOME: Record<Locale, HomeCopy> = {
     },
     catalogs: {
       eyebrow: 'Catálogos',
-      title: (catalogs, items) => `${countWord('es', catalogs)} catálogos, ${items} trabajos dentro`,
-      lead: 'No son apps sueltas: cada uno reúne y enlaza toda una colección (cursos, ponencias, simulaciones, proyectos de IA) y cada pieza tiene su propio sitio o repositorio.',
       label: (items, unit) => `Catálogo · ${items} ${unit}`,
       enter: 'Entrar al catálogo',
       private: 'privado',
@@ -199,8 +195,6 @@ export const HOME: Record<Locale, HomeCopy> = {
     },
     catalogs: {
       eyebrow: 'Catalogs',
-      title: (catalogs, items) => `${countWord('en', catalogs)} catalogs, ${items} works inside`,
-      lead: 'Not single apps: each one gathers and links a whole collection (courses, talks, simulations, AI projects), and every piece has its own site or repository.',
       label: (items, unit) => `Catalog · ${items} ${unit}`,
       enter: 'Enter the catalog',
       private: 'private',
