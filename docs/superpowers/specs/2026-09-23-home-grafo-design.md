@@ -131,6 +131,12 @@ Tokens de la home en `src/styles/home.css` (capa `@layer home`), en OKLCH con re
   - Alfa base ~0.15.
     - **Tarea 3 del Plan 2:** las aristas se mezclan en aditivo, así que la intensidad va en el color y el alfa solo lleva cobertura, atenuación y niebla. La línea base es 0.15 en las aristas semánticas y **0.05 en las decorativas**. La capa decorativa llega a 8k aristas en T3, y con 0.08 ya cruzaba el umbral del bloom (0.85) en reposo, donde convergen los satélites de un nodo pesado.
     - Medido en SwiftShader, con hubs y nodos por delante como en la escena real: en reposo, las aristas llegan como máximo a 0.27, 0.31 y 0.35 de luminancia en T1, T2 y T3 (0.26, 0.27 y 0.33 antes de la niebla de la Tarea 7, que ya no atenúa el plano de foco). Los pulsos llegan a 6–12, así que solo ellos cruzan el umbral.
+    - **Tarea 5 del Plan 2: mezcla sin compositor (T1).** Sin compositor, cada fragmento llega a la mezcla ya con tone mapping y en sRGB, y la suma aditiva de valores codificados sobrevalora los solapes. En móvil (390 × 844), el haz de aristas semánticas de la lemniscata de Contacto se quemaba a blanco puro: una región conexa de 769 a 896 px con los tres canales ≥ 250, unos 5 000 px en total. Ahora `EDGE_FRAG` saca el color premultiplicado por el alfa y `GraphScene` elige los factores de mezcla:
+      - con compositor (T2 y T3), (ONE, ONE): la misma suma lineal en HDR que la aditiva (SRC_ALPHA, ONE) de antes, con un solo tone mapping al final;
+      - sin compositor (T1, o si el postprocesado falla), de pantalla (ONE, ONE_MINUS_SRC_COLOR), `1 − (1 − a)(1 − b)`: una arista sola pinta igual y un haz satura suave, sin pasar de 1.
+      - Los factores son estado de GL, no del programa: cambiar de nivel no recompila las aristas.
+      - Medido después en el e2e: la mayor región blanca de Contacto en T1 es de 28 a 74 px (pulsos sobre el haz), y en el resto de poses de T1, de 4 px como mucho.
+    - **Convergencia de los satélites en cada pose** (Tarea 5, `e2e/graph3d.spec.ts`, SwiftShader, en pausa, sin pulsos y sin hubs ni nodos delante, el peor caso): en T3 (1440 × 900, con bloom y 8k satélites) ningún píxel llega a blanco puro en ninguna de las seis poses; en T1, como mucho 11 px (en Contacto). En la escena real, T3 no tiene ningún píxel blanco puro en ninguna pose.
   - Pulsos `glow = exp(-k (t - fract(time*speed*w + seed))^2)` en HDR. Al resaltar un nodo, recorren sus aristas desde él hacia los vecinos (§2.2).
 - **Postprocesado (según nivel):**
   - Bloom con umbral (mipmap blur, media resolución).

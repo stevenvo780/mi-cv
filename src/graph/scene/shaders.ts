@@ -314,10 +314,13 @@ void main() {
   float glow = base + pulse * (vSemantic > 0.5 ? 1.5 : 0.35 * vCover) * (1.0 + 2.2 * vHl);
   float hover = mix(1.0, mix(0.25, 1.0, vHl), uHoverActive);
   vec3 col = vColor * glow + vec3(1.0) * pulse * 0.55 * vSemantic * (1.0 + vHl);
-  /* Mezcla aditiva (SRC_ALPHA, ONE): la intensidad va en el color (base y pulsos HDR) y el alfa solo lleva
-     cobertura, atenuación y niebla. Si el alfa también llevara glow, la base contaría al cuadrado (0.15² ≈ 0.02). */
+  /* La intensidad va en el color (base y pulsos HDR) y el alfa solo lleva cobertura, atenuación y niebla. Si el alfa
+     también llevara glow, la base contaría al cuadrado (0.15² ≈ 0.02). */
   gl_FragColor = vec4(col, aa * uDim * hover * (1.0 - vFog));
   #include <tonemapping_fragment>
   #include <colorspace_fragment>
+  /* Premultiplicado: con compositor la mezcla es (ONE, ONE), la misma suma que la aditiva (SRC_ALPHA, ONE); sin él,
+     de pantalla (ONE, ONE_MINUS_SRC_COLOR). La elige GraphScene.useComposer. */
+  gl_FragColor.rgb *= gl_FragColor.a;
 }
 `;

@@ -1,5 +1,18 @@
 import * as pp from 'postprocessing';
-import { ACESFilmicToneMapping, NoToneMapping, type Group, type Material, type Object3D, type Scene, type ShaderMaterial, type Vector2 } from 'three';
+import {
+  ACESFilmicToneMapping,
+  AddEquation,
+  CustomBlending,
+  NoToneMapping,
+  OneFactor,
+  OneMinusSrcColorFactor,
+  type Group,
+  type Material,
+  type Object3D,
+  type Scene,
+  type ShaderMaterial,
+  type Vector2,
+} from 'three';
 import { afterEach, beforeEach, describe, expect, it, vi, type MockInstance } from 'vitest';
 import { buildArtifacts } from '@/graph/artifacts';
 import { decodeGraph } from '@/graph/codec';
@@ -9,6 +22,7 @@ import type { MainToWorker, SceneEvent } from '@/graph/runtime/protocol';
 import { BACKGROUND_COLOR } from '@/graph/palette';
 import { QualityGovernor, type Tier } from '@/graph/runtime/quality';
 import { GraphScene } from '@/graph/scene/GraphScene';
+import * as S from '@/graph/scene/shaders';
 
 /*
  * GraphScene sin GPU. three es el real salvo WebGLRenderer, que es un doble: registra lo que se le pide (DPR,
@@ -324,6 +338,55 @@ describe('GraphScene sin GPU', () => {
       expect(events).toEqual([{ type: 'ready' }]);
       frames.tick();
       expect(lastMain(renderer)).toMatchObject({ target: null, autoClear: true, toneMapping: ACESFilmicToneMapping });
+    });
+  });
+
+  // Sin compositor (T1), cada fragmento llega con tone mapping y en sRGB: sumadas en aditivo, las aristas de un haz se
+  // quemaban a blanco (la lemniscata de Contacto en móvil, medida en e2e/graph3d.spec.ts). EDGE_FRAG saca el color
+  // premultiplicado por el alfa, así que la mezcla se elige con los factores (estado de GL, no del programa).
+  describe('mezcla de las aristas', () => {
+    const edgeMaterial = () => {
+      let found: ShaderMaterial | undefined;
+      gpu.graphScene!.traverse((o) => {
+        const m = (o as { material?: ShaderMaterial }).material;
+        if (m?.fragmentShader === S.EDGE_FRAG) found = m;
+      });
+      return found!;
+    };
+    const blend = (m: ShaderMaterial) => ({ blending: m.blending, equation: m.blendEquation, src: m.blendSrc, dst: m.blendDst });
+    /** (ONE, ONE) con el color premultiplicado: la misma suma que la aditiva de three (SRC_ALPHA, ONE). */
+    const ADDITIVE = { blending: CustomBlending, equation: AddEquation, src: OneFactor, dst: OneFactor };
+    /** Pantalla: 1 − (1 − a)(1 − b). Satura suave y no pasa de 1. */
+    const SCREEN = { blending: CustomBlending, equation: AddEquation, src: OneFactor, dst: OneMinusSrcColorFactor };
+
+    it('con compositor (T2), suma aditiva en el búfer lineal (HDR, un solo tone mapping al final)', async () => {
+      await mount({ tier: 2 });
+      expect(blend(edgeMaterial())).toEqual(ADDITIVE);
+    });
+
+    it('sin compositor (T1), mezcla de pantalla', async () => {
+      await mount({ tier: 1 });
+      expect(blend(edgeMaterial())).toEqual(SCREEN);
+    });
+
+    it('al bajar de T2 a T1 pasa a pantalla sin recompilar el programa (la precompilación de la T7 sigue valiendo)', async () => {
+      const { scene, events } = await mount({ tier: 2 });
+      const m = edgeMaterial();
+      const version = m.version;
+      expect(runUntilTierRequest(scene, SLOW)).toBe(1);
+      await flush();
+      expect(tiers(events)).toEqual([1]);
+      expect(blend(m)).toEqual(SCREEN);
+      expect(m.version).toBe(version);
+    });
+
+    it('si el montaje del compositor falla, mezcla de pantalla', async () => {
+      vi.spyOn(pp.EffectPass.prototype, 'initialize').mockImplementation(() => {
+        throw new Error('EffectPass no disponible');
+      });
+      vi.spyOn(console, 'warn').mockImplementation(() => {});
+      await mount({ tier: 2 });
+      expect(blend(edgeMaterial())).toEqual(SCREEN);
     });
   });
 

@@ -55,6 +55,11 @@ describe('shaders', () => {
     expect(alpha).not.toMatch(/glow|pulse|base/);
     expect(S.EDGE_FRAG).toMatch(/BASE_SEMANTIC\s*=\s*0\.15;/);
   });
+  it('aristas: el color sale premultiplicado por el alfa, tras el tone mapping y el espacio de color (GraphScene elige la mezcla)', () => {
+    const tail = S.EDGE_FRAG.slice(S.EDGE_FRAG.indexOf('#include <colorspace_fragment>'));
+    expect(tail).toMatch(/^#include <colorspace_fragment>\s*(\/\*[\s\S]*?\*\/\s*)?gl_FragColor\.rgb \*= gl_FragColor\.a;\s*\}/);
+    expect(S.EDGE_FRAG).not.toContain('premultiplied_alpha_fragment');
+  });
   it('aristas: con el nodo activo en el extremo b, los pulsos recorren la cinta al revés (salen hacia el vecino)', () => {
     expect(S.EDGE_VERT).toMatch(/vT\s*=\s*mix\(aT,\s*1\.0\s*-\s*aT,[^;]*hB[^;]*\);/);
   });

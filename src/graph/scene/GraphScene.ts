@@ -1,9 +1,10 @@
 import {
   ACESFilmicToneMapping,
-  AdditiveBlending,
+  AddEquation,
   BufferAttribute,
   BufferGeometry,
   Color,
+  CustomBlending,
   DataTexture,
   FloatType,
   Group,
@@ -16,6 +17,8 @@ import {
   Mesh,
   NearestFilter,
   NoToneMapping,
+  OneFactor,
+  OneMinusSrcColorFactor,
   PerspectiveCamera,
   PlaneGeometry,
   RedFormat,
@@ -100,6 +103,7 @@ export class GraphScene {
   private highlight!: DataTexture;
   private nodeGeometry!: InstancedBufferGeometry;
   private edgeGeometry!: InstancedBufferGeometry;
+  private edgeMaterial!: ShaderMaterial;
   /** Canvas con los listeners de pérdida de contexto (se retiran en dispose). */
   private canvas: EventTarget | null = null;
   private readonly u = {
@@ -329,17 +333,20 @@ export class GraphScene {
     edges.setAttribute('aSemantic', inst(e.semantic, 1));
     edges.instanceCount = e.count;
     this.edgeGeometry = edges;
-    const edgeMesh = new Mesh(
-      edges,
-      new ShaderMaterial({
-        vertexShader: S.EDGE_VERT,
-        fragmentShader: S.EDGE_FRAG,
-        uniforms: pick(...shared, 'uResolution', 'uWidth', 'uDim', 'uHoverActive'),
-        transparent: true,
-        depthWrite: false,
-        blending: AdditiveBlending,
-      }),
-    );
+    // EDGE_FRAG saca el color premultiplicado por el alfa: la mezcla la eligen los factores, según haya compositor o no
+    // (useComposer). Es estado de GL, no del programa: cambiar de nivel no recompila las aristas.
+    this.edgeMaterial = new ShaderMaterial({
+      vertexShader: S.EDGE_VERT,
+      fragmentShader: S.EDGE_FRAG,
+      uniforms: pick(...shared, 'uResolution', 'uWidth', 'uDim', 'uHoverActive'),
+      transparent: true,
+      depthWrite: false,
+      blending: CustomBlending,
+      blendEquation: AddEquation,
+      blendSrc: OneFactor,
+      blendDst: OneFactor,
+    });
+    const edgeMesh = new Mesh(edges, this.edgeMaterial);
     edgeMesh.frustumCulled = false;
     edgeMesh.renderOrder = 1;
     this.group.add(edgeMesh);
@@ -447,6 +454,11 @@ export class GraphScene {
     this.renderer.autoClear = composer === null;
     this.renderer.toneMapping = composer ? NoToneMapping : ACESFilmicToneMapping;
     this.u.uGlow.value = composer ? 0 : 1;
+    // Aristas. Con compositor, suma aditiva (ONE, ONE) en el búfer lineal: HDR y un solo tone mapping al final. Sin él,
+    // cada fragmento llega ya con tone mapping y en sRGB, y en aditivo un haz de aristas superpuestas se quemaba a
+    // blanco (la lemniscata de Contacto en móvil, T1). Ahí la mezcla es de pantalla, 1 − (1 − a)(1 − b): una arista
+    // sola pinta igual y el haz satura suave, sin pasar de 1 (medido en e2e/graph3d.spec.ts, spec §3.3).
+    this.edgeMaterial.blendDst = composer ? OneFactor : OneMinusSrcColorFactor;
     // El tamaño pudo cambiar mientras se compilaba.
     composer?.setSize(this.width, this.height);
   }
