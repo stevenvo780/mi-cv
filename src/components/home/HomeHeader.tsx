@@ -59,6 +59,7 @@ export default function HomeHeader({ locale, t }: { locale: Locale; t: HomeCopy 
     ['#contacto', nav.contact],
   ];
   return (
+    <>
     <header className="topbar">
       {/* <a> y no next/link, también dentro de la home: el módulo cliente de next/link no cabe en el
           presupuesto de JS de la home (spec §5). Ver tests/components/route-groups.test.ts. */}
@@ -73,10 +74,8 @@ export default function HomeHeader({ locale, t }: { locale: Locale; t: HomeCopy 
         <a href={`/${other}`} hrefLang={other} lang={other} className="lang">
           {nav.language}
         </a>
-        {/* En el móvil queda solo el anillo con la chispa: la etiqueta pasa a ser solo para lectores de pantalla. */}
-        <button type="button" className="ask" data-ask aria-haspopup="dialog">
-          <span className="ask-label">{nav.ask}</span>
-        </button>
+        {/* Hueco del botón de pausa del grafo: GraphStage lo monta aquí por portal cuando arranca el 3D. */}
+        <span id="graph-motion-slot" className="motion-slot" />
         <a className="wa" href={WHATSAPP_URL} rel="noopener" title={nav.whatsapp}>
           <span className="sr-only">{nav.whatsapp}</span>
         </a>
@@ -103,5 +102,10 @@ export default function HomeHeader({ locale, t }: { locale: Locale; t: HomeCopy 
           la barra sola, lo que adelantaba la descarga de dos fuentes al simulador del LCP (spec §5.2). */}
       <script type="module" dangerouslySetInnerHTML={{ __html: MENU_SCRIPT }} />
     </header>
+    {/* Asistente flotante, fuera del <header>: su backdrop-filter haría de bloque contenedor del position: fixed. */}
+    <button type="button" className="ask ask-fab" data-ask aria-haspopup="dialog">
+      <span className="ask-label">{nav.ask}</span>
+    </button>
+    </>
   );
 }

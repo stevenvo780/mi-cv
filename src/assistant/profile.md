@@ -1,13 +1,13 @@
 # Perfil de Steven Vallejo Ortiz
 
-Datos al 2026-09-24. Compilado por scripts/build-assistant-profile.mts (repo mi-cv) a partir de lo publicado en sus sitios: cv-informatico@f50d567:public/pdf/CV_ai_es.html, cv-filosofo@74ac58e:public/index.html, services@348e6a1:app/content.ts y el catálogo de stevenvallejo.com.
+Datos al 2026-09-24. Compilado por scripts/build-assistant-profile.mts (repo mi-cv) a partir de lo publicado en sus sitios: cv-informatico@4e5d102:public/pdf/CV_ai_es.html, cv-filosofo@803dea6:public/index.html, services@3185388:app/content.ts y el catálogo de stevenvallejo.com.
 
 ## Identidad y contacto
 
 - Nombre: Steven Vallejo Ortiz. Ingeniero de software y filósofo. Backend, IA agéntica y lógica formal.
 - Roles: Ingeniero de software y Filósofo.
 - Ubicación: Medellín, Antioquia, Colombia (GMT-5). Trabaja en remoto desde Colombia y presencial o híbrido en Medellín y el Valle de Aburrá.
-- WhatsApp: https://wa.me/573046374368 (+57 304 637 4368).
+- WhatsApp: https://wa.me/573023954534 (+57 302 395 4534, mi asistente personal).
 - Correo: stevenvallejo780@gmail.com.
 - GitHub: https://github.com/stevenvo780 · LinkedIn: https://www.linkedin.com/in/steven-vallejo/ · Instagram: https://www.instagram.com/stev_vallejo/ · Medium: https://medium.com/@stevenvallejo780
 - Temas que domina: Node.js, NestJS, TypeScript, PostgreSQL, Docker, Linux, Google Cloud Platform, Cloud Run, APIs REST, Microservicios, Integración de LLMs, RAG, OCR, Automatización de procesos, React, Next.js, Arquitectura de software, Orquestación de agentes de IA, Lógica formal, Filosofía analítica, Epistemología, Filosofía de la mente, Filosofía de la inteligencia artificial, Ética, Argumentación, Lógica simbólica, Teoría de tipos, SAT solving, Sistemas complejos.
@@ -303,18 +303,61 @@ Idiomas: Español — Nativo · Inglés — Lectura y escritura técnica sólida
 
 ## CV filosófico (https://filosofo.stevenvallejo.com)
 
-Filósofo · Lógica formal · Universidad de Antioquia
-Pensar antes de construir.
+Saltar al contenido
 
-Filósofo de formación analítica, formándome en la Universidad de Antioquia. Trabajo en lógica formal y simbólica, epistemología, filosofía de la mente y de la inteligencia artificial, y ética. Mi pregunta de fondo es antigua y precisa: qué es comprender, y dónde termina el cálculo y empieza el sentido. No estudio la lógica solo para conocerla: la escribo hasta hacerla correr en una máquina.
+Mouseîon · CV filósofo
+
+φιλόσοφος
+
+Medellín · Universidad de Antioquia 00
+
+Steven Vallejo Mouseîon · CV filósofo <https://www.stevenvallejo.com> WhatsApp <https://wa.me/573023954534>
+ES EN
+Índice
+
+Mouseîon
+
+- Inicio ↗ <https://www.stevenvallejo.com>
+
+- CV Informático ↗ <https://informatico.stevenvallejo.com>
+
+- Blog Scholḗ ↗ <https://schole.stevenvallejo.com>
+
+- Praxis · Servicios ↗ <https://praxis.stevenvallejo.com>
+
+- WhatsApp ↗ <https://wa.me/573023954534>
+
+- Email ↗
+
+Español English
+
+Filósofo · Lógica formal · Universidad de Antioquia φιλόσοφος
+
+Pensar antes de construir.
 
 «La abstracción no es alejarse del problema. Es verlo desde la altura exacta.»
 
-Medellín, Antioquia, Colombia · GMT-5 Español (nativo) · Inglés (lectura/escritura)
+Blog «Scholḗ» ↗ <https://schole.stevenvallejo.com>
 
-Blog «Scholḗ» <https://schole.stevenvallejo.com>
+Medellín, Antioquia, Colombia · GMT-5 Desplaza Español (nativo) · Inglés (lectura/escritura)
 
-El método
+§ I Prólogo
+
+Filósofo de formación analítica, formándome en la Universidad de Antioquia. Trabajo en lógica formal y simbólica, epistemología, filosofía de la mente y de la inteligencia artificial, y ética. Mi pregunta de fondo es antigua y precisa: qué es comprender, y dónde termina el cálculo y empieza el sentido. No estudio la lógica solo para conocerla: la escribo hasta hacerla correr en una máquina.
+
+Áreas
+
+Temas intelectuales
+
+Proyectos
+
+30
+
+Escritos
+
+14
+
+§ II El método
 
 ### Abstracción
 
@@ -330,61 +373,96 @@ Hubo un momento en que dejé de construir solo para otros y empecé a construir 
 
 ¿Qué se construye cuando dejas de construir para otros y empiezas a construir para entender?
 
-Trabajo filosófico
+§ III Trabajo filosófico
 
 ### Áreas
+
+- 01 Lógica
+
+- 02 Epistemología
+
+- 03 Mente e IA
+
+- 04 Ética
+
+01 / 04 lógos
+
+λόγος
 
 #### Lógica formal y simbólica
 
 Cálculo proposicional y de predicados, sistemas de prueba y semántica. Es el eje central de mi formación y de mi trabajo.
 
+02 / 04 epistḗmē
+
+ἐπιστήμη
+
 #### Filosofía analítica y epistemología
 
 Análisis del lenguaje y del argumento; las condiciones del conocimiento, la justificación y la verdad. Claridad y precisión por encima de la retórica vacía.
+
+03 / 04 noûs
+
+νοῦς
 
 #### Filosofía de la mente y de la IA
 
 Qué es comprender, qué hace una máquina cuando «razona», y dónde están los límites entre cómputo y sentido.
 
+04 / 04 êthos
+
+ἦθος
+
 #### Ética, argumentación y retórica
 
 Razón práctica, decisión y diálogo. El Gorgias como brújula: la diferencia entre persuadir y mostrar lo verdadero.
 
-El programa
+§ IV El programa
 
 ### Siete temas intelectuales
 
 No son teorías sueltas: son los hilos que recorren mi escritura y mis proyectos.
 
+01
 #### Lógica formal ejecutable
 
 No estudiar la lógica, implementarla. Si la lógica formal puede correr en una máquina, ¿qué dice eso sobre el pensamiento?
 
+02
 #### Filosofía de la IA y de la mente como un solo problema
 
 El agente que ejecuta frente al chatbot que conversa; el criterio que ninguna máquina fabrica. Multiplica fuerza, no fabrica criterio.
 
+03
 #### Abstracción como método y virtud
 
 La abstracción no es alejarse del problema; es verlo desde la altura exacta.
 
+04
 #### El Gorgias: la retórica como filosofía práctica
 
 La palabra que hace pensar frente a la que solo quiere ganar. ¿De qué sirve convencer si no se sabe mostrar lo verdadero?
 
+05
 #### Emergencia y sistemas complejos
 
 De Maturana y Varela a Luhmann y a los sistemas multiagente; la economía como sistema complejo.
 
+06
 #### Epistemología aplicada
 
 Cuándo algo cuenta como conocimiento. Si no puedes operacionalizar un concepto, no generas conocimiento verificable.
 
+07
 #### La arquitectura como postura ontológica
 
 CQRS, microservicios, observabilidad: no como meros trade-offs técnicos, sino como compromisos ontológicos sobre cómo se separa y se revela la intención.
 
-El puente filosofía–ingeniería
+λόγος ✦ ratio ✦ ἐπιστήμη ✦ scientia ✦ νοῦς ✦ mens ✦ λόγος ✦ ratio ✦ ἐπιστήμη ✦ scientia ✦ νοῦς ✦ mens ✦
+
+virtus ✦ ἦθος ✦ veritas ✦ ἀλήθεια ✦ systema ✦ κόσμος ✦ virtus ✦ ἦθος ✦ veritas ✦ ἀλήθεια ✦ systema ✦ κόσμος ✦
+
+§ V El puente filosofía–ingeniería
 
 ### Cuando un argumento se puede correr
 
@@ -395,7 +473,31 @@ ST es un lenguaje de lógica formal ejecutable: un DSL con más de 30 perfiles l
 
 SAT solver CDCL Teoría de tipos · MLTT 30+ perfiles lógicos 6.333+ tests npm · @stevenvo780/st-lang auto.logic · @stevenvo780/autologic
 
-ST · GitHub <https://github.com/stevenvo780/ST> auto.logic · GitHub <https://github.com/stevenvo780/auto.logic>
+ST · GitHub ↗ <https://github.com/stevenvo780/ST> auto.logic · GitHub ↗ <https://github.com/stevenvo780/auto.logic>
+
+p → q p
+
+→E
+
+q
+
+modus ponens · ⊢
+
+30 +
+
+perfiles lógicos
+
+6.333 +
+
+tests
+
+CDCL
+
+SAT solver
+
+MLTT
+
+teoría de tipos
 
 Lógica ejecutable
 
@@ -409,79 +511,79 @@ El Gorgias
 
 ¿De qué sirve convencer si no se sabe mostrar lo verdadero?
 
-Linaje
+§ VI Linaje
 
 ### Influencias
 
-- Platón — el Gorgias La retórica que hace pensar frente a la que solo quiere ganar; brújula ética y retórica.
+- i Platón — el Gorgias La retórica que hace pensar frente a la que solo quiere ganar; brújula ética y retórica.
 
-- Alain Badiou El evento como ruptura que redefine lo que cuenta como ser; la matemática (teoría de conjuntos) como ontología.
+- ii Alain Badiou El evento como ruptura que redefine lo que cuenta como ser; la matemática (teoría de conjuntos) como ontología.
 
-- Jean-Paul Sartre Existencialismo: cada individuo es responsable de sus actos y ha de hallar sentido en su libertad.
+- iii Jean-Paul Sartre Existencialismo: cada individuo es responsable de sus actos y ha de hallar sentido en su libertad.
 
-- Immanuel Kant El juicio sintético a priori y las condiciones de posibilidad del conocimiento: qué puede saberse y cómo.
+- iv Immanuel Kant El juicio sintético a priori y las condiciones de posibilidad del conocimiento: qué puede saberse y cómo.
 
-- Emergentismo — filosofía de la mente Las propiedades mentales surgen de la complejidad del cerebro y no se reducen a sus partes.
+- v Emergentismo — filosofía de la mente Las propiedades mentales surgen de la complejidad del cerebro y no se reducen a sus partes.
 
-- Maturana y Varela → Luhmann Emergencia, autopoiesis y sistemas complejos como marco para pensar lo social y lo cognitivo.
+- vi Maturana y Varela → Luhmann Emergencia, autopoiesis y sistemas complejos como marco para pensar lo social y lo cognitivo.
 
-Escritura
+§ VII Escritura
 
 ### Blog «Scholḗ»
 
 Donde la filosofía, la lógica y la ingeniería se piensan como un mismo problema. Una selección de artículos.
 
-- IA agéntica no es chatbot con herramientas
+- 01 IA agéntica no es chatbot con herramientas
 
-- Cuando la lógica se vuelve ejecutable
+- 02 Cuando la lógica se vuelve ejecutable
 
-- El agente que piensa con lógica formal
+- 03 El agente que piensa con lógica formal
 
-- Formalizar el cerebro: lógica y filosofía en Smalltalk
+- 04 Formalizar el cerebro: lógica y filosofía en Smalltalk
 
-- El mundo que nace de una conversación
+- 05 El mundo que nace de una conversación
 
-- MCP y composición de agentes
+- 06 MCP y composición de agentes
 
-- Economía como sistema complejo
+- 07 Economía como sistema complejo
 
-- Cuando el universo aprende: emergencia y algoritmos
+- 08 Cuando el universo aprende: emergencia y algoritmos
 
-- La interfaz como contrato
+- 09 La interfaz como contrato
 
-- El problema de ser Jarvis
+- 10 El problema de ser Jarvis
 
-- CQRS: la separación que revela la intención
+- 11 CQRS: la separación que revela la intención
 
-### Disertaciones en Medium
+#### Disertaciones en Medium
 
-#### Crítica y dialéctica del gnosticismo
+##### Crítica y dialéctica del gnosticismo
 
 2023 · Medium
 
-#### Ignosticismo: análisis filosófico crítico
+##### Ignosticismo: análisis filosófico crítico
 
 2024 · Medium
 
-#### Filosofía y programación: paradigmas y arquitecturas
+##### Filosofía y programación: paradigmas y arquitecturas
 
 2024 · Mapea OOP = Aristóteles, funcional = platonismo, serverless = Berkeley.
 
-Leer el blog «Scholḗ» <https://schole.stevenvallejo.com> Medium <https://medium.com/@stevenvallejo780>
+Leer el blog «Scholḗ»↗ <https://schole.stevenvallejo.com> Medium ↗ <https://medium.com/@stevenvallejo780>
 
-Formación
+§ VIII Formación
 
 ### Estudios
 
-Universidad de Antioquia Filosofía · Estudiante activo, en curso 2025 — est. 2029
+2025 — est. 2029 Universidad de Antioquia Filosofía Estudiante activo, en curso
 
-SENA Técnico en Desarrollo de Software · Graduado 2017
+2017 SENA Técnico en Desarrollo de Software Graduado
 
-SENA Desarrollo para HTC VR · Completado 2017
+2017 SENA Desarrollo para HTC VR Completado
 
-CENSA Desarrollo de videojuegos · Completado 2017
+2017 CENSA Desarrollo de videojuegos Completado
 
-Filosofía y lógica
+§ IX Filosofía y lógica
 
 ### Competencias
 
@@ -510,14 +612,15 @@ Teoría de tipos Intermedio
 SAT solving Intermedio
 
 «Dejé de querer tener razón. Empecé a ver.»
-Steven Vallejo Ortiz
+— Steven Vallejo Ortiz
 
-La obra
+§ X La obra
 
 ### Proyectos filosóficos y de lógica
 
 Donde la filosofía no es decoración, sino el motor: lógica ejecutable, vida artificial, fenomenología y simulación.
 
+X.1
 #### Lógica ejecutable y lenguaje
 
 ##### ST — Lenguaje de lógica formal ejecutable <https://github.com/stevenvo780/ST>
@@ -545,6 +648,7 @@ github.com/stevenvo780/helenikos
 Plataforma distribuida de agentes IA cuyo razonamiento se apoya en el núcleo lógico de ST; un agente que ejecuta acciones, no solo conversa.
 agora.elenxos.com
 
+X.2
 #### Filosofía de la mente y vida artificial
 
 ##### Estructuras Pre-Ontológicas <https://estructuras-preontologicas.vercel.app>
@@ -592,6 +696,7 @@ github.com/stevenvo780/hiper-objeto-simulaciones
 Laboratorio interactivo de autopoiesis y vida artificial basado en la coevolución.
 github.com/stevenvo780/duo-eterno
 
+X.3
 #### Emergencia, sistemas y ciencias formales
 
 ##### Algoritmo de Entrenamiento del Universo <https://github.com/stevenvo780/emergentismo-tesis>
@@ -654,6 +759,7 @@ github.com/stevenvo780/emergencia-experimento-temperatura
 Modelado de sistemas de transporte ferroviario.
 github.com/stevenvo780/SistemaDeTrasporteTrenes
 
+X.4
 #### Comunidad y diálogo intelectual
 
 ##### Cafetería del Caos <https://www.cafeteriadelcaos.com/>
@@ -676,13 +782,17 @@ github.com/stevenvo780/debatesUtil
 Disertaciones filosóficas: gnosticismo, ignosticismo, y filosofía y programación.
 medium.com/@stevenvallejo780
 
-Diálogo
+§ XI Diálogo
 
 ### Contacto
 
 Email
 
 stevenvallejo780@gmail.com
+
+WhatsApp · asistente
+
++57 302 395 4534 <https://wa.me/573023954534>
 
 Ubicación
 
@@ -711,6 +821,10 @@ Medium
 Idiomas
 
 Español (nativo) · Inglés (lectura y escritura)
+
+WhatsApp ↗ <https://wa.me/573023954534>
+
+φιλοσοφία
 
 © 2026 Steven Vallejo Ortiz — Filósofo · Lógica formal · Medellín, Colombia
 

@@ -13,4 +13,4 @@ export const SITES = {
 export const EMAIL = 'stevenvallejo780@gmail.com';
 
 /** WhatsApp con el mensaje de entrada ya escrito (el mismo que llevaba la home anterior). */
-export const WHATSAPP_URL = 'https://wa.me/573046374368?text=Hola%20Steven%2C%20vi%20tu%20portafolio%20y%20quiero%20hablar%20contigo';
+export const WHATSAPP_URL = 'https://wa.me/573023954534?text=Hola%20Steven%2C%20vi%20tu%20portafolio%20y%20quiero%20hablar%20contigo';

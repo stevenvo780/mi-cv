@@ -938,31 +938,35 @@
   .home .stage[data-state='live']::before {
     opacity: 0;
   }
-  /* Los controles y el tooltip se montan por portal dentro de .home (`.stage` es aria-hidden, spec §4.8). */
-  .home .graph-motion,
-  .home .graph-explore {
-    position: fixed;
-    right: var(--gutter);
-    bottom: 1.25rem;
-    z-index: 40;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.55rem;
-    min-height: 2.5rem;
-    padding: 0.55rem 1rem;
+  /* Pausa del grafo: icono redondo en la barra (portal al hueco #graph-motion-slot), del tamaño del de WhatsApp.
+     «Explorar en 3D» (movimiento reducido) y el tooltip se montan por portal en .home (`.stage` es aria-hidden, spec §4.8). */
+  .home .motion-slot {
+    display: contents;
+  }
+  .home .graph-motion {
+    display: inline-grid;
+    place-items: center;
+    flex: none;
+    width: 2.5rem;
+    height: 2.5rem;
+    padding: 0;
     border: 1px solid var(--line-strong);
-    border-radius: 999px;
-    background: rgb(5 9 11 / 0.82);
+    border-radius: 50%;
+    background: transparent;
     color: var(--text-soft);
     font-family: var(--f-mono);
-    font-size: 0.72rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
     cursor: pointer;
+    transition:
+      color 0.3s,
+      border-color 0.3s;
+  }
+  .home .graph-motion:hover {
+    color: var(--text-strong);
+    border-color: color-mix(in oklab, var(--teal) 55%, transparent);
   }
   .home .graph-motion::before {
     content: '❚❚';
-    font-size: 0.66rem;
+    font-size: 0.7rem;
     letter-spacing: -0.1em;
   }
   .home .graph-motion[aria-pressed='true'] {
@@ -973,8 +977,41 @@
     content: '▶';
   }
   .home .graph-explore {
+    position: fixed;
+    left: var(--gutter);
+    bottom: 1.25rem;
+    z-index: 40;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    min-height: 2.5rem;
+    padding: 0.55rem 1rem;
+    border: 1px solid color-mix(in oklab, var(--teal) 60%, transparent);
+    border-radius: 999px;
+    background: rgb(5 9 11 / 0.82);
     color: var(--text-strong);
-    border-color: color-mix(in oklab, var(--teal) 60%, transparent);
+    font-family: var(--f-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+  /* Asistente flotante abajo a la derecha, donde antes iba la pausa. */
+  .home .ask-fab {
+    position: fixed;
+    right: var(--gutter);
+    bottom: 1.25rem;
+    z-index: 41;
+    min-height: 3rem;
+    padding: 0.6rem 1.15rem 0.6rem 0.95rem;
+    font-size: 0.78rem;
+    box-shadow:
+      0 10px 30px -10px rgb(0 0 0 / 0.7),
+      0 0 26px -6px color-mix(in oklab, var(--teal) 60%, transparent);
+  }
+  .home .ask-fab::before {
+    width: 1rem;
+    height: 1rem;
   }
   .home .graph-tip {
     position: fixed;

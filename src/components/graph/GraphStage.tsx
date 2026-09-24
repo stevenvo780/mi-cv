@@ -60,6 +60,7 @@ export default function GraphStage({ locale, t }: { locale: Locale; t: HomeCopy[
   const motionRef = useRef(motion);
   // Solo se monta en cliente (la puerta lo importa tras un efecto): document existe.
   const [home] = useState(() => document.querySelector('.home'));
+  const [motionSlot] = useState(() => document.getElementById('graph-motion-slot'));
 
   // Refleja la preferencia guardada en <html> (pausa también las animaciones CSS).
   useEffect(() => {
@@ -272,14 +273,15 @@ export default function GraphStage({ locale, t }: { locale: Locale; t: HomeCopy[
   return (
     <>
       <div ref={hostRef} className="stage-host" aria-hidden="true" />
+      {(phase === 'live' || phase === 'loading') && (motionSlot ?? home)
+        ? createPortal(
+            <button type="button" className="graph-motion" aria-pressed={!motion} aria-label={t.pause} title={t.pause} onClick={toggleMotion} />,
+            (motionSlot ?? home) as Element,
+          )
+        : null}
       {home
         ? createPortal(
             <>
-              {phase === 'live' || phase === 'loading' ? (
-                <button type="button" className="graph-motion" aria-pressed={!motion} onClick={toggleMotion}>
-                  {t.pause}
-                </button>
-              ) : null}
               {phase === 'reduced' ? (
                 <button
                   type="button"

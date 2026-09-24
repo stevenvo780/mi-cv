@@ -4,7 +4,7 @@ import { expect, test } from './fixtures';
 // La barra de accesos y el asistente «Pregúntame». Ningún test llama a la API real: /api/assistant se intercepta
 // con page.route y responde aquí, así que no se gasta ni un token.
 
-const WHATSAPP = 'https://wa.me/573046374368?text=Hola%20Steven%2C%20vi%20tu%20portafolio%20y%20quiero%20hablar%20contigo';
+const WHATSAPP = 'https://wa.me/573023954534?text=Hola%20Steven%2C%20vi%20tu%20portafolio%20y%20quiero%20hablar%20contigo';
 const ANSWER = 'Steven es ingeniero de software y filósofo en Medellín. Sus servicios están en https://praxis.stevenvallejo.com.';
 
 type CspWindow = Window & { __csp?: string[] };
@@ -26,7 +26,7 @@ async function mockAssistant(page: Page, reply: (route: Route) => Promise<void> 
 }
 
 /** El botón «Pregúntame» visible: la píldora de la barra (en el móvil, el anillo con la chispa). */
-const askButton = (page: Page) => page.locator('.topbar-actions > .ask');
+const askButton = (page: Page) => page.locator('.ask-fab');
 
 test('la barra lleva los sitios hermanos, las secciones, el idioma, Servicios y WhatsApp', async ({ page }, info) => {
   await page.goto('/es');

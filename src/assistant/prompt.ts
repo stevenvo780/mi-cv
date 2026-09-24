@@ -9,7 +9,7 @@ import { EMAIL, SITES } from '@/lib/ecosystem';
 export const PROFILE_PATH = join(process.cwd(), 'src/assistant/profile.md');
 
 /** WhatsApp sin mensaje precargado: el enlace que el modelo escribe en sus respuestas. */
-const WHATSAPP = 'https://wa.me/573046374368';
+const WHATSAPP = 'https://wa.me/573023954534';
 
 /**
  * Instrucciones del asistente. El system prompt entero (esto más el perfil) no lleva nada variable, ni fechas ni el

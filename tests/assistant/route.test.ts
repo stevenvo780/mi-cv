@@ -88,7 +88,7 @@ describe('system prompt del asistente', () => {
   it('las instrucciones fijan idioma, fuente única, contacto, contratación y tema', () => {
     expect(INSTRUCTIONS).toMatch(/idioma en que escribe el visitante/);
     expect(INSTRUCTIONS).toMatch(/usa únicamente hechos del perfil/);
-    expect(INSTRUCTIONS).toContain('https://wa.me/573046374368');
+    expect(INSTRUCTIONS).toContain('https://wa.me/573023954534');
     expect(INSTRUCTIONS).toContain('stevenvallejo780@gmail.com');
     expect(INSTRUCTIONS).toContain('https://praxis.stevenvallejo.com');
     expect(INSTRUCTIONS).toMatch(/solo hablas de Steven/);
