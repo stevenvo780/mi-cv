@@ -25,6 +25,31 @@ function collectErrors(page: Page) {
   return errors;
 }
 
+type CspWindow = Window & { __csp?: string[] };
+
+/** Registra cada evento securitypolicyviolation (también los que no llegan a la consola) en window.__csp. */
+async function watchCsp(page: Page) {
+  await page.addInitScript(() => {
+    document.addEventListener('securitypolicyviolation', (e) => {
+      const w = window as CspWindow;
+      (w.__csp ??= []).push(`${e.violatedDirective} ${e.blockedURI}`);
+    });
+  });
+  return () => page.evaluate(() => (window as CspWindow).__csp ?? []);
+}
+
+/** Baja hasta el final para que monte lo diferido (canvas del portal, chunks con ssr: false) y espera la red. */
+async function scrollToEnd(page: Page) {
+  await page.evaluate(async () => {
+    for (let y = 0; y < document.documentElement.scrollHeight; y += 500) {
+      window.scrollTo(0, y);
+      await new Promise((r) => setTimeout(r, 50));
+    }
+  });
+  await page.waitForLoadState('networkidle');
+  await page.waitForTimeout(500);
+}
+
 for (const locale of ['es', 'en'] as const) {
   test.describe(`/${locale}`, () => {
     test('estructura, SEO y cero errores de consola', async ({ page }, info) => {
@@ -201,17 +226,57 @@ test('el menú móvil es un landmark y se cierra al elegir una sección o con Es
   await expect(open).toHaveCount(0);
 });
 
-test('las subpáginas siguen funcionando con su propio canonical', async ({ page }) => {
-  for (const path of ['/es/filosofia', '/es/informatica', '/es/ciencias', '/es/enterprise', '/es/lore', '/en/lore']) {
-    const errors = collectErrors(page);
-    const res = await page.goto(path);
-    expect(res!.status(), path).toBe(200);
-    await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', `${SITE}${path}`);
-    expect(await page.locator('meta[property="og:image"]').count(), path).toBeGreaterThan(0);
-    // theme-color del portal (#0b1417, su fondo), no el de la home.
-    await expect(page.locator('meta[name="theme-color"]')).toHaveAttribute('content', '#0b1417');
-    expect(errors, path).toEqual([]);
-  }
+// Red contra errores y violaciones de CSP en el portal, que ahora se bloquean (no solo se informan): los dos
+// idiomas, todos los frentes y lore, con lo que monta en diferido tras la hidratación.
+const FRENTES = ['filosofia', 'informatica', 'ciencias', 'enterprise'];
+for (const locale of ['es', 'en'] as const) {
+  test(`/${locale}: las subpáginas funcionan, con su canonical y sin errores ni violaciones de CSP`, async ({ page }) => {
+    const violations = await watchCsp(page);
+    for (const path of [...FRENTES.map((f) => `/${locale}/${f}`), `/${locale}/lore`]) {
+      const errors = collectErrors(page);
+      const res = await page.goto(path, { waitUntil: 'networkidle' });
+      expect(res!.status(), path).toBe(200);
+      await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', `${SITE}${path}`);
+      expect(await page.locator('meta[property="og:image"]').count(), path).toBeGreaterThan(0);
+      // Tarjeta al compartir: título con el nombre e imagen con alt.
+      await expect(page.locator('meta[property="og:title"]')).toHaveAttribute('content', / · Steven Vallejo Ortiz$/);
+      await expect(page.locator('meta[property="og:image:alt"]')).toHaveAttribute('content', 'Steven Vallejo Ortiz — Mouseîon');
+      // theme-color del portal (#0b1417, su fondo), no el de la home.
+      await expect(page.locator('meta[name="theme-color"]')).toHaveAttribute('content', '#0b1417');
+      await scrollToEnd(page);
+      expect([...errors, ...(await violations())], path).toEqual([]);
+    }
+  });
+}
+
+// GA solo se carga con la primera interacción (o 5 s después de load), así que ningún otro test lo ve: aquí se
+// provoca y se exige que gtag.js y su petición de medición pasen la CSP (spec §4.1 y §5).
+test('GA se carga con la primera interacción y no viola la CSP', async ({ page }, info) => {
+  test.skip(info.project.name !== 'desktop', 'basta un proyecto: pide gtag.js real a Google');
+  const errors = collectErrors(page);
+  const violations = await watchCsp(page);
+  // Las peticiones de medición no salen del test, para no ensuciar la propiedad: se responden aquí con 204. La CSP
+  // se evalúa antes, en el navegador, así que una petición bloqueada nunca llega a esta ruta y deja su violación.
+  await page.route(/^https:\/\/([a-z0-9-]+\.)*(google-analytics\.com|analytics\.google\.com|doubleclick\.net|google\.com)\//, (r) =>
+    r.fulfill({ status: 204 }),
+  );
+  const collects: string[] = [];
+  page.on('request', (r) => {
+    if (/\/g\/collect\b/.test(r.url())) collects.push(r.url());
+  });
+  await page.goto('/es', { waitUntil: 'networkidle' });
+  const gtag = page.waitForResponse((r) => r.url().startsWith('https://www.googletagmanager.com/gtag/js'));
+  await page.mouse.move(400, 400);
+  await page.mouse.wheel(0, 600);
+  expect((await gtag).status()).toBe(200);
+  // Si la CSP bloquea la medición, la petición no sale y la espera muestra las violaciones.
+  await expect
+    .poll(async () => ({ collect: collects.length > 0, errores: [...errors, ...(await violations())] }), { timeout: 20_000 })
+    .toEqual({ collect: true, errores: [] });
+  expect(new URL(collects[0]).searchParams.get('tid')).toBe('G-E5NMYWLXER');
+  // Lo que gtag pida justo después (p. ej. las señales de Google) también tiene que pasar la CSP.
+  await page.waitForTimeout(2000);
+  expect([...errors, ...(await violations())]).toEqual([]);
 });
 
 // El proxy decide adónde va la URL raíz del dominio y pone el locale a las rutas que no lo llevan (spec §4.1).
