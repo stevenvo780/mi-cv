@@ -44,6 +44,19 @@ export interface HomeCopy {
     listLink: string;
   };
   fronts: { eyebrow: string; title: string; lead: string; searchLabel: string; searchPlaceholder: string; noResults: string; openFront: string; visit: string; code: string; soon: string };
+  /** Banda de los catálogos, al principio del catálogo. Las cifras llegan de los datos (`incluye` de cada catálogo). */
+  catalogs: {
+    eyebrow: string;
+    title: (catalogs: number, items: number) => string;
+    lead: string;
+    /** Rótulo de cada catálogo: «Catálogo · 23 proyectos». */
+    label: (items: number, unit: string) => string;
+    enter: string;
+    /** Ítem sin enlace público (un repositorio privado). */
+    private: string;
+    /** Enlace del frente a su catálogo, en la cabecera del frente. */
+    ofFront: string;
+  };
   contact: { eyebrow: string; title: string; lead: string; email: string; whatsapp: string; story: string; social: string; ecosystem: string; foot: string };
   graph: { pause: string; explore: string; openHint: string; present: string; kinds: Record<NodeKind, string> };
 }
@@ -110,6 +123,15 @@ export const HOME: Record<Locale, HomeCopy> = {
       code: 'Código',
       soon: 'Próximamente',
     },
+    catalogs: {
+      eyebrow: 'Catálogos',
+      title: (catalogs, items) => `${countWord('es', catalogs)} catálogos, ${items} trabajos dentro`,
+      lead: 'No son apps sueltas: cada uno reúne y enlaza toda una colección (cursos, ponencias, simulaciones, proyectos de IA) y cada pieza tiene su propio sitio o repositorio.',
+      label: (items, unit) => `Catálogo · ${items} ${unit}`,
+      enter: 'Entrar al catálogo',
+      private: 'privado',
+      ofFront: 'Su catálogo',
+    },
     contact: {
       eyebrow: 'Contacto',
       title: 'Hablemos',
@@ -174,6 +196,15 @@ export const HOME: Record<Locale, HomeCopy> = {
       visit: 'Visit',
       code: 'Code',
       soon: 'Coming soon',
+    },
+    catalogs: {
+      eyebrow: 'Catalogs',
+      title: (catalogs, items) => `${countWord('en', catalogs)} catalogs, ${items} works inside`,
+      lead: 'Not single apps: each one gathers and links a whole collection (courses, talks, simulations, AI projects), and every piece has its own site or repository.',
+      label: (items, unit) => `Catalog · ${items} ${unit}`,
+      enter: 'Enter the catalog',
+      private: 'private',
+      ofFront: 'Its catalog',
     },
     contact: {
       eyebrow: 'Contact',

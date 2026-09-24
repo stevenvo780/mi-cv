@@ -1,4 +1,4 @@
-import { frentesMeta, productos } from '@/data/frentes';
+import { catalogos, esCatalogo, frentesMeta, productos } from '@/data/frentes';
 import expEs from '@/locales/es/common/experience.json';
 import expEn from '@/locales/en/common/experience.json';
 import toolsEs from '@/locales/es/common/tools.json';
@@ -42,6 +42,9 @@ function bilingual(key: string, dict: { es: Dict; en: Dict }): Bilingual {
   return { es, en };
 }
 
+/** URL comparable: sin barra final ni mayúsculas. */
+const bareUrl = (url?: string) => url?.replace(/\/+$/, '').toLowerCase();
+
 /** "ReactJS (Redux, sagas, ReactContext)" → "ReactJS". */
 function shortLabel(label: string): string {
   return label.split(' (')[0].trim();
@@ -72,9 +75,17 @@ export function buildGraphModel(): GraphModel {
       label: { es: p.nombre, en: p.nombre },
       frente: p.frente,
       url: p.url,
-      weight: p.banner || p.featured ? 3 : 2,
+      // Los catálogos reúnen otros sitios: pesan como un hub, igual que un frente.
+      weight: esCatalogo(p) ? 4 : p.banner || p.featured ? 3 : 2,
     });
     addEdge(nodeId.frente(p.frente), nodeId.producto(p.id), 'pertenece-a', 2);
+  }
+  // Catálogo → productos del portafolio que reúne: los que comparten sitio o repositorio con uno de sus ítems.
+  for (const c of catalogos) {
+    const urls = new Set(c.incluye.map((i) => bareUrl(i.url)).filter(Boolean));
+    for (const p of productos) {
+      if (p.id !== c.id && (urls.has(bareUrl(p.url)) || urls.has(bareUrl(p.repo)))) addEdge(nodeId.producto(c.id), nodeId.producto(p.id), 'agrupa', 2);
+    }
   }
   for (const x of EXTRA_PROJECTS) {
     nodes.push({ id: nodeId.producto(x.id), kind: 'producto', label: x.label, frente: x.frente, weight: 1 });

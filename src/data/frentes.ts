@@ -36,8 +36,16 @@ export interface Producto {
   featured?: boolean;
   /** Secondary card shown nested under a primary product. */
   secondary?: boolean;
-  /** Product type override, e.g. 'ponencia' for academic talks/presentations. */
-  tipo?: 'ponencia';
+  /**
+   * Product type override: 'ponencia' for academic talks/presentations; 'catalogo' for a site that gathers and
+   * links a whole collection of other sites, courses or repos (Paideía, Kósmos, Daímon). A catálogo carries
+   * `incluye` and `unidad`, and the home shows it as a big tile of its own (Fronts.tsx).
+   */
+  tipo?: 'ponencia' | 'catalogo';
+  /** Solo catálogos: lo que reúne, ítem a ítem. Toda cifra que la home muestre de un catálogo se deriva de aquí. */
+  incluye?: CatalogoItem[];
+  /** Solo catálogos: cómo se llaman sus ítems, en plural («proyectos», «obras»). */
+  unidad?: LocalizedText;
   /**
    * Render this product as a full-width SHOWCASE BANNER (horizontal og_product
    * cover, big radius) at the TOP of its section — even when the section also
@@ -47,6 +55,36 @@ export interface Producto {
    */
   banner?: boolean;
 }
+
+/**
+ * Colección de un catálogo: las áreas de Kósmos (lib/catalog.ts → CATEGORIES) y de Daímon (lib/catalog-groups.ts),
+ * y los tipos de obra de Paideía (cursos de su archivo y app/trabajos/works.ts).
+ */
+export type CatalogoKind =
+  | 'curso'
+  | 'ponencia'
+  | 'tesis'
+  | 'ensayo'
+  | 'matematicas'
+  | 'fisica'
+  | 'sistemas-complejos'
+  | 'emergencia'
+  | 'computo-cientifico'
+  | 'infraestructura'
+  | 'asistentes'
+  | 'herramientas'
+  | 'inferencia';
+
+export interface CatalogoItem {
+  /** Título tal como lo publica el catálogo. */
+  nombre: string;
+  /** Enlace directo: su sitio, su curso o su repositorio. Sin él, el ítem no es público (p. ej. un repo privado). */
+  url?: string;
+  kind: CatalogoKind;
+}
+
+/** Un producto con `tipo: 'catalogo'`: lleva siempre lo que reúne y el nombre de sus ítems. */
+export type Catalogo = Producto & { tipo: 'catalogo'; incluye: CatalogoItem[]; unidad: LocalizedText };
 
 export interface FrenteMeta {
   id: FrenteId;
@@ -154,18 +192,51 @@ export const productos: Producto[] = [
     frente: 'filosofia',
     nombre: 'Paideía',
     subtitulo: {
-      es: 'Portal de humanidades',
-      en: 'Humanities portal',
+      es: 'Catálogo de cursos, ponencias y ensayos',
+      en: 'Catalog of courses, talks and essays',
     },
     descripcion: {
-      es: 'Portal de humanidades digitales con 227 rutas estáticas en MDX: Griego Clásico (morfología, traducciones, glosario), Neurofilosofía (210 archivos en 10 módulos) y Filosofía de la Ciudad. Next.js 15, sin base de datos, 100% estático — pensado para leerse y citarse como material académico.',
-      en: 'Digital humanities portal with 227 static MDX routes: Classical Greek (morphology, translations, glossary), Neurophilosophy (210 files across 10 modules) and Philosophy of the City. Next.js 15, no database, fully static — built to be read and cited as academic material.',
+      es: 'No es una app suelta: es la capa que organiza el trabajo de humanidades. Reúne los cursos de Griego Clásico, Neurofilosofía y Filosofía de la Ciudad, con sus documentos navegables y un buscador, y enlaza las ponencias interactivas, la tesis doctoral y los ensayos, cada uno publicado en su propio sitio.',
+      en: 'Not a single app: it is the layer that organizes the humanities work. It gathers the Classical Greek, Neurophilosophy and Philosophy of the City courses, with their browsable documents and a search, and links the interactive talks, the doctoral thesis and the essays, each published on a site of its own.',
     },
     url: 'https://paideia.stevenvallejo.com',
     repo: 'https://github.com/stevenvo780/clavis',
     status: 'live',
     badge: { es: 'Humanidades digitales', en: 'Digital humanities' },
     featured: true,
+    tipo: 'catalogo',
+    unidad: { es: 'obras', en: 'works' },
+    // Fuente: el repo paideia (app/trabajos/works.ts, app/ponencias/page.tsx y los módulos de lib/modules.ts).
+    // El Fedón va una vez: /ponencias enlaza además un deck alterno (clavis-decks.vercel.app/platon/) de la misma ponencia.
+    incluye: [
+      { nombre: 'Griego Clásico', kind: 'curso', url: 'https://paideia.stevenvallejo.com/griego' },
+      { nombre: 'Neurofilosofía', kind: 'curso', url: 'https://paideia.stevenvallejo.com/neurofilosofia' },
+      { nombre: 'Filosofía de la Ciudad', kind: 'curso', url: 'https://paideia.stevenvallejo.com/filosofia-ciudad' },
+      { nombre: '¿Silicio o Tejido? — mente y materia', kind: 'ponencia', url: 'https://neurocarbon.stevenvallejo.com/' },
+      { nombre: 'La ciudad bien asignada — Medellín', kind: 'ponencia', url: 'https://autopoesis.stevenvallejo.com/' },
+      { nombre: 'La retórica como téchne', kind: 'ponencia', url: 'https://retorica.stevenvallejo.com/' },
+      { nombre: 'Redes Neuronales — Hinton', kind: 'ponencia', url: 'https://hinton.stevenvallejo.com/' },
+      { nombre: 'Refutación de Simmias y Cebes (Fedón)', kind: 'ponencia', url: 'https://fedon.stevenvallejo.com/' },
+      { nombre: 'Fenomenología urbana de Medellín', kind: 'ponencia', url: 'https://fenomenologiaurbana.stevenvallejo.com/' },
+      { nombre: 'Fragmentar el futuro — Yuk Hui', kind: 'ponencia', url: 'https://ponencia-yuk-hui-critertec-a963d21e.vercel.app/' },
+      { nombre: 'La arquitectura de lo ausente — Russell', kind: 'ponencia', url: 'https://russell.stevenvallejo.com/' },
+      { nombre: 'Estructuras Pre-Ontológicas', kind: 'tesis', url: 'https://preontologia.stevenvallejo.com/' },
+      {
+        nombre: 'Ignosticismo — análisis filosófico crítico',
+        kind: 'ensayo',
+        url: 'https://medium.com/@stevenvallejo780/ignosticismo-an%C3%A1lisis-filos%C3%B3fico-cr%C3%ADtico-0cb2a411569f',
+      },
+      {
+        nombre: 'Crítica y dialéctica del Gnosticismo',
+        kind: 'ensayo',
+        url: 'https://medium.com/@stevenvallejo780/cr%C3%ADtica-y-dial%C3%A9ctica-del-gnosticismo-6173e5768a0c',
+      },
+      {
+        nombre: 'Filosofía y Programación',
+        kind: 'ensayo',
+        url: 'https://medium.com/@stevenvallejo780/filosof%C3%ADa-y-programaci%C3%B3n-una-exploraci%C3%B3n-profunda-de-paradigmas-y-arquitecturas-199df6786331',
+      },
+    ],
   },
   {
     id: 'debatesuite',
@@ -191,18 +262,46 @@ export const productos: Producto[] = [
     frente: 'ciencias',
     nombre: 'Kósmos',
     subtitulo: {
-      es: 'Catálogo de simulación científica',
-      en: 'Scientific simulation catalogue',
+      es: 'Catálogo de proyectos científicos',
+      en: 'Catalog of science projects',
     },
     descripcion: {
-      es: 'Catálogo educativo interactivo de 16 repos en sistemas complejos, emergencia y cómputo científico: ABM y ODE acoplados, una métrica de emergencia propia (EDI) y su fundamento en realismo estructural operativo. 22 páginas SSG, sin base de datos, todo estático.',
-      en: 'Interactive educational catalogue of 16 repos on complex systems, emergence and scientific computation: coupled ABM and ODE models, a home-grown emergence metric (EDI) and its grounding in operative structural realism. 22 SSG pages, no database, fully static.',
+      es: 'Reúne proyectos públicos de matemáticas, física, sistemas complejos, autómatas y cómputo científico, cada uno con su ficha y su propio repositorio. Cada ficha dice el alcance real del código y separa el modelo didáctico del resultado empírico; la portada suma diagramas interactivos propios, como un atractor de Lorenz que se recalcula en vivo.',
+      en: 'It gathers public projects in mathematics, physics, complex systems, automata and scientific computing, each with its own page and repository. Every page states what the code really covers and separates the teaching model from the empirical result; the front page adds its own interactive diagrams, such as a Lorenz attractor recomputed live.',
     },
     url: 'https://kosmos.stevenvallejo.com',
     repo: 'https://github.com/stevenvo780/complexlab',
     status: 'live',
-    badge: { es: '16 repos · 22 páginas', en: '16 repos · 22 pages' },
+    badge: { es: 'Atlas de ciencia en código', en: 'Atlas of science in code' },
     featured: true,
+    tipo: 'catalogo',
+    unidad: { es: 'proyectos', en: 'projects' },
+    // Fuente: el repo kosmos (lib/catalog.ts → PROJECTS y CATEGORIES; docs/CATALOG_AUDIT.md). Un repositorio por ficha.
+    incluye: [
+      { nombre: 'Curvas de complejidad algorítmica', kind: 'matematicas', url: 'https://github.com/stevenvo780/ComplejidadYCostoComputacional' },
+      { nombre: 'Comunicación celular con ruido', kind: 'matematicas', url: 'https://github.com/stevenvo780/teoria-informacion' },
+      { nombre: 'Grafos e hipergrafos', kind: 'matematicas', url: 'https://github.com/stevenvo780/complejidad-teoria' },
+      { nombre: 'Kalos: visualización matemática', kind: 'matematicas', url: 'https://github.com/stevenvo780/kalos' },
+      { nombre: 'Cálculo de entropía de Shannon', kind: 'matematicas', url: 'https://github.com/stevenvo780/shanon' },
+      { nombre: 'Simulación de estrategias y recursos', kind: 'matematicas', url: 'https://github.com/stevenvo780/teoria-de-juegos' },
+      { nombre: 'Utilidad esperada de decisiones', kind: 'matematicas', url: 'https://github.com/stevenvo780/teoria-desicion' },
+      { nombre: 'Medidas probabilísticas de información', kind: 'matematicas', url: 'https://github.com/stevenvo780/TheorySemanticInformation' },
+      { nombre: 'Banco de pruebas EDI multiescala', kind: 'sistemas-complejos', url: 'https://github.com/stevenvo780/EstructurasPreontologicas' },
+      { nombre: 'Casos de simulación ABM y ODE', kind: 'sistemas-complejos', url: 'https://github.com/stevenvo780/hiper-objeto-simulaciones' },
+      { nombre: 'Simulaciones urbanas de Medellín', kind: 'sistemas-complejos', url: 'https://github.com/stevenvo780/FenomenologiaUrbana' },
+      { nombre: 'Sistema económico simulado', kind: 'sistemas-complejos', url: 'https://github.com/stevenvo780/teoria-sistemas' },
+      { nombre: 'Modelo multiagente MASOES', kind: 'sistemas-complejos', url: 'https://github.com/stevenvo780/teoria-MASOES' },
+      { nombre: 'Simulación de un sistema de metro', kind: 'sistemas-complejos', url: 'https://github.com/stevenvo780/SistemaDeTrasporteTrenes' },
+      { nombre: 'Isla de calor urbano', kind: 'fisica', url: 'https://github.com/stevenvo780/JacobTesis' },
+      { nombre: 'Atractor de Lorenz', kind: 'fisica', url: 'https://github.com/stevenvo780/teoria-caos' },
+      { nombre: 'Partículas y dispersión de velocidades', kind: 'fisica', url: 'https://github.com/stevenvo780/emergencia-experimento-temperatura' },
+      { nombre: 'Enfriamiento cosmológico simplificado', kind: 'fisica', url: 'https://github.com/stevenvo780/entropia-vacio' },
+      { nombre: 'Juego de la Vida y entropía', kind: 'emergencia', url: 'https://github.com/stevenvo780/emergencia-juego-de-conwey' },
+      { nombre: 'Grafo de reglas de autómatas', kind: 'emergencia', url: 'https://github.com/stevenvo780/teoria-ruliat' },
+      { nombre: 'Dinámica de partículas macro y micro', kind: 'emergencia', url: 'https://github.com/stevenvo780/experimento-macro-micro' },
+      { nombre: 'Benchmark y simulación N cuerpos', kind: 'computo-cientifico', url: 'https://github.com/stevenvo780/TestPcForProgramers' },
+      { nombre: 'Prácticas de redes neuronales', kind: 'computo-cientifico', url: 'https://github.com/stevenvo780/neuronalLearning' },
+    ],
   },
   {
     id: 'estructuras-preontologicas',
@@ -247,17 +346,44 @@ export const productos: Producto[] = [
     frente: 'informatica',
     nombre: 'Daímon',
     subtitulo: {
-      es: 'Pila de IA',
-      en: 'AI stack',
+      es: 'Catálogo de proyectos de IA',
+      en: 'Catalog of AI projects',
     },
     descripcion: {
-      es: 'Vitrina de la pila de IA personal: Jarvis v1/v2 (RAG sobre ChromaDB, modelos 14B–70B), chat GGUF local con llama-cpp-python, swarm MCP con Ollama (deepseek-r1 + qwen2.5) y un conversor OCR PDF→Markdown en GPU. Documentación estática en Next.js 15: no ejecuta modelos en el servidor.',
-      en: 'Showcase of the personal AI stack: Jarvis v1/v2 (RAG over ChromaDB, 14B–70B models), local GGUF chat via llama-cpp-python, an MCP swarm on Ollama (deepseek-r1 + qwen2.5) and a GPU OCR PDF→Markdown converter. Static docs in Next.js 15: no models run on the server.',
+      es: 'Reúne mis proyectos de IA (asistentes, infraestructura para agentes, inferencia local y herramientas), cada uno con su ficha, su diagrama y su repositorio. No ejecuta los proyectos: los documenta y enlaza, y dice con honestidad cuáles son demo, cuáles referencia y cuáles privados.',
+      en: 'It gathers my AI projects (assistants, agent infrastructure, local inference and tools), each with its own page, diagram and repository. It does not run them: it documents and links them, and says plainly which are demos, which are references and which are private.',
     },
     url: 'https://daimon.stevenvallejo.com',
     repo: 'https://github.com/stevenvo780/stevenai',
     status: 'live',
-    badge: { es: 'Pila de IA', en: 'AI stack' },
+    badge: { es: 'Atlas de inteligencia', en: 'Atlas of intelligence' },
+    tipo: 'catalogo',
+    unidad: { es: 'proyectos', en: 'projects' },
+    // Fuente: el repo daimon (lib/components-data.ts y lib/catalog-groups.ts). Talos es privado: el catálogo público no
+    // enlaza su repositorio, así que aquí tampoco.
+    incluye: [
+      { nombre: 'Cauce V3', kind: 'infraestructura', url: 'https://github.com/stevenvo780/cauce-v3' },
+      { nombre: 'MCP Swarm Delegator', kind: 'infraestructura', url: 'https://github.com/stevenvo780/MCP-delegate-agents' },
+      { nombre: 'MCP Autonomous Agents', kind: 'infraestructura', url: 'https://github.com/stevenvo780/MCPagents' },
+      { nombre: 'night-harness', kind: 'infraestructura', url: 'https://github.com/stevenvo780/night-harness' },
+      { nombre: 'Clawbus', kind: 'infraestructura', url: 'https://github.com/stevenvo780/clawbus' },
+      { nombre: 'Prizma Agent Stack', kind: 'infraestructura', url: 'https://github.com/stevenvo780/prizma-agent-stack' },
+      { nombre: 'Agora MCP', kind: 'infraestructura', url: 'https://github.com/stevenvo780/agora-mcp' },
+      { nombre: 'Cloud Delegate', kind: 'infraestructura', url: 'https://github.com/stevenvo780/cloud-delegate' },
+      { nombre: 'Talos · Harness de automatización', kind: 'infraestructura' },
+      { nombre: 'Jarvis IA v1', kind: 'asistentes', url: 'https://github.com/stevenvo780/jarvisIA' },
+      { nombre: 'Jarvis IA v2', kind: 'asistentes', url: 'https://github.com/stevenvo780/jarvisIAV2' },
+      { nombre: 'Kratos Jarvis', kind: 'asistentes', url: 'https://github.com/stevenvo780/kratos-jarvis' },
+      { nombre: 'clawbar', kind: 'asistentes', url: 'https://github.com/stevenvo780/clawbar' },
+      { nombre: 'Ágora AI Agent', kind: 'asistentes', url: 'https://github.com/stevenvo780/agora-backend' },
+      { nombre: 'PDF to Markdown IA', kind: 'herramientas', url: 'https://github.com/stevenvo780/ConvertPDFToMarkdownIA' },
+      { nombre: 'ai-usage-live', kind: 'herramientas', url: 'https://github.com/stevenvo780/ai-usage-live' },
+      { nombre: 'reel-forge', kind: 'herramientas', url: 'https://github.com/stevenvo780/reel-forge' },
+      { nombre: 'NewsLeters · MiniMax H3', kind: 'herramientas', url: 'https://github.com/stevenvo780/minimax-h3' },
+      { nombre: 'Generador de pixel art', kind: 'herramientas', url: 'https://github.com/stevenvo780/CreadorDeImagenes' },
+      { nombre: 'Chat IA Local GGUF', kind: 'inferencia', url: 'https://github.com/stevenvo780/IA' },
+      { nombre: 'Neuronal Learning', kind: 'inferencia', url: 'https://github.com/stevenvo780/neuronalLearning' },
+    ],
   },
   {
     id: 'stevendevbox',
@@ -502,13 +628,13 @@ export const productos: Producto[] = [
  */
 export const productTags: Record<string, string[]> = {
   agora: ['lógica formal', 'plataforma académica', 'filosofía analítica', 'SAT solver', 'ST', 'auto.logic', 'verificación', 'humanidades', 'elenxos', 'razonamiento'],
-  clavis: ['paideía', 'humanidades digitales', 'griego clásico', 'griego', 'morfología', 'neurofilosofía', 'filosofía de la ciudad', 'MDX', 'educación', 'filosofía', 'lecturas'],
+  clavis: ['paideía', 'catálogo', 'catalog', 'humanidades digitales', 'griego clásico', 'griego', 'morfología', 'neurofilosofía', 'filosofía de la ciudad', 'MDX', 'educación', 'filosofía', 'lecturas', 'ponencias', 'ensayos'],
   debatesuite: ['agón', 'debate', 'debates', 'cafetería del caos', 'retórica', 'moderación', 'falacias', 'argumentación', 'autómata celular', 'PWA', 'filosofía', 'oratoria'],
   'estructuras-preontologicas': ['filosofía de la ciencia', 'ontología', 'complejidad', 'tesis doctoral', 'preontología', 'EDI', 'emergencia', 'ciencias de la complejidad', 'metafísica', 'investigación'],
-  complexlab: ['kósmos', 'ciencia', 'complejidad', 'emergencia', 'caos', 'redes', 'agentes', 'simulación', 'sistemas complejos', 'autómatas', 'orden natural'],
+  complexlab: ['kósmos', 'catálogo', 'catalog', 'ciencia', 'complejidad', 'emergencia', 'caos', 'redes', 'agentes', 'simulación', 'sistemas complejos', 'autómatas', 'orden natural'],
   aporia: ['áporía', 'CMS', 'editorial', 'papers', 'publicación académica', 'investigación', 'ciencia', 'paradojas', 'Neon', 'Postgres'],
   'nlp-to-logic': ['órganon', 'lógica formal', 'NLP', 'lenguaje natural', 'SAT solver', 'CDCL', 'ST', 'autologic', 'razonamiento', 'formalización'],
-  stevenai: ['daímon', 'inteligencia artificial', 'IA', 'RAG', 'LLM', 'Jarvis', 'Ollama', 'agentes', 'MCP', 'GPU', 'ChromaDB', 'chat local', 'OCR'],
+  stevenai: ['daímon', 'catálogo', 'catalog', 'inteligencia artificial', 'IA', 'RAG', 'LLM', 'Jarvis', 'Ollama', 'agentes', 'MCP', 'GPU', 'ChromaDB', 'chat local', 'OCR'],
   stevendevbox: ['téchne', 'devtools', 'OSS', 'código abierto', 'terminal', 'Hyprland', 'Linux', 'Wayland', 'herramientas', 'monitor de sistema'],
   communityos: ['koinonía', 'comunidades', 'Discord', 'multi-tenant', 'eventos', 'ranking', 'biblioteca', 'bot', 'NestJS', 'gamificación'],
   devkits: ['érgon', 'starter kits', 'PYME', 'CRM', 'hours tracker', 'VPN', 'plantillas', 'landing comercial'],
@@ -529,6 +655,37 @@ export const productTags: Record<string, string[]> = {
 /* ---------------------------------------------------------------- */
 export function productosPorFrente(frente: FrenteId): Producto[] {
   return productos.filter((p) => p.frente === frente);
+}
+
+/** Nombre de cada colección, como lo publica su catálogo. */
+export const catalogoKinds: Record<CatalogoKind, LocalizedText> = {
+  curso: { es: 'Cursos', en: 'Courses' },
+  ponencia: { es: 'Ponencias', en: 'Talks' },
+  tesis: { es: 'Tesis doctoral', en: 'Doctoral thesis' },
+  ensayo: { es: 'Ensayos', en: 'Essays' },
+  matematicas: { es: 'Matemáticas', en: 'Mathematics' },
+  fisica: { es: 'Física y ambiente', en: 'Physics & environment' },
+  'sistemas-complejos': { es: 'Sistemas complejos', en: 'Complex systems' },
+  emergencia: { es: 'Autómatas y emergencia', en: 'Automata & emergence' },
+  'computo-cientifico': { es: 'Cómputo científico', en: 'Scientific computing' },
+  infraestructura: { es: 'Infraestructura para agentes', en: 'Agent infrastructure' },
+  asistentes: { es: 'Asistentes y voz', en: 'Assistants & voice' },
+  herramientas: { es: 'Herramientas y creación', en: 'Tools & creation' },
+  inferencia: { es: 'Inferencia y experimentos', en: 'Inference & experiments' },
+};
+
+export function esCatalogo(p: Producto): p is Catalogo {
+  return p.tipo === 'catalogo' && Array.isArray(p.incluye) && p.unidad !== undefined;
+}
+
+/** Los catálogos, en el orden de los frentes (frenteOrder) y, dentro de cada frente, en el de `productos`. */
+export const catalogos: Catalogo[] = frenteOrder.flatMap((f) => productos.filter((p) => p.frente === f).filter(esCatalogo));
+
+/** Colecciones de un catálogo en el orden en que aparecen sus ítems, cada una con sus ítems. */
+export function catalogoGrupos(c: Catalogo): { kind: CatalogoKind; items: CatalogoItem[] }[] {
+  const grupos = new Map<CatalogoKind, CatalogoItem[]>();
+  for (const item of c.incluye) grupos.set(item.kind, [...(grupos.get(item.kind) ?? []), item]);
+  return [...grupos].map(([kind, items]) => ({ kind, items }));
 }
 
 /** Cross-links to the sibling brand sites, per front. */

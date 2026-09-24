@@ -17,7 +17,7 @@ import { readFileSync, writeFileSync } from 'node:fs';
 import ts from 'typescript';
 import { PORTRAIT } from '../src/app/components/Portrait/portraitData';
 import { HOME } from '../src/content/home';
-import { frenteLinks, frenteOrder, frentesMeta, productos } from '../src/data/frentes';
+import { catalogoGrupos, catalogoKinds, esCatalogo, frenteLinks, frenteOrder, frentesMeta, productos } from '../src/data/frentes';
 import { EMAIL, SITES, WHATSAPP_URL } from '../src/lib/ecosystem';
 import { PROFILES, SITE } from '../src/lib/site';
 
@@ -229,6 +229,13 @@ for (const fid of frenteOrder) {
   for (const p of productos.filter((x) => x.frente === fid)) {
     const where = [p.url && `sitio: ${p.url}`, p.repo && `código: ${p.repo}`, p.status === 'soon' ? 'próximamente' : 'en línea'].filter(Boolean).join(' · ');
     push(`- ${p.nombre}${p.subtitulo ? ` (${p.subtitulo.es})` : ''}${p.badge ? ` [${p.badge.es}]` : ''}: ${p.descripcion.es} (${where})`);
+    // Un catálogo reúne otros sitios, cursos o repositorios: el asistente conoce cada uno y su enlace.
+    if (esCatalogo(p)) {
+      push(`  - Es un catálogo: reúne ${p.incluye.length} ${p.unidad.es}.`);
+      for (const g of catalogoGrupos(p)) {
+        push(`  - ${catalogoKinds[g.kind].es} (${g.items.length}): ${g.items.map((i) => (i.url ? `${i.nombre} <${i.url}>` : `${i.nombre} (privado, sin enlace público)`)).join(' · ')}`);
+      }
+    }
   }
   const links = frenteLinks[fid];
   if (links?.length) push(`- Enlaces del frente: ${links.map((l) => `${l.label.es} ${l.url}`).join(' · ')}`);

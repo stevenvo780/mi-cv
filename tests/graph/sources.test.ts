@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import toolsEs from '@/locales/es/common/tools.json';
-import { productos } from '@/data/frentes';
+import { catalogos, productos } from '@/data/frentes';
 import { buildGraphModel, nodeId, parseDates } from '@/graph/sources';
 import { CONCEPT_PRODUCTS, EMPRESAS, PRODUCT_TECH, TOOL_GROUPS } from '@/graph/relations';
 
@@ -54,6 +54,13 @@ describe('buildGraphModel', () => {
       expect(node?.frente).toBe(p.frente);
       expect(g.edges.some((e) => e.source === nodeId.frente(p.frente) && e.target === id)).toBe(true);
     }
+  });
+
+  // Paideía, Kósmos y Daímon reúnen otros sitios: pesan como un frente y se unen a los productos que contienen.
+  it('los catálogos son hubs unidos a los productos del portafolio que reúnen', () => {
+    for (const c of catalogos) expect(g.nodes.find((n) => n.id === nodeId.producto(c.id))?.weight, c.nombre).toBe(4);
+    const contains = g.edges.filter((e) => e.rel === 'agrupa' && e.source.startsWith('producto:')).map((e) => `${e.source} → ${e.target}`);
+    expect(contains.sort()).toEqual(['producto:clavis → producto:estructuras-preontologicas', 'producto:complexlab → producto:estructuras-preontologicas']);
   });
 
   it('cada herramienta de tools.json está en exactamente un grupo', () => {
