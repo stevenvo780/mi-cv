@@ -168,6 +168,13 @@ test('la búsqueda filtra el portafolio', async ({ page }) => {
   await expect(page.locator('[data-node="producto:graf"]')).toBeHidden();
   await search.fill('zzzz-inexistente');
   await expect(page.getByText('Sin resultados. Prueba con otro término.')).toBeVisible();
+  await expect(page.locator('[data-front]:visible')).toHaveCount(0);
+  // Borrar la búsqueda devuelve todo el portafolio.
+  expect(await page.locator('[data-front]').count()).toBeGreaterThan(1);
+  await search.fill('');
+  await expect(page.locator('[data-front]:visible')).toHaveCount(await page.locator('[data-front]').count());
+  await expect(page.locator('[data-search]:visible')).toHaveCount(await page.locator('[data-search]').count());
+  await expect(page.getByText('Sin resultados. Prueba con otro término.')).toHaveCount(0);
 });
 
 // Por debajo de 900 px el índice es un <details> dentro de un <nav>; se cierra al elegir sección y con Escape.

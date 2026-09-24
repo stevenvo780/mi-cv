@@ -31,6 +31,24 @@ describe('cifras de la sección Prueba', () => {
     expect(byId['graph'].value.en).toBe(`${GRAPH_STATS.nodes} · ${GRAPH_STATS.edges}`);
   });
 
+  it('los valores en español coinciden con lo que dicen los datos', () => {
+    expect(byId['sat-tests'].value.es).toBe('6 333');
+    expect(byId['logic-profiles'].value.es).toBe('11');
+    expect(byId['microservices'].value.es).toBe('8');
+    expect(byId['years'].value.es).toBe('12+');
+    expect(byId['kosmos-repos'].value.es).toBe('16');
+    expect(byId['paideia-routes'].value.es).toBe('227');
+  });
+
+  // Cada cifra se extrae con dos regex sobre dos textos (descripcion.es y descripcion.en): si solo se actualiza
+  // uno, /es y /en mostrarían cifras distintas. Se comparan los dígitos, sin separadores de miles.
+  it('cada cifra es la misma en ES y en EN', () => {
+    for (const f of figures) {
+      expect(f.value.es.replace(/\D/g, ''), f.id).toBe(f.value.en.replace(/\D/g, ''));
+      expect(f.value.es.replace(/\D/g, '').length, f.id).toBeGreaterThan(0);
+    }
+  });
+
   it('cada cifra declara su fuente', () => {
     for (const f of figures) expect(f.source.length).toBeGreaterThan(0);
   });

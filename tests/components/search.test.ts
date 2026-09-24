@@ -31,4 +31,15 @@ describe('applySearchFilter', () => {
     expect(applySearchFilter(root as unknown as ParentNode, '   ')).toBe(3);
     expect(root.cards.every((c) => !c.hidden)).toBe(true);
   });
+  // Tras una búsqueda sin resultados, borrarla devuelve todo el portafolio (tarjetas y frentes).
+  it('borrar la consulta restaura la vista', () => {
+    const root = fakeRoot();
+    root.fronts.forEach((f) => Object.assign(f, { querySelector: () => (f.cards.some((c) => !c.hidden) ? {} : null) }));
+    expect(applySearchFilter(root as unknown as ParentNode, 'zzz')).toBe(0);
+    expect(root.cards.every((c) => c.hidden)).toBe(true);
+    expect(root.fronts.every((f) => f.hidden)).toBe(true);
+    expect(applySearchFilter(root as unknown as ParentNode, '')).toBe(3);
+    expect(root.cards.every((c) => !c.hidden)).toBe(true);
+    expect(root.fronts.every((f) => !f.hidden)).toBe(true);
+  });
 });
