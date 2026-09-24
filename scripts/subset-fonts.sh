@@ -100,8 +100,9 @@ latin() { # <entrada> <salida> [unicodes que pinta el portal, además del rango 
 
 # Google sirve Inter solo con el eje wght (opsz fijado en su valor por defecto, 14) cuando se pide wght@100..900.
 $PY -m fontTools.varLib.instancer "$TMP/inter.ttf" opsz=14 -q -o "$TMP/inter-14.ttf"
-# Cormorant: Ω ∞ ◇ de las fichas de símbolo (no tiene ε, Π, ◎ ni «ḗ»; los demás símbolos no están en ninguna fuente).
-latin "$TMP/cg.ttf" cormorant-garamond-latin.woff2 'U+03A9,U+221E,U+25C7'
+# Cormorant: Ω y ∞ de las fichas de símbolo. No tiene ε, Π, ◎ ni «ḗ», y los demás símbolos no están en ninguna fuente.
+# Su ◇ sí existe, pero es un rombo de texto diminuto al lado de los demás símbolos: se queda en la fuente del sistema.
+latin "$TMP/cg.ttf" cormorant-garamond-latin.woff2 'U+03A9,U+221E'
 latin "$TMP/cgi.ttf" cormorant-garamond-italic-latin.woff2
 # JetBrains Mono: ← (volver a la home) y ↗ (enlaces en vivo). No tiene «ḗ» ni «Ḗ» (Pinakothḗke en versalitas).
 latin "$TMP/jb.ttf" jetbrains-mono-latin.woff2 'U+2190,U+2197'
