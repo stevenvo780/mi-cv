@@ -164,7 +164,7 @@ export const HOME: Record<Locale, HomeCopy> = {
     path: {
       eyebrow: '02 · Path',
       title: 'From the server room to the agent fleet',
-      lead: 'From infrastructure and video games to platforms that invoice, and to the agent fleet that runs this portfolio today.',
+      lead: 'From infrastructure and video games to platforms that bill, and to the agent fleet that runs this portfolio today.',
     },
     fronts: {
       eyebrow: '03 · Fronts',

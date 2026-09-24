@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { EMPRESAS } from '@/graph/relations';
-import { buildTimeline } from '@/content/timeline';
+import { buildTimeline, formatRange } from '@/content/timeline';
 
 describe('línea de tiempo', () => {
   const entries = buildTimeline();
@@ -22,5 +22,16 @@ describe('línea de tiempo', () => {
     expect(start.appsWeb).toBe('2018');
     expect(start.infraestructura).toBe('2014-02');
     for (const e of entries) expect(e.start).toMatch(/^\d{4}(-(0[1-9]|1[0-2]))?$/);
+  });
+  it('las fechas van con raya y sin palabras en mayúsculas sostenidas', () => {
+    expect(formatRange('2014/02 - ACTUALIDAD')).toBe('2014/02 — Actualidad');
+    expect(formatRange('2018 - Present')).toBe('2018 — Present');
+    for (const e of entries) {
+      for (const d of [e.dates.es, e.dates.en]) {
+        expect(d).not.toMatch(/\p{Lu}{2,}/u);
+        expect(d).toMatch(/^\d{4}(\/\d{2})? — /);
+      }
+    }
+    expect(entries.find((e) => e.key === 'infraestructura')!.dates.es).toBe('2014/02 — Actualidad');
   });
 });

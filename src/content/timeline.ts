@@ -31,7 +31,12 @@ export interface TimelineEntry {
 
 const pick = (dict: { es: Dict; en: Dict }, key: string): Bilingual | undefined =>
   dict.es[key] && dict.en[key] ? { es: dict.es[key], en: dict.en[key] } : undefined;
-const dash = (s: string) => s.replace(/\s*-\s*/, ' — ');
+/**
+ * "2014/02 - ACTUALIDAD" → "2014/02 — Actualidad": raya entre las fechas y las palabras en mayúsculas sostenidas en
+ * tipo oración. Se normaliza aquí y no en experience.json, que también alimenta el CV del portal.
+ */
+export const formatRange = (s: string) =>
+  s.replace(/\s*-\s*/, ' — ').replace(/\p{Lu}{2,}/gu, (w) => w[0] + w.slice(1).toLowerCase());
 
 export function buildTimeline(): TimelineEntry[] {
   return EMPRESAS.map((key) => {
@@ -42,7 +47,7 @@ export function buildTimeline(): TimelineEntry[] {
       nodeId: nodeId.empresa(key),
       company: pick(EXP, `experience.${key}`)!,
       role: pick(EXP, `experience.role.${key}`)!,
-      dates: { es: dash(dates.es), en: dash(dates.en) },
+      dates: { es: formatRange(dates.es), en: formatRange(dates.en) },
       start: month === undefined ? String(year) : `${year}-${String(month).padStart(2, '0')}`,
       location: pick(EXP, `experience.location.${key}`),
       achievements: (ACHIEVEMENTS[key] ?? []).map((a) => pick(ACH, `achievements.description.${a}`)).filter((a): a is Bilingual => Boolean(a)),
