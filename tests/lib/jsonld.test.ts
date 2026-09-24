@@ -25,6 +25,14 @@ describe('JSON-LD de la home', () => {
     expect(list.itemListElement).toHaveLength(productos.filter((p) => p.url && p.status === 'live').length);
   });
 
+  it('el ItemList no repite las descripciones que ya están en las tarjetas (peso del HTML, spec §5.2)', () => {
+    const list = graph[3] as { itemListElement: { item: Record<string, unknown> }[] };
+    for (const { item } of list.itemListElement) {
+      expect(Object.keys(item).sort()).toEqual(['@type', 'name', 'url']);
+      expect(item.url).toMatch(/^https:\/\//);
+    }
+  });
+
   it('declara como empleadores actuales solo las empresas abiertas no freelance', () => {
     expect(currentEmployers().map((o) => o.name)).toEqual(['Humanizar Systems', 'Finca Directa S.A.S']);
   });

@@ -1,7 +1,10 @@
 'use client';
 
-import { useId, useState } from 'react';
+import { useState } from 'react';
 import { normalizeSearch } from '@/lib/text';
+
+/** Hay un solo buscador en la home: un id fijo ahorra `useId` en el JS de la home (presupuesto de la spec §5.1). */
+const INPUT_ID = 'buscar-productos';
 
 /** Filtra en el DOM las tarjetas renderizadas por el servidor. Devuelve cuántas quedan visibles. */
 export function applySearchFilter(root: ParentNode, query: string): number {
@@ -30,11 +33,9 @@ export default function ProductSearch({
   placeholder: string;
   noResults: string;
 }) {
-  const id = useId();
-  const [query, setQuery] = useState('');
   const [empty, setEmpty] = useState(false);
+  // Input no controlado: el valor solo hace falta al filtrar, así que no se guarda en el estado.
   const onChange = (value: string) => {
-    setQuery(value);
     const root = document.getElementById(targetId);
     if (!root) return;
     const count = applySearchFilter(root, value);
@@ -42,10 +43,10 @@ export default function ProductSearch({
   };
   return (
     <div className="search" role="search">
-      <label htmlFor={id} className="search-label">
+      <label htmlFor={INPUT_ID} className="search-label">
         {label}
       </label>
-      <input id={id} type="search" value={query} placeholder={placeholder} autoComplete="off" onChange={(e) => onChange(e.target.value)} />
+      <input id={INPUT_ID} type="search" placeholder={placeholder} autoComplete="off" onChange={(e) => onChange(e.target.value)} />
       <p className="search-empty" aria-live="polite">
         {empty ? noResults : ''}
       </p>

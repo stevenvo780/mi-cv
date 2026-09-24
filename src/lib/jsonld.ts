@@ -56,12 +56,14 @@ export function buildHomeJsonLd(locale: Locale, facts: PersonFacts, dateModified
       {
         '@type': 'ItemList',
         '@id': `${page}#portfolio`,
+        // Nombre y URL: la descripción de cada producto ya está en el HTML de su tarjeta, y el bloque JSON-LD viaja
+        // dos veces (marcado y payload RSC). Repetirla costaba ~2.6 KB gz de HTML (spec §5.2).
         itemListElement: productos
           .filter((p) => p.url && p.status === 'live')
           .map((p, i) => ({
             '@type': 'ListItem',
             position: i + 1,
-            item: { '@type': 'CreativeWork', name: p.nombre, url: p.url, description: p.descripcion[locale] },
+            item: { '@type': 'CreativeWork', name: p.nombre, url: p.url },
           })),
       },
     ],
