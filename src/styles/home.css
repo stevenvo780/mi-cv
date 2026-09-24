@@ -34,9 +34,11 @@
     --violet: #8d7cc0;
     --scrim: rgb(5 9 11 / 0.86);
     --blur: none;
-    --f-display: var(--font-display), 'Cormorant Garamond', Georgia, serif;
-    --f-sans: var(--font-geist-sans), system-ui, -apple-system, 'Segoe UI', sans-serif;
-    --f-mono: var(--font-jetbrains), ui-monospace, 'SFMono-Regular', monospace;
+    /* Subconjuntos propios de la home ([locale]/(home)/fonts.ts). Sin familias de Google como respaldo:
+       el navegador las descargaría mientras cargan estas. */
+    --f-display: var(--font-home-display), Georgia, serif;
+    --f-sans: var(--font-home-sans), system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --f-mono: var(--font-home-mono), ui-monospace, 'SFMono-Regular', monospace;
     --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
     --gutter: clamp(1rem, 4vw, 3rem);
     --measure: 40rem;
@@ -334,7 +336,8 @@
     grid-template-columns: 1fr 1fr;
     column-gap: var(--hero-gap);
     align-items: baseline;
-    font-family: var(--f-display);
+    /* El nombre (elemento LCP) usa un subconjunto de 2 KB con solo sus glifos, el único archivo precargado. */
+    font-family: var(--font-home-hero), var(--f-display);
     font-size: min(12rem, calc((100vw - 2 * var(--gutter) - var(--hero-gap)) / 9.6));
     line-height: 0.86;
     letter-spacing: -0.035em;

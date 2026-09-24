@@ -5,8 +5,11 @@ import localFont from 'next/font/local';
 import Analytics from '@/components/Analytics';
 import { LOCALES, SITE, isLocale } from '@/lib/site';
 
-// Geist (geist@1.7.2, variable) recortado a latín: 33 KB frente a los 70 KB del archivo completo, que se
-// precarga y compite con el LCP en móvil. Se regenera con:
+// Fuentes del layout raíz: las usan el portal (brand.css: --font-inter, --font-jetbrains, --font-cormorant) y el
+// 404 de [locale] (NotFoundView). La home no las usa: tiene sus propios subconjuntos en (home)/fonts.ts, así que
+// aquí nada se precarga (una precarga desde el layout raíz se descargaría también en la home).
+//
+// Geist (geist@1.7.2, variable) recortado a latín: 33 KB frente a los 70 KB del archivo completo. Se regenera con:
 //   pyftsubset node_modules/geist/dist/fonts/geist-sans/Geist-Variable.ttf --flavor=woff2 --layout-features='*' \
 //     --unicodes='U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+1E17,U+2000-206F,U+20AC,U+2122,U+2190-2193,U+2197,U+2212,U+2215,U+FEFF,U+FFFD' \
 //     --output-file=src/app/fonts/geist-sans-latin.woff2
@@ -16,7 +19,7 @@ const geist = localFont({
   weight: '100 900',
   display: 'swap',
   adjustFontFallback: 'Arial',
-  preload: true,
+  preload: false,
 });
 // Una sola familia "Cormorant Garamond" repartida en dos instancias sin caras en común. next/font 16 publica el
 // nombre real de la familia, así que si las dos declaran la misma cara (peso y estilo) gana la última y el
@@ -27,9 +30,9 @@ const display = Cormorant_Garamond({
   style: ['normal'],
   variable: '--font-display',
   display: 'swap',
-  preload: true,
+  preload: false,
 });
-// Cursivas (epígrafe de la home y portal). `--font-cormorant` nombra la misma familia, así que el portal
+// Cursivas del portal. `--font-cormorant` nombra la misma familia, así que el portal
 // (brand.css) sigue teniendo las caras rectas de la instancia anterior.
 const cormorant = Cormorant_Garamond({
   subsets: ['latin'],
