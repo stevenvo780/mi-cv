@@ -26,6 +26,7 @@ export interface HomeCopy {
     services: string;
     cvEngineer: string;
     cvPhilosopher: string;
+    blog: string;
     figcaption: (nodes: number, edges: number) => string;
     listLink: string;
   };
@@ -76,6 +77,7 @@ export const HOME: Record<Locale, HomeCopy> = {
       services: 'Servicios',
       cvEngineer: 'CV Informático',
       cvPhilosopher: 'CV Filósofo',
+      blog: 'Blog · Scholḗ',
       figcaption: (nodes, edges) => `Este grafo es el mapa de mis trabajos: ${nodes} nodos, ${edges} relaciones reales`,
       listLink: 'Verlo como catálogo',
     },
@@ -136,6 +138,7 @@ export const HOME: Record<Locale, HomeCopy> = {
       services: 'Services',
       cvEngineer: 'Engineering CV',
       cvPhilosopher: 'Philosophy CV',
+      blog: 'Blog · Scholḗ',
       figcaption: (nodes, edges) => `This graph maps my work: ${nodes} nodes, ${edges} real relations`,
       listLink: 'See it as a catalog',
     },

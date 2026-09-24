@@ -426,6 +426,22 @@ export const productos: Producto[] = [
 
   /* ===================== ENTERPRISE ===================== */
   {
+    id: 'humanizar',
+    frente: 'enterprise',
+    nombre: 'Humanizar',
+    subtitulo: {
+      es: 'Mi empresa: ecosistema SaaS empresarial',
+      en: 'My company: enterprise SaaS ecosystem',
+    },
+    descripcion: {
+      es: 'Humanizar Systems, la empresa que fundé y lidero como desarrollador principal: un ecosistema SaaS empresarial multi-tenant con e-commerce, punto de venta con facturación electrónica DIAN, fintech de créditos y mensajería, orquestados con microservicios NestJS y con clientes en producción.',
+      en: 'Humanizar Systems, the company I founded and lead as principal developer: a multi-tenant enterprise SaaS ecosystem with e-commerce, point of sale with DIAN e-invoicing, credit fintech and messaging, orchestrated with NestJS microservices and with clients in production.',
+    },
+    url: 'https://humanizar.tech',
+    status: 'live',
+    badge: { es: 'Empresa propia', en: 'My company' },
+  },
+  {
     id: 'prizma',
     frente: 'enterprise',
     nombre: 'Prizma',
@@ -502,6 +518,7 @@ export const productTags: Record<string, string[]> = {
   warehouse: ['apothḗke', 'inventario', 'almacén', 'stock', 'órdenes', 'logística', 'gestión', 'roles', 'analítica'],
   eikon: ['eikón', 'imagen de marca', 'logos', 'identidad visual', 'iconsets', 'favicons', 'paletas', 'WCAG', 'generador', 'MCP', 'branding', 'diseño', 'marca'],
   'cauce-v3': ['cauce', 'cauce v3', 'flota agéntica', 'agentes', 'orquestador', 'director de flota', 'multi-tenant', 'CRM', 'CRM agéntico', 'humandroid', 'humanizar', 'flagship engineering'],
+  humanizar: ['humanizar', 'humanizar systems', 'empresa', 'SaaS', 'multi-tenant', 'e-commerce', 'POS', 'facturación DIAN', 'fintech', 'crédito', 'mensajería', 'microservicios', 'NestJS'],
   prizma: ['suite empresarial', 'POS', 'facturación DIAN', 'crédito', 'WhatsApp', 'marketing', 'e-commerce', 'logística', 'CRM', 'microservicios', 'Cloud Run', 'talanton', 'pistis', 'iris', 'hermes', 'talaria'],
   graf: ['pedidos', 'domicilios', 'logística', 'última milla', 'delivery', 'clientes', 'comercio', 'plataforma', 'producción'],
   demeter: ['distribución', 'alimentos', 'pedidos', 'rutas', 'facturación DIAN', 'cartera', 'inventario', 'HORECA', 'logística', 'multi-empresa', 'despacho'],
