@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { QualityGovernor, TIERS, initialTier } from '@/graph/runtime/quality';
+import { QualityGovernor, TIERS, initialTier, type Tier } from '@/graph/runtime/quality';
 
 const feed = (g: QualityGovernor, ms: number, frames: number, start: number) => {
   let changed = null;
@@ -61,7 +61,7 @@ describe('calidad', () => {
     expect(feedFrames(g2, 3, 21, 900, 0).changed).toBe(null);
     expect(g2.tier).toBe(1);
   });
-  it('cada bajada desde un nivel duplica la espera para volver a él (5 s, 10 s, 20 s…)', () => {
+  it('la primera vuelta a un nivel espera 5 s y cada bajada posterior desde él duplica la espera (10 s, 20 s…)', () => {
     const g = new QualityGovernor(2);
     const slow = (start: number) => feedFrames(g, 3, 28, 90, start);
     const fast = (frames: number, start: number) => feedFrames(g, 4, 1000 / 60, frames, start);
@@ -77,6 +77,73 @@ describe('calidad', () => {
     expect(r.changed).toBe(2);
     expect(g.tier).toBe(2);
   });
+  /** Ciclos de bajada (frames de 28 ms) y vuelta (frames rápidos de 60 Hz): devuelve lo que tardó cada vuelta. */
+  const cycles = (g: QualityGovernor, n: number, start = 0) => {
+    const waits: number[] = [];
+    let now = start;
+    for (let i = 0; i < n; i++) {
+      const slow = feedFrames(g, 3, 28, 90, now);
+      expect(slow.changed, `bajada ${i + 1}`).toBe(1);
+      now = slow.now;
+      const t0 = now;
+      let r: Tier | null = null;
+      while (r === null && now - t0 < 700_000) {
+        const f = feedFrames(g, 4, 1000 / 60, 90, now);
+        r = f.changed;
+        now = f.now;
+      }
+      expect(r, `vuelta ${i + 1}`).toBe(2);
+      waits.push(now - t0);
+    }
+    return { waits, now };
+  };
+  /** La vuelta tarda la espera más lo que tardan en completarse las ventanas de 90 frames (1.5 s cada una). */
+  const expectWait = (ms: number, hold: number) => {
+    expect(ms).toBeGreaterThanOrEqual(hold);
+    expect(ms).toBeLessThanOrEqual(hold + 3100);
+  };
+
+  it('la espera para volver a un nivel tiene un tope de 60 s', () => {
+    const g = new QualityGovernor(2);
+    const { waits } = cycles(g, 8);
+    [5, 10, 20, 40, 60, 60, 60, 60].forEach((s, i) => expectWait(waits[i], s * 1000));
+  });
+
+  it('tras 60 s en un nivel sin bajar de él, olvida las bajadas desde ese nivel', () => {
+    const g = new QualityGovernor(2);
+    let { now } = cycles(g, 3); // tras otra bajada, la vuelta esperaría 40 s
+    // 61.5 s (41 ventanas) en T2 sin bajar: intervalo de 60 Hz y coste de 12 ms (ni lento ni rápido).
+    now = feedFrames(g, 12, 1000 / 60, 41 * 90, now).now;
+    expect(g.tier).toBe(2);
+    const { waits } = cycles(g, 1, now);
+    expectWait(waits[0], 5000);
+  });
+
+  it('estar estable en el nivel de abajo no borra las bajadas del de arriba', () => {
+    const g = new QualityGovernor(2);
+    let { now } = cycles(g, 2);
+    expect(feedFrames(g, 3, 28, 90, now).changed).toBe(1); // tercera bajada: la vuelta esperará 20 s
+    now += 90 * 28;
+    // 70.5 s (47 ventanas) en T1 sin poder subir (coste de 12 ms): T1 aguanta, pero eso no dice nada de T2.
+    now = feedFrames(g, 12, 1000 / 60, 47 * 90, now).now;
+    const t0 = now;
+    let r: Tier | null = null;
+    while (r === null) {
+      const f = feedFrames(g, 4, 1000 / 60, 90, now);
+      r = f.changed;
+      now = f.now;
+    }
+    expectWait(now - t0, 20_000);
+  });
+
+  it('resetBackoff (un resize) olvida las bajadas', () => {
+    const g = new QualityGovernor(2);
+    const { now } = cycles(g, 3); // tras otra bajada, la vuelta esperaría 40 s
+    g.resetBackoff();
+    const { waits } = cycles(g, 1, now);
+    expectWait(waits[0], 5000);
+  });
+
   it('nunca baja de 1', () => {
     const g = new QualityGovernor(1);
     expect(feed(g, 60, 900, 0).changed).toBe(null);

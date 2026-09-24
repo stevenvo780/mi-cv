@@ -5,6 +5,7 @@
 - Estado: diseño aprobado por Steven (narrativa, sistema visual, arquitectura y plan de publicación)
 - Actualizada el 2026-09-24 con lo construido en el Plan 1 y con el fix de su revisión final: las desviaciones están en §2 (filas 0 y 3), §3.1, §3.2, §4.1, §4.2, §4.3, §4.4, §4.6, §4.7, §4.8, §5, §6 y §8.
 - Tarea 3 del Plan 2 (shaders y `GraphScene`, ronda de fix 1): lo que concreta o cambia está en §3.3 (aristas y niebla), §3.4 (respiración), §4.4 (regulador) y §4.6 (archivos).
+- Tarea 7 del Plan 2 (endurecimiento de `GraphScene`): §3.3 (rango de la niebla y luminancia de las aristas en reposo) y §4.4 (espera del regulador: tope y olvido de las bajadas).
 - Lighthouse en móvil cumple desde la ronda de fix 2 de la Tarea 14: Performance 99 en `/es` y `/en` y LCP de laboratorio de 1.7 a 1.9 s, con el objetivo de LCP en ≤ 2.5 s (§5.2).
 
 ## 1. Objetivo
@@ -129,12 +130,13 @@ Tokens de la home en `src/styles/home.css` (capa `@layer home`), en OKLCH con re
     - Una cinta de menos de 1 px de semiancho se dibuja a 1 px y su línea base se atenúa en proporción (la de los pulsos tenues de la capa decorativa, también). Así conserva la energía de su ancho real y el rasterizador no la deja a trozos.
   - Alfa base ~0.15.
     - **Tarea 3 del Plan 2:** las aristas se mezclan en aditivo, así que la intensidad va en el color y el alfa solo lleva cobertura, atenuación y niebla. La línea base es 0.15 en las aristas semánticas y **0.05 en las decorativas**. La capa decorativa llega a 8k aristas en T3, y con 0.08 ya cruzaba el umbral del bloom (0.85) en reposo, donde convergen los satélites de un nodo pesado.
-    - Medido en SwiftShader, con hubs y nodos por delante como en la escena real: en reposo, las aristas llegan como máximo a 0.26, 0.27 y 0.33 de luminancia en T1, T2 y T3. Los pulsos llegan a 6–11, así que solo ellos cruzan el umbral.
+    - Medido en SwiftShader, con hubs y nodos por delante como en la escena real: en reposo, las aristas llegan como máximo a 0.27, 0.31 y 0.35 de luminancia en T1, T2 y T3 (0.26, 0.27 y 0.33 antes de la niebla de la Tarea 7, que ya no atenúa el plano de foco). Los pulsos llegan a 6–12, así que solo ellos cruzan el umbral.
   - Pulsos `glow = exp(-k (t - fract(time*speed*w + seed))^2)` en HDR. Al resaltar un nodo, recorren sus aristas desde él hacia los vecinos (§2.2).
 - **Postprocesado (según nivel):**
   - Bloom con umbral (mipmap blur, media resolución).
   - Viñeta y grano sutil.
-  - Niebla en el shader: 0 por delante del plano de foco y hasta 0.7 detrás, según la profundidad de vista. Atenúa el alfa de los nodos, la intensidad de las aristas y el color de los hubs, y se retira en proporción al resaltado: nada en el nodo activo y sus aristas, a medias en sus vecinos.
+  - Niebla en el shader, según la profundidad de vista: 0 delante del plano de foco y en él; detrás sube con smoothstep hasta 0.7 a 0.8 unidades del plano (`fogOf` en `scene/shaders.ts`). Atenúa el alfa de los nodos, la intensidad de las aristas y el color de los hubs, y se retira en proporción al resaltado: nada en el nodo activo y sus aristas, a medias en sus vecinos.
+    - **Tarea 7 del Plan 2:** el shader empezaba 0.4 unidades por delante del foco (en el propio plano ya valía ≈ 0.14). Se ajustó el shader a esta sección, porque delante no debe haber niebla, y se acortó la rampa de 1.4 a 0.8 unidades para que la mitad trasera conserve la profundidad que ya tenía. Medido en SwiftShader (T1, foco 4.4), brillo del centro de cada nodo semántico con niebla frente a sin ella, antes → ahora: delante 0.99 → 1.00; foco ± 0.2 0.86 → 0.98; detrás 0.69 → 0.77; más de 0.45 detrás 0.65 → 0.67. Con 1.0 unidades la parte de atrás perdía profundidad (0.83 y 0.76), y con 0.6 quedaba más apagada que antes (0.67 y 0.56). Además, así el canvas se acerca al póster, que no tiene niebla.
   - DOF real solo en T3.
 - **Prohibido:** campo de estrellas o partículas sin aristas. Toda la capa decorativa son nodos conectados.
 
@@ -279,7 +281,8 @@ Tokens de la home en `src/styles/home.css` (capa `@layer home`), en OKLCH con re
 
   - Regulador: mediana del tiempo de frame cada 90 frames. Baja de nivel si > 20 ms y sube si < 10 ms sostenido durante 5 s.
     - El tiempo de frame se mide de dos formas (`src/graph/runtime/quality.ts`). Para bajar cuenta el intervalo entre frames: incluye la GPU, que va asíncrona, y cualquier atasco, pero nunca baja del refresco de la pantalla (16.7 ms a 60 Hz). Para subir cuenta el coste del frame en CPU (update más envío del render), siempre que el intervalo no sea lento. Con el intervalo solo, en una pantalla de 60 Hz no se podría volver a subir.
-    - Ese coste no ve la GPU, así que una subida puede no aguantar. Cada bajada desde un nivel duplica la espera para volver a él (5 s, 10 s, 20 s…) y así un equipo limitado por la GPU no oscila entre dos niveles.
+    - Ese coste no ve la GPU, así que una subida puede no aguantar. Para que un equipo limitado por la GPU no oscile entre dos niveles, la primera vuelta a un nivel espera 5 s y cada bajada posterior desde él duplica la espera (10 s, 20 s, 40 s), con un tope de 60 s.
+    - Tras 60 s en un nivel sin bajar de él se olvidan las bajadas desde ese nivel y desde los de debajo. Las del nivel de arriba se conservan: estar estable en un nivel no dice nada del siguiente. Además, un `resize` que cambia el tamaño o el DPR las olvida todas; el reajuste interno al cambiar de nivel no cuenta.
   - 30 fps tras 8 s sin input.
 - **Draw calls objetivo:** ≤ 6 (nodos SDF, hubs, aristas, etiquetas opcionales, postprocesado).
 - **Raycast:** fuerza bruta en el worker contra las esferas de los nodos semánticos.

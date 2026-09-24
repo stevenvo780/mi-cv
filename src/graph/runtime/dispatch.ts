@@ -25,5 +25,11 @@ export function dispatch(scene: GraphScene, msg: Exclude<MainToWorker, { type: '
     case 'dispose':
       scene.dispose();
       break;
+    default: {
+      // Si el protocolo gana una variante sin su caso, esto deja de compilar. En ejecución, un mensaje que no es
+      // del protocolo se ignora.
+      const _exhaustive: never = msg;
+      return _exhaustive;
+    }
   }
 }

@@ -1,4 +1,9 @@
 /* Shaders de la escena del grafo. Colores en espacio lineal; los pulsos salen en HDR (> 1) para el bloom. */
+import { BACKGROUND_COLOR, HALO_COLOR } from '../palette';
+import { hexToLinear } from './data';
+
+/** Color de la paleta (hex sRGB) como literal GLSL en espacio lineal. */
+const linearVec3 = (hex: string) => `vec3(${hexToLinear(hex).map((c) => c.toFixed(6)).join(', ')})`;
 
 const COMMON = /* glsl */ `
 uniform sampler2D uLayouts;
@@ -12,8 +17,7 @@ uniform float uFocus;
 const float BREATH_AMP = 0.016;
 const float BREATH_RATE = 0.08;
 const float FOG_MAX = 0.7;
-const float FOG_NEAR = 0.4;
-const float FOG_FAR = 1.0;
+const float FOG_DEPTH = 0.8;
 
 /* Fila de la textura = forma. El parámetro no se llama "layout": es palabra reservada en GLSL ES 3.00. */
 vec3 layoutPos(int row, float ref) {
@@ -65,11 +69,12 @@ vec3 nodePos(float ref, vec3 off) {
 }
 
 /*
- * Niebla (spec §3.3): 0 por delante del plano de foco y hasta FOG_MAX detrás, según la profundidad de vista.
- * Se aplica hacia el fondo: alfa en los nodos, intensidad en las aristas (aditivas) y color en los hubs (opacos).
+ * Niebla (spec §3.3), según la profundidad de vista: 0 delante del plano de foco y en él; detrás sube con smoothstep
+ * hasta FOG_MAX a FOG_DEPTH unidades. Se aplica hacia el fondo: alfa en los nodos, intensidad en las aristas
+ * (aditivas) y color en los hubs (opacos).
  */
 float fogOf(float depth) {
-  return FOG_MAX * smoothstep(uFocus - FOG_NEAR, uFocus + FOG_FAR, depth);
+  return FOG_MAX * smoothstep(uFocus, uFocus + FOG_DEPTH, depth);
 }
 `;
 
@@ -88,8 +93,8 @@ varying vec2 vUv;
 void main() {
   vec2 q = (vUv - 0.5) * uAspect;
   float halo = exp(-dot(q, q) * 2.6);
-  vec3 ink = vec3(0.0015, 0.0027, 0.0033);   // #05090b
-  vec3 glow = vec3(0.0168, 0.0561, 0.1022);  // rgb(35 67 90)
+  vec3 ink = ${linearVec3(BACKGROUND_COLOR)};
+  vec3 glow = ${linearVec3(HALO_COLOR)};
   gl_FragColor = vec4(ink + glow * halo * (0.3 + 0.4 * uDim), 1.0);
   #include <tonemapping_fragment>
   #include <colorspace_fragment>

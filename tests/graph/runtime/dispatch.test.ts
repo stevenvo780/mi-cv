@@ -76,9 +76,12 @@ describe('dispatch', () => {
     onlyCalled('dispose');
   });
 
-  it('cubre todas las variantes de MainToWorker salvo init', () => {
-    // Si el protocolo gana una variante, este registro deja de compilar (tsc) hasta que se añada su caso.
-    const covered: Record<Msg['type'], true> = { resize: true, pointer: true, scroll: true, motion: true, focus: true, visible: true, dispose: true };
-    expect(Object.keys(covered)).toHaveLength(7);
+  it('una variante desconocida (fuera del protocolo) no lanza ni toca la escena', () => {
+    // La exhaustividad la comprueba tsc: dispatch.ts deja de compilar si el protocolo gana una variante sin su caso
+    // (default con `never`). En ejecución, un mensaje que no es del protocolo se ignora.
+    for (const msg of [{ type: 'init' }, { type: 'nope', x: 1 }, {}]) {
+      expect(() => dispatch(scene, msg as unknown as Msg)).not.toThrow();
+    }
+    for (const [name, fn] of Object.entries(fake)) expect(fn, name).not.toHaveBeenCalled();
   });
 });

@@ -2,6 +2,7 @@ import {
   ACESFilmicToneMapping,
   AdditiveBlending,
   BufferAttribute,
+  BufferGeometry,
   Color,
   DataTexture,
   FloatType,
@@ -10,6 +11,7 @@ import {
   IcosahedronGeometry,
   InstancedBufferAttribute,
   InstancedBufferGeometry,
+  Material,
   Matrix4,
   Mesh,
   NearestFilter,
@@ -25,15 +27,19 @@ import {
   Vector3,
   WebGLRenderer,
   type IUniform,
+  type Object3D,
   type WebGLRenderTarget,
 } from 'three';
 import { CAMERA0 } from '../camera0';
 import type { DecodedGraph } from '../codec';
 import { LAYOUT_NAMES } from '../layout-names';
+import { BACKGROUND_COLOR } from '../palette';
 import type { SceneEvent } from '../runtime/protocol';
 import { QualityGovernor, TIERS, type Tier } from '../runtime/quality';
 import { frameAt, type FrameContext } from './choreography';
+import { damp, POSE_KEYS, settling, type Damped } from './damping';
 import { buildSceneData, clusterCentroids, helixSpan, type SceneData } from './data';
+import { ribbonIndex, ribbonVertices } from './ribbon';
 import * as S from './shaders';
 
 export interface SceneInit {
@@ -54,6 +60,12 @@ interface Composer {
   dispose(): void;
 }
 
+/** Materiales del postprocesado según dónde pintan: en sus búferes internos (lineales) o en pantalla. */
+interface PostPrograms {
+  offscreen: Material[];
+  onscreen: Material[];
+}
+
 const EDGE_SEGMENTS = 20;
 const HOVER_RADIUS_PX = 18;
 const IDLE_MS = 8000;
@@ -65,7 +77,12 @@ const requestFrame: (cb: (t: number) => void) => number =
 const cancelFrame: (id: number) => void =
   typeof globalThis.cancelAnimationFrame === 'function' ? globalThis.cancelAnimationFrame.bind(globalThis) : (id) => clearTimeout(id);
 
-const damp = (current: number, target: number, lambda: number, dt: number) => current + (target - current) * (1 - Math.exp(-lambda * dt));
+/** Un índice de nodo que no sea un entero en [0, count) no es ningún nodo. */
+const nodeIndex = (index: number | null, count: number): number | null =>
+  index !== null && Number.isInteger(index) && index >= 0 && index < count ? index : null;
+
+/** Materiales que un pase guarda en sus propios campos (los de MipmapBlurPass no están en los tipos de postprocessing). */
+const ownMaterials = (pass: object): Material[] => Object.values(pass).filter((v): v is Material => v instanceof Material);
 
 export class GraphScene {
   ready = false;
@@ -76,11 +93,15 @@ export class GraphScene {
   private data!: SceneData;
   private ctx!: FrameContext;
   private composer: Composer | null = null;
+  /** Cuenta los montajes del compositor: uno que termina cuando ya lo adelantó otro (o un dispose) se descarta. */
+  private composerSeq = 0;
   private governor!: QualityGovernor;
   private tier: Tier = 2;
   private highlight!: DataTexture;
   private nodeGeometry!: InstancedBufferGeometry;
   private edgeGeometry!: InstancedBufferGeometry;
+  /** Canvas con los listeners de pérdida de contexto (se retiran en dispose). */
+  private canvas: EventTarget | null = null;
   private readonly u = {
     uLayouts: { value: null as DataTexture | null },
     uHighlight: { value: null as DataTexture | null },
@@ -106,23 +127,28 @@ export class GraphScene {
   private motion = true;
   private visible = true;
   private disposed = false;
-  private rafId = 0;
+  /** rAF pendiente del bucle; null con el bucle parado (antes de `ready`, con la escena oculta o liberada). */
+  private rafId: number | null = null;
   private last = 0;
   private lastInput = 0;
   private frameCount = 0;
   private time = 0;
-  private s = 0;
   private sTarget = 0;
   private readonly pointer = { x: 0, y: 0, inside: false };
-  private readonly parallax = { x: 0, y: 0 };
-  private readonly pose = { distance: CAMERA0.distance as number, yaw: CAMERA0.yaw as number, pitch: CAMERA0.pitch as number, tx: 0, ty: 0, tz: 0, shiftX: 0, dim: 1 };
+  /** Magnitudes amortiguadas (scroll, pose de la cámara, resaltado y paralaje) y sus objetivos: ver damping.ts. */
+  private readonly cur: Damped = { s: 0, distance: CAMERA0.distance, yaw: CAMERA0.yaw, pitch: CAMERA0.pitch, tx: 0, ty: 0, tz: 0, shiftX: 0, dim: 1, hoverActive: 0, parallaxX: 0, parallaxY: 0 };
+  private readonly goal: Damped = { ...this.cur };
   private hovered = -1;
-  private lastEmit = { x: -1, y: -1 };
+  private readonly lastEmit = { x: -1, y: -1 };
   private focused: number | null = null;
-  private hoverActive = 0;
   private dirty = true;
   private readonly tmp = new Vector3();
   private readonly mvp = new Matrix4();
+
+  private readonly onContextLost = (e: Event) => {
+    e.preventDefault();
+    this.emit({ type: 'error', message: 'webgl-context-lost' });
+  };
 
   constructor(private readonly emit: (e: SceneEvent) => void) {}
 
@@ -131,39 +157,112 @@ export class GraphScene {
     this.motion = o.motion;
     this.governor = new QualityGovernor(o.tier);
     this.renderer = new WebGLRenderer({ canvas: o.canvas, antialias: false, alpha: false, stencil: false, powerPreference: 'high-performance' });
-    this.renderer.setClearColor(new Color(0x05090b), 1);
-    const onLost = (e: Event) => {
-      e.preventDefault();
-      this.emit({ type: 'error', message: 'webgl-context-lost' });
-    };
-    (o.canvas as EventTarget).addEventListener('webglcontextlost', onLost);
-    (o.canvas as EventTarget).addEventListener('contextlost', onLost);
+    this.renderer.setClearColor(new Color(BACKGROUND_COLOR), 1);
+    this.canvas = o.canvas as EventTarget;
+    this.canvas.addEventListener('webglcontextlost', this.onContextLost);
+    this.canvas.addEventListener('contextlost', this.onContextLost);
 
     this.data = buildSceneData(o.graph, TIERS[o.tier].decor);
     this.ctx = { aspect: o.width / Math.max(o.height, 1), clusterCenters: clusterCentroids(this.data), helixSpan: helixSpan(this.data) };
     this.buildMeshes();
     this.scene.add(this.group);
-    this.resize(o.width, o.height, o.dpr);
+    this.applySize(o.width, o.height, o.dpr);
+    // Con bloom, setupComposer deja compilados (sin bloquear) los programas de la escena y del postprocesado.
     await this.setupComposer();
     // dispose() pudo llegar mientras init esperaba: no se pinta ni se anuncia `ready` sobre un renderer liberado.
     if (this.disposed) return;
-    this.update(0);
-    // Con bloom la escena se pinta en el búfer del compositor (espacio lineal), no en pantalla (sRGB): se precompila
-    // esa variante de los programas, que es la que se usa. compile() lee el render target activo de forma síncrona.
-    this.renderer.setRenderTarget(this.composer?.inputBuffer ?? null);
-    const compiled = this.renderer.compileAsync(this.scene, this.camera);
-    this.renderer.setRenderTarget(null);
-    await compiled;
+    this.update(0, true);
+    if (!this.composer) await this.precompile(null);
     if (this.disposed) return;
     this.ready = true;
     this.last = performance.now();
     this.lastInput = this.last;
     this.renderFrame(0);
     this.emit({ type: 'ready' });
-    this.rafId = requestFrame(this.loop);
+    if (this.visible) this.rafId = requestFrame(this.loop);
   }
 
+  /** Mensaje `resize` del hilo principal. Un tamaño o un DPR nuevos reinician la espera del regulador para subir. */
   resize(width: number, height: number, dpr: number): void {
+    if (this.disposed) return;
+    const changed = Math.max(1, Math.round(width)) !== this.width || Math.max(1, Math.round(height)) !== this.height || dpr !== this.requestedDpr;
+    if (changed) this.governor.resetBackoff();
+    this.applySize(width, height, dpr);
+  }
+
+  setPointer(x: number, y: number, inside: boolean): void {
+    if (this.disposed) return;
+    this.pointer.x = x;
+    this.pointer.y = y;
+    this.pointer.inside = inside;
+    this.lastInput = performance.now();
+    this.dirty = true;
+  }
+
+  setScroll(s: number): void {
+    if (this.disposed) return;
+    this.sTarget = s;
+    this.lastInput = performance.now();
+    this.dirty = true;
+  }
+
+  setMotion(on: boolean): void {
+    if (this.disposed) return;
+    this.motion = on;
+    this.dirty = true;
+  }
+
+  /** Un índice que no sea un entero en [0, nodeCount) se trata como null (con -1 la cámara iría a NaN). */
+  focusNode(index: number | null): void {
+    if (this.disposed) return;
+    this.focused = nodeIndex(index, this.data.nodeCount);
+    this.applyHighlight(this.focused ?? this.hovered);
+    this.lastInput = performance.now();
+    this.dirty = true;
+  }
+
+  /** Oculta, el bucle no pide frames. Al volver, el primer dt se mide desde ahora: el reloj de la animación no salta. */
+  setVisible(visible: boolean): void {
+    if (this.disposed) return;
+    this.visible = visible;
+    if (!visible) {
+      this.stopLoop();
+      return;
+    }
+    if (this.ready && this.rafId === null) {
+      this.last = performance.now();
+      this.rafId = requestFrame(this.loop);
+    }
+  }
+
+  /** Libera todo. Después, los mensajes se ignoran y un init o un cambio de nivel a medias ya no pinta ni emite. */
+  dispose(): void {
+    if (this.disposed) return;
+    this.disposed = true;
+    this.ready = false;
+    this.stopLoop();
+    this.canvas?.removeEventListener('webglcontextlost', this.onContextLost);
+    this.canvas?.removeEventListener('contextlost', this.onContextLost);
+    this.canvas = null;
+    this.composer?.dispose();
+    this.composer = null;
+    this.scene.traverse((obj) => {
+      if (obj instanceof Mesh) {
+        obj.geometry.dispose();
+        (obj.material as ShaderMaterial).dispose();
+      }
+    });
+    this.u.uLayouts.value?.dispose();
+    this.highlight?.dispose();
+    this.renderer?.dispose();
+  }
+
+  private stopLoop(): void {
+    if (this.rafId !== null) cancelFrame(this.rafId);
+    this.rafId = null;
+  }
+
+  private applySize(width: number, height: number, dpr: number): void {
     this.width = Math.max(1, Math.round(width));
     this.height = Math.max(1, Math.round(height));
     this.requestedDpr = dpr;
@@ -182,52 +281,6 @@ export class GraphScene {
     this.u.uWidth.value = 0.85 * this.dpr;
     this.u.uAspect.value.set(this.camera.aspect, 1);
     this.dirty = true;
-  }
-
-  setPointer(x: number, y: number, inside: boolean): void {
-    this.pointer.x = x;
-    this.pointer.y = y;
-    this.pointer.inside = inside;
-    this.lastInput = performance.now();
-    this.dirty = true;
-  }
-
-  setScroll(s: number): void {
-    this.sTarget = s;
-    this.lastInput = performance.now();
-    this.dirty = true;
-  }
-
-  setMotion(on: boolean): void {
-    this.motion = on;
-    this.dirty = true;
-  }
-
-  focusNode(index: number | null): void {
-    this.focused = index;
-    this.applyHighlight(index ?? this.hovered);
-    this.lastInput = performance.now();
-    this.dirty = true;
-  }
-
-  setVisible(visible: boolean): void {
-    this.visible = visible;
-    if (visible) this.last = performance.now();
-  }
-
-  dispose(): void {
-    this.disposed = true;
-    cancelFrame(this.rafId);
-    this.composer?.dispose();
-    this.scene.traverse((obj) => {
-      if (obj instanceof Mesh) {
-        obj.geometry.dispose();
-        (obj.material as ShaderMaterial).dispose();
-      }
-    });
-    this.u.uLayouts.value?.dispose();
-    this.highlight?.dispose();
-    this.renderer?.dispose();
   }
 
   private buildMeshes(): void {
@@ -256,27 +309,13 @@ export class GraphScene {
     background.renderOrder = -10;
     this.scene.add(background);
 
-    // Aristas: cinta de EDGE_SEGMENTS tramos instanciada por arista.
-    const verts = (EDGE_SEGMENTS + 1) * 2;
-    const aT = new Float32Array(verts);
-    const aSide = new Float32Array(verts);
-    for (let i = 0; i <= EDGE_SEGMENTS; i++) {
-      aT[i * 2] = aT[i * 2 + 1] = i / EDGE_SEGMENTS;
-      aSide[i * 2] = -1;
-      aSide[i * 2 + 1] = 1;
-    }
-    // Orden antihorario en pantalla: el shader extruye aSide = +1 hacia la normal (tangente girada 90° a la
-    // izquierda). Con el orden inverso todos los triángulos quedan de espaldas y FrontSide los descarta.
-    const index: number[] = [];
-    for (let i = 0; i < EDGE_SEGMENTS; i++) {
-      const a = i * 2;
-      index.push(a, a + 2, a + 1, a + 1, a + 2, a + 3);
-    }
+    // Aristas: cinta de EDGE_SEGMENTS tramos instanciada por arista, con el índice antihorario de ribbon.ts.
+    const ribbon = ribbonVertices(EDGE_SEGMENTS);
     const edges = new InstancedBufferGeometry();
-    edges.setIndex(index);
-    edges.setAttribute('position', new BufferAttribute(new Float32Array(verts * 3), 3));
-    edges.setAttribute('aT', new BufferAttribute(aT, 1));
-    edges.setAttribute('aSide', new BufferAttribute(aSide, 1));
+    edges.setIndex(ribbonIndex(EDGE_SEGMENTS));
+    edges.setAttribute('position', new BufferAttribute(new Float32Array(ribbon.t.length * 3), 3));
+    edges.setAttribute('aT', new BufferAttribute(ribbon.t, 1));
+    edges.setAttribute('aSide', new BufferAttribute(ribbon.side, 1));
     const e = d.edges;
     const inst = (arr: Float32Array, size: number) => new InstancedBufferAttribute(arr, size);
     edges.setAttribute('aA', inst(e.a, 1));
@@ -349,35 +388,90 @@ export class GraphScene {
     this.group.add(nodeMesh);
   }
 
-  /** Bloom real (postprocessing, carga diferida) solo en los niveles que lo permiten; si no, halo en el shader. */
+  /**
+   * Bloom real (postprocessing, carga diferida) solo en los niveles que lo permiten; si no, halo en el shader.
+   * Un compositor nuevo no se activa hasta tener compilados sus programas y los de la escena en su variante (búfer
+   * lineal): así el primer frame con bloom no compila en síncrono. Mientras, se sigue pintando como antes.
+   */
   private async setupComposer(): Promise<void> {
-    this.composer?.dispose();
-    this.composer = null;
+    const seq = ++this.composerSeq;
+    const current = () => !this.disposed && seq === this.composerSeq;
     if (!TIERS[this.tier].bloom) {
-      this.renderer.toneMapping = ACESFilmicToneMapping;
-      this.u.uGlow.value = 1;
+      this.useComposer(null);
       return;
     }
+    let next: Composer | null = null;
     try {
       const pp = await import('postprocessing');
-      if (this.disposed) return;
+      if (!current()) return;
       const composer = new pp.EffectComposer(this.renderer, { frameBufferType: HalfFloatType });
+      next = composer;
+      // El constructor pone autoClear = false; hasta que se active, el renderer sigue pintando directo a pantalla.
+      this.renderer.autoClear = this.composer === null;
       composer.addPass(new pp.RenderPass(this.scene, this.camera));
       const bloom = new pp.BloomEffect({ mipmapBlur: true, luminanceThreshold: 0.85, luminanceSmoothing: 0.25, intensity: 1.35, radius: 0.72 });
       const vignette = new pp.VignetteEffect({ offset: 0.28, darkness: 0.62 });
       const noise = new pp.NoiseEffect({ blendFunction: pp.BlendFunction.OVERLAY, premultiply: true });
       noise.blendMode.opacity.value = 0.05;
       const tone = new pp.ToneMappingEffect({ mode: pp.ToneMappingMode.ACES_FILMIC });
-      composer.addPass(new pp.EffectPass(this.camera, bloom, vignette, noise, tone));
+      const effects = new pp.EffectPass(this.camera, bloom, vignette, noise, tone);
+      composer.addPass(effects);
       composer.setSize(this.width, this.height);
-      this.renderer.toneMapping = NoToneMapping;
-      this.u.uGlow.value = 0;
-      this.composer = composer;
+      // Los 4 programas del postprocesado: luminancia y desenfoque mipmap del bloom (búferes internos) y el EffectPass
+      // que junta los efectos (a pantalla). KawaseBlurPass y CopyPass no se usan con mipmapBlur ni sin stencil.
+      await this.precompile(composer, {
+        offscreen: [bloom.luminancePass.fullscreenMaterial, ...ownMaterials(bloom.mipmapBlurPass)],
+        onscreen: [effects.fullscreenMaterial],
+      });
+      if (!current()) {
+        composer.dispose();
+        return;
+      }
+      this.useComposer(composer);
     } catch (err) {
+      next?.dispose();
       console.warn('[grafo] postprocesado no disponible, uso halo en shader', err);
-      this.renderer.toneMapping = ACESFilmicToneMapping;
-      this.u.uGlow.value = 1;
+      if (current()) this.useComposer(null);
     }
+  }
+
+  /** Activa (o quita) el compositor y deja el renderer como lo necesita cada camino. */
+  private useComposer(composer: Composer | null): void {
+    if (this.composer !== composer) this.composer?.dispose();
+    this.composer = composer;
+    // EffectComposer pone autoClear = false y su dispose() no lo restaura: sin compositor, el renderer vuelve a borrar.
+    this.renderer.autoClear = composer === null;
+    this.renderer.toneMapping = composer ? NoToneMapping : ACESFilmicToneMapping;
+    this.u.uGlow.value = composer ? 0 : 1;
+    // El tamaño pudo cambiar mientras se compilaba.
+    composer?.setSize(this.width, this.height);
+  }
+
+  /**
+   * Compila sin bloquear (compileAsync) los programas que usará el siguiente frame. three elige la variante de cada
+   * programa según el render target activo al llamar a compile(), que lo lee en síncrono: con compositor, la escena y
+   * los pases internos pintan en búferes lineales (vale cualquiera; se usa inputBuffer) y el EffectPass, en pantalla.
+   */
+  private precompile(composer: Composer | null, post: PostPrograms = { offscreen: [], onscreen: [] }): Promise<unknown> {
+    const r = this.renderer;
+    const jobs: Promise<unknown>[] = [];
+    const compile = (root: Object3D) => jobs.push(r.compileAsync(root, this.camera));
+    // El triángulo de pantalla de postprocessing (position y uv): la clave del programa depende de qué atributos
+    // tiene la geometría (sin position, three compila otra variante y el primer frame vuelve a compilar).
+    const screen = new BufferGeometry();
+    screen.setAttribute('position', new BufferAttribute(new Float32Array([-1, -1, 0, 3, -1, 0, -1, 3, 0]), 3));
+    screen.setAttribute('uv', new BufferAttribute(new Float32Array([0, 0, 2, 0, 0, 2]), 2));
+    const sceneOf = (materials: Material[]) => {
+      const s = new Scene();
+      for (const m of materials) s.add(new Mesh(screen, m));
+      return s;
+    };
+    r.setRenderTarget(composer?.inputBuffer ?? null);
+    compile(this.scene);
+    if (post.offscreen.length > 0) compile(sceneOf(post.offscreen));
+    r.setRenderTarget(null);
+    if (post.onscreen.length > 0) compile(sceneOf(post.onscreen));
+    return Promise.all(jobs);
   }
 
   private async changeTier(tier: Tier): Promise<void> {
@@ -386,18 +480,17 @@ export class GraphScene {
     const decor = Math.min(TIERS[tier].decor, this.data.decorCount);
     this.nodeGeometry.instanceCount = this.data.nodeCount + decor;
     this.edgeGeometry.instanceCount = this.data.edges.count - this.data.decorEdgePrefix[this.data.decorCount] + this.data.decorEdgePrefix[decor];
-    this.resize(this.width, this.height, this.requestedDpr);
+    this.applySize(this.width, this.height, this.requestedDpr);
     if (hadBloom !== TIERS[tier].bloom) await this.setupComposer();
+    // dispose() o un cambio de nivel posterior pudieron llegar durante la espera: este ya no se anuncia.
+    if (this.disposed || this.tier !== tier) return;
     this.emit({ type: 'tier', tier });
   }
 
   private readonly loop = (now: number): void => {
-    if (this.disposed) return;
+    this.rafId = null;
+    if (this.disposed || !this.visible) return;
     this.rafId = requestFrame(this.loop);
-    if (!this.visible) {
-      this.last = now;
-      return;
-    }
     const idle = now - this.lastInput > IDLE_MS;
     this.frameCount++;
     // 30 fps en reposo: el frame saltado no mueve `last`, así el dt del siguiente abarca los dos y el reloj no va a media velocidad.
@@ -423,69 +516,73 @@ export class GraphScene {
     else this.renderer.render(this.scene, this.camera);
   }
 
-  private nodeLayoutPos(i: number): [number, number, number] {
+  /** Posición de un nodo semántico en la forma actual (sin la respiración del shader), escrita en `out`. */
+  private nodeLayoutPos(i: number, out: Vector3): Vector3 {
     const a = this.data.layouts[this.u.uFrom.value];
     const b = this.data.layouts[this.u.uTo.value];
     const m = this.u.uMix.value;
-    return [a[i * 3] + (b[i * 3] - a[i * 3]) * m, a[i * 3 + 1] + (b[i * 3 + 1] - a[i * 3 + 1]) * m, a[i * 3 + 2] + (b[i * 3 + 2] - a[i * 3 + 2]) * m];
+    const k = i * 3;
+    return out.set(a[k] + (b[k] - a[k]) * m, a[k + 1] + (b[k + 1] - a[k + 1]) * m, a[k + 2] + (b[k + 2] - a[k + 2]) * m);
   }
 
-  /** Avanza el estado; devuelve true mientras las magnitudes amortiguadas no hayan convergido. */
-  private update(dt: number): boolean {
+  /**
+   * Avanza el estado; devuelve true mientras alguna magnitud amortiguada no haya llegado a su objetivo.
+   * `snap` (solo en init) coloca la cámara en su pose sin amortiguar.
+   */
+  private update(dt: number, snap = false): boolean {
     if (this.motion) this.time += dt;
     this.u.uTime.value = this.time;
-    this.s = damp(this.s, this.sTarget, 4, dt);
-    const frame = frameAt(this.s, this.ctx);
+    const c = this.cur;
+    const g = this.goal;
+    g.s = this.sTarget;
+    c.s = damp(c.s, g.s, 4, dt);
+    const frame = frameAt(c.s, this.ctx);
     this.u.uFrom.value = LAYOUT_NAMES.indexOf(frame.from);
     this.u.uTo.value = LAYOUT_NAMES.indexOf(frame.to);
     this.u.uMix.value = frame.mix;
 
-    let { distance } = frame.pose;
-    let [tx, ty, tz] = frame.pose.target;
+    const pose = frame.pose;
+    g.distance = pose.distance;
+    g.tx = pose.target[0];
+    g.ty = pose.target[1];
+    g.tz = pose.target[2];
     if (this.focused !== null) {
-      [tx, ty, tz] = this.nodeLayoutPos(this.focused);
-      distance = Math.max(distance * 0.72, 2.2);
+      const f = this.nodeLayoutPos(this.focused, this.tmp);
+      g.tx = f.x;
+      g.ty = f.y;
+      g.tz = f.z;
+      g.distance = Math.max(pose.distance * 0.72, 2.2);
     }
-    const k = 5;
-    const p = this.pose;
-    p.distance = damp(p.distance, distance, k, dt);
-    p.yaw = damp(p.yaw, frame.pose.yaw, k, dt);
-    p.pitch = damp(p.pitch, frame.pose.pitch, k, dt);
-    p.tx = damp(p.tx, tx, k, dt);
-    p.ty = damp(p.ty, ty, k, dt);
-    p.tz = damp(p.tz, tz, k, dt);
-    p.shiftX = damp(p.shiftX, frame.pose.shiftX, k, dt);
-    p.dim = damp(p.dim, frame.pose.dim, k, dt);
-    if (dt === 0) Object.assign(p, { distance, yaw: frame.pose.yaw, pitch: frame.pose.pitch, tx, ty, tz, shiftX: frame.pose.shiftX, dim: frame.pose.dim });
+    g.yaw = pose.yaw;
+    g.pitch = pose.pitch;
+    g.shiftX = pose.shiftX;
+    g.dim = pose.dim;
+    for (const k of POSE_KEYS) c[k] = snap ? g[k] : damp(c[k], g[k], 5, dt);
 
-    this.parallax.x = damp(this.parallax.x, this.pointer.inside ? this.pointer.x : 0, 3, dt);
-    this.parallax.y = damp(this.parallax.y, this.pointer.inside ? this.pointer.y : 0, 3, dt);
+    g.parallaxX = this.pointer.inside ? this.pointer.x : 0;
+    g.parallaxY = this.pointer.inside ? this.pointer.y : 0;
+    c.parallaxX = damp(c.parallaxX, g.parallaxX, 3, dt);
+    c.parallaxY = damp(c.parallaxY, g.parallaxY, 3, dt);
     const drift = this.time * 0.035;
-    this.group.rotation.set(p.pitch + this.parallax.y * 0.08, p.yaw + drift + this.parallax.x * 0.14, 0, 'XYZ');
-    this.tmp.set(p.tx, p.ty, p.tz).applyEuler(this.group.rotation);
-    this.group.position.set(p.shiftX - this.tmp.x, -this.tmp.y, -this.tmp.z);
+    this.group.rotation.set(c.pitch + c.parallaxY * 0.08, c.yaw + drift + c.parallaxX * 0.14, 0, 'XYZ');
+    this.tmp.set(c.tx, c.ty, c.tz).applyEuler(this.group.rotation);
+    this.group.position.set(c.shiftX - this.tmp.x, -this.tmp.y, -this.tmp.z);
     this.group.updateMatrixWorld();
-    this.camera.position.set(0, 0, p.distance);
+    this.camera.position.set(0, 0, c.distance);
     this.camera.lookAt(0, 0, 0);
     this.camera.updateMatrixWorld();
-    this.u.uFocus.value = p.distance;
-    this.u.uDim.value = p.dim;
+    this.u.uFocus.value = c.distance;
+    this.u.uDim.value = c.dim;
 
-    const hoverTarget = this.hovered >= 0 || this.focused !== null ? 1 : 0;
-    this.hoverActive = damp(this.hoverActive, hoverTarget, 6, dt);
-    this.u.uHoverActive.value = this.hoverActive;
+    g.hoverActive = this.hovered >= 0 || this.focused !== null ? 1 : 0;
+    c.hoverActive = damp(c.hoverActive, g.hoverActive, 6, dt);
+    this.u.uHoverActive.value = c.hoverActive;
     if (this.pointer.inside || this.hovered >= 0) this.pick();
 
-    return (
-      Math.abs(this.s - this.sTarget) > 1e-3 ||
-      Math.abs(p.distance - distance) > 1e-3 ||
-      Math.abs(p.ty - ty) > 1e-3 ||
-      Math.abs(this.hoverActive - hoverTarget) > 1e-3 ||
-      Math.abs(this.parallax.x - (this.pointer.inside ? this.pointer.x : 0)) > 1e-3
-    );
+    return settling(c, g);
   }
 
-  /** Hover por proyección en CPU de los nodos semánticos (~200): sin lectura de GPU. */
+  /** Hover por proyección en CPU de los nodos semánticos (~200): sin lectura de GPU ni reservas por nodo. */
   private pick(): void {
     if (!this.pointer.inside) {
       this.setHovered(-1, 0, 0);
@@ -499,11 +596,10 @@ export class GraphScene {
     let bx = 0;
     let by = 0;
     for (let i = 0; i < this.data.nodeCount; i++) {
-      const [x, y, z] = this.nodeLayoutPos(i);
-      this.tmp.set(x, y, z).applyMatrix4(this.mvp);
-      if (this.tmp.z > 1) continue;
-      const sx = ((this.tmp.x + 1) / 2) * this.width;
-      const sy = ((1 - this.tmp.y) / 2) * this.height;
+      const p = this.nodeLayoutPos(i, this.tmp).applyMatrix4(this.mvp);
+      if (p.z > 1) continue;
+      const sx = ((p.x + 1) / 2) * this.width;
+      const sy = ((1 - p.y) / 2) * this.height;
       const dist = Math.hypot(sx - px, sy - py);
       if (dist < HOVER_RADIUS_PX + this.data.nodes.size[i] * 0.5 && dist < bestD) {
         best = i;
@@ -518,14 +614,16 @@ export class GraphScene {
   private setHovered(index: number, x: number, y: number): void {
     if (index === this.hovered) {
       if (index >= 0 && Math.hypot(x - this.lastEmit.x, y - this.lastEmit.y) > 1.5) {
-        this.lastEmit = { x, y };
+        this.lastEmit.x = x;
+        this.lastEmit.y = y;
         this.emit({ type: 'hover', index, x, y });
       }
       return;
     }
     this.hovered = index;
     if (this.focused === null) this.applyHighlight(index);
-    this.lastEmit = { x, y };
+    this.lastEmit.x = x;
+    this.lastEmit.y = y;
     this.emit(index >= 0 ? { type: 'hover', index, x, y } : { type: 'hover-end' });
   }
 

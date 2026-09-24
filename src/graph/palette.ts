@@ -11,6 +11,10 @@ export const FRENTE_COLOR: Record<FrenteId, string> = {
 export const SELF_COLOR = '#f6f1e8';
 export const EMPRESA_COLOR = '#6fd3c4';
 export const NEUTRAL_COLOR = '#8fa3a8';
+/** Fondo de la home: el mismo `--ink-0` de home.css. Color de borrado del canvas y base del fondo de la escena. */
+export const BACKGROUND_COLOR = '#05090b';
+/** Halo radial detrás del grafo: el `rgb(35 67 90)` de home.css (spec §3.1). */
+export const HALO_COLOR = '#23435a';
 
 export function nodeColor(kind: NodeKind, frente?: FrenteId): string {
   if (kind === 'self') return SELF_COLOR;
