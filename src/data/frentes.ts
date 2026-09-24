@@ -76,8 +76,11 @@ export type CatalogoKind =
   | 'inferencia';
 
 export interface CatalogoItem {
-  /** Título tal como lo publica el catálogo. */
-  nombre: string;
+  /**
+   * Título tal como lo publica el catálogo. Un texto solo es un nombre propio (Cauce V3, clawbar) o una obra publicada
+   * en su idioma (una ponencia, un ensayo) y sale igual en /es y en /en; una etiqueta descriptiva lleva sus dos idiomas.
+   */
+  nombre: string | LocalizedText;
   /** Enlace directo: su sitio, su curso o su repositorio. Sin él, el ítem no es público (p. ej. un repo privado). */
   url?: string;
   kind: CatalogoKind;
@@ -209,9 +212,9 @@ export const productos: Producto[] = [
     // Fuente: el repo paideia (app/trabajos/works.ts, app/ponencias/page.tsx y los módulos de lib/modules.ts).
     // El Fedón va una vez: /ponencias enlaza además un deck alterno (clavis-decks.vercel.app/platon/) de la misma ponencia.
     incluye: [
-      { nombre: 'Griego Clásico', kind: 'curso', url: 'https://paideia.stevenvallejo.com/griego' },
-      { nombre: 'Neurofilosofía', kind: 'curso', url: 'https://paideia.stevenvallejo.com/neurofilosofia' },
-      { nombre: 'Filosofía de la Ciudad', kind: 'curso', url: 'https://paideia.stevenvallejo.com/filosofia-ciudad' },
+      { nombre: { es: 'Griego Clásico', en: 'Classical Greek' }, kind: 'curso', url: 'https://paideia.stevenvallejo.com/griego' },
+      { nombre: { es: 'Neurofilosofía', en: 'Neurophilosophy' }, kind: 'curso', url: 'https://paideia.stevenvallejo.com/neurofilosofia' },
+      { nombre: { es: 'Filosofía de la Ciudad', en: 'Philosophy of the City' }, kind: 'curso', url: 'https://paideia.stevenvallejo.com/filosofia-ciudad' },
       { nombre: '¿Silicio o Tejido? — mente y materia', kind: 'ponencia', url: 'https://neurocarbon.stevenvallejo.com/' },
       { nombre: 'La ciudad bien asignada — Medellín', kind: 'ponencia', url: 'https://autopoesis.stevenvallejo.com/' },
       { nombre: 'La retórica como téchne', kind: 'ponencia', url: 'https://retorica.stevenvallejo.com/' },
@@ -278,29 +281,29 @@ export const productos: Producto[] = [
     unidad: { es: 'proyectos', en: 'projects' },
     // Fuente: el repo kosmos (lib/catalog.ts → PROJECTS y CATEGORIES; docs/CATALOG_AUDIT.md). Un repositorio por ficha.
     incluye: [
-      { nombre: 'Curvas de complejidad algorítmica', kind: 'matematicas', url: 'https://github.com/stevenvo780/ComplejidadYCostoComputacional' },
-      { nombre: 'Comunicación celular con ruido', kind: 'matematicas', url: 'https://github.com/stevenvo780/teoria-informacion' },
-      { nombre: 'Grafos e hipergrafos', kind: 'matematicas', url: 'https://github.com/stevenvo780/complejidad-teoria' },
-      { nombre: 'Kalos: visualización matemática', kind: 'matematicas', url: 'https://github.com/stevenvo780/kalos' },
-      { nombre: 'Cálculo de entropía de Shannon', kind: 'matematicas', url: 'https://github.com/stevenvo780/shanon' },
-      { nombre: 'Simulación de estrategias y recursos', kind: 'matematicas', url: 'https://github.com/stevenvo780/teoria-de-juegos' },
-      { nombre: 'Utilidad esperada de decisiones', kind: 'matematicas', url: 'https://github.com/stevenvo780/teoria-desicion' },
-      { nombre: 'Medidas probabilísticas de información', kind: 'matematicas', url: 'https://github.com/stevenvo780/TheorySemanticInformation' },
-      { nombre: 'Banco de pruebas EDI multiescala', kind: 'sistemas-complejos', url: 'https://github.com/stevenvo780/EstructurasPreontologicas' },
-      { nombre: 'Casos de simulación ABM y ODE', kind: 'sistemas-complejos', url: 'https://github.com/stevenvo780/hiper-objeto-simulaciones' },
-      { nombre: 'Simulaciones urbanas de Medellín', kind: 'sistemas-complejos', url: 'https://github.com/stevenvo780/FenomenologiaUrbana' },
-      { nombre: 'Sistema económico simulado', kind: 'sistemas-complejos', url: 'https://github.com/stevenvo780/teoria-sistemas' },
-      { nombre: 'Modelo multiagente MASOES', kind: 'sistemas-complejos', url: 'https://github.com/stevenvo780/teoria-MASOES' },
-      { nombre: 'Simulación de un sistema de metro', kind: 'sistemas-complejos', url: 'https://github.com/stevenvo780/SistemaDeTrasporteTrenes' },
-      { nombre: 'Isla de calor urbano', kind: 'fisica', url: 'https://github.com/stevenvo780/JacobTesis' },
-      { nombre: 'Atractor de Lorenz', kind: 'fisica', url: 'https://github.com/stevenvo780/teoria-caos' },
-      { nombre: 'Partículas y dispersión de velocidades', kind: 'fisica', url: 'https://github.com/stevenvo780/emergencia-experimento-temperatura' },
-      { nombre: 'Enfriamiento cosmológico simplificado', kind: 'fisica', url: 'https://github.com/stevenvo780/entropia-vacio' },
-      { nombre: 'Juego de la Vida y entropía', kind: 'emergencia', url: 'https://github.com/stevenvo780/emergencia-juego-de-conwey' },
-      { nombre: 'Grafo de reglas de autómatas', kind: 'emergencia', url: 'https://github.com/stevenvo780/teoria-ruliat' },
-      { nombre: 'Dinámica de partículas macro y micro', kind: 'emergencia', url: 'https://github.com/stevenvo780/experimento-macro-micro' },
-      { nombre: 'Benchmark y simulación N cuerpos', kind: 'computo-cientifico', url: 'https://github.com/stevenvo780/TestPcForProgramers' },
-      { nombre: 'Prácticas de redes neuronales', kind: 'computo-cientifico', url: 'https://github.com/stevenvo780/neuronalLearning' },
+      { nombre: { es: 'Curvas de complejidad algorítmica', en: 'Algorithmic complexity curves' }, kind: 'matematicas', url: 'https://github.com/stevenvo780/ComplejidadYCostoComputacional' },
+      { nombre: { es: 'Comunicación celular con ruido', en: 'Noisy cellular communication' }, kind: 'matematicas', url: 'https://github.com/stevenvo780/teoria-informacion' },
+      { nombre: { es: 'Grafos e hipergrafos', en: 'Graphs and hypergraphs' }, kind: 'matematicas', url: 'https://github.com/stevenvo780/complejidad-teoria' },
+      { nombre: { es: 'Kalos: visualización matemática', en: 'Kalos: mathematical visualization' }, kind: 'matematicas', url: 'https://github.com/stevenvo780/kalos' },
+      { nombre: { es: 'Cálculo de entropía de Shannon', en: 'Shannon entropy calculator' }, kind: 'matematicas', url: 'https://github.com/stevenvo780/shanon' },
+      { nombre: { es: 'Simulación de estrategias y recursos', en: 'Strategy and resource simulation' }, kind: 'matematicas', url: 'https://github.com/stevenvo780/teoria-de-juegos' },
+      { nombre: { es: 'Utilidad esperada de decisiones', en: 'Expected utility of decisions' }, kind: 'matematicas', url: 'https://github.com/stevenvo780/teoria-desicion' },
+      { nombre: { es: 'Medidas probabilísticas de información', en: 'Probabilistic measures of information' }, kind: 'matematicas', url: 'https://github.com/stevenvo780/TheorySemanticInformation' },
+      { nombre: { es: 'Banco de pruebas EDI multiescala', en: 'Multiscale EDI test bench' }, kind: 'sistemas-complejos', url: 'https://github.com/stevenvo780/EstructurasPreontologicas' },
+      { nombre: { es: 'Casos de simulación ABM y ODE', en: 'ABM and ODE simulation cases' }, kind: 'sistemas-complejos', url: 'https://github.com/stevenvo780/hiper-objeto-simulaciones' },
+      { nombre: { es: 'Simulaciones urbanas de Medellín', en: 'Urban simulations of Medellín' }, kind: 'sistemas-complejos', url: 'https://github.com/stevenvo780/FenomenologiaUrbana' },
+      { nombre: { es: 'Sistema económico simulado', en: 'Simulated economic system' }, kind: 'sistemas-complejos', url: 'https://github.com/stevenvo780/teoria-sistemas' },
+      { nombre: { es: 'Modelo multiagente MASOES', en: 'MASOES multi-agent model' }, kind: 'sistemas-complejos', url: 'https://github.com/stevenvo780/teoria-MASOES' },
+      { nombre: { es: 'Simulación de un sistema de metro', en: 'Metro system simulation' }, kind: 'sistemas-complejos', url: 'https://github.com/stevenvo780/SistemaDeTrasporteTrenes' },
+      { nombre: { es: 'Isla de calor urbano', en: 'Urban heat island' }, kind: 'fisica', url: 'https://github.com/stevenvo780/JacobTesis' },
+      { nombre: { es: 'Atractor de Lorenz', en: 'Lorenz attractor' }, kind: 'fisica', url: 'https://github.com/stevenvo780/teoria-caos' },
+      { nombre: { es: 'Partículas y dispersión de velocidades', en: 'Particles and velocity dispersion' }, kind: 'fisica', url: 'https://github.com/stevenvo780/emergencia-experimento-temperatura' },
+      { nombre: { es: 'Enfriamiento cosmológico simplificado', en: 'Simplified cosmological cooling' }, kind: 'fisica', url: 'https://github.com/stevenvo780/entropia-vacio' },
+      { nombre: { es: 'Juego de la Vida y entropía', en: 'Game of Life and entropy' }, kind: 'emergencia', url: 'https://github.com/stevenvo780/emergencia-juego-de-conwey' },
+      { nombre: { es: 'Grafo de reglas de autómatas', en: 'Automaton rule graph' }, kind: 'emergencia', url: 'https://github.com/stevenvo780/teoria-ruliat' },
+      { nombre: { es: 'Dinámica de partículas macro y micro', en: 'Macro and micro particle dynamics' }, kind: 'emergencia', url: 'https://github.com/stevenvo780/experimento-macro-micro' },
+      { nombre: { es: 'Benchmark y simulación N cuerpos', en: 'N-body benchmark and simulation' }, kind: 'computo-cientifico', url: 'https://github.com/stevenvo780/TestPcForProgramers' },
+      { nombre: { es: 'Prácticas de redes neuronales', en: 'Neural network exercises' }, kind: 'computo-cientifico', url: 'https://github.com/stevenvo780/neuronalLearning' },
     ],
   },
   {
@@ -370,7 +373,7 @@ export const productos: Producto[] = [
       { nombre: 'Prizma Agent Stack', kind: 'infraestructura', url: 'https://github.com/stevenvo780/prizma-agent-stack' },
       { nombre: 'Agora MCP', kind: 'infraestructura', url: 'https://github.com/stevenvo780/agora-mcp' },
       { nombre: 'Cloud Delegate', kind: 'infraestructura', url: 'https://github.com/stevenvo780/cloud-delegate' },
-      { nombre: 'Talos · Harness de automatización', kind: 'infraestructura' },
+      { nombre: { es: 'Talos · Harness de automatización', en: 'Talos · Automation harness' }, kind: 'infraestructura' },
       { nombre: 'Jarvis IA v1', kind: 'asistentes', url: 'https://github.com/stevenvo780/jarvisIA' },
       { nombre: 'Jarvis IA v2', kind: 'asistentes', url: 'https://github.com/stevenvo780/jarvisIAV2' },
       { nombre: 'Kratos Jarvis', kind: 'asistentes', url: 'https://github.com/stevenvo780/kratos-jarvis' },
@@ -380,8 +383,8 @@ export const productos: Producto[] = [
       { nombre: 'ai-usage-live', kind: 'herramientas', url: 'https://github.com/stevenvo780/ai-usage-live' },
       { nombre: 'reel-forge', kind: 'herramientas', url: 'https://github.com/stevenvo780/reel-forge' },
       { nombre: 'NewsLeters · MiniMax H3', kind: 'herramientas', url: 'https://github.com/stevenvo780/minimax-h3' },
-      { nombre: 'Generador de pixel art', kind: 'herramientas', url: 'https://github.com/stevenvo780/CreadorDeImagenes' },
-      { nombre: 'Chat IA Local GGUF', kind: 'inferencia', url: 'https://github.com/stevenvo780/IA' },
+      { nombre: { es: 'Generador de pixel art', en: 'Pixel art generator' }, kind: 'herramientas', url: 'https://github.com/stevenvo780/CreadorDeImagenes' },
+      { nombre: { es: 'Chat IA Local GGUF', en: 'Local GGUF AI chat' }, kind: 'inferencia', url: 'https://github.com/stevenvo780/IA' },
       { nombre: 'Neuronal Learning', kind: 'inferencia', url: 'https://github.com/stevenvo780/neuronalLearning' },
     ],
   },
@@ -680,6 +683,19 @@ export function esCatalogo(p: Producto): p is Catalogo {
 
 /** Los catálogos, en el orden de los frentes (frenteOrder) y, dentro de cada frente, en el de `productos`. */
 export const catalogos: Catalogo[] = frenteOrder.flatMap((f) => productos.filter((p) => p.frente === f).filter(esCatalogo));
+
+/** Nombre de un ítem de catálogo en un idioma (ver CatalogoItem.nombre). */
+export function nombreItem(i: CatalogoItem, locale: keyof LocalizedText): string {
+  return typeof i.nombre === 'string' ? i.nombre : i.nombre[locale];
+}
+
+/**
+ * Trabajos distintos que reúnen los catálogos, entre todos. Un mismo trabajo puede estar en dos (neuronalLearning está
+ * en Kósmos y en Daímon, cada uno con su título): se cuenta una vez, por su enlace, o por su nombre si no es público.
+ */
+export function trabajosEnCatalogos(cs: Catalogo[]): number {
+  return new Set(cs.flatMap((c) => c.incluye.map((i) => i.url ?? nombreItem(i, 'es')))).size;
+}
 
 /** Colecciones de un catálogo en el orden en que aparecen sus ítems, cada una con sus ítems. */
 export function catalogoGrupos(c: Catalogo): { kind: CatalogoKind; items: CatalogoItem[] }[] {

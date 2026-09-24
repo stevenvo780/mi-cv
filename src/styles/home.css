@@ -931,6 +931,51 @@
       transform: translateY(-2.7rem) rotate(-1deg);
     }
   }
+  /* Sin puntero (táctil) no hay hover que abra el abanico: las hojas descansan abiertas, que es la señal de «aquí dentro
+     hay muchos sitios». Con movimiento, se abren al entrar la tarjeta en pantalla (home-cat-fan-*, ligado al scroll). */
+  @media (hover: none) {
+    .home .cat::before {
+      border-color: color-mix(in oklab, var(--cat) 75%, transparent);
+      transform: translateY(-1.35rem) rotate(-0.8deg);
+    }
+    .home .cat::after {
+      transform: translateY(-2.7rem) rotate(1deg);
+    }
+    .home .cat:nth-child(even)::before {
+      transform: translateY(-1.35rem) rotate(0.8deg);
+    }
+    .home .cat:nth-child(even)::after {
+      transform: translateY(-2.7rem) rotate(-1deg);
+    }
+  }
+  @supports (animation-timeline: view()) {
+    @media (hover: none) and (prefers-reduced-motion: no-preference) {
+      .home .cat::before,
+      .home .cat::after {
+        animation: home-cat-fan-1 linear both;
+        animation-timeline: view();
+        animation-range: entry 5% entry 45%;
+      }
+      .home .cat::after {
+        animation-name: home-cat-fan-2;
+      }
+    }
+  }
+  html[data-motion='paused'] .home .cat::before,
+  html[data-motion='paused'] .home .cat::after {
+    animation: none;
+  }
+  /* Parten de las hojas cerradas (el reposo con puntero) y acaban en el valor de la regla: el abanico abierto. */
+  @keyframes home-cat-fan-1 {
+    from {
+      transform: translateY(-0.9rem);
+    }
+  }
+  @keyframes home-cat-fan-2 {
+    from {
+      transform: translateY(-1.8rem);
+    }
+  }
   /* Cara opaca con el borde de luz: un degradado cónico en el border-box que gira (--cat-angle, al final del archivo).
      background-color también: el test de scrim (e2e) lo busca en un antepasado de cada texto pequeño. */
   .home .cat-face {

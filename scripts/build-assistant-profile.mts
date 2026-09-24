@@ -17,7 +17,7 @@ import { readFileSync, writeFileSync } from 'node:fs';
 import ts from 'typescript';
 import { PORTRAIT } from '../src/app/components/Portrait/portraitData';
 import { HOME } from '../src/content/home';
-import { catalogoGrupos, catalogoKinds, esCatalogo, frenteLinks, frenteOrder, frentesMeta, productos } from '../src/data/frentes';
+import { catalogoGrupos, catalogoKinds, esCatalogo, frenteLinks, frenteOrder, frentesMeta, nombreItem, productos } from '../src/data/frentes';
 import { EMAIL, SITES, WHATSAPP_URL } from '../src/lib/ecosystem';
 import { PROFILES, SITE } from '../src/lib/site';
 
@@ -233,7 +233,7 @@ for (const fid of frenteOrder) {
     if (esCatalogo(p)) {
       push(`  - Es un catálogo: reúne ${p.incluye.length} ${p.unidad.es}.`);
       for (const g of catalogoGrupos(p)) {
-        push(`  - ${catalogoKinds[g.kind].es} (${g.items.length}): ${g.items.map((i) => (i.url ? `${i.nombre} <${i.url}>` : `${i.nombre} (privado, sin enlace público)`)).join(' · ')}`);
+        push(`  - ${catalogoKinds[g.kind].es} (${g.items.length}): ${g.items.map((i) => (i.url ? `${nombreItem(i, 'es')} <${i.url}>` : `${nombreItem(i, 'es')} (privado, sin enlace público)`)).join(' · ')}`);
       }
     }
   }

@@ -8,8 +8,10 @@ import {
   frenteLinks,
   frenteOrder,
   frentesMeta,
+  nombreItem,
   productTags,
   productos,
+  trabajosEnCatalogos,
 } from '@/data/frentes';
 import { nodeId } from '@/graph/sources';
 import type { Locale } from '@/lib/site';
@@ -45,7 +47,7 @@ function CatalogTile({ c, locale, t }: { c: Catalogo; locale: Locale; t: HomeCop
           t.catalogs.eyebrow,
           ...(productTags[c.id] ?? []),
           ...grupos.map((g) => catalogoKinds[g.kind][locale]),
-          ...c.incluye.map((i) => i.nombre),
+          ...c.incluye.map((i) => nombreItem(i, locale)),
         ].join(' '),
       )}
     >
@@ -85,19 +87,22 @@ function CatalogTile({ c, locale, t }: { c: Catalogo; locale: Locale; t: HomeCop
                 <span>{catalogoKinds[g.kind][locale]}</span> <span className="cat-group-n">{g.items.length}</span>
               </p>
               <ul>
-                {g.items.map((i) => (
-                  <li key={i.nombre}>
-                    {i.url ? (
-                      <a href={i.url} rel="noopener" target="_blank">
-                        {i.nombre}
-                      </a>
-                    ) : (
-                      <span>
-                        {i.nombre} <span className="cat-private">{t.catalogs.private}</span>
-                      </span>
-                    )}
-                  </li>
-                ))}
+                {g.items.map((i) => {
+                  const nombre = nombreItem(i, locale);
+                  return (
+                    <li key={nombre}>
+                      {i.url ? (
+                        <a href={i.url} rel="noopener" target="_blank">
+                          {nombre}
+                        </a>
+                      ) : (
+                        <span>
+                          {nombre} <span className="cat-private">{t.catalogs.private}</span>
+                        </span>
+                      )}
+                    </li>
+                  );
+                })}
               </ul>
             </div>
           ))}
@@ -109,7 +114,8 @@ function CatalogTile({ c, locale, t }: { c: Catalogo; locale: Locale; t: HomeCop
 
 export default function Fronts({ locale, t }: { locale: Locale; t: HomeCopy }) {
   const f = t.fronts;
-  const items = catalogos.reduce((n, c) => n + c.incluye.length, 0);
+  // Trabajos distintos: el que está en dos catálogos cuenta una vez (cada tarjeta sí cuenta todo lo que reúne).
+  const items = trabajosEnCatalogos(catalogos);
   return (
     <section id="frentes" className="sec sec-fronts" aria-labelledby="frentes-title" data-section="frentes">
       <div className="sec-inner">
