@@ -402,19 +402,23 @@ export class GraphScene {
     }
     let next: Composer | null = null;
     try {
-      const pp = await import('postprocessing');
+      // Destructurado en la propia sentencia del import(): así webpack recorta postprocessing a lo que se usa. Con
+      // `const pp = await import(...)` y `pp.X` lo metía entero (112.8 KB gz frente a 16.6 KB), y el worker con sus
+      // chunks se pasaba del presupuesto del 3D (≤ 175 KB gz, spec §5).
+      const { BlendFunction, BloomEffect, EffectComposer, EffectPass, NoiseEffect, RenderPass, ToneMappingEffect, ToneMappingMode, VignetteEffect } =
+        await import('postprocessing');
       if (!current()) return;
-      const composer = new pp.EffectComposer(this.renderer, { frameBufferType: HalfFloatType });
+      const composer = new EffectComposer(this.renderer, { frameBufferType: HalfFloatType });
       next = composer;
       // El constructor pone autoClear = false; hasta que se active, el renderer sigue pintando directo a pantalla.
       this.renderer.autoClear = this.composer === null;
-      composer.addPass(new pp.RenderPass(this.scene, this.camera));
-      const bloom = new pp.BloomEffect({ mipmapBlur: true, luminanceThreshold: 0.85, luminanceSmoothing: 0.25, intensity: 1.35, radius: 0.72 });
-      const vignette = new pp.VignetteEffect({ offset: 0.28, darkness: 0.62 });
-      const noise = new pp.NoiseEffect({ blendFunction: pp.BlendFunction.OVERLAY, premultiply: true });
+      composer.addPass(new RenderPass(this.scene, this.camera));
+      const bloom = new BloomEffect({ mipmapBlur: true, luminanceThreshold: 0.85, luminanceSmoothing: 0.25, intensity: 1.35, radius: 0.72 });
+      const vignette = new VignetteEffect({ offset: 0.28, darkness: 0.62 });
+      const noise = new NoiseEffect({ blendFunction: BlendFunction.OVERLAY, premultiply: true });
       noise.blendMode.opacity.value = 0.05;
-      const tone = new pp.ToneMappingEffect({ mode: pp.ToneMappingMode.ACES_FILMIC });
-      const effects = new pp.EffectPass(this.camera, bloom, vignette, noise, tone);
+      const tone = new ToneMappingEffect({ mode: ToneMappingMode.ACES_FILMIC });
+      const effects = new EffectPass(this.camera, bloom, vignette, noise, tone);
       composer.addPass(effects);
       composer.setSize(this.width, this.height);
       // Los 4 programas del postprocesado: luminancia y desenfoque mipmap del bloom (búferes internos) y el EffectPass
