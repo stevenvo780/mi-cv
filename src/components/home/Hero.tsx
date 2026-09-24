@@ -4,7 +4,7 @@ import type { Locale } from '@/lib/site';
 
 export default function Hero({ locale, t }: { locale: Locale; t: HomeCopy }) {
   return (
-    <section className="hero" aria-labelledby="hero-title">
+    <section className="hero" aria-labelledby="hero-title" data-section="hero">
       <p className="hero-kicker">{t.hero.kicker}</p>
       <h1 id="hero-title" className="hero-title">
         <span className="hero-first">{t.hero.first}</span> <span className="hero-last">{t.hero.last}</span>

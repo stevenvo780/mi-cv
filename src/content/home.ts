@@ -1,6 +1,7 @@
 import aboutEs from '@/locales/es/common/about.json';
 import aboutEn from '@/locales/en/common/about.json';
 import { frenteOrder } from '@/data/frentes';
+import type { NodeKind } from '@/graph/model';
 import type { Locale } from '@/lib/site';
 
 const COUNT_WORDS: Record<Locale, readonly string[]> = {
@@ -38,6 +39,7 @@ export interface HomeCopy {
     ecosystem: string;
     foot: string;
   };
+  graph: { pause: string; explore: string; openHint: string; present: string; kinds: Record<NodeKind, string> };
 }
 
 const KNOWS_ES = [
@@ -134,6 +136,13 @@ export const HOME: Record<Locale, HomeCopy> = {
       ecosystem: 'Ecosistema',
       foot: 'Pensar antes de construir: ese es todo el método.',
     },
+    graph: {
+      pause: 'Pausar la animación del grafo',
+      explore: 'Explorar el grafo en 3D',
+      openHint: 'Clic para abrir',
+      present: 'Actualidad',
+      kinds: { self: 'Yo', frente: 'Frente', empresa: 'Empresa', producto: 'Producto', grupo: 'Familia de herramientas', tecnologia: 'Tecnología', concepto: 'Concepto' },
+    },
   },
   en: {
     meta: {
@@ -212,6 +221,13 @@ export const HOME: Record<Locale, HomeCopy> = {
       social: 'Social',
       ecosystem: 'Ecosystem',
       foot: 'Think before you build: that is the whole method.',
+    },
+    graph: {
+      pause: 'Pause the graph animation',
+      explore: 'Explore the graph in 3D',
+      openHint: 'Click to open',
+      present: 'Present',
+      kinds: { self: 'Me', frente: 'Front', empresa: 'Company', producto: 'Product', grupo: 'Tool family', tecnologia: 'Technology', concepto: 'Concept' },
     },
   },
 };

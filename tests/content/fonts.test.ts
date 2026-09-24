@@ -60,14 +60,16 @@ async function homeText(locale: Locale): Promise<string> {
 const chars = (s: string) => [...new Set(s)].filter((c) => !/\s/u.test(c));
 
 // Glifos que ninguna fuente de la home tiene y que siempre se pintaron con una fuente del sistema (igual que con las
-// de Google): «ḗ» de Scholḗ. «î» (Mouseîon) no está en Geist: solo la pintan la marca (Cormorant) y el kicker, en
-// mono y en mayúsculas por CSS («Î»).
-const SYSTEM = new Set(['ḗ']);
+// de Google): «ḗ» de Scholḗ, y «❚» del botón de pausa del grafo (tampoco está en JetBrains Mono). «î» (Mouseîon) no
+// está en Geist: solo la pintan la marca (Cormorant) y el kicker, en mono y en mayúsculas por CSS («Î»). «▶» (el botón
+// de pausa, pausado) va en mono.
+const SYSTEM = new Set(['ḗ', '❚']);
 const NOT_IN_SANS: Record<string, [font: string, glyph: string][]> = {
   î: [
     ['cormorant-home', 'î'],
     ['jetbrains-home', 'Î'],
   ],
+  '▶': [['jetbrains-home', '▶']],
 };
 
 describe('cobertura de glifos del contenido de la home', () => {

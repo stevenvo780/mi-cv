@@ -57,7 +57,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
       </a>
       <HomeHeader locale={locale} t={t} />
       <main id="contenido">
-        <Stage />
+        <Stage locale={locale} t={t} />
         <Hero locale={locale} t={t} />
         <Method t={t} />
         <Path locale={locale} t={t} />

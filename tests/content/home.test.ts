@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { HOME, countWord } from '@/content/home';
 import { frenteOrder } from '@/data/frentes';
+import { KINDS } from '@/graph/codec';
 
 // Tabla independiente de la implementación para el numeral (no reutiliza COUNT_WORDS).
 const COUNT_TODAY: Record<'es' | 'en', Record<number, string>> = {
@@ -41,5 +42,17 @@ describe('copy de la home', () => {
   it('Trayectoria en inglés: «platforms that bill», con un verbo que no queda colgando', () => {
     expect(HOME.en.path.lead).toContain('platforms that bill,');
     expect(HOME.en.path.lead).not.toMatch(/invoice/);
+  });
+
+  // Controles y tooltip del grafo 3D (Plan 2, Tarea 4): cada tipo de nodo del binario tiene su nombre en los dos idiomas.
+  it('el bloque graph trae los controles y un nombre por cada tipo de nodo, en los dos idiomas', () => {
+    for (const locale of ['es', 'en'] as const) {
+      const { graph } = HOME[locale];
+      for (const text of [graph.pause, graph.explore, graph.openHint, graph.present]) expect(text.trim(), locale).not.toBe('');
+      expect(Object.keys(graph.kinds).sort(), locale).toEqual([...KINDS].sort());
+      for (const kind of KINDS) expect(graph.kinds[kind].trim(), `${locale}: ${kind}`).not.toBe('');
+    }
+    expect(HOME.es.graph.pause).toBe('Pausar la animación del grafo');
+    expect(HOME.en.graph.explore).toBe('Explore the graph in 3D');
   });
 });

@@ -291,7 +291,7 @@ Tokens de la home en `src/styles/home.css` (capa `@layer home`), en OKLCH con re
 ### 4.5 Scroll
 
 - **Secciones:** fijadas con CSS `position: sticky` en contenedores de altura definida en CSS.
-- **Progreso:** `src/components/home/useSectionProgress.ts`, con `IntersectionObserver` + `scroll` pasivo agrupado por rAF. Emite `{section, progress}` y lo envía al worker.
+- **Progreso:** `src/components/home/useSectionProgress.ts`, con `scroll` pasivo y `resize` agrupados por rAF (sin `IntersectionObserver`: el cálculo lee las cajas de las secciones `[data-section]`). Emite un escalar continuo `s` = índice de la sección bajo el centro de la pantalla + progreso dentro de ella (`sectionProgress`, con tests) y lo envía a la escena.
 - **Sin GSAP:** salvo que una coreografía concreta lo requiera, y en ese caso solo cargado de forma diferida y sin `pin`.
 
 ### 4.6 Estructura de archivos
@@ -304,10 +304,11 @@ src/app/[locale]/(home)/page.tsx       RSC: compone las secciones, JSON-LD (grup
 src/app/fonts/*.woff2                  fuentes del layout raíz recortadas a latín (Geist, Cormorant, JetBrains Mono, Inter) y subconjuntos de la home
 src/app/[locale]/(portal)/...          frentes y lore (grupo (portal), con bootstrap y brand.css)
 src/app/[locale]/opengraph-image.tsx   OG por locale
-src/components/home/*.tsx              HomeHeader, Stage, Hero, Method, Path, Fronts, Proof, Contact, HomeFooter, SectionHead, ProductSearch (cliente); MotionToggle (cliente) y useSectionProgress llegan con el Plan 2
-src/components/graph/GraphStage.tsx    isla cliente
+src/components/home/*.tsx              HomeHeader, Stage, Hero, Method, Path, Fronts, Proof, Contact, HomeFooter, SectionHead, ProductSearch (cliente); useSectionProgress.ts (Plan 2)
+src/components/graph/GraphStageLazy.tsx  puerta mínima de la ruta crítica (enmienda H1 del Plan 2, §5.1)
+src/components/graph/GraphStage.tsx    isla cliente: sonda, worker o fallback, puente de eventos, tooltip, pausa (.graph-motion) y «Explorar en 3D»
 src/graph/{model,sources,relations,layouts,codec,palette,camera0,layout-names,random,poster,artifacts}.ts
-src/graph/runtime/{protocol,probe,quality,loader,dispatch}.ts   sin three: también los importa el hilo principal
+src/graph/runtime/{protocol,probe,quality,loader,dispatch,inbox}.ts   sin three: también los importa el hilo principal
 src/graph/scene/{GraphScene,shaders,data,choreography}.ts        three.js (solo en el worker o en el fallback)
 src/graph/worker/graph.worker.ts       llega con la Tarea 4 del Plan 2
 src/graph/generated/{poster,stats}.ts  (generados, versionados)
@@ -348,8 +349,8 @@ e2e/fixtures.ts                        test y expect de Playwright sin hits real
 
 | Métrica | Límite |
 |---|---|
-| JS en el hilo principal de la home | ≤ 130 KB gz = 133 120 B (antes ~200 KB). Tras el fix de la revisión final, 132 462 B con webpack (§4.1): margen de 658 B (§5.1) |
-| Worker | ≤ 175 KB gz |
+| JS de la ruta crítica de la home: los scripts pedidos antes del evento `load` (enmienda H1 del Plan 2) | ≤ 130 KB gz = 133 120 B (antes ~200 KB). Con la puerta del grafo (Plan 2, Tarea 4), 132 944 B con webpack (§4.1): margen de 176 B (§5.1). Antes de la puerta, 132 462 B |
+| 3D: chunk de `GraphStage`, worker y sus chunks (lo que la puerta pide después de `load` o con la primera interacción) | ≤ 175 KB gz = 179 200 B |
 | Datos del grafo | ≤ 60 KB gz |
 | LCP | ≤ 2.5 s en laboratorio móvil (Lighthouse, mediana de 5). Antes decía 1.8 s, que era una estimación de la investigación y no un requisito de Steven. Medido: 1.7–1.9 s en móvil y 0.5–0.6 s en escritorio (§5.2) |
 | TBT | ≤ 100 ms |
@@ -362,14 +363,18 @@ e2e/fixtures.ts                        test y expect de Playwright sin hits real
 
 ### 5.1 Margen del presupuesto de JS
 
-- **Medido en el fix de la revisión final** (gzip nivel 6 de cada script, igual que el e2e): 132 462 B de 133 120 B. Quedan **658 B, el 0.49 %**. En la Tarea 14 eran 132 501 B (ronda 2) y 132 505 B (ronda 1): el chunk del layout bajó 41 B al quitar los objetos de `next/font/google`. El script inline del menú móvil no cuenta: no es una respuesta de tipo script.
-- **El framework ocupa el 98.8 %:** el runtime de Next, React DOM, el runtime de webpack y `main-app` suman 130 867 B. El código propio de la home son 1 595 B: el chunk del layout de `[locale]` (cargador de GA y objetos de `next/font` del layout raíz, 900 B) y el de la página (`ProductSearch`, 695 B). No queda código propio cuyo recorte dé un margen real.
+- **Qué cuenta (enmienda H1 del Plan 2):** los scripts pedidos antes del evento `load`. El e2e lo decide con el Resource Timing de la página, por URL y sin filtrar por `initiatorType` (el runtime de webpack llega por `<link rel="preload">`); un script sin entrada cuenta como crítico. El e2e también exige que la puerta pida algo después de `load` e imprime lo que queda fuera.
+- **Medido con la puerta del grafo (Plan 2, Tarea 4):** 132 944 B de 133 120 B. Quedan **176 B, el 0.13 %**. La puerta añade 300 B al chunk de la página (995 B frente a 695) y el runtime de webpack crece unos 180 B, porque lista los chunks nuevos del 3D (el de `GraphStage`, el del worker, los dos de three, el de `GraphScene` y el de `postprocessing`). Después de `load` se pide el chunk de `GraphStage`, 5 101 B, que va al presupuesto del 3D.
+- **Medido en el fix de la revisión final** (gzip nivel 6 de cada script, igual que el e2e): 132 462 B de 133 120 B, con 658 B de margen. En la Tarea 14 eran 132 501 B (ronda 2) y 132 505 B (ronda 1): el chunk del layout bajó 41 B al quitar los objetos de `next/font/google`. El script inline del menú móvil no cuenta: no es una respuesta de tipo script.
+- **El framework ocupa el 98.8 %** (medido antes de la puerta del grafo): el runtime de Next, React DOM, el runtime de webpack y `main-app` suman 130 867 B. El código propio de la home eran 1 595 B: el chunk del layout de `[locale]` (cargador de GA y objetos de `next/font` del layout raíz, 900 B) y el de la página (`ProductSearch`, 695 B). No queda código propio cuyo recorte dé un margen real.
 - **Ruido de 2 a 3 B por build:** el runtime de webpack lista los ids de los chunks que solo llevan CSS, y esos ids cambian al añadir o quitar módulos. Las fuentes de la home añadieron uno y el runtime creció 3 B. `ProductSearch` sin `useId` ni input controlado compensó 6 B.
 - **No hay otro bundler de reserva:** con Turbopack, solo el framework ya pesa 134 143 B (§4.1).
 - **Reglas mientras el margen siga así:**
   - Cualquier cambio que añada código cliente a la home, o que suba `next`, `react` o `react-dom`, puede pasarse del límite aunque no haya una regresión propia. Antes de fusionarlo, se vuelve a medir con `npm run build && npm run e2e`. El test imprime el total y el margen.
   - Si el test falla, se recorta o se aplaza el código cliente nuevo. El límite no se sube en el test: cambiarlo lo decide Steven, y se cambia en esta tabla.
-  - El Plan 2 monta en la home la isla del grafo. Con `next/dynamic` (`ssr: false`), su chunk y el de `GraphStage` se descargarían tras la hidratación aunque el 3D no llegara a arrancar, y con 658 B no caben. La enmienda H1 del Plan 2 lo resuelve así: `GraphStageLazy` es una puerta mínima que solo hace `import('./GraphStage')` tras la primera interacción o el idle; este presupuesto pasa a contar los scripts pedidos antes de `load`, y `GraphStage` y el worker van al presupuesto del 3D (≤ 175 KB gz). No está implementado ni medido: cuando el Plan 2 cambie el test, esta tabla se actualiza en el mismo commit.
+  - El Plan 2 monta en la home la isla del grafo. Con `next/dynamic` (`ssr: false`), su chunk y el de `GraphStage` se descargarían tras la hidratación aunque el 3D no llegara a arrancar, y con 658 B no cabían. La enmienda H1 del Plan 2 lo resuelve así: `GraphStageLazy` es una puerta mínima que solo hace `import('./GraphStage')` tras la primera interacción o el idle después de `load`; este presupuesto cuenta los scripts pedidos antes de `load`, y `GraphStage` y el worker van al presupuesto del 3D (≤ 175 KB gz). Implementado y medido en la Tarea 4 del Plan 2 (arriba). Con 176 B de margen, la puerta no admite más código: lo nuevo del 3D va en `GraphStage` o en el worker.
+  - Coste si la decisión es errónea: JS diferido que Lighthouse todavía ve como TBT. Lo mide la Tarea 6 del Plan 2.
+- **Presupuesto del 3D:** three va en dos chunks (unos 52 y 85 KB gz) que comparten el worker y el fallback en el hilo principal. El worker es clásico: webpack reescribe `{ type: 'module' }` a `undefined` y carga sus chunks con `importScripts`.
 
 ### 5.2 Lighthouse en móvil: resuelto en la Tarea 14 (ronda 2)
 
@@ -404,7 +409,7 @@ e2e/fixtures.ts                        test y expect de Playwright sin hits real
 - **FCP bimodal:** las cuatro fuentes sin precarga tienen prioridad VeryHigh. Si terminan unos milisegundos antes del primer pintado observado, Lantern las mete en el grafo del FCP y da 1.67 s. Si terminan justo después, da 1.06 s. Es una carrera en local que el código no controla sin precargarlas, y mueve la Performance en torno a un punto (97–100).
 - **CLS de 0.0001–0.0002:** al llegar Geist sin precarga, el botón "Mi historia" se mueve unos píxeles, porque el ancho de "Contratar servicios" cambia respecto al de su respaldo ajustado. Lighthouse lo muestra como 0.
 - **TBT:** de 42 a 73 ms en las medianas de las dos tandas, y hasta 99 ms en alguna corrida. Depende de la carga del host: en la ronda 1 llegó a 199 ms.
-- **Margen de JS para el Plan 2:** 658 B. La isla del grafo no cabe montada con `next/dynamic`; el Plan 2 la monta con la puerta de la enmienda H1 (§5.1).
+- **Margen de JS para el Plan 2:** 658 B. La isla del grafo no cabe montada con `next/dynamic`; el Plan 2 la monta con la puerta de la enmienda H1 (§5.1), y el margen queda en 176 B.
 
 ## 6. Pruebas
 
@@ -463,7 +468,7 @@ e2e/fixtures.ts                        test y expect de Playwright sin hits real
 | OffscreenCanvas y WebGL en Safari < 17 | Fallback al hilo principal con `compileAsync`. |
 | Workers con `new URL(..., import.meta.url)` en el build de producción | El build ya es webpack 5 (`next build --webpack`, §4.1), que los emite como chunk propio; lo valida el e2e del Plan 2 (Tarea 5). `next dev` sigue con Turbopack: si ahí el worker no arranca, lo cubre el fallback en el hilo principal. |
 | Compatibilidad `postprocessing` ↔ three | Versiones fijadas exactas. |
-| Presupuesto de JS de la home sin margen (658 B, §5.1) | El e2e lo mide en cada build y se vuelve a medir antes de fusionar. El Plan 2 monta `GraphStage` detrás de la puerta mínima de su enmienda H1. |
+| Presupuesto de JS de la home sin margen (176 B con la puerta del grafo, §5.1) | El e2e lo mide en cada build y se vuelve a medir antes de fusionar. El Plan 2 monta `GraphStage` detrás de la puerta mínima de su enmienda H1: lo nuevo del 3D va en `GraphStage` o en el worker, no en la puerta. |
 | El 3D no aparece en Lighthouse | Es intencional: el laboratorio mide la ruta del póster. No hay RUM propio: Vercel Speed Insights no cabe en el presupuesto de JS (su script contaría en §5.1), así que no se instala. El dato de campo sale de CrUX, PageSpeed Insights y el informe de Core Web Vitals de Search Console; el 3D, además, con pruebas manuales en GPU real. |
 | Disco raíz del host lleno | Todo lo pesado va a `/workspace`. |
 | Contenido nuevo con un carácter que no está en los subconjuntos de fuente de la home o del portal | En la home, `npm test` falla (`tests/content/fonts.test.ts` recorre el texto de la home en ES y EN) y el e2e de glifos también; en el portal, el e2e de las subpáginas. Los dos nombran el archivo y el carácter. Se añade en `scripts/subset-fonts.sh` y se regenera (hace falta Python con fonttools y brotli); si la fuente de origen no lo tiene, se añade a las excepciones del test. |

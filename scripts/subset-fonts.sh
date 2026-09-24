@@ -82,8 +82,9 @@ subset "$TMP/cg-400-500.ttf" cormorant-home.woff2 "$ASCII$ES·îÎ–—‘’�
 # Cursiva: solo el epígrafe de Método.
 subset "$TMP/cgi-400.ttf" cormorant-home-italic.woff2 "$ALNUM$ES.,;:!?'\"()-«»“”‘’–—…"
 # Etiquetas, fechas y chips del stack: sin la puntuación ASCII que no usan (sus ligaduras de código pesan). Sin «→»:
-# el subconjunto latin de Google no lo trae, así que la home siempre lo pintó con la mono del sistema.
-subset "$TMP/jb-400-500.ttf" jetbrains-home.woff2 "$ALNUM$ES#&()+,-./:~_'§·—Î"
+# el subconjunto latin de Google no lo trae, así que la home siempre lo pintó con la mono del sistema. «▶» es el del
+# botón de pausa del grafo cuando está pausado; su «❚❚» no está en ninguna de las fuentes de origen (la del sistema).
+subset "$TMP/jb-400-500.ttf" jetbrains-home.woff2 "$ALNUM$ES#&()+,-./:~_'§·—Î▶"
 
 # ── 2. Layout raíz (portal y 404 de [locale]) ──
 

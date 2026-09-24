@@ -177,18 +177,38 @@ for (const locale of ['es', 'en'] as const) {
       expect(lcp).toBe('h1');
     });
 
-    // Presupuesto de la spec §5. El margen es de unos cientos de bytes y el framework ocupa el 98 % (spec §5.1):
-    // si falla, no es ruido. El límite no se sube aquí; cambiarlo lo decide Steven en la spec.
-    test('JS del hilo principal ≤ 130 KB gz', async ({ page, baseURL }) => {
+    // Presupuesto de la spec §5: el JS de la ruta crítica, los scripts pedidos antes del evento `load` (enmienda H1 del
+    // Plan 2). La puerta GraphStageLazy importa GraphStage después de `load` (o con la primera interacción), y ese chunk
+    // y el worker van al presupuesto del 3D. El margen es de unos cientos de bytes y el framework ocupa el 98 % (spec
+    // §5.1): si falla, no es ruido. El límite no se sube aquí; cambiarlo lo decide Steven en la spec.
+    test('JS de la ruta crítica (scripts pedidos antes de load) ≤ 130 KB gz', async ({ page, baseURL }) => {
       const BUDGET = 130 * 1024;
-      const scripts: Promise<number>[] = [];
+      const scripts = new Map<string, Promise<number>>();
       page.on('response', (r) => {
-        if (r.request().resourceType() === 'script' && r.url().startsWith(baseURL!)) scripts.push(r.body().then((b) => gzipSync(b).length));
+        if (r.request().resourceType() === 'script' && r.url().startsWith(baseURL!)) scripts.set(r.url(), r.body().then((b) => gzipSync(b).length));
       });
       await page.goto(`/${locale}`, { waitUntil: 'networkidle' });
-      const total = (await Promise.all(scripts)).reduce((a, b) => a + b, 0);
-      console.log(`JS /${locale}: ${total} B gz (${(total / 1024).toFixed(1)} KB), margen ${BUDGET - total} B`);
-      expect(total, `JS de /${locale}: ${total} B gz frente a ${BUDGET} B (spec §5.1)`).toBeLessThanOrEqual(BUDGET);
+      // Resource Timing: si cada script se pidió antes del evento load, en el reloj de la página. Por URL y sin filtrar
+      // por initiatorType: el runtime de webpack llega por <link rel="preload"> (initiatorType «link»). Un script sin
+      // entrada cuenta como crítico. Se espera a que la puerta dispare (idle tras load, ≤ 1.5 s) para comprobar que lo
+      // que difiere sale de verdad después de load.
+      const split = async () => {
+        const early = await page.evaluate(() => {
+          const load = (performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming).loadEventStart;
+          return Object.fromEntries(performance.getEntriesByType('resource').map((e) => [e.name, load === 0 || e.startTime < load]));
+        });
+        const urls = [...scripts.keys()];
+        return { before: urls.filter((url) => early[url] !== false), after: urls.filter((url) => early[url] === false) };
+      };
+      await expect.poll(async () => (await split()).after.length, { message: 'la puerta del grafo no importó GraphStage tras load' }).toBeGreaterThan(0);
+      const { before, after } = await split();
+      const size = async (urls: string[]) => (await Promise.all(urls.map((url) => scripts.get(url)!))).reduce((a, b) => a + b, 0);
+      const total = await size(before);
+      console.log(
+        `JS /${locale}: ruta crítica ${total} B gz (${(total / 1024).toFixed(1)} KB, ${before.length} scripts), margen ${BUDGET - total} B; ` +
+          `tras load ${await size(after)} B gz (${after.map((u) => u.split('/').pop()).join(', ')})`,
+      );
+      expect(total, `JS de la ruta crítica de /${locale}: ${total} B gz frente a ${BUDGET} B (spec §5.1)`).toBeLessThanOrEqual(BUDGET);
     });
   });
 }
@@ -222,7 +242,8 @@ for (const locale of ['es', 'en'] as const) {
       'geistHome|normal': 'geist-home',
       'jetbrainsHome|normal': 'jetbrains-home',
     };
-    const SYSTEM_GLYPHS: Partial<Record<HomeFont, string>> = { 'cormorant-home': 'ḗ', 'geist-home': 'ḗ', 'jetbrains-home': '→' };
+    // «❚» (pausa del grafo) no está en JetBrains Mono: lo pinta la mono del sistema. Su «▶» sí va en el subconjunto.
+    const SYSTEM_GLYPHS: Partial<Record<HomeFont, string>> = { 'cormorant-home': 'ḗ', 'geist-home': 'ḗ', 'jetbrains-home': '→❚' };
     await page.goto(`/${locale}`);
     const missing = missingGlyphs(await paintedText(page, '.home'), FILES, SYSTEM_GLYPHS);
     expect(missing, 'regenera los subconjuntos con bash scripts/subset-fonts.sh').toEqual({});
