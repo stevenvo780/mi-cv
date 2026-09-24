@@ -20,8 +20,19 @@ export default defineConfig({
   },
   webServer: { command: 'npx next start -p 3210', url: 'http://localhost:3210/es', reuseExistingServer: true, timeout: 120_000 },
   projects: [
-    { name: 'desktop', use: { viewport: { width: 1440, height: 900 } } },
-    { name: 'tablet', use: { viewport: { width: 834, height: 1112 } } },
-    { name: 'mobile', use: { viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true } },
+    { name: 'desktop', testIgnore: /graph3d\.spec\.ts/, use: { viewport: { width: 1440, height: 900 } } },
+    { name: 'tablet', testIgnore: /graph3d\.spec\.ts/, use: { viewport: { width: 834, height: 1112 } } },
+    { name: 'mobile', testIgnore: /graph3d\.spec\.ts/, use: { viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true } },
+    // El grafo 3D con WebGL por SwiftShader (software): solo este proyecto ejecuta graph3d.spec.ts.
+    {
+      name: '3d',
+      testMatch: /graph3d\.spec\.ts/,
+      timeout: 180_000,
+      use: {
+        viewport: { width: 1440, height: 900 },
+        // LAUNCH ya lleva el ejecutable y la regla que deja sin DNS los hosts de medición: se conservan.
+        launchOptions: { ...LAUNCH, args: [...LAUNCH.args, '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'] },
+      },
+    },
   ],
 });

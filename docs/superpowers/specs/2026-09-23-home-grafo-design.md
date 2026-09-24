@@ -357,7 +357,7 @@ e2e/fixtures.ts                        test y expect de Playwright sin hits real
 | Métrica | Límite |
 |---|---|
 | JS de la ruta crítica de la home: los scripts pedidos antes del evento `load` (enmienda H1 del Plan 2) | ≤ 130 KB gz = 133 120 B (antes ~200 KB). Con la puerta del grafo (Plan 2, Tarea 4), 132 947 B con webpack (§4.1): margen de 173 B (§5.1). Antes de la puerta, 132 462 B |
-| 3D: chunk de `GraphStage`, worker y sus chunks (lo que la puerta pide después de `load` o con la primera interacción) | ≤ 175 KB gz = 179 200 B. Medido en la Tarea 4 del Plan 2 (ronda de fix 1): 171 534 B con bloom (niveles T2 y T3) y 154 976 B sin él (T1, móvil) |
+| 3D: chunk de `GraphStage`, worker y sus chunks (lo que la puerta pide después de `load` o con la primera interacción) | ≤ 175 KB gz = 179 200 B. Medido en la Tarea 4 del Plan 2 (ronda de fix 1): 171 534 B con bloom (niveles T2 y T3) y 154 976 B sin él (T1, móvil). Lo mide el e2e `graph3d.spec.ts` (Tarea 5): 171 672 B en 6 archivos con bloom, margen de 7 528 B (+138 B por la mezcla de las aristas de §3.3) |
 | Datos del grafo | ≤ 60 KB gz |
 | LCP | ≤ 2.5 s en laboratorio móvil (Lighthouse, mediana de 5). Antes decía 1.8 s, que era una estimación de la investigación y no un requisito de Steven. Medido: 1.7–1.9 s en móvil y 0.5–0.6 s en escritorio (§5.2) |
 | TBT | ≤ 100 ms |
@@ -456,6 +456,14 @@ e2e/fixtures.ts                        test y expect de Playwright sin hits real
    - Menú móvil: landmark, y se cierra al elegir sección y con Escape (§4.8).
    - 404 bilingües.
    - Capturas a 390, 834 y 1440 px.
+   - **Grafo 3D (Plan 2, Tarea 5):** el proyecto `3d` de Playwright lanza Chrome con WebGL por SwiftShader (`--use-angle=swiftshader`) y solo ejecuta `e2e/graph3d.spec.ts`; los demás proyectos lo ignoran. Comprueba:
+     - que la escena arranca en el worker, pinta y se anima, y que el fallback (`?worker=off`) pinta en el hilo principal;
+     - el hover con su ficha, la pausa (la escena se queda quieta y la preferencia persiste al recargar), el foco de teclado en un producto (mueve la cámara con la escena en pausa y sin desplazar la página) y el movimiento reducido (póster y «Explorar en 3D», que arranca en pausa);
+     - las cinco formas por scroll, con capturas cuando la cámara llega a cada pose;
+     - el presupuesto del 3D (§5), con el mismo Resource Timing que el de la ruta crítica;
+     - por píxeles, en las seis poses y en T3 (1440 × 900) y T1 (390 × 844), que las aristas se ven en la escena real, que las semánticas y las decorativas se ven en reposo (sin pulsos) y que las decorativas son filamentos y no puntos, y que ninguna zona se quema a blanco (la mayor región de blanco puro, ≤ 200 px; §3.3). Para eso envuelve WebGL2 desde un script de inicio: omite capas y anula los pulsos sin tocar el código del sitio. Solo ve el hilo principal, así que esta parte usa el fallback, con la misma escena y los mismos shaders que el worker.
+     - En pausa, la espera hasta que la cámara llega a su pose no es un tiempo fijo: en SwiftShader un frame tarda cientos de ms (más con la suite en paralelo) y avanza como mucho 50 ms del reloj de la escena. Con el fallback cuenta fotogramas del navegador sin pintar; con el worker, espera a que el escenario lleve 3 s sin cambiar.
+     - Cero errores de consola y de CSP. El aviso `KHR_parallel_shader_compile extension not supported` de SwiftShader es un `warning`, no un error, y no cuenta.
 3. **Lighthouse:**
    - Móvil y escritorio, `/es` y `/en`, mediana de 5 corridas.
    - Ruta del póster (sin GPU) y ruta 3D (Chrome con GPU por SwiftShader forzada) documentadas por separado.
