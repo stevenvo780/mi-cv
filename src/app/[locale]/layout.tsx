@@ -16,12 +16,10 @@ import { LOCALES, SITE, isLocale } from '@/lib/site';
 //   pyftsubset <TTF de google/fonts> --flavor=woff2 --no-hinting \
 //     --layout-features=ccmp,locl,mark,mkmk,kern,liga,calt,clig,rlig,rvrn,rclt,curs,frac,numr,dnom,lnum,pnum,tnum \
 //     --unicodes='U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD' \
-//     --output-file=src/app/fonts/<familia>-latin.woff2
+//     --name-IDs='*' --output-file=src/app/fonts/<familia>-latin.woff2
 //
-// Geist (geist@1.7.2, variable) recortado a latín: 33 KB frente a los 70 KB del archivo completo. Se regenera con:
-//   pyftsubset node_modules/geist/dist/fonts/geist-sans/Geist-Variable.ttf --flavor=woff2 --layout-features='*' \
-//     --unicodes='U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+1E17,U+2000-206F,U+20AC,U+2122,U+2190-2193,U+2197,U+2212,U+2215,U+FEFF,U+FFFD' \
-//     --output-file=src/app/fonts/geist-sans-latin.woff2
+// Geist (geist@1.7.2, variable) recortado a latín: 33 KB frente a los 70 KB del archivo completo. Lo regenera el mismo
+// script (rango latin más U+1E17 y las flechas U+2190–2193 y U+2197, con todas sus features).
 const geist = localFont({
   src: '../fonts/geist-sans-latin.woff2',
   variable: '--font-geist-sans',

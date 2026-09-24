@@ -9,7 +9,7 @@
 # aquí y volver a ejecutar el script. Lo detectan `npm test` (tests/content/fonts.test.ts recorre el texto de la
 # home en ES y EN) y el e2e "tiene cada carácter en el subconjunto de su familia", que además mira la familia.
 #
-# 2. Layout raíz. Sustituyen a next/font/google, que falla en algunos builds limpios (spec §8). Son las mismas
+# 2. Layout raíz (y geist-sans-latin, del 404 de [locale]). Sustituyen a next/font/google, que falla en algunos builds limpios (spec §8). Son las mismas
 # fuentes que servía Google Fonts con subsets: ['latin']: variables, con el rango unicode "latin" de Google, sus
 # mismas features y sin hinting. Contornos, métricas y features coinciden con los archivos de Google (comprobado
 # con fontTools), así que el portal se ve igual.
@@ -21,6 +21,8 @@
 # Fuentes de origen (licencia SIL OFL 1.1, sin nombres reservados; mismas versiones que sirve Google Fonts):
 #   - Cormorant Garamond 4.001, JetBrains Mono 2.211 e Inter 4.001: github.com/google/fonts en el commit fijado abajo.
 #   - Geist 1.800: node_modules/geist@1.7.2.
+# Todos los archivos conservan la tabla name entera (--name-IDs='*'; por defecto fontTools solo deja los IDs 0–6), así
+# que el aviso de la licencia (nameID 13) y su URL (14) viajan dentro de cada woff2. Cuesta de 76 a 336 B por archivo.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
@@ -56,7 +58,8 @@ ASCII=$(printf '%s' ' !"#$%&'"'"'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUV
 ALNUM='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 '
 
 subset() { # <entrada> <salida> <texto> [features extra]
-  $PY -m fontTools.subset "$1" --flavor=woff2 --text="$3" --layout-features="$ON${4:+,$4}" --output-file="$OUT/$2" 2>/dev/null
+  $PY -m fontTools.subset "$1" --flavor=woff2 --text="$3" --layout-features="$ON${4:+,$4}" --name-IDs='*' \
+    --output-file="$OUT/$2" 2>/dev/null
   printf '%-40s %6d B\n' "$2" "$(wc -c < "$OUT/$2")"
 }
 
@@ -82,7 +85,7 @@ GF_FEATURES=ccmp,locl,mark,mkmk,kern,liga,calt,clig,rlig,rvrn,rclt,curs,frac,num
 
 latin() { # <entrada> <salida>
   $PY -m fontTools.subset "$1" --flavor=woff2 --unicodes="$LATIN" --layout-features="$GF_FEATURES" --no-hinting \
-    --output-file="$OUT/$2" 2>/dev/null
+    --name-IDs='*' --output-file="$OUT/$2" 2>/dev/null
   printf '%-40s %6d B\n' "$2" "$(wc -c < "$OUT/$2")"
 }
 
@@ -92,3 +95,9 @@ latin "$TMP/cg.ttf" cormorant-garamond-latin.woff2
 latin "$TMP/cgi.ttf" cormorant-garamond-italic-latin.woff2
 latin "$TMP/jb.ttf" jetbrains-mono-latin.woff2
 latin "$TMP/inter-14.ttf" inter-latin.woff2
+
+# Geist (geist@1.7.2, variable), del 404 de [locale]: rango latin más «ḗ» y las flechas, con todas sus features.
+$PY -m fontTools.subset "$TMP/geist.ttf" --flavor=woff2 --layout-features='*' --name-IDs='*' \
+  --unicodes='U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+1E17,U+2000-206F,U+20AC,U+2122,U+2190-2193,U+2197,U+2212,U+2215,U+FEFF,U+FFFD' \
+  --output-file="$OUT/geist-sans-latin.woff2" 2>/dev/null
+printf '%-40s %6d B\n' geist-sans-latin.woff2 "$(wc -c < "$OUT/geist-sans-latin.woff2")"
