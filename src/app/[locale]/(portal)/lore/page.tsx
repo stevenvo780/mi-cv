@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 import { PORTRAIT } from '@/app/components/Portrait/portraitData';
-import { OG_LOCALE, clampDescription, pageAlternates, toLocale } from '@/lib/site';
+import { OG_LOCALE, clampDescription, localeUrl, pageAlternates, toLocale } from '@/lib/site';
 import LorePageClient from './LorePageClient';
 
 export async function generateMetadata({
@@ -12,6 +12,7 @@ export async function generateMetadata({
   const title = locale === 'es' ? 'Mi historia' : 'My story';
   const description = clampDescription(PORTRAIT[locale].heroLead);
   const alternates = pageAlternates(locale, '/lore');
+  const ogImage = `${localeUrl(locale)}/opengraph-image`;
   return {
     title,
     description,
@@ -24,8 +25,9 @@ export async function generateMetadata({
       locale: OG_LOCALE[locale],
       alternateLocale: OG_LOCALE[locale === 'es' ? 'en' : 'es'],
       siteName: 'Mouseîon',
+      images: [{ url: ogImage, width: 1200, height: 630 }],
     },
-    twitter: { card: 'summary_large_image', title, description },
+    twitter: { card: 'summary_large_image', title, description, images: [ogImage] },
   };
 }
 
