@@ -38,4 +38,31 @@ describe('shaders', () => {
     const decl = new RegExp(`\\b(?:float|u?int|bool|[iu]?vec[234]|mat[234]|sampler2D)\\s+(${reserved.join('|')})\\b`);
     for (const [name, src] of Object.entries(S)) expect(src.match(decl)?.[0], name).toBeUndefined();
   });
+  it('cada uniform se declara una sola vez por programa (uFocus pasó al bloque común)', () => {
+    for (const name of ['NODE_VERT', 'HUB_VERT', 'EDGE_VERT']) {
+      const src = (S as Record<string, string>)[name];
+      const decls = [...src.matchAll(/uniform\s+\w+\s+(\w+);/g)].map((m) => m[1]);
+      expect(decls.filter((d, i) => decls.indexOf(d) !== i), name).toEqual([]);
+    }
+  });
+  it('aristas: el alfa es cobertura, no intensidad (con mezcla aditiva, glow en el alfa deja la base al cuadrado)', () => {
+    const alpha = S.EDGE_FRAG.match(/gl_FragColor\s*=\s*vec4\(col,\s*([^;]+)\);/)?.[1];
+    expect(alpha).toBeDefined();
+    expect(alpha).not.toMatch(/glow|pulse|base/);
+    expect(S.EDGE_FRAG).toMatch(/BASE_SEMANTIC\s*=\s*0\.15;/);
+  });
+  it('aristas: con el nodo activo en el extremo b, los pulsos recorren la cinta al revés (salen hacia el vecino)', () => {
+    expect(S.EDGE_VERT).toMatch(/vT\s*=\s*mix\(aT,\s*1\.0\s*-\s*aT,[^;]*hB[^;]*\);/);
+  });
+  it('respiración con ruido simplex por instancia, sin senos del tiempo', () => {
+    const body = S.NODE_VERT.slice(S.NODE_VERT.indexOf('vec3 nodePos('), S.NODE_VERT.indexOf('float fogOf('));
+    expect(body).toContain('simplex(');
+    expect(body).not.toMatch(/\b(sin|cos)\s*\(\s*uTime/);
+    expect(S.NODE_VERT).toMatch(/float simplex\(vec2 p\)/);
+  });
+  it('niebla en los tres materiales del grafo', () => {
+    for (const name of ['NODE_VERT', 'HUB_VERT', 'EDGE_VERT']) expect((S as Record<string, string>)[name], name).toMatch(/fogOf\(/);
+    expect(S.HUB_FRAG).toMatch(/mix\(col,[^;]*vFog\)/);
+    expect(S.EDGE_FRAG).toMatch(/1\.0 - vFog/);
+  });
 });

@@ -7,6 +7,13 @@ uniform int uFrom;
 uniform int uTo;
 uniform float uMix;
 uniform float uTime;
+uniform float uFocus;
+
+const float BREATH_AMP = 0.016;
+const float BREATH_RATE = 0.08;
+const float FOG_MAX = 0.7;
+const float FOG_NEAR = 0.4;
+const float FOG_FAR = 1.0;
 
 /* Fila de la textura = forma. El parámetro no se llama "layout": es palabra reservada en GLSL ES 3.00. */
 vec3 layoutPos(int row, float ref) {
@@ -18,11 +25,51 @@ float highlightOf(float ref) {
 float nodeKey(float ref, vec3 off) {
   return fract(ref * 0.1373 + dot(off, vec3(12.989, 78.233, 37.719)));
 }
-/* Posición animada de un nodo (semántico: off = 0; satélite: off = desplazamiento). La misma para sprites, hubs y aristas. */
+
+/*
+ * Ruido simplex 2D (Perlin 2001; formulación de Gustavson, «Simplex noise demystified»). El gradiente de cada
+ * vértice de la rejilla sale de un hash sin tablas: la permutación polinómica (34x² + x) mod 289. Todos los
+ * enteros intermedios caben exactos en un float de 32 bits (< 2^24). Con gradientes unitarios y núcleo
+ * (0.5 − d²)⁴ la suma no pasa de ≈ 0.0101 (medido con 4 millones de muestras): ×99 deja la salida en [-1, 1].
+ */
+vec3 permute289(vec3 x) {
+  return mod((x * 34.0 + 1.0) * x, 289.0);
+}
+float simplex(vec2 p) {
+  const float F2 = 0.36602540;  // (√3 − 1) / 2: del plano a la rejilla de triángulos
+  const float G2 = 0.21132487;  // (3 − √3) / 6: de vuelta
+  vec2 i = floor(p + (p.x + p.y) * F2);
+  vec2 x0 = p - i + (i.x + i.y) * G2;
+  vec2 o = x0.x > x0.y ? vec2(1.0, 0.0) : vec2(0.0, 1.0);
+  vec2 x1 = x0 - o + G2;
+  vec2 x2 = x0 - 1.0 + 2.0 * G2;
+  i = mod(i, 289.0);
+  vec3 a = permute289(permute289(i.x + vec3(0.0, o.x, 1.0)) + i.y + vec3(0.0, o.y, 1.0)) * (6.2831853 / 289.0);
+  vec3 w = max(0.5 - vec3(dot(x0, x0), dot(x1, x1), dot(x2, x2)), 0.0);
+  w *= w;
+  w *= w;
+  vec3 g = vec3(dot(vec2(cos(a.x), sin(a.x)), x0), dot(vec2(cos(a.y), sin(a.y)), x1), dot(vec2(cos(a.z), sin(a.z)), x2));
+  return 99.0 * dot(w, g);
+}
+
+/*
+ * Posición animada de un nodo (semántico: off = 0; satélite: off = desplazamiento). La misma para sprites, hubs y
+ * aristas. Respiración (spec §3.4): ruido simplex por instancia; cada nodo recorre en el tiempo su propia fila del
+ * campo de ruido, una por eje.
+ */
 vec3 nodePos(float ref, vec3 off) {
   vec3 p = mix(layoutPos(uFrom, ref), layoutPos(uTo, ref), uMix) + off;
-  float k = nodeKey(ref, off) * 6.2831;
-  return p + 0.012 * vec3(sin(uTime * 0.7 + k), cos(uTime * 0.6 + k * 0.65), sin(uTime * 0.5 + k * 0.37));
+  float lane = nodeKey(ref, off) * 173.0;
+  float t = uTime * BREATH_RATE;
+  return p + BREATH_AMP * vec3(simplex(vec2(t, lane)), simplex(vec2(t + 37.1, lane + 11.3)), simplex(vec2(t + 71.7, lane + 23.9)));
+}
+
+/*
+ * Niebla (spec §3.3): 0 por delante del plano de foco y hasta FOG_MAX detrás, según la profundidad de vista.
+ * Se aplica hacia el fondo: alfa en los nodos, intensidad en las aristas (aditivas) y color en los hubs (opacos).
+ */
+float fogOf(float depth) {
+  return FOG_MAX * smoothstep(uFocus - FOG_NEAR, uFocus + FOG_FAR, depth);
 }
 `;
 
@@ -53,7 +100,6 @@ export const NODE_VERT = /* glsl */ `
 ${COMMON}
 uniform float uPixelRatio;
 uniform float uViewportH;
-uniform float uFocus;
 uniform float uDim;
 uniform float uHoverActive;
 attribute float aRef;
@@ -82,7 +128,8 @@ void main() {
   vHl = hl;
   float hover = mix(1.0, aSemantic > 0.5 ? mix(0.35, 1.0, step(0.01, hl)) : 0.3, uHoverActive);
   float twinkle = 0.85 + 0.15 * sin(uTime * 1.3 + aSeed * 40.0);
-  vAlpha = (aSemantic > 0.5 ? 1.0 : 0.6 * twinkle) * (1.0 - 0.5 * coc) * uDim * hover;
+  float fog = fogOf(depth) * (1.0 - hl);
+  vAlpha = (aSemantic > 0.5 ? 1.0 : 0.6 * twinkle) * (1.0 - 0.5 * coc) * uDim * hover * (1.0 - fog);
 }
 `;
 
@@ -123,6 +170,7 @@ varying vec3 vN;
 varying vec3 vV;
 varying vec3 vColor;
 varying float vHl;
+varying float vFog;
 void main() {
   float hl = highlightOf(aRef);
   float ang = uTime * 0.25 + aRef;
@@ -135,6 +183,7 @@ void main() {
   vV = normalize(-mv.xyz);
   vColor = aColor * uDim;
   vHl = hl;
+  vFog = fogOf(max(-mv.z, 0.05)) * (1.0 - hl);
   gl_Position = projectionMatrix * mv;
 }
 `;
@@ -144,6 +193,7 @@ varying vec3 vN;
 varying vec3 vV;
 varying vec3 vColor;
 varying float vHl;
+varying float vFog;
 void main() {
   vec3 n = normalize(vN);
   vec3 v = normalize(vV);
@@ -153,6 +203,7 @@ void main() {
   env += vec3(0.95, 0.9, 0.85) * pow(max(refr.x * 0.7 + refr.y * 0.7, 0.0), 8.0) * 0.6;
   vec3 col = env * 0.6 + vColor * fres * 1.8 + vec3(1.0) * pow(fres, 7.0) * 0.9;
   col *= 1.0 + vHl * 1.4;
+  col = mix(col, vec3(0.004, 0.012, 0.02), vFog);
   gl_FragColor = vec4(col, 1.0);
   #include <tonemapping_fragment>
   #include <colorspace_fragment>
@@ -181,6 +232,9 @@ varying float vWeight;
 varying float vHl;
 varying float vSide;
 varying float vSemantic;
+varying float vCover;
+varying float vFog;
+const float DECOR_WIDTH = 0.4;
 vec3 bez(vec3 a, vec3 c, vec3 b, float t) {
   float u = 1.0 - t;
   return u * u * a + 2.0 * u * t * c + t * t * b;
@@ -205,11 +259,19 @@ void main() {
   vec2 tng = s1 - s0;
   float tl = length(tng);
   vec2 nrm = tl > 1e-4 ? vec2(-tng.y, tng.x) / tl : vec2(0.0, 1.0);
-  float hl = aSemantic * max(step(0.99, highlightOf(aA)), step(0.99, highlightOf(aB)));
-  float w = uWidth * (aSemantic > 0.5 ? 0.55 + 0.3 * aWeight : 0.4) * (1.0 + 1.4 * hl);
-  clip.xy += nrm * aSide * w * 2.0 / uResolution * clip.w;
+  float hA = step(0.99, highlightOf(aA));
+  float hB = step(0.99, highlightOf(aB));
+  float hl = aSemantic * max(hA, hB);
+  float w = uWidth * (aSemantic > 0.5 ? 0.55 + 0.3 * aWeight : DECOR_WIDTH) * (1.0 + 1.4 * hl);
+  /* Por debajo de 1 px de semiancho el rasterizador deja la cinta a trozos: se dibuja a 1 px y la línea base se
+     atenúa en proporción (vCover), así conserva la energía de su ancho real. */
+  float wd = max(w, 1.0);
+  clip.xy += nrm * aSide * wd * 2.0 / uResolution * clip.w;
   gl_Position = clip;
-  vT = aT;
+  /* Los pulsos van del nodo activo hacia sus vecinos (spec §2.2): si el activo es el extremo b, t se recorre al revés. */
+  vT = mix(aT, 1.0 - aT, aSemantic * hB * (1.0 - hA));
+  vCover = w / wd;
+  vFog = fogOf(max(clip.w, 0.05)) * (1.0 - hl);
   vColor = mix(aColA, aColB, aT);
   vSeed = aSeed;
   vWeight = aWeight;
@@ -230,17 +292,26 @@ varying float vWeight;
 varying float vHl;
 varying float vSide;
 varying float vSemantic;
+varying float vCover;
+varying float vFog;
+/* Opacidad de la línea base en reposo (spec §3.3: ~0.15). */
+const float BASE_SEMANTIC = 0.15;
+const float BASE_DECOR = 0.05;
 void main() {
   float aa = 1.0 - smoothstep(0.55, 1.0, abs(vSide));
-  float base = vSemantic > 0.5 ? 0.14 : 0.06;
+  /* La línea base y los pulsos tenues de la capa decorativa conservan la energía de su ancho real (vCover); los
+     pulsos semánticos son cuentas de luz HDR del ancho de la cinta: son los que tienen que pasar el umbral del bloom. */
+  float base = (vSemantic > 0.5 ? BASE_SEMANTIC : BASE_DECOR) * vCover;
   float speed = 0.16 + 0.1 * vWeight + 0.4 * vHl;
   float p1 = fract(uTime * speed + vSeed);
   float p2 = fract(uTime * speed * 0.61 + vSeed * 3.7);
   float pulse = exp(-pow((vT - p1) * 16.0, 2.0)) + 0.55 * exp(-pow((vT - p2) * 22.0, 2.0));
-  float glow = base + pulse * (vSemantic > 0.5 ? 1.5 : 0.35) * (1.0 + 2.2 * vHl);
+  float glow = base + pulse * (vSemantic > 0.5 ? 1.5 : 0.35 * vCover) * (1.0 + 2.2 * vHl);
   float hover = mix(1.0, mix(0.25, 1.0, vHl), uHoverActive);
   vec3 col = vColor * glow + vec3(1.0) * pulse * 0.55 * vSemantic * (1.0 + vHl);
-  gl_FragColor = vec4(col, aa * min(glow, 1.0) * uDim * hover);
+  /* Mezcla aditiva (SRC_ALPHA, ONE): la intensidad va en el color (base y pulsos HDR) y el alfa solo lleva
+     cobertura, atenuación y niebla. Si el alfa también llevara glow, la base contaría al cuadrado (0.15² ≈ 0.02). */
+  gl_FragColor = vec4(col, aa * uDim * hover * (1.0 - vFog));
   #include <tonemapping_fragment>
   #include <colorspace_fragment>
 }

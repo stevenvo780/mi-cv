@@ -245,7 +245,8 @@ export class GraphScene {
     this.u.uHighlight.value = this.highlight;
 
     const pick = (...names: (keyof typeof this.u)[]) => Object.fromEntries(names.map((n) => [n, this.u[n] as IUniform])) as Record<string, IUniform>;
-    const shared = ['uLayouts', 'uHighlight', 'uFrom', 'uTo', 'uMix', 'uTime'] as const;
+    // uFocus: plano de foco (bokeh de los nodos) y origen de la niebla, que aplican las tres capas.
+    const shared = ['uLayouts', 'uHighlight', 'uFrom', 'uTo', 'uMix', 'uTime', 'uFocus'] as const;
 
     const background = new Mesh(
       new PlaneGeometry(2, 2),
@@ -338,7 +339,7 @@ export class GraphScene {
       new ShaderMaterial({
         vertexShader: S.NODE_VERT,
         fragmentShader: S.NODE_FRAG,
-        uniforms: pick(...shared, 'uPixelRatio', 'uViewportH', 'uFocus', 'uDim', 'uHoverActive', 'uGlow'),
+        uniforms: pick(...shared, 'uPixelRatio', 'uViewportH', 'uDim', 'uHoverActive', 'uGlow'),
         transparent: true,
         depthWrite: false,
       }),
@@ -401,14 +402,18 @@ export class GraphScene {
     this.frameCount++;
     // 30 fps en reposo: el frame saltado no mueve `last`, así el dt del siguiente abarca los dos y el reloj no va a media velocidad.
     if (idle && this.frameCount % 2 === 1) return;
-    const dt = Math.min(Math.max((now - this.last) / 1000, 0), 0.05);
+    const interval = Math.max(now - this.last, 0);
+    const dt = Math.min(interval / 1000, 0.05);
     this.last = now;
+    const start = performance.now();
     const settling = this.update(dt);
     if (!this.motion && !this.dirty && !settling) return;
     this.renderFrame(dt);
     this.dirty = false;
     if (this.motion && !idle) {
-      const next = this.governor.sample(dt * 1000, now);
+      // Coste del frame (update + envío del render) e intervalo entre frames: el intervalo nunca baja del refresco
+      // de la pantalla (16.7 ms a 60 Hz), así que con él solo no se podría subir de nivel (ver QualityGovernor).
+      const next = this.governor.sample(performance.now() - start, now, interval);
       if (next !== null) void this.changeTier(next);
     }
   };

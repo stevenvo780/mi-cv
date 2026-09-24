@@ -12,6 +12,18 @@ const feed = (g: QualityGovernor, ms: number, frames: number, start: number) => 
   return { changed, now };
 };
 
+/** Frames con coste `workMs` y un intervalo entre frames `intervalMs` (el reloj avanza por el intervalo). */
+const feedFrames = (g: QualityGovernor, workMs: number, intervalMs: number, frames: number, start: number) => {
+  let changed = null;
+  let now = start;
+  for (let i = 0; i < frames; i++) {
+    now += intervalMs;
+    const r = g.sample(workMs, now, intervalMs);
+    if (r !== null) changed = r;
+  }
+  return { changed, now };
+};
+
 describe('calidad', () => {
   it('los niveles crecen en coste', () => {
     expect(TIERS[1].decor).toBeLessThan(TIERS[2].decor);
@@ -36,6 +48,34 @@ describe('calidad', () => {
     expect(second.changed).toBe(3);
     expect(feed(g, 8, 1200, second.now).changed).toBe(null);
     expect(g.tier).toBe(3);
+  });
+  it('a 60 Hz (intervalo de 16.7 ms) sube cuando el coste del frame es < 10 ms durante 5 s', () => {
+    const g = new QualityGovernor(1, 2);
+    expect(feedFrames(g, 4, 1000 / 60, 450, 0).changed).toBe(2);
+  });
+  it('baja por el intervalo aunque el coste en CPU sea bajo (GPU saturada) y entonces no sube', () => {
+    const g = new QualityGovernor(3);
+    expect(feedFrames(g, 3, 28, 90, 0).changed).toBe(2);
+    expect(feedFrames(g, 3, 28, 90, 90 * 28).changed).toBe(1);
+    const g2 = new QualityGovernor(1, 3);
+    expect(feedFrames(g2, 3, 21, 900, 0).changed).toBe(null);
+    expect(g2.tier).toBe(1);
+  });
+  it('cada bajada desde un nivel duplica la espera para volver a él (5 s, 10 s, 20 s…)', () => {
+    const g = new QualityGovernor(2);
+    const slow = (start: number) => feedFrames(g, 3, 28, 90, start);
+    const fast = (frames: number, start: number) => feedFrames(g, 4, 1000 / 60, frames, start);
+    let r = slow(0);
+    expect(r.changed).toBe(1);
+    r = fast(450, r.now); // 7.5 s: primera vuelta, espera de 5 s
+    expect(r.changed).toBe(2);
+    r = slow(r.now);
+    expect(r.changed).toBe(1);
+    r = fast(450, r.now); // 7.5 s < 10 s: no vuelve todavía
+    expect(r.changed).toBe(null);
+    r = fast(450, r.now); // 15 s en total
+    expect(r.changed).toBe(2);
+    expect(g.tier).toBe(2);
   });
   it('nunca baja de 1', () => {
     const g = new QualityGovernor(1);

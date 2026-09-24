@@ -4,6 +4,7 @@
 - Rama: `redesign/home-grafo`
 - Estado: diseño aprobado por Steven (narrativa, sistema visual, arquitectura y plan de publicación)
 - Actualizada el 2026-09-24 con lo construido en el Plan 1 y con el fix de su revisión final: las desviaciones están en §2 (filas 0 y 3), §3.1, §3.2, §4.1, §4.2, §4.3, §4.4, §4.6, §4.7, §4.8, §5, §6 y §8.
+- Tarea 3 del Plan 2 (shaders y `GraphScene`, ronda de fix 1): lo que concreta o cambia está en §3.3 (aristas y niebla), §3.4 (respiración), §4.4 (regulador) y §4.6 (archivos).
 - Lighthouse en móvil cumple desde la ronda de fix 2 de la Tarea 14: Performance 99 en `/es` y `/en` y LCP de laboratorio de 1.7 a 1.9 s, con el objetivo de LCP en ≤ 2.5 s (§5.2).
 
 ## 1. Objetivo
@@ -125,12 +126,15 @@ Tokens de la home en `src/styles/home.css` (capa `@layer home`), en OKLCH con re
 - **Aristas:**
   - Una cinta instanciada por arista, con Bézier cuadrática evaluada en el vertex shader.
   - Grosor constante en píxeles y antialiasing analítico.
+    - Una cinta de menos de 1 px de semiancho se dibuja a 1 px y su línea base se atenúa en proporción (la de los pulsos tenues de la capa decorativa, también). Así conserva la energía de su ancho real y el rasterizador no la deja a trozos.
   - Alfa base ~0.15.
-  - Pulsos `glow = exp(-k (t - fract(time*speed*w + seed))^2)` en HDR.
+    - **Tarea 3 del Plan 2:** las aristas se mezclan en aditivo, así que la intensidad va en el color y el alfa solo lleva cobertura, atenuación y niebla. La línea base es 0.15 en las aristas semánticas y **0.05 en las decorativas**. La capa decorativa llega a 8k aristas en T3, y con 0.08 ya cruzaba el umbral del bloom (0.85) en reposo, donde convergen los satélites de un nodo pesado.
+    - Medido en SwiftShader, con hubs y nodos por delante como en la escena real: en reposo, las aristas llegan como máximo a 0.26, 0.27 y 0.33 de luminancia en T1, T2 y T3. Los pulsos llegan a 6–11, así que solo ellos cruzan el umbral.
+  - Pulsos `glow = exp(-k (t - fract(time*speed*w + seed))^2)` en HDR. Al resaltar un nodo, recorren sus aristas desde él hacia los vecinos (§2.2).
 - **Postprocesado (según nivel):**
   - Bloom con umbral (mipmap blur, media resolución).
   - Viñeta y grano sutil.
-  - Niebla en el shader.
+  - Niebla en el shader: 0 por delante del plano de foco y hasta 0.7 detrás, según la profundidad de vista. Atenúa el alfa de los nodos, la intensidad de las aristas y el color de los hubs, y se retira en proporción al resaltado: nada en el nodo activo y sus aristas, a medias en sus vecinos.
   - DOF real solo en T3.
 - **Prohibido:** campo de estrellas o partículas sin aristas. Toda la capa decorativa son nodos conectados.
 
@@ -138,7 +142,7 @@ Tokens de la home en `src/styles/home.css` (capa `@layer home`), en OKLCH con re
 
 - **Easing:** expo-out.
 - **Cámara:** con amortiguación (`1 - exp(-k·dt)`).
-- **Respiración:** ruido simplex por instancia en el vertex shader.
+- **Respiración:** ruido simplex por instancia en el vertex shader. Es simplex 2D: cada instancia recorre en el tiempo su propia fila del campo, una por eje, con 0.016 de amplitud (misma RMS que la versión con senos del plan).
 - **Morphs:** `mix(layoutA, layoutB, smoothstep(progress))` en el vertex shader. Duración percibida 1.2–1.8 s, ligada al scroll con amortiguación.
 - **Aparición de texto:** CSS con `animation-timeline: view()` dentro de `@supports`. El estado por defecto es visible. El `<h1>` nunca arranca oculto.
 - **Scroll:** nativo; sin Lenis.
@@ -251,7 +255,7 @@ Tokens de la home en `src/styles/home.css` (capa `@layer home`), en OKLCH con re
   - Chrome no lo toma como candidato a LCP porque cubre todo el viewport: el LCP sigue siendo el nombre del h1, y lo comprueba un e2e.
   - Frente a `<svg><use href="…#p">` midió igual (§5.2), y `<img>` no depende de que el navegador resuelva degradados de un documento externo.
 - **Isla cliente `src/components/graph/GraphStage.tsx`** (Plan 2): se monta encima del póster. `Stage` monta a su lado la puerta `GraphStageLazy`, que no usa `next/dynamic` en el render y solo hace `import('./GraphStage')` tras el disparador del paso 2 (enmienda H1 del Plan 2, §5.1). El póster no cambia: sigue siendo el `<img>` del servidor.
-  1. Ejecuta la sonda de GPU `src/graph/probe.ts`. Devuelve falso si:
+  1. Ejecuta la sonda de GPU `src/graph/runtime/probe.ts`. Devuelve falso si:
      - `reduced-motion`;
      - `saveData`;
      - `deviceMemory < 4` o `hardwareConcurrency < 4`;
@@ -274,6 +278,8 @@ Tokens de la home en `src/styles/home.css` (capa `@layer home`), en OKLCH con re
   | T3 | Escritorio con GPU dedicada | ≤ 2 | 8k | Bloom + DOF |
 
   - Regulador: mediana del tiempo de frame cada 90 frames. Baja de nivel si > 20 ms y sube si < 10 ms sostenido durante 5 s.
+    - El tiempo de frame se mide de dos formas (`src/graph/runtime/quality.ts`). Para bajar cuenta el intervalo entre frames: incluye la GPU, que va asíncrona, y cualquier atasco, pero nunca baja del refresco de la pantalla (16.7 ms a 60 Hz). Para subir cuenta el coste del frame en CPU (update más envío del render), siempre que el intervalo no sea lento. Con el intervalo solo, en una pantalla de 60 Hz no se podría volver a subir.
+    - Ese coste no ve la GPU, así que una subida puede no aguantar. Cada bajada desde un nivel duplica la espera para volver a él (5 s, 10 s, 20 s…) y así un equipo limitado por la GPU no oscila entre dos niveles.
   - 30 fps tras 8 s sin input.
 - **Draw calls objetivo:** ≤ 6 (nodos SDF, hubs, aristas, etiquetas opcionales, postprocesado).
 - **Raycast:** fuerza bruta en el worker contra las esferas de los nodos semánticos.
@@ -297,9 +303,10 @@ src/app/[locale]/(portal)/...          frentes y lore (grupo (portal), con boots
 src/app/[locale]/opengraph-image.tsx   OG por locale
 src/components/home/*.tsx              HomeHeader, Stage, Hero, Method, Path, Fronts, Proof, Contact, HomeFooter, SectionHead, ProductSearch (cliente); MotionToggle (cliente) y useSectionProgress llegan con el Plan 2
 src/components/graph/GraphStage.tsx    isla cliente
-src/graph/{model,sources,relations,probe}.ts
-src/graph/scene/{GraphScene.ts,shaders/*.ts,layers/*.ts,quality.ts,camera.ts}
-src/graph/worker/graph.worker.ts
+src/graph/{model,sources,relations,layouts,codec,palette,camera0,layout-names,random,poster,artifacts}.ts
+src/graph/runtime/{protocol,probe,quality,loader,dispatch}.ts   sin three: también los importa el hilo principal
+src/graph/scene/{GraphScene,shaders,data,choreography}.ts        three.js (solo en el worker o en el fallback)
+src/graph/worker/graph.worker.ts       llega con la Tarea 4 del Plan 2
 src/graph/generated/{poster,stats}.ts  (generados, versionados)
 src/lib/site.ts                        SITE, locales, helpers de alternates
 src/content/home.ts                    textos es/en de la home (una sola fuente i18n para la home)
@@ -313,6 +320,12 @@ tests/graph/*.test.ts                  vitest
 e2e/home.spec.ts                       Playwright
 e2e/fixtures.ts                        test y expect de Playwright sin hits reales a GA (§6)
 ```
+
+**Desviación del Plan 2 en `src/graph`:** el diseño preveía `scene/{shaders/*.ts,layers/*.ts,quality.ts,camera.ts}`. Lo construido es otra cosa:
+- **Shaders:** los ocho (fondo, nodos, hubs y aristas, vertex y fragment) van en un solo `scene/shaders.ts`, con un bloque GLSL común (formas, resaltado, respiración y niebla). Así las tres capas comparten la misma `nodePos`.
+- **Capas:** no hay `layers/`. Las cuatro mallas las construye `GraphScene.buildMeshes()` desde los arrays de `scene/data.ts`.
+- **Regulador y sonda:** van en `runtime/` (`quality.ts`, `probe.ts`) porque el hilo principal importa `initialTier` y la sonda sin arrastrar three.
+- **Cámara:** no hay `camera.ts`. Las poses por sección están en `scene/choreography.ts` y la amortiguación en `GraphScene.update()`. La cámara inicial común es `camera0.ts`.
 
 ### 4.7 Analítica
 
