@@ -61,7 +61,8 @@
   - Foco de teclado en `[data-node]` → resalta el nodo.
 - **Prohibido:** campo de estrellas o partículas sin aristas; toda la capa decorativa son nodos conectados.
 - **Colores:** los de `src/graph/palette.ts`. La cámara inicial es `CAMERA0` (`src/graph/camera0.ts`), la misma que la del póster.
-- **Commits:** en español, con la línea `Co-Authored-By: Claude Opus 5.5 (1M context) <noreply@anthropic.com>`.
+- **Commits:** en español, con la línea `Co-Authored-By` del modelo que escribe el commit (enmienda H9). La de los snippets es un ejemplo.
+- **E2E sin hits reales a GA:** todo spec importa `test` y `expect` de `e2e/fixtures.ts` (Plan 1, residuos), no de `@playwright/test`. El fixture responde con 204 los hosts de medición, sirve `gtag.js` con un stub y falla si alguna petición de medición sale sin interceptar. Un proyecto de Playwright con `launchOptions` propios parte de `LAUNCH` (`playwright.config.ts`), que deja sin DNS esos hosts.
 - **Git:** sin push ni merge; los hace el controlador al final.
 
 ## Mapa de archivos (Plan 2)
@@ -963,7 +964,7 @@ Co-Authored-By: Claude Opus 5.5 (1M context) <noreply@anthropic.com>"
 
 **Files:**
 - Create: `src/graph/scene/shaders.ts`, `src/graph/scene/GraphScene.ts`, `src/graph/runtime/dispatch.ts`
-- Test: `tests/graph/scene/shaders.test.ts`
+- Test: `tests/graph/scene/shaders.test.ts`, `tests/graph/runtime/dispatch.test.ts` (enmienda H6)
 
 **Interfaces:**
 - Consume:
@@ -1277,6 +1278,8 @@ void main() {
 Run: `npx vitest run tests/graph/scene/shaders.test.ts` → Expected: PASS.
 
 - [ ] **Step 3: `dispatch.ts`**
+
+Test (enmienda H6): `tests/graph/runtime/dispatch.test.ts`, con una escena simulada (un objeto con `vi.fn()` por método, tipado con `as unknown as GraphScene`) y una aserción por cada variante de `MainToWorker` salvo `init`: el método que llama y sus argumentos. Escríbelo antes que `dispatch.ts` y comprueba que falla.
 
 ```ts
 import type { GraphScene } from '../scene/GraphScene';
@@ -2151,27 +2154,33 @@ export default function GraphStage({ locale, t }: { locale: Locale; t: HomeCopy[
       const allowWorker = new URLSearchParams(window.location.search).get('worker') !== 'off';
       const probeCanvas = document.createElement('canvas');
       if (allowWorker && typeof Worker !== 'undefined' && 'transferControlToOffscreen' in probeCanvas) {
+        // Enmienda H8: fuera del try, para terminarlo en el catch si algo falla después de crearlo
+        // (transferControlToOffscreen, postMessage). Los cierres usan la constante `w`: TS no estrecha un `let`
+        // dentro de un callback.
+        let worker: Worker | undefined;
         try {
           const canvas = probeCanvas;
           canvas.className = 'stage-canvas';
           host.appendChild(canvas);
-          const worker = new Worker(new URL('../../graph/worker/graph.worker.ts', import.meta.url), { type: 'module' });
+          const w = new Worker(new URL('../../graph/worker/graph.worker.ts', import.meta.url), { type: 'module' });
+          worker = w;
           const offscreen = canvas.transferControlToOffscreen();
-          worker.onmessage = (ev: MessageEvent<SceneEvent>) => onEvent(ev.data);
-          worker.onerror = (ev) => {
+          w.onmessage = (ev: MessageEvent<SceneEvent>) => onEvent(ev.data);
+          w.onerror = (ev) => {
             ev.preventDefault();
-            worker.terminate();
+            w.terminate();
             host.replaceChildren();
             sendRef.current = null;
             void startMain(host, common, binUrl).catch(teardown);
           };
           const init: MainToWorker = { type: 'init', canvas: offscreen, binUrl, ...common };
-          worker.postMessage(init, [offscreen]);
-          sendRef.current = (m) => worker.postMessage(m);
-          disposeRef.current = () => worker.terminate();
+          w.postMessage(init, [offscreen]);
+          sendRef.current = (m) => w.postMessage(m);
+          disposeRef.current = () => w.terminate();
           emitScroll();
           return;
         } catch (err) {
+          worker?.terminate();
           console.warn('[grafo] worker no disponible, uso el hilo principal:', err);
           host.replaceChildren();
         }
@@ -2385,15 +2394,15 @@ En `src/components/home/Hero.tsx`: `<section className="hero" aria-labelledby="h
 
 - [ ] **Step 6: Estilos del 3D en `src/styles/home.css`**
 
-Añade dentro de `@layer home`, antes del bloque de movimiento:
+Añade dentro de `@layer home`, antes del bloque de movimiento. Cada selector cuelga de `.home` (enmienda H5): los controles y el tooltip se montan con un portal dentro de `.home`, así que también les aplica.
 
 ```css
   /* ── Escena 3D ── */
-  .stage-host {
+  .home .stage-host {
     position: absolute;
     inset: 0;
   }
-  .stage-canvas {
+  .home .stage-canvas {
     position: absolute;
     inset: 0;
     display: block;
@@ -2402,19 +2411,23 @@ Añade dentro de `@layer home`, antes del bloque de movimiento:
     opacity: 0;
     transition: opacity 0.6s var(--ease-out);
   }
-  .stage[data-state='live'] .stage-canvas {
+  .home .stage[data-state='live'] .stage-canvas {
     opacity: 1;
   }
-  .stage[data-state='live'] .stage-poster {
+  .home .stage[data-state='live'] .stage-poster {
     animation: none;
     opacity: 0;
     transition: opacity 0.6s var(--ease-out);
   }
-  .stage[data-state='live']::before {
+  /* El halo se desvanece al ritmo del póster y del canvas (enmienda H10). */
+  .home .stage::before {
+    transition: opacity 0.6s var(--ease-out);
+  }
+  .home .stage[data-state='live']::before {
     opacity: 0;
   }
-  .graph-motion,
-  .graph-explore {
+  .home .graph-motion,
+  .home .graph-explore {
     position: fixed;
     right: var(--gutter);
     bottom: 1.25rem;
@@ -2434,23 +2447,23 @@ Añade dentro de `@layer home`, antes del bloque de movimiento:
     text-transform: uppercase;
     cursor: pointer;
   }
-  .graph-motion::before {
+  .home .graph-motion::before {
     content: '❚❚';
     font-size: 0.66rem;
     letter-spacing: -0.1em;
   }
-  .graph-motion[aria-pressed='true'] {
+  .home .graph-motion[aria-pressed='true'] {
     color: var(--gold-2);
     border-color: color-mix(in oklab, var(--gold) 50%, transparent);
   }
-  .graph-motion[aria-pressed='true']::before {
+  .home .graph-motion[aria-pressed='true']::before {
     content: '▶';
   }
-  .graph-explore {
+  .home .graph-explore {
     color: var(--text-strong);
     border-color: color-mix(in oklab, var(--teal) 60%, transparent);
   }
-  .graph-tip {
+  .home .graph-tip {
     position: fixed;
     left: 0;
     top: 0;
@@ -2465,25 +2478,25 @@ Añade dentro de `@layer home`, antes del bloque de movimiento:
     display: grid;
     gap: 0.2rem;
   }
-  .graph-tip-kind {
+  .home .graph-tip-kind {
     font-family: var(--f-mono);
     font-size: 0.66rem;
     letter-spacing: 0.14em;
     text-transform: uppercase;
     color: var(--teal-2);
   }
-  .graph-tip-label {
+  .home .graph-tip-label {
     font-family: var(--f-display);
     font-size: 1.3rem;
     line-height: 1.1;
     color: var(--text-strong);
   }
-  .graph-tip-role,
-  .graph-tip-years {
+  .home .graph-tip-role,
+  .home .graph-tip-years {
     font-size: 0.82rem;
     color: var(--text-soft);
   }
-  .graph-tip-hint {
+  .home .graph-tip-hint {
     margin-top: 0.3rem;
     font-size: 0.72rem;
     color: var(--gold-2);
@@ -2493,6 +2506,10 @@ Añade dentro de `@layer home`, antes del bloque de movimiento:
   }
 ```
 
+Especificidad, comprobada contra el `home.css` actual (todo en `@layer home`): `.home .stage[data-state='live'] .stage-poster` (0,4,0) gana a `.home .stage-poster` (0,2,0), que es donde el bloque de movimiento pone la animación de atenuación; `html[data-motion='paused'] .home .reveal` (0,3,1) gana a `.home .reveal` (0,2,0), dentro de `@supports`/`@media` o fuera. No dependen del orden.
+
+- Glifos: los `content` de `.graph-motion` van en `--f-mono`, y su subconjunto (`jetbrains-home.woff2`) no trae ninguno de los dos. `▶` (U+25B6) sí está en JetBrains Mono: añádelo en `scripts/subset-fonts.sh` y regenera. `❚` (U+275A) no está en ninguna de las fuentes de origen: va a `SYSTEM_GLYPHS` del e2e «tiene cada carácter en el subconjunto de su familia», que es el que lo detecta cuando el botón se ve.
+
 - [ ] **Step 7: Build y verificación del bundle del worker**
 
 ```bash
@@ -2500,10 +2517,7 @@ npm run typecheck && npm run lint && npm test && npm run build 2>&1 | tail -25
 ls .next/static/media 2>/dev/null | grep -i worker; grep -rl "GRF1\|graph.worker" .next/static/chunks 2>/dev/null | head -5
 ```
 
-Resultado esperado: el build pasa y existe un chunk del worker. Si Turbopack no acepta `new Worker(new URL(...), { type: 'module' })`:
-1. Cambia el script `build` a `NODE_ENV=production next build --webpack`.
-2. Documenta el motivo en el commit.
-3. Verifica de nuevo.
+Resultado esperado: el build pasa y existe un chunk del worker. El build ya usa `--webpack` (`next build --webpack` desde la Tarea 14 del Plan 1, enmienda H7), que emite `new Worker(new URL(...), { type: 'module' })` como chunk propio: no hay contingencia de Turbopack. Si no aparece el chunk, es un fallo que se investiga, no un cambio de bundler.
 
 - [ ] **Step 8: Prueba manual rápida en navegador**
 
@@ -2531,6 +2545,7 @@ Co-Authored-By: Claude Opus 5.5 (1M context) <noreply@anthropic.com>"
 **Files:**
 - Create: `e2e/graph3d.spec.ts`
 - Modify: `playwright.config.ts` (proyecto `3d` con WebGL por SwiftShader, que solo ejecuta `graph3d.spec.ts`; los demás proyectos lo ignoran)
+- Modify: `e2e/home.spec.ts` (el presupuesto de JS pasa a la ruta crítica, enmienda H1) y la tabla de §5 de `docs/superpowers/specs/2026-09-23-home-grafo-design.md`, en el mismo commit
 
 **Interfaces:**
 - Consume: todo lo anterior; selectores `.stage[data-state="live"]`, `.graph-motion`, `.graph-explore`, `.graph-tip`, `[data-section]`, `[data-node]`.
@@ -2549,10 +2564,8 @@ En `playwright.config.ts`:
       timeout: 180_000,
       use: {
         viewport: { width: 1440, height: 900 },
-        launchOptions: {
-          executablePath: process.env.PW_CHROME ?? '/usr/bin/google-chrome',
-          args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'],
-        },
+        // LAUNCH ya lleva el ejecutable y la regla que deja sin DNS los hosts de medición: se conservan.
+        launchOptions: { ...LAUNCH, args: [...LAUNCH.args, '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'] },
       },
     },
 ```
@@ -2563,7 +2576,9 @@ En `playwright.config.ts`:
 
 ```ts
 import { gzipSync } from 'node:zlib';
-import { expect, test, type Page } from '@playwright/test';
+import type { Page } from '@playwright/test';
+// Sin hits reales a GA: medición en 204 y gtag.js de pega (e2e/fixtures.ts).
+import { expect, test } from './fixtures';
 
 const SHOTS = '/workspace/.scratch-steven-redesign/shots';
 
@@ -2661,40 +2676,77 @@ test('fallback en el hilo principal (?worker=off) también pinta', async ({ page
   expect(errors).toEqual([]);
 });
 
-test('reduced motion: póster y botón "Explorar en 3D" sin autoplay', async ({ browser }) => {
-  const context = await browser.newContext({ reducedMotion: 'reduce', viewport: { width: 1440, height: 900 } });
-  const page = await context.newPage();
-  await page.goto('/es');
-  await page.mouse.move(300, 300);
-  const explore = page.locator('.graph-explore');
-  await expect(explore).toBeVisible({ timeout: 20_000 });
-  await explore.click();
-  await expect(page.locator('.stage[data-state="live"]')).toBeAttached({ timeout: 60_000 });
-  await expect(page.locator('.graph-motion')).toHaveAttribute('aria-pressed', 'true');
-  await context.close();
+test.describe('reduced motion', () => {
+  // El contexto del fixture (sin hits a GA) con prefers-reduced-motion: reduce. Un browser.newContext() a mano no
+  // pasaría por el fixture. El viewport es el del proyecto 3d.
+  test.use({ reducedMotion: 'reduce' });
+
+  test('reduced motion: póster y botón "Explorar en 3D" sin autoplay', async ({ page }) => {
+    await page.goto('/es');
+    await page.mouse.move(300, 300);
+    const explore = page.locator('.graph-explore');
+    await expect(explore).toBeVisible({ timeout: 20_000 });
+    await explore.click();
+    await expect(page.locator('.stage[data-state="live"]')).toBeAttached({ timeout: 60_000 });
+    await expect(page.locator('.graph-motion')).toHaveAttribute('aria-pressed', 'true');
+  });
 });
 
-test('presupuesto del worker y sus chunks ≤ 175 KB gz', async ({ page, baseURL }) => {
-  const before = new Set<string>();
-  const after: Promise<number>[] = [];
-  let armed = false;
+// Enmienda H1: lo que la página pide antes de `load` es la ruta crítica (≤ 130 KB, lo mide e2e/home.spec.ts); el
+// chunk de GraphStage, el worker y sus chunks, que la puerta pide después (interacción o idle), son el presupuesto
+// del 3D. La puerta puede arrancar antes de `networkidle`, así que se separa por el Resource Timing de la página y
+// no por el momento en que el test empieza a contar.
+test('presupuesto del 3D (chunk de GraphStage, worker y sus chunks) ≤ 175 KB gz', async ({ page, baseURL }) => {
+  const sizes = new Map<string, Promise<number>>();
   page.on('response', (r) => {
     const url = r.url();
-    if (!url.startsWith(baseURL!) || !/\.m?js(\?|$)/.test(url)) return;
-    if (!armed) before.add(url);
-    else if (!before.has(url)) after.push(r.body().then((b) => gzipSync(b).length));
+    if (url.startsWith(baseURL!) && /\.m?js(\?|$)/.test(url) && !sizes.has(url)) sizes.set(url, r.body().then((b) => gzipSync(b).length));
   });
-  await page.goto('/es?gl=force', { waitUntil: 'networkidle' });
-  armed = true;
+  await page.goto('/es?gl=force');
   await page.mouse.move(320, 240);
   await expect(page.locator('.stage[data-state="live"]')).toBeAttached({ timeout: 60_000 });
   await page.waitForTimeout(1500);
-  const total = (await Promise.all(after)).reduce((x, y) => x + y, 0);
-  console.log(`JS del 3D: ${(total / 1024).toFixed(1)} KB gz en ${after.length} archivos`);
+  // Lo que empezó antes de load. El worker y lo que importa no están en el Resource Timing de la página: cuentan.
+  const critical = new Set(
+    await page.evaluate(() => {
+      const load = (performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming).loadEventStart;
+      return performance.getEntriesByType('resource').filter((e) => e.startTime < load).map((e) => e.name);
+    }),
+  );
+  const deferred = [...sizes].filter(([url]) => !critical.has(url));
+  const total = (await Promise.all(deferred.map(([, size]) => size))).reduce((x, y) => x + y, 0);
+  console.log(`JS del 3D: ${(total / 1024).toFixed(1)} KB gz en ${deferred.length} archivos`);
   expect(total).toBeGreaterThan(0);
   expect(total).toBeLessThanOrEqual(175 * 1024);
 });
 ```
+
+- [ ] **Step 2b: Presupuesto de la ruta crítica en `e2e/home.spec.ts` (enmienda H1)**
+
+El test «JS del hilo principal ≤ 130 KB gz» pasa a contar solo los scripts que la página pide antes de `load`, con el mismo Resource Timing que el test del 3D. Así la puerta `GraphStageLazy` cuenta, y lo que pide después no:
+
+```ts
+    // Presupuesto de la spec §5 (enmienda H1): la ruta crítica, los scripts pedidos antes de `load`. La puerta
+    // GraphStageLazy entra aquí; el chunk de GraphStage y el worker, que pide después, van al presupuesto del 3D.
+    test('JS de la ruta crítica ≤ 130 KB gz', async ({ page, baseURL }) => {
+      const BUDGET = 130 * 1024;
+      const sizes = new Map<string, Promise<number>>();
+      page.on('response', (r) => {
+        if (r.request().resourceType() === 'script' && r.url().startsWith(baseURL!)) sizes.set(r.url(), r.body().then((b) => gzipSync(b).length));
+      });
+      await page.goto(`/${locale}`, { waitUntil: 'networkidle' });
+      const critical = await page.evaluate(() => {
+        const load = (performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming).loadEventStart;
+        return performance.getEntriesByType('resource').filter((e) => e.startTime < load).map((e) => e.name);
+      });
+      const total = (await Promise.all(critical.filter((url) => sizes.has(url)).map((url) => sizes.get(url)!))).reduce((a, b) => a + b, 0);
+      console.log(`JS /${locale}: ${total} B gz (${(total / 1024).toFixed(1)} KB), margen ${BUDGET - total} B`);
+      expect(total, `JS de /${locale}: ${total} B gz frente a ${BUDGET} B (spec §5.1)`).toBeLessThanOrEqual(BUDGET);
+    });
+```
+
+- Antes de montar la puerta, este test y el anterior dan la misma cifra (132 460 B el 2026-09-24): hoy todos los scripts de la home se piden antes de `load`. Compruébalo antes de seguir.
+- En el mismo commit, la tabla de §5 de la spec dice «JS de la ruta crítica (scripts pedidos antes de `load`)».
 
 - [ ] **Step 3: Ejecutar**
 
@@ -2710,7 +2762,7 @@ Resultado esperado: pasan todos los proyectos, también los e2e del Plan 1. Que 
 
 ```bash
 git add -A
-git commit -m "test(e2e): grafo 3D en navegador (worker, hover, pausa, formas por sección, foco, fallback, reduced motion y presupuesto)
+git commit -m "test(e2e): grafo 3D en navegador (worker, hover, pausa, formas por sección, foco, fallback, reduced motion) y presupuestos de la ruta crítica y del 3D
 
 Co-Authored-By: Claude Opus 5.5 (1M context) <noreply@anthropic.com>"
 ```
