@@ -26,6 +26,9 @@ vi.mock('next/link', async () => {
   return { default: Link };
 });
 
+// geist/font/sans llama a next/font/local, que solo funciona dentro del build de Next (lo usa global-not-found).
+vi.mock('geist/font/sans', () => ({ GeistSans: { className: 'geist', variable: 'geist-variable' } }));
+
 vi.mock('next/navigation', () => ({
   useParams: () => ({ locale: 'es' }),
   usePathname: () => '/es/lore',
@@ -80,6 +83,15 @@ describe('enlaces entre los grupos de rutas (home) y (portal)', () => {
       { href: '/es', client: false },
       { href: '/en', client: false },
     ]);
+  });
+
+  // Sin theme-color propio, la barra del navegador en móvil no lleva el fondo de NotFoundView (#05090b): el layout
+  // raíz ya no lo fija (cada grupo pone el suyo) y los 404 no están en ningún grupo.
+  it.each([
+    ['[locale]/not-found', () => import('@/app/[locale]/not-found')],
+    ['global-not-found', () => import('@/app/global-not-found')],
+  ])('%s declara theme-color #05090b', async (_name, load) => {
+    expect((await load()).viewport).toEqual({ themeColor: '#05090b' });
   });
 
   it('la vista 404 muestra los dos idiomas, cada uno con su lang', () => {

@@ -157,7 +157,7 @@ Tokens de la home en `src/styles/home.css` (capa `@layer home`), en OKLCH con re
   - `generateStaticParams` → `es`, `en`, con `dynamicParams = false`.
   - Se elimina `headers()` y el header `x-locale`.
   - Se elimina `src/app/layout.tsx`: `[locale]` pasa a ser el único layout raíz.
-  - El 404 global pasa a `src/app/global-not-found.tsx`, con el flag experimental `globalNotFound`, sustituyendo a `src/app/not-found.tsx`. Los dos 404 (el global y el de `[locale]`) son bilingües, como el anterior: ninguno recibe el locale de la URL.
+  - El 404 global pasa a `src/app/global-not-found.tsx`, con el flag experimental `globalNotFound`, sustituyendo a `src/app/not-found.tsx`. Los dos 404 (el global y el de `[locale]`) son bilingües, como el anterior: ninguno recibe el locale de la URL. Los dos fijan `theme-color` `#05090b`, el fondo de su vista (la home fija `#05090b` y el portal `#0b1417` desde su grupo de rutas; el layout raíz no fija ninguno).
   - Se eliminan `src/app/opengraph-image.tsx` y `public/og-image.png` en favor de la OG por locale. `robots.ts`, `sitemap.ts`, `icon.svg` y `favicon.ico` siguen en `src/app/`.
 - **Proxy:** `src/middleware.ts` → `src/proxy.ts`. Solo redirige `/` según `Accept-Language` (etiquetas ordenadas por su peso q; gana la primera es/en) y fuerza el prefijo de locale. Las redirecciones conservan la query (UTM). Sin `console.log`. Lo cubren `tests/lib/proxy.test.ts` (redirecciones, pesos q y matcher: sitemap, robots, `/graph`, `/_next` y OG) y un e2e.
 - **Lint:** ESLint 9 con configuración plana (`eslint.config.mjs`), `eslint-config-next@16`, script `"lint": "eslint ."`.

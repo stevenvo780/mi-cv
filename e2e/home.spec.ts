@@ -384,5 +384,6 @@ test('404 reales y bilingües', async ({ page }) => {
     await expect(page.locator('h1 [lang="en"]')).toHaveText('This page does not exist');
     await expect(page.locator('main a[href="/es"]')).toHaveText('Volver al inicio');
     await expect(page.locator('main a[href="/en"]')).toHaveText('Back to home');
+    await expect(page.locator('meta[name="theme-color"]')).toHaveAttribute('content', '#05090b');
   }
 });
