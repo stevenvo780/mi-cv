@@ -10,11 +10,13 @@ import { test as base, expect, type BrowserContext, type Page, type Request } fr
  *   `test.use({ realGtag: true })`.
  * - Un listener de requests comprueba al final que ninguna petición a un host de medición salió sin pasar por la
  *   ruta. Si alguna sale, el test falla y la lista.
- * - Antes de cerrar, apaga GA en cada página (`window['ga-disable-<ID>'] = true`). gtag manda una baliza al descargar
- *   la página (pagehide), y esa baliza keepalive no pasa por las rutas de Playwright ni emite el evento `request`:
- *   medido con un proxy, al navegar a about:blank la baliza llegaba a www.google-analytics.com, y al cerrar el
- *   contexto llegaba a abrir la conexión. Con la bandera, gtag no la envía. playwright.config.ts deja además sin DNS
- *   los hosts de medición, por si algo más se escapara de las rutas.
+ * - Antes de cerrar, silencia a Google en cada página. Al descargarse (pagehide), gtag manda balizas keepalive que no
+ *   pasan por las rutas de Playwright ni emiten el evento `request`. Medido con un proxy y el NetLog de Chrome: al
+ *   navegar a about:blank, la de GA llegaba a www.google-analytics.com, y al cerrar el contexto, la de diagnóstico de
+ *   la etiqueta (googletagmanager.com/td) llegó a enviar sus cabeceras. Por eso se activa el opt-out oficial de GA
+ *   (`window['ga-disable-<ID>'] = true`) y un script de inicio, que envuelve fetch y sendBeacon desde antes de que
+ *   cargue gtag, descarta en la página lo que vaya a Google a partir de esa señal. playwright.config.ts deja además
+ *   sin DNS los hosts de medición (no googletagmanager.com, del que el test de GA pide gtag.js).
  *
  * Bajo la CSP de producción, Chromium bloquea antes de llegar a la capa de red: una petición que viola la CSP no
  * alcanza la ruta y deja su evento securitypolicyviolation, así que las rutas no tapan violaciones.
@@ -69,6 +71,7 @@ export async function guardMeasurement(context: BrowserContext, { realGtag = fal
   if (!realGtag) {
     await context.route(isGtag, (route) => route.fulfill({ status: 200, contentType: 'application/javascript', body: '' }));
   }
+  await context.addInitScript(silenceGoogleOnTeardown);
   return {
     intercepted: () => ({ ...intercepted }),
     leaked: () =>
@@ -79,10 +82,36 @@ export async function guardMeasurement(context: BrowserContext, { realGtag = fal
   };
 }
 
-/** Opt-out oficial de GA: con la bandera, gtag no envía nada más (tampoco la baliza de pagehide al cerrar). */
-async function disableGa(page: Page) {
+type QuietWindow = Window & { __e2eQuiet?: boolean };
+
+/**
+ * Script de inicio de cada página: fetch y sendBeacon pasan tal cual hasta que el fixture marca `__e2eQuiet`; desde
+ * entonces, lo que va a Google se descarta en la página (las balizas de pagehide al cerrar no pasan por las rutas).
+ */
+function silenceGoogleOnTeardown() {
+  const google = /^https?:\/\/([^/?#]+\.)?(google-analytics\.com|analytics\.google\.com|doubleclick\.net|googletagmanager\.com|google\.[a-z.]+)([:/?#]|$)/;
+  const drop = (url: string) => (window as QuietWindow).__e2eQuiet === true && google.test(new URL(url, location.href).href);
+  const sendBeacon = navigator.sendBeacon.bind(navigator);
+  navigator.sendBeacon = (url, data) => (drop(String(url)) ? true : sendBeacon(url, data));
+  const fetch = window.fetch.bind(window);
+  window.fetch = (input, init) =>
+    drop(input instanceof Request ? input.url : String(input)) ? Promise.resolve(new Response(null, { status: 204 })) : fetch(input, init);
+}
+
+/**
+ * Antes de cerrar: opt-out oficial de GA y, desde ya, nada a Google desde la página (ver silenceGoogleOnTeardown).
+ * Si Analytics.tsx aún no cargó gtag, un `window.gtag` vacío hace que su respaldo de 5 s no lo pida durante el cierre
+ * (con el contexto cerrándose, la ruta del stub ya no responde y la petición de gtag.js salía a la red).
+ */
+async function quietGoogle(page: Page) {
   if (page.isClosed()) return;
-  await page.evaluate((id) => Object.assign(window, { [`ga-disable-${id}`]: true }), GA_ID).catch(() => {});
+  await page
+    .evaluate((id) => {
+      const w = window as QuietWindow & { gtag?: (...args: unknown[]) => void };
+      Object.assign(w, { [`ga-disable-${id}`]: true, __e2eQuiet: true });
+      w.gtag ??= () => {};
+    }, GA_ID)
+    .catch(() => {});
 }
 
 export const test = base.extend<{ realGtag: boolean; measurementGuard: MeasurementGuard }>({
@@ -91,7 +120,7 @@ export const test = base.extend<{ realGtag: boolean; measurementGuard: Measureme
     async ({ context, realGtag }, use, testInfo) => {
       const guard = await guardMeasurement(context, { realGtag });
       await use(guard);
-      await Promise.all(context.pages().map((page) => disableGa(page)));
+      await Promise.all(context.pages().map((page) => quietGoogle(page)));
       const leaked = guard.leaked();
       const hosts = Object.entries(guard.intercepted());
       const total = hosts.reduce((n, [, count]) => n + count, 0);
