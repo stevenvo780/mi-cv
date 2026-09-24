@@ -1181,7 +1181,7 @@ Co-Authored-By: Claude Opus 5.5 (1M context) <noreply@anthropic.com>"
 ### Task 5: Las 5 formas del grafo (layouts precalculados)
 
 **Files:**
-- Create: `src/types/d3-force-3d.d.ts`, `src/graph/layouts.ts`
+- Create: `src/types/d3-force-3d.d.ts`, `src/graph/layout-names.ts`, `src/graph/layouts.ts`
 - Test: `tests/graph/layouts.test.ts`
 - Add devDependency: `d3-force-3d@3.0.6`
 
@@ -1346,19 +1346,29 @@ describe('computeLayouts', () => {
 
 Run: `npx vitest run tests/graph/layouts.test.ts` → Expected: FAIL (`Cannot find module '@/graph/layouts'`).
 
-- [ ] **Step 3: Implementar `layouts.ts`**
+- [ ] **Step 3: Implementar `layout-names.ts` y `layouts.ts`**
+
+Los nombres de las formas viven en un módulo sin dependencias porque el worker WebGL del Plan 2 los importa (vía `codec.ts`). Si vivieran en `layouts.ts`, arrastrarían `d3-force-3d`, que es solo de build, al bundle de producción.
+
+`src/graph/layout-names.ts`:
+
+```ts
+/** Sin dependencias: lo importan el códec y el worker WebGL (Plan 2). */
+export const LAYOUT_NAMES = ['red', 'hemisferios', 'helice', 'clusters', 'lemniscata'] as const;
+export type LayoutName = (typeof LAYOUT_NAMES)[number];
+export type Layouts = Record<LayoutName, Float32Array>;
+```
 
 `src/graph/layouts.ts`:
 
 ```ts
 import { forceCenter, forceLink, forceManyBody, forceSimulation } from 'd3-force-3d';
 import type { FrenteId } from '@/data/frentes';
+import { LAYOUT_NAMES, type LayoutName, type Layouts } from './layout-names';
 import type { GNode, GraphModel } from './model';
 import { BRIDGE_PRODUCTS } from './relations';
 
-export const LAYOUT_NAMES = ['red', 'hemisferios', 'helice', 'clusters', 'lemniscata'] as const;
-export type LayoutName = (typeof LAYOUT_NAMES)[number];
-export type Layouts = Record<LayoutName, Float32Array>;
+export { LAYOUT_NAMES, type LayoutName, type Layouts };
 
 export const CLUSTER_CENTERS: Record<FrenteId, [number, number, number]> = {
   informatica: [-0.52, 0.18, 0.05],
@@ -1597,7 +1607,7 @@ Co-Authored-By: Claude Opus 5.5 (1M context) <noreply@anthropic.com>"
 - Test: `tests/graph/codec.test.ts`
 
 **Interfaces:**
-- Consume: `GraphModel`, `GNode`, `NodeKind`, `RelKind`, `Bilingual` (Tarea 4); `LAYOUT_NAMES`, `Layouts`, `LayoutName` (Tarea 5).
+- Consume: `GraphModel`, `GNode`, `NodeKind`, `RelKind`, `Bilingual` (Tarea 4); `LAYOUT_NAMES`, `Layouts`, `LayoutName` desde `./layout-names` (Tarea 5). El códec no puede importar `./layouts`: el worker del Plan 2 lo carga en producción.
 - Produce:
   - `KINDS`, `RELS`, `FRENTES`, `NO_FRENTE`.
   - `interface MetaNode`, `interface GraphMeta`, `interface DecodedGraph`.
@@ -1673,7 +1683,7 @@ Run: `npx vitest run tests/graph/codec.test.ts` → Expected: FAIL (módulo inex
 
 ```ts
 import type { FrenteId } from '@/data/frentes';
-import { LAYOUT_NAMES, type LayoutName, type Layouts } from './layouts';
+import { LAYOUT_NAMES, type LayoutName, type Layouts } from './layout-names';
 import type { Bilingual, GNode, GraphModel, NodeKind, RelKind } from './model';
 
 export const KINDS: readonly NodeKind[] = ['self', 'frente', 'empresa', 'producto', 'grupo', 'tecnologia', 'concepto'];
