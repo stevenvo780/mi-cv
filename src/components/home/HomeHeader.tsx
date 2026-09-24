@@ -6,7 +6,8 @@ import type { Locale } from '@/lib/site';
  * Cierra el menú móvil (<details>) al elegir una sección, al tocar fuera y con Escape (que devuelve el foco al
  * botón si estaba dentro). Un <details> abierto sigue abierto tras navegar a un ancla y, como la barra es fija,
  * se quedaba tapando la sección de destino. Script inline y delegado en document: no añade un chunk cliente al
- * presupuesto de JS de la home (spec §5.1) y la CSP ya admite 'unsafe-inline'.
+ * presupuesto de JS de la home (spec §5.1) y la CSP ya admite 'unsafe-inline'. Es un módulo, así que se ejecuta
+ * diferido, tras el análisis del documento, sin bloquear el parser.
  */
 const MENU_SCRIPT = `(()=>{const d=document,q='.home details.menu[open]';d.addEventListener('click',e=>{const m=d.querySelector(q),t=e.target;if(m&&t instanceof Element&&(t.closest('.home .menu a')||!m.contains(t)))m.open=false});d.addEventListener('keydown',e=>{const m=d.querySelector(q);if(e.key!=='Escape'||!m)return;const f=m.contains(d.activeElement);m.open=false;if(f)m.querySelector('summary').focus()})})()`;
 
@@ -54,7 +55,9 @@ export default function HomeHeader({ locale, t }: { locale: Locale; t: HomeCopy 
           </details>
         </nav>
       </div>
-      <script dangerouslySetInnerHTML={{ __html: MENU_SCRIPT }} />
+      {/* type="module": un script inline clásico bloquea el parser hasta que llega el CSS, y Chrome pintaba antes
+          la barra sola, lo que adelantaba la descarga de dos fuentes al simulador del LCP (spec §5.2). */}
+      <script type="module" dangerouslySetInnerHTML={{ __html: MENU_SCRIPT }} />
     </header>
   );
 }
