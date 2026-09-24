@@ -181,6 +181,22 @@ test('las subpáginas siguen funcionando con su propio canonical', async ({ page
   }
 });
 
+// El proxy decide adónde va la URL raíz del dominio y pone el locale a las rutas que no lo llevan (spec §4.1).
+test('el proxy redirige la raíz por idioma y deja pasar sitemap y robots', async ({ request }) => {
+  const location = async (path: string, headers?: Record<string, string>) => {
+    const res = await request.get(path, { headers, maxRedirects: 0 });
+    expect(res.status(), path).toBe(307);
+    const url = new URL(res.headers()['location'], 'http://localhost'); // next start la manda relativa
+    return url.pathname + url.search;
+  };
+  expect(await location('/', { 'accept-language': 'es-CO,es;q=0.9' })).toBe('/es');
+  expect(await location('/', { 'accept-language': 'pt-BR,pt;q=0.9,es;q=0.8' })).toBe('/es');
+  expect(await location('/')).toBe('/en');
+  expect(await location('/?utm_source=linkedin', { 'accept-language': 'es' })).toBe('/es?utm_source=linkedin');
+  expect(await location('/lore')).toBe('/en/lore');
+  for (const path of ['/sitemap.xml', '/robots.txt']) expect((await request.get(path, { maxRedirects: 0 })).status(), path).toBe(200);
+});
+
 test('404 reales y bilingües', async ({ page }) => {
   for (const path of ['/es/no-existe', '/en/filosofia-x']) {
     expect((await page.goto(path))!.status(), path).toBe(404);
