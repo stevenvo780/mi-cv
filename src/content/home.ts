@@ -1,6 +1,19 @@
 import aboutEs from '@/locales/es/common/about.json';
 import aboutEn from '@/locales/en/common/about.json';
+import { frenteOrder } from '@/data/frentes';
 import type { Locale } from '@/lib/site';
+
+const COUNT_WORDS: Record<Locale, readonly string[]> = {
+  es: ['Dos', 'Tres', 'Cuatro', 'Cinco', 'Seis', 'Siete', 'Ocho', 'Nueve', 'Diez'],
+  en: ['Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten'],
+};
+
+/** Numeral en palabras (2–10) para un título: la home no escribe cifras a mano, las deriva de los datos. */
+export function countWord(locale: Locale, n: number): string {
+  const word = COUNT_WORDS[locale][n - 2];
+  if (!word) throw new Error(`Sin numeral en palabras para ${n} (${locale})`);
+  return word;
+}
 
 export interface HomeCopy {
   meta: { title: string; description: string; jobTitle: string[]; knowsAbout: string[] };
@@ -89,7 +102,7 @@ export const HOME: Record<Locale, HomeCopy> = {
     },
     fronts: {
       eyebrow: '03 · Frentes',
-      title: 'Cuatro frentes, un mismo criterio',
+      title: `${countWord('es', frenteOrder.length)} frentes, un mismo criterio`,
       lead: 'Cada producto es una tesis sobre lógica, sistemas complejos o software que genera caja.',
       searchLabel: 'Buscar en el portafolio',
       searchPlaceholder: 'Producto, tecnología o tema…',
@@ -168,7 +181,7 @@ export const HOME: Record<Locale, HomeCopy> = {
     },
     fronts: {
       eyebrow: '03 · Fronts',
-      title: 'Four fronts, one standard',
+      title: `${countWord('en', frenteOrder.length)} fronts, one standard`,
       lead: 'Each product is a thesis on logic, complex systems or software that makes money.',
       searchLabel: 'Search the portfolio',
       searchPlaceholder: 'Product, technology or topic…',
