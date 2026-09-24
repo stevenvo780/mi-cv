@@ -245,6 +245,15 @@ for (const locale of ['es', 'en'] as const) {
       await expect(page.locator('meta[name="theme-color"]')).toHaveAttribute('content', '#0b1417');
       await scrollToEnd(page);
       expect([...errors, ...(await violations())], path).toEqual([]);
+      // --font-cormorant es una sola familia con caras rectas y cursivas: el texto recto del portal (Lore pinta
+      // --font-serif a 600) usa la cara recta, no una cursiva sintetizada.
+      const cormorant = await page.evaluate(async () => {
+        await document.fonts.ready;
+        const family = getComputedStyle(document.documentElement).getPropertyValue('--font-cormorant').split(',')[0].trim().replace(/["']/g, '');
+        return [...document.fonts].filter((f) => f.family.replace(/["']/g, '') === family).map((f) => `${f.style}|${f.status}`);
+      });
+      expect(cormorant, path).toContain('normal|loaded');
+      expect(cormorant.some((f) => f.startsWith('italic|')), path).toBe(true);
     }
   });
 }
