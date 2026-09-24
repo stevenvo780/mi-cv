@@ -2,7 +2,8 @@ import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { gzipSync } from 'node:zlib';
-import { expect, test, type Page } from '@playwright/test';
+import type { Page } from '@playwright/test';
+import { GA_ID, GTAG_URL, expect, test } from './fixtures';
 
 const SITE = 'https://www.stevenvallejo.com';
 const SHOTS = '/workspace/.scratch-steven-redesign/shots';
@@ -288,33 +289,45 @@ for (const locale of ['es', 'en'] as const) {
 }
 
 // GA solo se carga con la primera interacción (o 5 s después de load), así que ningún otro test lo ve: aquí se
-// provoca y se exige que gtag.js y su petición de medición pasen la CSP (spec §4.1 y §5).
-test('GA se carga con la primera interacción y no viola la CSP', async ({ page }, info) => {
-  test.skip(info.project.name !== 'desktop', 'basta un proyecto: pide gtag.js real a Google');
-  const errors = collectErrors(page);
-  const violations = await watchCsp(page);
-  // Las peticiones de medición no salen del test, para no ensuciar la propiedad: se responden aquí con 204. La CSP
-  // se evalúa antes, en el navegador, así que una petición bloqueada nunca llega a esta ruta y deja su violación.
-  await page.route(/^https:\/\/([a-z0-9-]+\.)*(google-analytics\.com|analytics\.google\.com|doubleclick\.net|google\.com)\//, (r) =>
-    r.fulfill({ status: 204 }),
-  );
-  const collects: string[] = [];
-  page.on('request', (r) => {
-    if (/\/g\/collect\b/.test(r.url())) collects.push(r.url());
+// provoca y se exige que el gtag.js real y su petición de medición pasen la CSP (spec §4.1 y §5). La medición no sale
+// del test: el fixture (e2e/fixtures.ts) la responde con 204. La CSP se evalúa antes, en el navegador, así que una
+// petición bloqueada nunca llega a esa ruta y deja su violación.
+test.describe('GA con el gtag.js real', () => {
+  test.use({ realGtag: true });
+
+  test('GA se carga con la primera interacción y no viola la CSP', async ({ page }, info) => {
+    test.skip(info.project.name !== 'desktop', 'basta un proyecto: pide gtag.js real a Google');
+    const errors = collectErrors(page);
+    const violations = await watchCsp(page);
+    const collects: string[] = [];
+    page.on('request', (r) => {
+      if (/\/g\/collect\b/.test(r.url())) collects.push(r.url());
+    });
+    // Antes del goto: si la carga se alarga más de 5 s, el respaldo de Analytics pide gtag.js sin esperar al ratón.
+    const gtag = Promise.race([
+      page.waitForResponse((r) => r.url().startsWith(GTAG_URL), { timeout: 20_000 }).then((r) => `HTTP ${r.status()}`),
+      page
+        .waitForEvent('requestfailed', { predicate: (r) => r.url().startsWith(GTAG_URL), timeout: 20_000 })
+        .then((r) => r.failure()?.errorText ?? 'fallo de red'),
+    ]).catch(() => 'sin respuesta en 20 s');
+    await page.goto('/es', { waitUntil: 'networkidle' });
+    await page.mouse.move(400, 400);
+    await page.mouse.wheel(0, 600);
+    const outcome = await gtag;
+    if (outcome !== 'HTTP 200') {
+      // Si lo bloqueó la CSP, es un fallo del sitio y no de la red.
+      expect(await violations(), `gtag.js: ${outcome}`).toEqual([]);
+      test.skip(true, `gtag.js real no alcanzable (${outcome}): sin red hacia www.googletagmanager.com no se puede probar GA bajo la CSP`);
+    }
+    // Si la CSP bloquea la medición, la petición no sale y la espera muestra las violaciones.
+    await expect
+      .poll(async () => ({ collect: collects.length > 0, errores: [...errors, ...(await violations())] }), { timeout: 20_000 })
+      .toEqual({ collect: true, errores: [] });
+    expect(new URL(collects[0]).searchParams.get('tid')).toBe(GA_ID);
+    // Lo que gtag pida justo después (p. ej. las señales de Google) también tiene que pasar la CSP.
+    await page.waitForTimeout(2000);
+    expect([...errors, ...(await violations())]).toEqual([]);
   });
-  await page.goto('/es', { waitUntil: 'networkidle' });
-  const gtag = page.waitForResponse((r) => r.url().startsWith('https://www.googletagmanager.com/gtag/js'));
-  await page.mouse.move(400, 400);
-  await page.mouse.wheel(0, 600);
-  expect((await gtag).status()).toBe(200);
-  // Si la CSP bloquea la medición, la petición no sale y la espera muestra las violaciones.
-  await expect
-    .poll(async () => ({ collect: collects.length > 0, errores: [...errors, ...(await violations())] }), { timeout: 20_000 })
-    .toEqual({ collect: true, errores: [] });
-  expect(new URL(collects[0]).searchParams.get('tid')).toBe('G-E5NMYWLXER');
-  // Lo que gtag pida justo después (p. ej. las señales de Google) también tiene que pasar la CSP.
-  await page.waitForTimeout(2000);
-  expect([...errors, ...(await violations())]).toEqual([]);
 });
 
 // El proxy decide adónde va la URL raíz del dominio y pone el locale a las rutas que no lo llevan (spec §4.1).

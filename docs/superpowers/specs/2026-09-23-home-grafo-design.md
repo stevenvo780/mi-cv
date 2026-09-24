@@ -308,6 +308,7 @@ scripts/data-date.ts                   DATA_DATE (último commit de los datos; c
 scripts/subset-fonts.sh                regenera los subconjuntos de la home y las fuentes del layout raíz
 tests/graph/*.test.ts                  vitest
 e2e/home.spec.ts                       Playwright
+e2e/fixtures.ts                        test y expect de Playwright sin hits reales a GA (§6)
 ```
 
 ### 4.7 Analítica
@@ -413,6 +414,12 @@ e2e/home.spec.ts                       Playwright
      - enlaces internos 200.
    - `/{es,en}/{frente}` y `/{es,en}/lore` siguen renderizando, sin errores ni violaciones de CSP.
    - GA cargado tras una interacción, sin violaciones de CSP (§4.1).
+   - **Ningún e2e manda hits reales a la propiedad de GA.** Todos importan `test` de `e2e/fixtures.ts`, que en cada contexto del navegador:
+     - responde con 204 las peticiones a los hosts de medición (`*.google-analytics.com`, `*.analytics.google.com`, `*.doubleclick.net`, `google.*` como `www.google.com/g/collect`, Ads y el resto de `googletagmanager.com`);
+     - sirve `gtag.js` con un stub vacío, sin red. Solo el test de GA pide el real (`test.use({ realGtag: true })`), con la medición igualmente en 204, y hace *skip* razonado si `gtag.js` no es alcanzable (salvo que lo bloquee la CSP, que es un fallo). Bajo la CSP, Chromium bloquea antes de la capa de red, así que la ruta no tapa una violación;
+     - comprueba al final, con un listener de requests, que ninguna petición a esos hosts salió sin pasar por la ruta;
+     - antes de cerrar, apaga GA en cada página (`window['ga-disable-G-E5NMYWLXER'] = true`): la baliza que gtag manda al descargar la página es keepalive y no pasa por las rutas de Playwright ni emite `request`. Medido con un proxy: al navegar a `about:blank` llegaba a `www.google-analytics.com`.
+   - Además, `playwright.config.ts` lanza Chrome con `--host-resolver-rules` que dejan sin DNS esos hosts (no `googletagmanager.com`), por si algo más escapara a las rutas.
    - Proxy: `/` según `Accept-Language` y conservando la query; sitemap y robots sin redirigir.
    - Menú móvil: landmark, y se cierra al elegir sección y con Escape (§4.8).
    - 404 bilingües.
