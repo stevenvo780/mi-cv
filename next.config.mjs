@@ -78,6 +78,8 @@ const nextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
   experimental: { globalNotFound: true },
+  // El asistente lee su perfil del disco (src/assistant/prompt.ts): el archivo viaja con la función de la ruta.
+  outputFileTracingIncludes: { '/api/assistant': ['./src/assistant/profile.md'] },
   async headers() {
     return [
       { source: '/:path*', headers: securityHeaders },

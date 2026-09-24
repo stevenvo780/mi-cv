@@ -16,7 +16,20 @@ export function countWord(locale: Locale, n: number): string {
 
 export interface HomeCopy {
   meta: { title: string; description: string; person: string; jobTitle: string[]; knowsAbout: string[] };
-  nav: { skip: string; menu: string; catalog: string; contact: string; language: string; services: string };
+  nav: {
+    skip: string;
+    menu: string;
+    catalog: string;
+    contact: string;
+    language: string;
+    services: string;
+    /** Botón del asistente (Claude) en la barra y en el menú móvil. */
+    ask: string;
+    askHint: string;
+    whatsapp: string;
+    /** Grupo de los sitios hermanos dentro del menú móvil. */
+    sites: string;
+  };
   hero: {
     kicker: string;
     first: string;
@@ -67,6 +80,10 @@ export const HOME: Record<Locale, HomeCopy> = {
       contact: 'Contacto',
       language: 'English',
       services: 'Servicios',
+      ask: 'Pregúntame',
+      askHint: 'Un asistente con IA que conoce mi perfil',
+      whatsapp: 'WhatsApp',
+      sites: 'Sitios',
     },
     hero: {
       kicker: 'Mouseîon · stevenvallejo.com',
@@ -128,6 +145,10 @@ export const HOME: Record<Locale, HomeCopy> = {
       contact: 'Contact',
       language: 'Español',
       services: 'Services',
+      ask: 'Ask me',
+      askHint: 'An AI assistant that knows my profile',
+      whatsapp: 'WhatsApp',
+      sites: 'Sites',
     },
     hero: {
       kicker: 'Mouseîon · stevenvallejo.com',

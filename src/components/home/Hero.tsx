@@ -1,13 +1,7 @@
 import type { HomeCopy } from '@/content/home';
 import { GRAPH_STATS } from '@/graph/generated/stats';
-
-/** Sitios hermanos que abre el hero: servicios, los dos CV y el blog, cada uno en su propio subdominio. */
-const SITES = {
-  services: 'https://praxis.stevenvallejo.com',
-  cvEngineer: 'https://informatico.stevenvallejo.com',
-  cvPhilosopher: 'https://filosofo.stevenvallejo.com',
-  blog: 'https://schole.stevenvallejo.com',
-} as const;
+// Sitios hermanos que abre el hero: servicios, los dos CV y el blog, cada uno en su propio subdominio.
+import { SITES } from '@/lib/ecosystem';
 
 export default function Hero({ t }: { t: HomeCopy }) {
   const h = t.hero;

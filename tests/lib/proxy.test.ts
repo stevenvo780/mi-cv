@@ -85,8 +85,9 @@ describe('proxy: matcher', () => {
     expect(matches(url)).toBe(true);
   });
 
-  // Si entraran, irían a /en/sitemap.xml (404) o a /en/graph/… y romperían el SEO y el póster.
-  it.each(['/sitemap.xml', '/robots.txt', '/graph/poster.b146b168ba.svg', '/_next/static/chunks/main.js', '/_next/image', '/icon.svg', '/favicon.ico'])(
+  // Si entraran, irían a /en/sitemap.xml (404) o a /en/graph/… y romperían el SEO y el póster. El asistente
+  // (/api/assistant) redirigido a /en/api/assistant sería un 404 para cada pregunta.
+  it.each(['/sitemap.xml', '/robots.txt', '/graph/poster.b146b168ba.svg', '/_next/static/chunks/main.js', '/_next/image', '/icon.svg', '/favicon.ico', '/api/assistant'])(
     '%s no entra en el proxy',
     (url) => {
       expect(matches(url)).toBe(false);

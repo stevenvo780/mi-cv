@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import AssistantGate from '@/components/assistant/AssistantGate';
 import Contact from '@/components/home/Contact';
 import Fronts from '@/components/home/Fronts';
 import Hero from '@/components/home/Hero';
@@ -60,6 +61,8 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
         <Contact locale={locale} t={t} />
       </main>
       <HomeFooter locale={locale} t={t} />
+      {/* Escucha los botones «Pregúntame» de la barra; el panel se importa con el primer clic (spec §5.1). */}
+      <AssistantGate locale={locale} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeJsonLd(jsonLd) }} />
     </div>
   );
