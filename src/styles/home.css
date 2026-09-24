@@ -813,7 +813,7 @@
       position: static;
     }
   }
-  /* ── Catálogos: sitios que reúnen otros sitios (Paideía, Kósmos, Daímon) ──
+  /* ── Catálogos: sitios que reúnen otros sitios (Humanizar, Paideía, Kósmos, Daímon) ──
      Cada uno es una tarjeta ancha con el color de su propia marca, un borde de luz que la recorre, hojas apiladas
      detrás (contiene más sitios) que se abren en abanico al pasar el puntero, el rótulo «Catálogo · N …» y la lista
      entera de lo que reúne. Todo en CSS: la home no admite JS nuevo (spec §5.1). */
@@ -831,7 +831,11 @@
     isolation: isolate;
     scroll-margin-top: 7rem;
   }
-  /* El color de cada catálogo es el de su propia marca (su globals.css): menta, dorado y lima. */
+  /* Cada catálogo conserva los colores de su marca. */
+  .home .cat[data-cat='humanizar'] {
+    --cat: #4fd1c5;
+    --cat-2: #7c6cf6;
+  }
   .home .cat[data-cat='stevenai'] {
     --cat: #8ee9d4;
     --cat-2: #f1bb7c;
@@ -1042,6 +1046,10 @@
     line-height: 0.95;
     letter-spacing: -0.025em;
     color: var(--text-strong);
+  }
+  /* Humanizar tiene un nombre más largo: conserva la escala del sistema sin tocar la cifra. */
+  .home .cat[data-cat='humanizar'] h4 {
+    font-size: clamp(3rem, 5vw, 4.3rem);
   }
   /* La cifra, enorme y en contorno: se ve de lejos que dentro hay muchos. El rótulo la dice en texto. */
   .home .cat-count {

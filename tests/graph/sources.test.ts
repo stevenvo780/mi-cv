@@ -56,11 +56,23 @@ describe('buildGraphModel', () => {
     }
   });
 
-  // Paideía, Kósmos y Daímon reúnen otros sitios: pesan como un frente y se unen a los productos que contienen.
+  // Los catálogos reúnen otros sitios: pesan como un frente y se unen a los productos que contienen.
   it('los catálogos son hubs unidos a los productos del portafolio que reúnen', () => {
     for (const c of catalogos) expect(g.nodes.find((n) => n.id === nodeId.producto(c.id))?.weight, c.nombre).toBe(4);
     const contains = g.edges.filter((e) => e.rel === 'agrupa' && e.source.startsWith('producto:')).map((e) => `${e.source} → ${e.target}`);
-    expect(contains.sort()).toEqual(['producto:clavis → producto:estructuras-preontologicas', 'producto:complexlab → producto:estructuras-preontologicas']);
+    expect(contains.sort()).toEqual([
+      'producto:clavis → producto:estructuras-preontologicas',
+      'producto:complexlab → producto:estructuras-preontologicas',
+      'producto:humanizar → producto:agora',
+      'producto:humanizar → producto:cauce-v3',
+      'producto:humanizar → producto:communityos',
+      'producto:humanizar → producto:demeter',
+      'producto:humanizar → producto:devkits',
+      'producto:humanizar → producto:devkits-crm',
+      'producto:humanizar → producto:devkits-hours',
+      'producto:humanizar → producto:prizma',
+      'producto:humanizar → producto:warehouse',
+    ]);
   });
 
   it('cada herramienta de tools.json está en exactamente un grupo', () => {

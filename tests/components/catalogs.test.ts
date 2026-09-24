@@ -8,17 +8,18 @@ import { normalizeSearch } from '@/lib/text';
 const html = async (locale: 'es' | 'en') => renderToStaticMarkup(await HomePage({ params: Promise.resolve({ locale }) }));
 
 describe('datos de los catálogos', () => {
-  it('Paideía, Kósmos y Daímon son los catálogos, en el orden de los frentes', () => {
-    expect(catalogos.map((c) => c.nombre)).toEqual(['Daímon', 'Paideía', 'Kósmos']);
+  it('Humanizar abre la banda y los otros catálogos conservan su orden', () => {
+    expect(catalogos.map((c) => c.nombre)).toEqual(['Humanizar', 'Daímon', 'Paideía', 'Kósmos']);
     expect(productos.filter((p) => p.tipo === 'catalogo').every(esCatalogo)).toBe(true);
   });
 
-  // Cifras verificadas en cada repo (Kósmos: lib/catalog.ts y docs/CATALOG_AUDIT.md; Daímon: lib/components-data.ts y
-  // lib/catalog-groups.ts; Paideía: app/trabajos/works.ts, app/ponencias y sus tres módulos). Si un catálogo crece,
+  // Humanizar: catalogo-publico.json; Kósmos: lib/catalog.ts; Daímon: lib/components-data.ts; Paideía: app/trabajos/works.ts.
+  // Si un catálogo crece,
   // se añade el ítem en frentes.ts y se actualiza aquí: la home las deriva de `incluye`.
   it('cada catálogo reúne lo que publica su sitio, agrupado por colección', () => {
     const shape = Object.fromEntries(catalogos.map((c) => [c.id, catalogoGrupos(c).map((g) => `${g.kind}:${g.items.length}`)]));
     expect(shape).toEqual({
+      humanizar: ['producto:12', 'servicio:3'],
       stevenai: ['infraestructura:9', 'asistentes:5', 'herramientas:5', 'inferencia:2'],
       clavis: ['curso:3', 'ponencia:8', 'tesis:1', 'ensayo:3'],
       complexlab: ['matematicas:8', 'sistemas-complejos:6', 'fisica:4', 'emergencia:3', 'computo-cientifico:2'],
@@ -52,9 +53,8 @@ describe('datos de los catálogos', () => {
     expect(en('clavis')).toEqual(expect.arrayContaining(['Classical Greek', 'Neurophilosophy', 'Philosophy of the City', 'La retórica como téchne']));
   });
 
-  // neuronalLearning está en Kósmos (su faceta de cómputo) y en Daímon (su faceta de IA): cada tarjeta lo cuenta, el
-  // total de la banda no lo cuenta dos veces.
-  it('el total de la banda cuenta cada trabajo una vez aunque esté en dos catálogos', () => {
+  // neuronalLearning tiene la misma URL en Kósmos y Daímon; el helper deduplica ese destino.
+  it('el helper cuenta una sola vez los enlaces idénticos entre catálogos', () => {
     const suma = catalogos.reduce((n, c) => n + c.incluye.length, 0);
     const repetidos = ['https://github.com/stevenvo780/neuronalLearning'];
     for (const url of repetidos) expect(catalogos.filter((c) => c.incluye.some((i) => i.url === url)), url).toHaveLength(2);
@@ -110,5 +110,23 @@ describe('banda de catálogos en la home', () => {
     expect(search('stevenai')).toContain(normalizeSearch('Jarvis IA v2'));
     expect(search('clavis')).toContain(normalizeSearch('Redes Neuronales — Hinton'));
     expect(search('clavis')).toContain(normalizeSearch('Ponencias'));
+    expect(search('humanizar')).toContain(normalizeSearch('Agentes de IA a la medida'));
+    expect(page).toContain('href="https://catalogo.humanizar.tech/"');
+  });
+
+});
+
+describe('proyectos del frente Ciencias', () => {
+  it.each(['es', 'en'] as const)('/%s: Umbral y Phúsis tienen una ficha propia y no duplican los catálogos', async (locale) => {
+    const page = await html(locale);
+    for (const [id, url] of [
+      ['umbral-atlas', 'https://umbral-atlas.stevenvallejo.com'],
+      ['phusis', 'https://phusis.stevenvallejo.com'],
+    ] as const) {
+      expect(productos.find((p) => p.id === id)?.frente).toBe('ciencias');
+      expect(catalogos.some((c) => c.id === id)).toBe(false);
+      expect(page.match(new RegExp(`data-node="producto:${id}"`, 'g'))).toHaveLength(1);
+      expect(page.match(new RegExp(`href="${url}"`, 'g'))).toHaveLength(1);
+    }
   });
 });

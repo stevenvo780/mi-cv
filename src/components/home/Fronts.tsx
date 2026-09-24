@@ -21,7 +21,7 @@ import SectionHead from './SectionHead';
 const catalogAnchor = (id: string) => `catalogo-${id}`;
 
 /**
- * Un catálogo (Paideía, Kósmos, Daímon) no es una app más: es un sitio que reúne otros. Va en la banda «Catálogos»,
+ * Un catálogo (Humanizar, Paideía, Kósmos, Daímon) reúne otros sitios. Va en la banda «Catálogos»,
  * al principio del catálogo, como una tarjeta grande con hojas apiladas detrás, su rótulo «Catálogo · N …» y la
  * lista entera de lo que contiene, agrupada por colección. Todo es HTML del servidor y CSS (spec §5.1: sin JS nuevo).
  */

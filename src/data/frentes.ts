@@ -40,7 +40,7 @@ export interface Producto {
   secondary?: boolean;
   /**
    * Product type override: 'ponencia' for academic talks/presentations; 'catalogo' for a site that gathers and
-   * links a whole collection of other sites, courses or repos (Paideía, Kósmos, Daímon). A catálogo carries
+   * links a whole collection of other sites, courses or repos (Humanizar, Paideía, Kósmos, Daímon). A catálogo carries
    * `incluye` and `unidad`, and the home shows it as a big tile of its own (Fronts.tsx).
    */
   tipo?: 'ponencia' | 'catalogo';
@@ -75,7 +75,9 @@ export type CatalogoKind =
   | 'infraestructura'
   | 'asistentes'
   | 'herramientas'
-  | 'inferencia';
+  | 'inferencia'
+  | 'producto'
+  | 'servicio';
 
 export interface CatalogoItem {
   /**
@@ -120,7 +122,7 @@ export const frentesMeta: Record<FrenteId, FrenteMeta> = {
   ciencias: {
     id: 'ciencias',
     nombre: { es: 'Ciencias', en: 'Sciences' },
-    secNo: '03',  // 2 products (grid-portrait)
+    secNo: '03',
     tagline: {
       es: 'Sistemas complejos, emergencia, simulación.',
       en: 'Complex systems, emergence, simulation.',
@@ -158,7 +160,7 @@ export const frentesMeta: Record<FrenteId, FrenteMeta> = {
   },
 };
 
-// Ordered descending by product count: informatica(11) > filosofia(5) > ciencias(2) > enterprise(1)
+// Front order in the portfolio; catalog cards have their own priority below.
 export const frenteOrder: FrenteId[] = [
   'informatica',
   'filosofia',
@@ -349,6 +351,41 @@ export const productos: Producto[] = [
       { nombre: { es: 'Benchmark y simulación N cuerpos', en: 'N-body benchmark and simulation' }, kind: 'computo-cientifico', url: 'https://github.com/stevenvo780/TestPcForProgramers' },
       { nombre: { es: 'Prácticas de redes neuronales', en: 'Neural network exercises' }, kind: 'computo-cientifico', url: 'https://github.com/stevenvo780/neuronalLearning' },
     ],
+  },
+  {
+    id: 'umbral-atlas',
+    frente: 'ciencias',
+    nombre: 'Umbral',
+    subtitulo: {
+      es: 'Atlas interactivo de experimentos',
+      en: 'Interactive atlas of experiments',
+    },
+    descripcion: {
+      es: 'Atlas interactivo de 23 experimentos de matemáticas, física, autómatas y sistemas complejos. Combina escenas 3D exploratorias con 230 resultados documentados y enlaces al código fuente; las escenas no recalculan los resultados originales.',
+      en: 'Interactive atlas of 23 experiments in mathematics, physics, automata and complex systems. It pairs exploratory 3D scenes with 230 documented results and source links; the scenes do not recompute the original results.',
+    },
+    url: 'https://umbral-atlas.stevenvallejo.com',
+    status: 'live',
+    badge: { es: 'Exploración científica', en: 'Scientific exploration' },
+    cardIdentity: { label: { es: 'Atlas de experimentos', en: 'Experiment atlas' }, symbol: '◇' },
+    banner: true,
+  },
+  {
+    id: 'phusis',
+    frente: 'ciencias',
+    nombre: 'Phúsis',
+    subtitulo: {
+      es: 'Aprender complejidad programando',
+      en: 'Learn complexity by coding',
+    },
+    descripcion: {
+      es: 'Plataforma-curso de ciencias de la complejidad con tres cursos activos y 22 lecciones. Permite programar autómatas, sistemas caóticos y modelos basados en agentes, con vista previa, comprobaciones automáticas y reflexión filosófica.',
+      en: 'Complexity science course platform with three active courses and 22 lessons. Learners code cellular automata, chaotic systems and agent-based models, with live previews, automated checks and philosophical reflection.',
+    },
+    url: 'https://phusis.stevenvallejo.com',
+    status: 'live',
+    badge: { es: 'Plataforma educativa', en: 'Learning platform' },
+    cardIdentity: { label: { es: 'Ciencia en código', en: 'Science in code' }, symbol: 'φ' },
   },
   {
     id: 'estructuras-preontologicas',
@@ -575,7 +612,7 @@ export const productos: Producto[] = [
       es: 'Mi proyecto estrella en ingeniería: orquestador de la flota agéntica que opera Cauce V3 (este mismo portafolio y todo el ecosistema Humanizar). Despliegues, monitoreo, contratos de entrega entre agentes y un CRM multi-tenant en producción. Es la mano derecha que mantiene viva la flota.',
       en: 'My flagship engineering project: the orchestrating director of the agent fleet that operates Cauce V3 (this very portfolio and the entire Humanizar ecosystem). Deployments, monitoring, delivery contracts between agents, and a multi-tenant CRM in production. The right hand that keeps the fleet alive.',
     },
-    url: 'https://humanizar.tech',
+    url: 'https://cauce.humanizar.tech',
     status: 'live',
     badge: { es: 'Proyecto estrella en ingeniería', en: 'Flagship engineering project' },
     banner: true,
@@ -603,16 +640,36 @@ export const productos: Producto[] = [
     frente: 'enterprise',
     nombre: 'Humanizar',
     subtitulo: {
-      es: 'Mi empresa: ecosistema SaaS empresarial',
-      en: 'My company: enterprise SaaS ecosystem',
+      es: 'Catálogo de productos y servicios',
+      en: 'Catalog of products and services',
     },
     descripcion: {
-      es: 'Humanizar Systems, la empresa que fundé y lidero como desarrollador principal: un ecosistema SaaS empresarial multi-tenant con e-commerce, punto de venta con facturación electrónica DIAN, fintech de créditos y mensajería, orquestados con microservicios NestJS y con clientes en producción.',
-      en: 'Humanizar Systems, the company I founded and lead as principal developer: a multi-tenant enterprise SaaS ecosystem with e-commerce, point of sale with DIAN e-invoicing, credit fintech and messaging, orchestrated with NestJS microservices and with clients in production.',
+      es: 'Reúne la oferta pública de Humanizar Systems: software para ventas, distribución y operación, plataformas para coordinar agentes de IA y servicios de ingeniería a medida. Cada ficha lleva a su producto o servicio.',
+      en: 'It brings together Humanizar Systems’ public offerings: software for sales, distribution and operations, platforms for coordinating AI agents, and tailored engineering services. Each entry links to its product or service.',
     },
-    url: 'https://humanizar.tech',
+    url: 'https://catalogo.humanizar.tech/',
     status: 'live',
-    badge: { es: 'Empresa propia', en: 'My company' },
+    badge: { es: 'Software y agentes para empresas', en: 'Business software and AI agents' },
+    tipo: 'catalogo',
+    unidad: { es: 'soluciones', en: 'offerings' },
+    // Fuente: catalogo.humanizar.tech/catalogo-publico.json (12 productos y 3 servicios públicos).
+    incluye: [
+      { nombre: 'POS Saldantia', kind: 'producto', url: 'https://pos.saldantia.cloud' },
+      { nombre: 'Deméter', kind: 'producto', url: 'https://demeter.humanizar.cloud' },
+      { nombre: 'Graf Commerce', kind: 'producto', url: 'https://admin.graf.com.co' },
+      { nombre: 'Xenía (Devkits CRM)', kind: 'producto', url: 'https://xenia.stevenvallejo.com' },
+      { nombre: 'Cauce V3', kind: 'producto', url: 'https://cauce.humanizar.tech' },
+      { nombre: 'Agora (Elenxos)', kind: 'producto', url: 'https://agora.elenxos.com' },
+      { nombre: 'Aletheia', kind: 'producto', url: 'https://aletheia.humanizar.tech' },
+      { nombre: 'Apothḗke', kind: 'producto', url: 'https://apotheke.stevenvallejo.com' },
+      { nombre: 'Koinonía', kind: 'producto', url: 'https://koinonia.stevenvallejo.com' },
+      { nombre: 'Chrónos', kind: 'producto', url: 'https://chronos.stevenvallejo.com' },
+      { nombre: 'Gravitatoria', kind: 'producto', url: 'https://gravitatoria.humanizar.tech' },
+      { nombre: 'Prizma', kind: 'producto', url: 'https://prisma-enterprice.cloud' },
+      { nombre: 'Práxis', kind: 'servicio', url: 'https://praxis.stevenvallejo.com' },
+      { nombre: 'Érgon', kind: 'servicio', url: 'https://ergon.stevenvallejo.com' },
+      { nombre: { es: 'Agentes de IA a la medida', en: 'Tailored AI agents' }, kind: 'servicio', url: 'https://agentes.humanizar.tech/' },
+    ],
   },
   {
     id: 'prizma',
@@ -681,6 +738,8 @@ export const productTags: Record<string, string[]> = {
   debatesuite: ['agón', 'debate', 'debates', 'cafetería del caos', 'retórica', 'moderación', 'falacias', 'argumentación', 'autómata celular', 'PWA', 'filosofía', 'oratoria'],
   'estructuras-preontologicas': ['filosofía de la ciencia', 'ontología', 'complejidad', 'tesis doctoral', 'preontología', 'EDI', 'emergencia', 'ciencias de la complejidad', 'metafísica', 'investigación'],
   complexlab: ['kósmos', 'catálogo', 'catalog', 'ciencia', 'complejidad', 'emergencia', 'caos', 'redes', 'agentes', 'simulación', 'sistemas complejos', 'autómatas', 'orden natural'],
+  'umbral-atlas': ['umbral', 'atlas', 'experimentos', 'matemáticas', 'física', 'autómatas', 'sistemas complejos', '3D', 'simulación', 'resultados documentados'],
+  phusis: ['phúsis', 'ciencias de la complejidad', 'educación', 'curso', 'lecciones', 'autómatas celulares', 'caos', 'sistemas dinámicos', 'modelos basados en agentes', 'programación'],
   aporia: ['áporía', 'CMS', 'editorial', 'papers', 'publicación académica', 'investigación', 'ciencia', 'paradojas', 'Neon', 'Postgres'],
   'nlp-to-logic': ['órganon', 'lógica formal', 'NLP', 'lenguaje natural', 'SAT solver', 'CDCL', 'ST', 'autologic', 'razonamiento', 'formalización'],
   stevenai: ['daímon', 'catálogo', 'catalog', 'inteligencia artificial', 'IA', 'RAG', 'LLM', 'Jarvis', 'Ollama', 'agentes', 'MCP', 'GPU', 'ChromaDB', 'chat local', 'OCR'],
@@ -693,7 +752,7 @@ export const productTags: Record<string, string[]> = {
   warehouse: ['apothḗke', 'inventario', 'almacén', 'stock', 'órdenes', 'logística', 'gestión', 'roles', 'analítica'],
   eikon: ['eikón', 'imagen de marca', 'logos', 'identidad visual', 'iconsets', 'favicons', 'paletas', 'WCAG', 'generador', 'MCP', 'branding', 'diseño', 'marca'],
   'cauce-v3': ['cauce', 'cauce v3', 'flota agéntica', 'agentes', 'orquestador', 'director de flota', 'multi-tenant', 'CRM', 'CRM agéntico', 'humandroid', 'humanizar', 'flagship engineering'],
-  humanizar: ['humanizar', 'humanizar systems', 'empresa', 'SaaS', 'multi-tenant', 'e-commerce', 'POS', 'facturación DIAN', 'fintech', 'crédito', 'mensajería', 'microservicios', 'NestJS'],
+  humanizar: ['humanizar', 'humanizar systems', 'catálogo', 'catalog', 'empresa', 'productos', 'servicios', 'software empresarial', 'agentes de IA', 'POS', 'ventas', 'distribución', 'operación', 'ingeniería'],
   prizma: ['suite empresarial', 'POS', 'facturación DIAN', 'crédito', 'WhatsApp', 'marketing', 'e-commerce', 'logística', 'CRM', 'microservicios', 'Cloud Run', 'talanton', 'pistis', 'iris', 'hermes', 'talaria'],
   graf: ['pedidos', 'domicilios', 'logística', 'última milla', 'delivery', 'clientes', 'comercio', 'plataforma', 'producción'],
   demeter: ['distribución', 'alimentos', 'pedidos', 'rutas', 'facturación DIAN', 'cartera', 'inventario', 'HORECA', 'logística', 'multi-empresa', 'despacho'],
@@ -721,14 +780,18 @@ export const catalogoKinds: Record<CatalogoKind, LocalizedText> = {
   asistentes: { es: 'Asistentes y voz', en: 'Assistants & voice' },
   herramientas: { es: 'Herramientas y creación', en: 'Tools & creation' },
   inferencia: { es: 'Inferencia y experimentos', en: 'Inference & experiments' },
+  producto: { es: 'Productos', en: 'Products' },
+  servicio: { es: 'Servicios', en: 'Services' },
 };
 
 export function esCatalogo(p: Producto): p is Catalogo {
   return p.tipo === 'catalogo' && Array.isArray(p.incluye) && p.unidad !== undefined;
 }
 
-/** Los catálogos, en el orden de los frentes (frenteOrder) y, dentro de cada frente, en el de `productos`. */
-export const catalogos: Catalogo[] = frenteOrder.flatMap((f) => productos.filter((p) => p.frente === f).filter(esCatalogo));
+/** Humanizar abre la banda; los demás conservan el orden de sus frentes y de `productos`. */
+export const catalogos: Catalogo[] = frenteOrder
+  .flatMap((f) => productos.filter((p) => p.frente === f).filter(esCatalogo))
+  .sort((a, b) => Number(b.id === 'humanizar') - Number(a.id === 'humanizar'));
 
 /** Nombre de un ítem de catálogo en un idioma (ver CatalogoItem.nombre). */
 export function nombreItem(i: CatalogoItem, locale: keyof LocalizedText): string {
@@ -736,8 +799,8 @@ export function nombreItem(i: CatalogoItem, locale: keyof LocalizedText): string
 }
 
 /**
- * Trabajos distintos que reúnen los catálogos, entre todos. Un mismo trabajo puede estar en dos (neuronalLearning está
- * en Kósmos y en Daímon, cada uno con su título): se cuenta una vez, por su enlace, o por su nombre si no es público.
+ * Destinos distintos entre catálogos, por URL o por nombre si no son públicos. Dos enlaces distintos a un mismo
+ * proyecto cuentan por separado; esta cifra no se presenta en la interfaz.
  */
 export function trabajosEnCatalogos(cs: Catalogo[]): number {
   return new Set(cs.flatMap((c) => c.incluye.map((i) => i.url ?? nombreItem(i, 'es')))).size;
