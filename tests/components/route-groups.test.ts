@@ -11,6 +11,7 @@ import FrentePageClient from '@/app/[locale]/(portal)/[frente]/FrentePageClient'
 import LorePageClient from '@/app/[locale]/(portal)/lore/LorePageClient';
 import CustomNavbar from '@/app/components/Navbar';
 import HomePage from '@/app/[locale]/(home)/page';
+import NotFoundView from '@/components/NotFoundView';
 import { frenteOrder } from '@/data/frentes';
 
 // next/link se sustituye por un <a> marcado: así el HTML distingue la navegación en cliente de la de documento.
@@ -57,16 +58,24 @@ function render<P extends object>(component: ComponentType<P>, props: P): string
 }
 
 describe('enlaces entre los grupos de rutas (home) y (portal)', () => {
-  it.each(['es', 'en'] as const)('la home (%s) solo usa next/link hacia la propia home', async (locale) => {
+  // Además, la home no usa next/link en absoluto: su módulo cliente (~3.5 KB gz) no cabe en el presupuesto
+  // de JS de la home (spec §5, ≤ 130 KB gz). La marca y el cambio de idioma son <a> (navegación de documento).
+  it.each(['es', 'en'] as const)('la home (%s) no usa next/link', async (locale) => {
     const links = internal(anchors(await renderHome(locale)));
-    const client = links.filter((a) => a.client);
-    expect(client.length).toBeGreaterThan(0); // el mock está activo: marca y cambio de idioma
-    expect(client.filter((a) => group(a.href) !== 'home')).toEqual([]);
+    expect(links.length).toBeGreaterThan(0);
+    expect(links.filter((a) => a.client)).toEqual([]);
 
     const toPortal = links.filter((a) => group(a.href) === 'portal');
     const targets = new Set(toPortal.map((a) => a.href));
     expect(targets).toEqual(new Set([`/${locale}/lore`, ...frenteOrder.map((fid) => `/${locale}/${fid}`)]));
     expect(toPortal.filter((a) => a.client)).toEqual([]);
+  });
+
+  // El 404 de [locale] va en el árbol RSC de todas las páginas del segmento (incluida la home), así que un
+  // next/link ahí también arrastraría el módulo a la home.
+  it.each(['es', 'en'] as const)('la vista 404 (%s) no usa next/link', (locale) => {
+    const links = internal(anchors(render(NotFoundView, { locale })));
+    expect(links).toEqual([{ href: `/${locale}`, client: false }]);
   });
 
   it('el portal solo usa next/link dentro del portal', () => {

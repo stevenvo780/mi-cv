@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import BrandLogo from '@/app/components/BrandLogo';
 import type { HomeCopy } from '@/content/home';
 import type { Locale } from '@/lib/site';
@@ -23,17 +22,19 @@ export default function HomeHeader({ locale, t }: { locale: Locale; t: HomeCopy 
   );
   return (
     <header className="topbar">
-      <Link href={`/${locale}`} className="brand" aria-label="Mouseîon · Steven Vallejo Ortiz">
+      {/* <a> y no next/link, también dentro de la home: el módulo cliente de next/link no cabe en el
+          presupuesto de JS de la home (spec §5). Ver tests/components/route-groups.test.ts. */}
+      <a href={`/${locale}`} className="brand" aria-label="Mouseîon · Steven Vallejo Ortiz">
         <BrandLogo size={28} />
         <span className="brand-word">Mouseîon</span>
-      </Link>
+      </a>
       <nav className="topnav" aria-label={t.nav.menu}>
         {list}
       </nav>
       <div className="topbar-actions">
-        <Link href={`/${other}`} hrefLang={other} lang={other} className="lang">
+        <a href={`/${other}`} hrefLang={other} lang={other} className="lang">
           {t.nav.language}
-        </Link>
+        </a>
         <a className="btn btn-solid btn-sm" href="https://praxis.stevenvallejo.com" rel="noopener">
           {t.nav.hire}
         </a>

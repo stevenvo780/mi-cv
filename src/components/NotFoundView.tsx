@@ -1,5 +1,3 @@
-import Link from 'next/link';
-
 export default function NotFoundView({ locale }: { locale: 'es' | 'en' }) {
   const t =
     locale === 'es'
@@ -22,9 +20,11 @@ export default function NotFoundView({ locale }: { locale: 'es' | 'en' }) {
       <p style={{ fontFamily: 'var(--font-jetbrains), monospace', letterSpacing: '0.2em', color: '#43b5a6', margin: 0 }}>404</p>
       <h1 style={{ fontFamily: 'var(--font-display), Georgia, serif', fontWeight: 500, fontSize: 'clamp(2.2rem, 6vw, 4rem)', margin: 0 }}>{t.title}</h1>
       <p style={{ color: '#c9c2b6', margin: 0 }}>{t.lead}</p>
-      <Link href={`/${locale}`} style={{ color: '#e0a85e' }}>
+      {/* <a> y no next/link: este 404 va en el árbol RSC de todas las páginas de [locale] y arrastraría
+          next/link al JS de la home (spec §5). */}
+      <a href={`/${locale}`} style={{ color: '#e0a85e' }}>
         {t.back}
-      </Link>
+      </a>
     </main>
   );
 }

@@ -3,6 +3,7 @@
 - Fecha: 2026-09-23
 - Rama: `redesign/home-grafo`
 - Estado: diseño aprobado por Steven (narrativa, sistema visual, arquitectura y plan de publicación)
+- Actualizada el 2026-09-24 al cerrar el Plan 1: sus desviaciones están en §2 (fila 3), §3.2, §4.1, §4.3, §4.6, §4.7, §4.8 y §5.
 
 ## 1. Objetivo
 
@@ -33,7 +34,7 @@ Todo el texto es HTML real renderizado en el servidor. El grafo es decorativo-in
 | 0 | Hero | `<h1>` "Steven Vallejo Ortiz", con subtítulo "Ingeniero de software · Filósofo" (EN: "Software engineer · Philosopher"). El nombre, en display gigante, flanquea el grafo. Esquinas: indicador en monoespaciada con nº de nodos y relaciones reales del grafo, y el locale. Controles: pausa, idioma. CTA "Contratar servicios" → praxis. | **L0 · Red:** force-directed 3D completo con hubs de frente destacados. Respiración y pulsos. |
 | 1 | Dos lenguajes, un método | "Pensar antes de construir", bio breve (de `about.json`), epígrafe. | **L1 · Hemisferios:** lógica/filosofía (oro) frente a ingeniería (teal). Los productos puente (Órganon, Kósmos, Estructuras Preontológicas, Paideía) se colocan en la franja central. |
 | 2 | Trayectoria | Línea de tiempo `<ol>` 2014–2026 desde `experience.json` (empresa, rol, fechas, ubicación), con logros de `achievements.json`. Soy Digital/INDOTEL figura como logro vía Critertec. | **L2 · Hélice temporal:** los nodos de empresa y rol se ordenan por año de inicio sobre una hélice. Sus productos y tecnologías quedan orbitando cerca. La cámara recorre la hélice según el progreso de la sección. |
-| 3 | Cuatro frentes | 4 bloques (Ingeniería, Filosofía, Ciencias, Enterprise) con tarjetas de producto (`productos` de `frentes.ts`: nombre, subtítulo, descripción, badge, enlace) y enlace a `/[locale]/[frente]`. Buscador de productos (isla cliente pequeña). Enlace "Ver como lista", al que apunta el `<figure>`. | **L3 · Clusters:** 4 clusters separados. La cámara visita el cluster de la sección activa (texto `sticky`). |
+| 3 | Cuatro frentes | 4 bloques (Ingeniería, Filosofía, Ciencias, Enterprise) con tarjetas de producto (`productos` de `frentes.ts`: nombre, subtítulo, descripción, badge, enlace) y enlace a `/[locale]/[frente]`. Buscador de productos (isla cliente pequeña). Destino del enlace "Verlo como lista" de la leyenda del hero (§4.8). | **L3 · Clusters:** 4 clusters separados. La cámara visita el cluster de la sección activa (texto `sticky`). |
 | 4 | Prueba | Cifras con fuente en datos del repo (ver §2.1) y stack agrupado de `tools.json` (backend, frontend, cloud/DevOps, datos, IA/ML, lógica/filosofía). Estética sobria de paper. | El grafo se atenúa a un segundo plano (opacidad y saturación bajas). Sin morph. |
 | 5 | Contacto | Contratar (praxis), email, WhatsApp, CV filósofo, CV informático, blog, GitHub, LinkedIn (`https://www.linkedin.com/in/steven-vallejo/`), Instagram. Pie. | **L4 · Lemniscata:** todos los nodos convergen sobre una lemniscata de Bernoulli 3D (el ∞ del logo). |
 
@@ -83,9 +84,10 @@ Tokens de la home en `src/styles/home.css` (capa `@layer home`), en OKLCH con re
 ### 3.2 Tipografía (`next/font`)
 
 - **Display:** Cormorant Garamond, pesos 500/600, cursiva para acentos. Tracking negativo; `clamp()` hasta ~18vw en el nombre.
-- **UI y cuerpo:** Geist, variable. Se convierte `src/app/fonts/GeistVF.woff` a woff2 con `next/font/local` y `adjustFontFallback`.
+- **UI y cuerpo:** Geist, variable, de `geist@1.7.2`. Se recorta a latín (`src/app/fonts/geist-sans-latin.woff2`, 33 KB frente a los 70 KB del archivo completo) con `pyftsubset` y se carga con `next/font/local` y `adjustFontFallback`. El comando está en `src/app/[locale]/layout.tsx`.
 - **Datos, indicador y etiquetas:** JetBrains Mono.
 - **Precarga:** solo Geist y Cormorant (las del h1 y el cuerpo). JetBrains Mono con `preload: false`.
+- **Una sola familia Cormorant:** next/font 16 publica el nombre real de la familia, así que dos instancias con la misma cara (peso y estilo) hacen que gane la última y el navegador baje una copia sin precargar del mismo archivo. Por eso hay dos instancias sin caras en común: la recta (400–700, un único archivo variable, precargada, `--font-display`) y la cursiva (sin precarga, `--font-cormorant`, que usa el portal). Lo comprueba un e2e.
 
 ### 3.3 Materiales del grafo
 
@@ -137,6 +139,7 @@ Tokens de la home en `src/styles/home.css` (capa `@layer home`), en OKLCH con re
   - Se eliminan `src/app/opengraph-image.tsx` y `public/og-image.png` en favor de la OG por locale. `robots.ts`, `sitemap.ts`, `icon.svg` y `favicon.ico` siguen en `src/app/`.
 - **Proxy:** `src/middleware.ts` → `src/proxy.ts`. Solo redirige `/` según `Accept-Language` y fuerza el prefijo de locale. Sin `console.log`.
 - **Lint:** ESLint 9 con configuración plana (`eslint.config.mjs`), `eslint-config-next@16`, script `"lint": "eslint ."`.
+- **Build con webpack:** el script `build` es `next build --webpack`. Con Turbopack, el bundler por defecto de Next 16, la home cargaba 135 478 B gz de JS. Solo el framework (runtime de Next, React DOM y los componentes cliente internos del App Router) ya sumaba 134 143 B gz, por encima del presupuesto de §5 (130 KB = 133 120 B), y los flags experimentales de Turbopack no lo reducen. Con webpack la home carga 132 505 B gz (129.4 KB). `next dev` sigue con Turbopack.
 - **Bootstrap:** `bootstrap.min.css` y `react-bootstrap` solo en las rutas que usan el `Navbar` actual (layout de frente y lore). La home tiene su propio encabezado.
 - **Cabeceras:** `poweredByHeader: false`. CSP aplicada (no Report-Only):
 
@@ -178,10 +181,15 @@ Tokens de la home en `src/styles/home.css` (capa `@layer home`), en OKLCH con re
 - **Modelo** (`src/graph/model.ts`):
 
   ```ts
-  type NodeKind = 'self' | 'frente' | 'empresa' | 'rol' | 'producto' | 'tecnologia' | 'concepto';
-  interface GNode { id: string; kind: NodeKind; label: {es: string; en: string}; frente?: FrenteId; year?: number; url?: string; weight: number }
-  interface GEdge { source: string; target: string; rel: 'trabajo-en' | 'construyo' | 'usa' | 'fundamenta' | 'evoluciona-a' | 'pertenece-a'; weight: number }
+  type NodeKind = 'self' | 'frente' | 'empresa' | 'producto' | 'grupo' | 'tecnologia' | 'concepto';
+  type RelKind = 'agrupa' | 'pertenece-a' | 'trabajo-en' | 'construyo' | 'usa' | 'fundamenta';
+  interface GNode { id: string; kind: NodeKind; label: {es: string; en: string}; frente?: FrenteId; year?: number; month?: number; yearEnd?: number | null; role?: {es: string; en: string}; url?: string; weight: number }
+  interface GEdge { source: string; target: string; rel: RelKind; weight: number }
   ```
+
+  - No hay nodo `rol`: el rol va dentro de la `empresa` (`role`, bilingüe, con `year`/`month` de inicio y `yearEnd`, `null` si sigue).
+  - `grupo` es una familia de `tools.json` (backend, frontend, cloud/DevOps…). `agrupa` une self → frente, frente → grupo y grupo → tecnología.
+  - No existe `evoluciona-a`: ninguna fuente lo alimentaba.
 
 - **Fuentes** (`src/graph/sources.ts`): `productos` y `frentesMeta` (`frentes.ts`), `experience.json`, `achievements.json`, `tools.json` (es/en), más relaciones curadas en `src/graph/relations.ts` (producto→tecnología, concepto→producto, empresa→producto). Objetivo: 150–300 nodos semánticos.
 - **Capa decorativa:** subgrafo procedural determinista (semilla fija) de 1.5k–8k nodos según el nivel de calidad. Nodos satélite unidos a los semánticos más cercanos. Se genera en el worker desde la semilla, no se transfiere.
@@ -193,10 +201,11 @@ Tokens de la home en `src/styles/home.css` (capa `@layer home`), en OKLCH con re
   - **L4:** muestreo de la lemniscata de Bernoulli 3D.
   - Normaliza todas las formas a una esfera de radio 1.
 - **Salidas:**
-  - `public/graph/graph.v1.bin`: Float32 × 5 layouts × N × 3, índices de aristas Uint16, frente/kind Uint8, pesos, puntos de control.
-  - `public/graph/graph.v1.json`: ids, etiquetas es/en, URLs, rangos.
+  - `public/graph/graph.<hash>.bin` (formato GRF1, `<hash>` = 10 hex del SHA-256 de binario y metadatos): cabecera de 16 bytes (magia, N, M, nº de layouts), Float32 × 5 layouts × N × 3, índices de aristas Uint16, y Uint8 para kind, frente y peso de cada nodo y rel y peso de cada arista. El binario no guarda puntos de control.
+  - `public/graph/graph.<hash>.json`: ids, kind, etiquetas es/en, frente, URLs, años (`year`, `month`, `yearEnd`) y rol.
+  - Con el hash en el nombre, `/graph/*` se sirve con caché `immutable` y cada build borra los artefactos viejos.
   - `src/graph/generated/poster.ts`: SVG inline del frame 0 de L0 con la cámara inicial.
-  - `src/graph/generated/stats.ts`: nº de nodos y aristas.
+  - `src/graph/generated/stats.ts`: `GRAPH_STATS` (nº de nodos y aristas), `GRAPH_ASSET` (rutas `bin` y `meta` del artefacto con hash) y `DATA_DATE` (fecha del último commit de los datos).
 - **Determinismo:** misma entrada ⇒ mismos bytes (se verifica con test).
 - **Presupuestos:** datos ≤ 60 KB gz; póster ≤ 12 KB gz.
 
@@ -246,16 +255,19 @@ Tokens de la home en `src/styles/home.css` (capa `@layer home`), en OKLCH con re
 
 ```
 src/app/[locale]/layout.tsx            html/body, fonts, metadata base, static params
-src/app/[locale]/page.tsx              RSC: compone las secciones, JSON-LD
+src/app/[locale]/(home)/page.tsx       RSC: compone las secciones, JSON-LD (grupo (home), con home.css)
+src/app/[locale]/(portal)/...          frentes y lore (grupo (portal), con bootstrap y brand.css)
 src/app/[locale]/opengraph-image.tsx   OG por locale
-src/components/home/*.tsx              HomeHeader, Hero, Metodo, Trayectoria, Frentes, Prueba, Contacto, ProductSearch (cliente), MotionToggle (cliente), useSectionProgress
+src/components/home/*.tsx              HomeHeader, Stage, Hero, Method, Path, Fronts, Proof, Contact, HomeFooter, SectionHead, ProductSearch (cliente); MotionToggle (cliente) y useSectionProgress llegan con el Plan 2
 src/components/graph/GraphStage.tsx    isla cliente
 src/graph/{model,sources,relations,probe}.ts
 src/graph/scene/{GraphScene.ts,shaders/*.ts,layers/*.ts,quality.ts,camera.ts}
 src/graph/worker/graph.worker.ts
 src/graph/generated/{poster,stats}.ts  (generados, versionados)
 src/lib/site.ts                        SITE, locales, helpers de alternates
-src/content/home.{es,en}.ts            textos de la home (una sola fuente i18n para la home)
+src/content/home.ts                    textos es/en de la home (una sola fuente i18n para la home)
+src/content/proof.ts                   cifras de Prueba derivadas de los datos (§2.1)
+src/content/timeline.ts                línea de tiempo canónica de Trayectoria
 src/styles/home.css
 scripts/build-graph.mts
 tests/graph/*.test.ts                  vitest
@@ -264,11 +276,11 @@ e2e/home.spec.ts                       Playwright
 
 ### 4.7 Analítica
 
-- **Carga de GA** (`G-E5NMYWLXER`): la hace un cargador propio, `src/components/Analytics.tsx`, en cliente. Inyecta `gtag.js` y la configuración con la primera interacción (`pointerdown`, `keydown`, `scroll`) o, en su defecto, 5 s después de `load` con `requestIdleCallback`. Se conserva el ID y la continuidad de datos, y se sustituye el `<Script afterInteractive>` inline actual.
+- **Carga de GA** (`G-E5NMYWLXER`): la hace un cargador propio, `src/components/Analytics.tsx`, en cliente. Inyecta `gtag.js` y la configuración con la primera interacción (`pointerdown`, `keydown`, `scroll`, `touchstart`) o, en su defecto, 5 s después de `load` con `requestIdleCallback` (sin él, directamente). La lógica está en `scheduleAnalyticsLoad`, con tests. Se conserva el ID y la continuidad de datos, y se sustituye el `<Script afterInteractive>` inline actual.
 
 ### 4.8 Accesibilidad
 
-- **Canvas:** `aria-hidden="true"` dentro de `<figure>` con `<figcaption>` visible ("Mapa de mi trayectoria: N nodos, M relaciones") y enlace "Ver como lista" → `#frentes`.
+- **Grafo:** va en `.stage`, una capa fija con `aria-hidden="true"` y sin `<figure>`. Hoy contiene el póster; el Plan 2 monta ahí el canvas. La leyenda visible está en el hero (`.hero-caption`): "Este grafo es mi trayectoria: N nodos, M relaciones reales" y el enlace "Verlo como lista" → `#frentes`.
 - **Botón de pausa:** visible, con `aria-pressed` (WCAG 2.2.2).
 - **Reduced motion:** póster; la escena solo arranca a demanda y sin autoplay.
 - **Objetivos táctiles:** ≥ 24 px y foco visible.
@@ -279,7 +291,7 @@ e2e/home.spec.ts                       Playwright
 
 | Métrica | Límite |
 |---|---|
-| JS en el hilo principal de la home | ≤ 130 KB gz (hoy ~200 KB) |
+| JS en el hilo principal de la home | ≤ 130 KB gz (antes ~200 KB; al cerrar el Plan 1, 129.4 KB con webpack, §4.1) |
 | Worker | ≤ 175 KB gz |
 | Datos del grafo | ≤ 60 KB gz |
 | LCP | ≤ 1.8 s |
@@ -287,6 +299,13 @@ e2e/home.spec.ts                       Playwright
 | CLS | ≤ 0.02 |
 | Errores de consola | 0 |
 | Violaciones de CSP | 0 |
+
+- La home no usa `next/link`, y tampoco el 404 de `[locale]`, que viaja en el árbol RSC de cada página: su módulo cliente cuesta ~3.5 KB gz.
+- **Medido al cerrar el Plan 1** (2026-09-24, `npm run lighthouse`, mediana de 5 corridas, en un host con carga media de 65 a 97 sobre 32 núcleos):
+  - SEO, Accesibilidad y Best Practices = 100 en las cuatro combinaciones.
+  - Escritorio cumple todo: Performance 100, LCP de 0.63 s (`/es`) y 0.75 s (`/en`), TBT 0 y CLS 0.
+  - Móvil **no** cumple ni Performance ≥ 95 ni LCP ≤ 1.8 s: `/es` 85 y 3.58 s, `/en` 89 y 3.48 s. El TBT móvil (199 ms en `/es`, 104 ms en `/en`) sube y baja con la carga del host: en otras tandas quedó entre 54 y 95 ms. CLS 0.
+  - Sin ninguna fuente web, la misma home marcó en una corrida 98 y un LCP de 2.33 s: el JS del framework (~130 KB gz) y el HTML (~44 KB gz) entran igualmente en el grafo del LCP simulado. Queda pendiente de decisión; los datos están en el reporte de la Tarea 14.
 
 ## 6. Pruebas
 

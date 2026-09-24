@@ -37,3 +37,5 @@ next-env.d.ts
 
 # artifacts (working notes)
 .qodo/repos_analitics/
+/test-results
+/playwright-report

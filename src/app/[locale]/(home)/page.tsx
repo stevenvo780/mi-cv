@@ -20,7 +20,8 @@ export const dynamic = 'error';
 // enlace o con Atrás), el CSS del portal (bootstrap, globals.css, brand.css) sigue cargado, no tiene capa
 // y gana siempre a `@layer home`. Por eso todo enlace de la home a /lore o a un frente, y del portal a la
 // home, es un <a>: cada grupo se carga en su propio documento. next/link solo enlaza páginas del mismo
-// grupo (p. ej. /es ↔ /en). Lo comprueba tests/components/route-groups.test.ts.
+// grupo, y la home ni siquiera lo usa (su módulo cliente no cabe en el presupuesto de JS, spec §5): la marca
+// y el cambio de idioma también son <a>. Lo comprueba tests/components/route-groups.test.ts.
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const locale = toLocale((await params).locale);
