@@ -22,9 +22,11 @@
     "bootstrap": "^5.3.3",
     "geist": "1.7.2",
     "next": "16.3.6",
+    "postprocessing": "6.39.5",
     "react": "19.3.0",
     "react-bootstrap": "2.10.10",
     "react-dom": "19.3.0",
+    "three": "0.186.0",
     "vis-network": "^9.1.9"
   },
   "devDependencies": {
@@ -32,6 +34,7 @@
     "@types/node": "22.19.0",
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
+    "@types/three": "0.186.0",
     "d3-force-3d": "3.0.6",
     "eslint": "9.39.5",
     "eslint-config-next": "16.3.6",

@@ -2,9 +2,11 @@ import { forceCenter, forceLink, forceManyBody, forceSimulation } from 'd3-force
 import type { FrenteId } from '@/data/frentes';
 import { LAYOUT_NAMES, type LayoutName, type Layouts } from './layout-names';
 import type { GNode, GraphModel } from './model';
+import { mulberry32 } from './random';
 import { BRIDGE_PRODUCTS } from './relations';
 
 export { LAYOUT_NAMES, type LayoutName, type Layouts };
+export { mulberry32 };
 
 export const CLUSTER_CENTERS: Record<FrenteId, [number, number, number]> = {
   informatica: [-0.52, 0.18, 0.05],
@@ -13,17 +15,6 @@ export const CLUSTER_CENTERS: Record<FrenteId, [number, number, number]> = {
   enterprise: [-0.18, -0.5, -0.42],
 };
 const FRENTE_ORDER: FrenteId[] = ['informatica', 'filosofia', 'ciencias', 'enterprise'];
-
-export function mulberry32(seed: number): () => number {
-  let a = seed >>> 0;
-  return () => {
-    a = (a + 0x6d2b79f5) >>> 0;
-    let t = a;
-    t = Math.imul(t ^ (t >>> 15), t | 1);
-    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-  };
-}
 
 /** Escala a radio máximo 1; con `center` resta antes el centroide. */
 export function normalize(p: Float32Array, center = true): Float32Array {
