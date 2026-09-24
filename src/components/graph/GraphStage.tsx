@@ -6,12 +6,11 @@ import { useSectionProgress } from '@/components/home/useSectionProgress';
 import type { HomeCopy } from '@/content/home';
 import type { GraphMeta, MetaNode } from '@/graph/codec';
 import { GRAPH_ASSET } from '@/graph/generated/stats';
-import { dispatch } from '@/graph/runtime/dispatch';
-import { createInbox } from '@/graph/runtime/inbox';
+import { launchScene } from '@/graph/runtime/launch';
 import { loadGraphBinary } from '@/graph/runtime/loader';
-import { browserProbeEnv, probe3D } from '@/graph/runtime/probe';
+import { browserProbeEnv, offscreenWebGL2, probe3D } from '@/graph/runtime/probe';
 import type { MainToWorker, SceneEvent } from '@/graph/runtime/protocol';
-import { initialTier, type Tier } from '@/graph/runtime/quality';
+import { initialTier } from '@/graph/runtime/quality';
 import type { Locale } from '@/lib/site';
 
 type Phase = 'poster' | 'loading' | 'live' | 'reduced';
@@ -20,13 +19,6 @@ interface Tip {
   node: MetaNode;
   x: number;
   y: number;
-}
-interface Common {
-  width: number;
-  height: number;
-  dpr: number;
-  tier: Tier;
-  motion: boolean;
 }
 
 /** Zonas donde el puntero pertenece al contenido y no al grafo. */
@@ -49,7 +41,8 @@ function readMotionPreference(): boolean {
  * Isla del grafo 3D (spec §4.4). La monta la puerta GraphStageLazy tras la primera interacción o el idle después de
  * `load` (el disparador del paso 2 ya ocurrió): aquí, en idle, la sonda de GPU decide entre la escena, el botón
  * «Explorar en 3D» (movimiento reducido) o quedarse en el póster. La escena corre en un worker con OffscreenCanvas y,
- * sin él, en el hilo principal. Los controles y el tooltip van por portal a `.home`: `.stage` es aria-hidden (§4.8).
+ * sin él (o si el worker falla antes de pintar), en el hilo principal: lo decide `launchScene`. Los controles y el
+ * tooltip van por portal a `.home`: `.stage` es aria-hidden (§4.8).
  *
  * Parámetros de URL para pruebas: `?gl=force` se salta la sonda, `?gl=off` la desactiva y `?worker=off` fuerza el
  * fallback en el hilo principal.
@@ -63,6 +56,8 @@ export default function GraphStage({ locale, t }: { locale: Locale; t: HomeCopy[
   const [phase, setPhase] = useState<Phase>('poster');
   const [tip, setTip] = useState<Tip | null>(null);
   const [motion, setMotion] = useState(readMotionPreference);
+  /** La pausa vigente para quien arranque la escena más tarde (tras cargar three o al pasar del worker al hilo principal). */
+  const motionRef = useRef(motion);
   // Solo se monta en cliente (la puerta lo importa tras un efecto): document existe.
   const [home] = useState(() => document.querySelector('.home'));
 
@@ -114,82 +109,52 @@ export default function GraphStage({ locale, t }: { locale: Locale; t: HomeCopy[
     [teardown],
   );
 
-  /** Fallback sin OffscreenCanvas con WebGL: la escena en el hilo principal, con el mismo buzón que el worker. */
-  const startMain = useCallback(
-    async (host: HTMLDivElement, common: Common, binUrl: string) => {
-      const canvas = document.createElement('canvas');
-      canvas.className = 'stage-canvas';
-      host.appendChild(canvas);
-      const { GraphScene } = await import('@/graph/scene/GraphScene');
-      const scene = new GraphScene(onEvent);
-      const inbox = createInbox((m) => dispatch(scene, m));
-      sendRef.current = inbox.push;
-      disposeRef.current = () => scene.dispose();
-      await scene.init({ canvas, graph: await loadGraphBinary(binUrl), ...common });
-      inbox.open();
-      emitScroll();
-    },
-    [emitScroll, onEvent],
-  );
-
-  const start = useCallback(
-    async (motionOn: boolean) => {
-      const host = hostRef.current;
-      if (!host || sendRef.current) return;
-      setPhase('loading');
-      fetch(GRAPH_ASSET.meta)
-        .then((r) => r.json() as Promise<GraphMeta>)
-        .then((m) => {
-          metaRef.current = m.nodes;
-        })
-        .catch((err: unknown) => console.warn('[grafo] sin fichas de nodos:', err));
-      const rect = host.getBoundingClientRect();
-      const common: Common = {
-        width: rect.width,
-        height: rect.height,
-        dpr: window.devicePixelRatio || 1,
-        tier: initialTier({ width: window.innerWidth, mobile: window.matchMedia('(pointer: coarse)').matches, cores: navigator.hardwareConcurrency ?? 4 }),
-        motion: motionOn,
-      };
-      const binUrl = new URL(GRAPH_ASSET.bin, window.location.href).toString();
-      const allowWorker = new URLSearchParams(window.location.search).get('worker') !== 'off';
-      const probeCanvas = document.createElement('canvas');
-      if (allowWorker && typeof Worker !== 'undefined' && 'transferControlToOffscreen' in probeCanvas) {
-        // Enmienda H8: fuera del try, para terminarlo en el catch si algo falla después de crearlo
-        // (transferControlToOffscreen, postMessage). Los cierres usan la constante `w`: TS no estrecha un `let`
-        // dentro de un callback.
-        let worker: Worker | undefined;
-        try {
-          const canvas = probeCanvas;
-          canvas.className = 'stage-canvas';
-          host.appendChild(canvas);
-          const w = new Worker(new URL('../../graph/worker/graph.worker.ts', import.meta.url), { type: 'module' });
-          worker = w;
-          const offscreen = canvas.transferControlToOffscreen();
-          w.onmessage = (ev: MessageEvent<SceneEvent>) => onEvent(ev.data);
-          w.onerror = (ev) => {
-            ev.preventDefault();
-            w.terminate();
-            host.replaceChildren();
-            sendRef.current = null;
-            void startMain(host, common, binUrl).catch(teardown);
-          };
-          const init: MainToWorker = { type: 'init', canvas: offscreen, binUrl, ...common };
-          w.postMessage(init, [offscreen]);
-          sendRef.current = (m) => w.postMessage(m);
-          disposeRef.current = () => w.terminate();
-          emitScroll();
-          return;
-        } catch (err) {
-          worker?.terminate();
-          console.warn('[grafo] worker no disponible, uso el hilo principal:', err);
-          host.replaceChildren();
-        }
-      }
-      await startMain(host, common, binUrl).catch(teardown);
-    },
-    [emitScroll, onEvent, startMain, teardown],
-  );
+  const start = useCallback(() => {
+    const host = hostRef.current;
+    if (!host || sendRef.current) return;
+    setPhase('loading');
+    fetch(GRAPH_ASSET.meta)
+      .then((r) => r.json() as Promise<GraphMeta>)
+      .then((m) => {
+        metaRef.current = m.nodes;
+      })
+      .catch((err: unknown) => console.warn('[grafo] sin fichas de nodos:', err));
+    const allowWorker = new URLSearchParams(window.location.search).get('worker') !== 'off';
+    const link = launchScene({
+      tier: initialTier({ width: window.innerWidth, mobile: window.matchMedia('(pointer: coarse)').matches, cores: navigator.hardwareConcurrency ?? 4 }),
+      binUrl: new URL(GRAPH_ASSET.bin, window.location.href).toString(),
+      size: () => {
+        const rect = host.getBoundingClientRect();
+        return { width: rect.width, height: rect.height, dpr: window.devicePixelRatio || 1 };
+      },
+      motion: () => motionRef.current,
+      mountCanvas: () => {
+        const canvas = document.createElement('canvas');
+        canvas.className = 'stage-canvas';
+        host.appendChild(canvas);
+        return canvas;
+      },
+      clearHost: () => host.replaceChildren(),
+      // Safari 16.4–16.x tiene OffscreenCanvas sin WebGL2: ahí va directo al hilo principal (spec §8).
+      createWorker:
+        allowWorker && typeof Worker !== 'undefined' && 'transferControlToOffscreen' in HTMLCanvasElement.prototype && offscreenWebGL2()
+          ? () => new Worker(new URL('../../graph/worker/graph.worker.ts', import.meta.url), { type: 'module' })
+          : null,
+      loadScene: async () => {
+        // Destructurado en la propia sentencia: webpack ve que solo se usa GraphScene, como en el worker, y los dos
+        // comparten el mismo chunk de la escena. Con el namespace entero, el worker se llevaba su propia copia.
+        const { GraphScene } = await import('@/graph/scene/GraphScene');
+        return GraphScene;
+      },
+      loadGraph: (url) => loadGraphBinary(url),
+      onEvent,
+      onFail: teardown,
+      warn: (message, detail) => console.warn(message, detail),
+    });
+    sendRef.current = link.send;
+    disposeRef.current = link.dispose;
+    emitScroll();
+  }, [emitScroll, onEvent, teardown]);
 
   // Arranque: la sonda en idle (crea y suelta un contexto WebGL2). Con movimiento reducido, solo el botón.
   useEffect(() => {
@@ -198,7 +163,7 @@ export default function GraphStage({ locale, t }: { locale: Locale; t: HomeCopy[
       if (cancelled) return;
       const env = browserProbeEnv();
       if (env.reducedMotion && env.override !== 'force') setPhase('reduced');
-      else if (probe3D(env).ok) void start(readMotionPreference());
+      else if (probe3D(env).ok) start();
     };
     const ric = 'requestIdleCallback' in window;
     const handle = ric ? window.requestIdleCallback(decide, { timeout: 1500 }) : window.setTimeout(decide, 200);
@@ -291,6 +256,7 @@ export default function GraphStage({ locale, t }: { locale: Locale; t: HomeCopy[
   const toggleMotion = () => {
     const next = !motion;
     setMotion(next);
+    motionRef.current = next;
     try {
       window.localStorage.setItem(MOTION_KEY, next ? 'on' : 'paused');
     } catch {
@@ -319,9 +285,11 @@ export default function GraphStage({ locale, t }: { locale: Locale; t: HomeCopy[
                   type="button"
                   className="graph-explore"
                   onClick={() => {
+                    // A demanda y sin autoplay (§4.8): arranca en pausa.
                     setMotion(false);
+                    motionRef.current = false;
                     document.documentElement.dataset.motion = 'paused';
-                    void start(false);
+                    start();
                   }}
                 >
                   {t.explore}

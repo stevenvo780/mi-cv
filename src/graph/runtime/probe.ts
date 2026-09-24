@@ -47,3 +47,20 @@ export function browserProbeEnv(): ProbeEnv {
     },
   };
 }
+
+/**
+ * ¿Admite el OffscreenCanvas un contexto WebGL2? La sonda solo prueba WebGL2 en un canvas del hilo principal, y Safari
+ * 16.4–16.x tiene OffscreenCanvas solo 2D: ahí el worker no puede pintar y la escena va al hilo principal (spec §4.4
+ * paso 3, §8). Libera el contexto de la prueba.
+ */
+export function offscreenWebGL2(scope: { OffscreenCanvas?: typeof OffscreenCanvas } = globalThis): boolean {
+  if (typeof scope.OffscreenCanvas !== 'function') return false;
+  try {
+    const gl = new scope.OffscreenCanvas(1, 1).getContext('webgl2');
+    if (!gl) return false;
+    gl.getExtension('WEBGL_lose_context')?.loseContext();
+    return true;
+  } catch {
+    return false;
+  }
+}

@@ -1,5 +1,5 @@
-import { describe, expect, it } from 'vitest';
-import { probe3D, type ProbeEnv } from '@/graph/runtime/probe';
+import { describe, expect, it, vi } from 'vitest';
+import { offscreenWebGL2, probe3D, type ProbeEnv } from '@/graph/runtime/probe';
 
 const base: ProbeEnv = {
   reducedMotion: false,
@@ -35,5 +35,45 @@ describe('probe3D', () => {
     let called = false;
     probe3D({ ...base, saveData: true, getRenderer: () => ((called = true), 'x') });
     expect(called).toBe(false);
+  });
+});
+
+describe('offscreenWebGL2 (¿puede pintar el worker?)', () => {
+  /** OffscreenCanvas de mentira: `context` es lo que devuelve getContext('webgl2'). */
+  const scopeWith = (context: unknown) => {
+    const asked: string[] = [];
+    class FakeOffscreen {
+      constructor(
+        readonly width: number,
+        readonly height: number,
+      ) {}
+      getContext(kind: string) {
+        asked.push(kind);
+        if (context instanceof Error) throw context;
+        return context;
+      }
+    }
+    return { scope: { OffscreenCanvas: FakeOffscreen as unknown as typeof OffscreenCanvas }, asked };
+  };
+
+  it('sin OffscreenCanvas, no', () => {
+    expect(offscreenWebGL2({})).toBe(false);
+  });
+
+  it('OffscreenCanvas solo 2D (Safari 16.4–16.x): no, y así la escena va al hilo principal', () => {
+    const { scope, asked } = scopeWith(null);
+    expect(offscreenWebGL2(scope)).toBe(false);
+    expect(asked).toEqual(['webgl2']);
+  });
+
+  it('si getContext lanza, no', () => {
+    expect(offscreenWebGL2(scopeWith(new Error('NotSupportedError')).scope)).toBe(false);
+  });
+
+  it('con WebGL2 en el OffscreenCanvas, sí, y libera el contexto de la prueba', () => {
+    const loseContext = vi.fn();
+    const gl = { getExtension: vi.fn((name: string) => (name === 'WEBGL_lose_context' ? { loseContext } : null)) };
+    expect(offscreenWebGL2(scopeWith(gl).scope)).toBe(true);
+    expect(loseContext).toHaveBeenCalledTimes(1);
   });
 });
