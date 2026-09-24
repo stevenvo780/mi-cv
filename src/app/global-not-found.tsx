@@ -8,7 +8,7 @@ export default function GlobalNotFound() {
   return (
     <html lang="en" className={GeistSans.variable}>
       <body style={{ margin: 0 }}>
-        <NotFoundView locale="en" />
+        <NotFoundView />
       </body>
     </html>
   );

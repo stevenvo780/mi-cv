@@ -181,7 +181,13 @@ test('las subpáginas siguen funcionando con su propio canonical', async ({ page
   }
 });
 
-test('404 reales', async ({ page }) => {
-  expect((await page.goto('/es/no-existe'))!.status()).toBe(404);
-  expect((await page.goto('/en/filosofia-x'))!.status()).toBe(404);
+test('404 reales y bilingües', async ({ page }) => {
+  for (const path of ['/es/no-existe', '/en/filosofia-x']) {
+    expect((await page.goto(path))!.status(), path).toBe(404);
+    // Ninguno de los dos 404 recibe el locale de la URL: muestran los dos idiomas y enlazan a las dos homes.
+    await expect(page.locator('h1 [lang="es"]')).toHaveText('Esta página no existe');
+    await expect(page.locator('h1 [lang="en"]')).toHaveText('This page does not exist');
+    await expect(page.locator('main a[href="/es"]')).toHaveText('Volver al inicio');
+    await expect(page.locator('main a[href="/en"]')).toHaveText('Back to home');
+  }
 });

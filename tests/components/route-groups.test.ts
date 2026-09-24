@@ -73,9 +73,24 @@ describe('enlaces entre los grupos de rutas (home) y (portal)', () => {
 
   // El 404 de [locale] va en el árbol RSC de todas las páginas del segmento (incluida la home), así que un
   // next/link ahí también arrastraría el módulo a la home.
-  it.each(['es', 'en'] as const)('la vista 404 (%s) no usa next/link', (locale) => {
-    const links = internal(anchors(render(NotFoundView, { locale })));
-    expect(links).toEqual([{ href: `/${locale}`, client: false }]);
+  // Es bilingüe (ninguno de los dos 404 recibe el locale): enlaza a las dos homes.
+  it('la vista 404 no usa next/link y enlaza a las dos homes', () => {
+    const links = internal(anchors(render(NotFoundView, {})));
+    expect(links).toEqual([
+      { href: '/es', client: false },
+      { href: '/en', client: false },
+    ]);
+  });
+
+  it('la vista 404 muestra los dos idiomas, cada uno con su lang', () => {
+    const html = render(NotFoundView, {});
+    for (const [lang, title, back] of [
+      ['es', 'Esta página no existe', 'Volver al inicio'],
+      ['en', 'This page does not exist', 'Back to home'],
+    ]) {
+      expect(html).toMatch(new RegExp(`<span lang="${lang}"[^>]*>${title}</span>`));
+      expect(html).toMatch(new RegExp(`<a href="/${lang}" hrefLang="${lang}" lang="${lang}"[^>]*>${back}</a>`));
+    }
   });
 
   it('el portal solo usa next/link dentro del portal', () => {
