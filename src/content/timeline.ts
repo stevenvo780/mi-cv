@@ -23,7 +23,7 @@ export interface TimelineEntry {
   company: Bilingual;
   role: Bilingual;
   dates: Bilingual;
-  /** YYYY-MM, para <time dateTime>. */
+  /** Inicio para <time dateTime>: YYYY-MM, o solo YYYY si la fuente no trae el mes. */
   start: string;
   location?: Bilingual;
   achievements: Bilingual[];
@@ -43,7 +43,7 @@ export function buildTimeline(): TimelineEntry[] {
       company: pick(EXP, `experience.${key}`)!,
       role: pick(EXP, `experience.role.${key}`)!,
       dates: { es: dash(dates.es), en: dash(dates.en) },
-      start: `${year}-${String(month).padStart(2, '0')}`,
+      start: month === undefined ? String(year) : `${year}-${String(month).padStart(2, '0')}`,
       location: pick(EXP, `experience.location.${key}`),
       achievements: (ACHIEVEMENTS[key] ?? []).map((a) => pick(ACH, `achievements.description.${a}`)).filter((a): a is Bilingual => Boolean(a)),
     };

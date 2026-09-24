@@ -15,4 +15,12 @@ describe('línea de tiempo', () => {
   it('Indie Level Studio termina en 2025/09', () => {
     expect(entries.find((e) => e.key === 'indieLevels')!.dates.es).toContain('2025/09');
   });
+  // <time dateTime> no afirma una precisión que la fuente no tiene: "2022 - Actualidad" no es enero de 2022.
+  it('el dateTime solo lleva el mes si la fuente lo trae', () => {
+    const start = Object.fromEntries(entries.map((e) => [e.key, e.start]));
+    expect(start.humanizar).toBe('2022');
+    expect(start.appsWeb).toBe('2018');
+    expect(start.infraestructura).toBe('2014-02');
+    for (const e of entries) expect(e.start).toMatch(/^\d{4}(-(0[1-9]|1[0-2]))?$/);
+  });
 });

@@ -28,10 +28,11 @@ export const nodeId = {
   tec: (id: string) => `tec:${id}`,
 };
 
-export function parseDates(range: string): { year: number; month: number; yearEnd: number | null } {
+/** "2024/11 - 2026/06", "2022 - Actualidad"… Sin mes en la fuente, `month` no se inventa: queda sin definir. */
+export function parseDates(range: string): { year: number; month?: number; yearEnd: number | null } {
   const m = range.match(/^(\d{4})(?:\/(\d{1,2}))?\s*-\s*(?:(\d{4})(?:\/\d{1,2})?|\p{L}+)$/u);
   if (!m) throw new Error(`Fecha no reconocida: "${range}"`);
-  return { year: Number(m[1]), month: m[2] ? Number(m[2]) : 1, yearEnd: m[3] ? Number(m[3]) : null };
+  return { year: Number(m[1]), ...(m[2] ? { month: Number(m[2]) } : {}), yearEnd: m[3] ? Number(m[3]) : null };
 }
 
 function bilingual(key: string, dict: { es: Dict; en: Dict }): Bilingual {

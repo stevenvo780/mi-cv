@@ -101,7 +101,7 @@ export function layoutHelice(model: GraphModel, seed = 11): Float32Array {
   const t = new Float64Array(model.nodes.length).fill(Number.NaN);
 
   model.nodes.forEach((n, i) => {
-    if (n.kind === 'empresa') t[i] = n.year! + (n.month! - 1) / 12;
+    if (n.kind === 'empresa') t[i] = n.year! + ((n.month ?? 1) - 1) / 12; // sin mes: a principio de año
   });
   // Productos: tras la empresa que los construyó; si no hay, repartidos en la etapa reciente (2022–2026).
   const productos = model.nodes.map((n, i) => ({ n, i })).filter(({ n }) => n.kind === 'producto');

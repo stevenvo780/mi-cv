@@ -14,7 +14,7 @@ export interface GNode {
   kind: NodeKind;
   label: Bilingual;
   frente?: FrenteId;
-  /** Empresas: año y mes de inicio. */
+  /** Empresas: año y mes de inicio (sin mes si la fuente solo trae el año). */
   year?: number;
   month?: number;
   /** Empresas: año de fin; null = actualidad. */

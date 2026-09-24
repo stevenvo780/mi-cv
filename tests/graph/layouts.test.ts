@@ -47,7 +47,7 @@ describe('computeLayouts', () => {
     const empresas = model.nodes
       .map((n, i) => ({ n, i }))
       .filter(({ n }) => n.kind === 'empresa')
-      .sort((a, b) => a.n.year! + (a.n.month! - 1) / 12 - (b.n.year! + (b.n.month! - 1) / 12));
+      .sort((a, b) => a.n.year! + ((a.n.month ?? 1) - 1) / 12 - (b.n.year! + ((b.n.month ?? 1) - 1) / 12));
     for (let k = 1; k < empresas.length; k++) {
       expect(p[empresas[k].i * 3 + 1]).toBeGreaterThanOrEqual(p[empresas[k - 1].i * 3 + 1]);
     }

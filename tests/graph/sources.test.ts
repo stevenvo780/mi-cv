@@ -9,9 +9,14 @@ describe('parseDates', () => {
     expect(parseDates('2024/11 - 2026/06')).toEqual({ year: 2024, month: 11, yearEnd: 2026 });
   });
   it('lee rangos abiertos en ES y EN y sin mes', () => {
-    expect(parseDates('2022 - Actualidad')).toEqual({ year: 2022, month: 1, yearEnd: null });
     expect(parseDates('2014/02 - ACTUALIDAD')).toEqual({ year: 2014, month: 2, yearEnd: null });
-    expect(parseDates('2018 - Present')).toEqual({ year: 2018, month: 1, yearEnd: null });
+  });
+  it('sin mes en la fuente no inventa uno', () => {
+    for (const range of ['2022 - Actualidad', '2018 - Present']) {
+      const d = parseDates(range);
+      expect(d).toEqual({ year: Number(range.slice(0, 4)), yearEnd: null });
+      expect('month' in d).toBe(false);
+    }
   });
   it('rechaza texto sin fecha', () => {
     expect(() => parseDates('hace tiempo')).toThrow();
