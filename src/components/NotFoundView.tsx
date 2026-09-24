@@ -1,3 +1,5 @@
+import { Fragment } from 'react';
+
 /**
  * 404 bilingüe (ES · EN), sin JS. Lo usan el 404 de [locale] y el global, y ninguno recibe el locale de la URL
  * (el de [locale] no recibe params), así que cada texto declara su propio `lang`.
@@ -40,13 +42,14 @@ export default function NotFoundView() {
       {/* <a> y no next/link: este 404 va en el árbol RSC de todas las páginas de [locale] y arrastraría
           next/link al JS de la home (spec §5). */}
       <p style={{ margin: 0 }}>
-        <a href="/es" hrefLang="es" lang="es" style={{ color: '#e0a85e' }}>
-          {TEXT.es.back}
-        </a>
-        {SEP}
-        <a href="/en" hrefLang="en" lang="en" style={{ color: '#e0a85e' }}>
-          {TEXT.en.back}
-        </a>
+        {(['es', 'en'] as const).map((lang, i) => (
+          <Fragment key={lang}>
+            {i > 0 ? SEP : null}
+            <a href={`/${lang}`} hrefLang={lang} lang={lang} style={{ color: '#e0a85e' }}>
+              {TEXT[lang].back}
+            </a>
+          </Fragment>
+        ))}
       </p>
     </main>
   );
