@@ -22,8 +22,10 @@ export default function Proof({ locale, t }: { locale: Locale; t: HomeCopy }) {
             </div>
           ))}
         </dl>
-        <h3 className="stack-title">{t.proof.stackTitle}</h3>
-        <p className="stack-lead">{t.proof.stackLead}</p>
+        <header className="stack-head">
+          <h3 className="stack-title">{t.proof.stackTitle}</h3>
+          <p className="stack-lead">{t.proof.stackLead}</p>
+        </header>
         <div className="stack">
           {Object.entries(TOOL_GROUPS).map(([gid, group]) => (
             <div key={gid} className="stack-group reveal" data-node={nodeId.grupo(gid)}>

@@ -81,6 +81,35 @@ for (const locale of ['es', 'en'] as const) {
       expect(errors).toEqual([]);
     });
 
+    // Spec §3.1: todo texto pequeño sobre el escenario lleva scrim. Sin él, sobre un núcleo de nodo casi blanco del
+    // póster (que con movimiento reducido no se atenúa), --muted se queda en 2.2:1; con él, ≥ 5.5:1.
+    test('ningún texto pequeño se pinta sobre el escenario sin scrim', async ({ page }) => {
+      await page.goto(`/${locale}`);
+      await page.getByRole('searchbox').fill('zzzz'); // muestra también el aviso de «sin resultados»
+      await expect(page.locator('.search-empty')).not.toBeEmpty();
+      const bare = await page.evaluate(() => {
+        const main = document.querySelector('.home main')!;
+        const out = new Set<string>();
+        const walker = document.createTreeWalker(main, NodeFilter.SHOW_TEXT);
+        for (let n = walker.nextNode(); n; n = walker.nextNode()) {
+          const el = n.parentElement!;
+          if (!n.textContent!.trim() || el.closest('script, style, .stage') || !el.checkVisibility()) continue;
+          // Texto grande (≥ 24 px) queda fuera: el nombre del h1, con su sombra, va en los flancos oscuros del grafo.
+          if (parseFloat(getComputedStyle(el).fontSize) >= 24) continue;
+          let scrim = false;
+          for (let a: Element | null = el; a && a !== main; a = a.parentElement) {
+            if (getComputedStyle(a).backgroundColor !== 'rgba(0, 0, 0, 0)') {
+              scrim = true;
+              break;
+            }
+          }
+          if (!scrim) out.add(`${el.tagName.toLowerCase()}.${[...el.classList].join('.')}: ${n.textContent!.trim().slice(0, 30)}`);
+        }
+        return [...out];
+      });
+      expect(bare).toEqual([]);
+    });
+
     test('enlaces internos responden 200', async ({ page, request }) => {
       await page.goto(`/${locale}`);
       const hrefs = await page.$$eval('a[href^="/"]', (as) => [...new Set(as.map((a) => a.getAttribute('href')!.split('#')[0]).filter(Boolean))]);

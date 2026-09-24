@@ -54,10 +54,14 @@
     -webkit-font-smoothing: antialiased;
     color-scheme: dark;
   }
+  /* El scrim más ligero solo con desenfoque: sin backdrop-filter, 0.74 sobre un núcleo de nodo casi blanco del póster
+     dejaría --muted por debajo de 4.5:1 (spec §3.1). */
   @media (min-width: 900px) and (hover: hover) {
-    .home {
-      --scrim: rgb(5 9 11 / 0.74);
-      --blur: blur(8px);
+    @supports (backdrop-filter: blur(1px)) {
+      .home {
+        --scrim: rgb(5 9 11 / 0.74);
+        --blur: blur(8px);
+      }
     }
   }
   @media (color-gamut: p3) {
@@ -326,8 +330,9 @@
   }
   .home .hero-kicker {
     align-self: end;
-    margin-bottom: 1.25rem;
-    padding-right: calc(50% + var(--hero-gap) / 2);
+    justify-self: end;
+    /* El texto termina donde antes (en el borde de la columna izquierda del nombre), descontando el relleno del scrim. */
+    margin: 0 calc(50% + var(--hero-gap) / 2 - 0.65em) 1.25rem 0;
     text-align: right;
     font-family: var(--f-mono);
     font-size: 0.72rem;
@@ -399,8 +404,8 @@
     }
     .home .hero-kicker {
       align-self: start;
-      margin: 0 0 1rem;
-      padding-right: 0;
+      justify-self: start;
+      margin: 0 0 1rem -0.65em;
       text-align: left;
     }
     .home .hero-title {
@@ -458,6 +463,21 @@
     color: var(--text-soft);
     text-wrap: pretty;
   }
+  /* Texto pequeño que no va dentro de un panel: su propio scrim (spec §3.1). Detrás puede pasar el punto más claro del
+     póster, un núcleo de nodo casi blanco (rgb 239 236 227): sin scrim, --muted quedaba en 2.2:1; con él, ≥ 5.4:1.
+     Con movimiento reducido el póster no se atenúa, así que ese es el peor caso. */
+  .home .hero-kicker,
+  .home .method-side,
+  .home .timeline-dates,
+  .home .search-label,
+  .home .search-empty:not(:empty),
+  .home .social a {
+    width: fit-content;
+    padding: 0.3em 0.65em;
+    background: var(--scrim);
+    border-radius: 8px;
+    backdrop-filter: var(--blur);
+  }
   .home .panel {
     padding: clamp(1.25rem, 2.6vw, 2rem);
     background: var(--scrim);
@@ -480,10 +500,12 @@
     text-transform: uppercase;
   }
   .home .method-logic {
+    justify-self: end;
     text-align: right;
     color: var(--gold);
   }
   .home .method-eng {
+    justify-self: start;
     color: var(--teal-2);
   }
   .home .method-body {
@@ -505,6 +527,7 @@
       grid-template-columns: 1fr;
     }
     .home .method-logic {
+      justify-self: start;
       text-align: left;
     }
   }
@@ -788,15 +811,23 @@
     font-size: 0.9rem;
     color: var(--text-soft);
   }
+  /* Título y entradilla de Herramientas con el mismo scrim que .sec-head (spec §3.1). */
+  .home .stack-head {
+    width: fit-content;
+    max-width: var(--measure);
+    margin: clamp(3rem, 7vh, 4.5rem) 0 1.5rem;
+    padding: 1.1rem 1.4rem;
+    background: var(--scrim);
+    border-radius: var(--radius);
+    backdrop-filter: var(--blur);
+  }
   .home .stack-title {
-    margin-top: clamp(3rem, 7vh, 4.5rem);
     font-family: var(--f-display);
     font-size: clamp(1.8rem, 3vw, 2.6rem);
     color: var(--text-strong);
   }
   .home .stack-lead {
-    max-width: var(--measure);
-    margin: 0.6rem 0 1.5rem;
+    margin-top: 0.6rem;
     color: var(--text-soft);
   }
   /* Columnas en vez de rejilla: los grupos tienen alturas muy distintas y así no quedan huecos. */
