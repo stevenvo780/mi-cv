@@ -26,7 +26,7 @@ function dataDate(): string {
   return new Date().toISOString().slice(0, 10);
 }
 
-const { bin, meta, posterSvg, hash, model } = buildArtifacts();
+const { bin, meta, posterSvg, posterHash, hash, model } = buildArtifacts();
 
 const dataGz = gzipSync(bin).length + gzipSync(JSON.stringify(meta)).length;
 const posterGz = gzipSync(posterSvg).length;
@@ -37,14 +37,19 @@ mkdirSync(PUBLIC_DIR, { recursive: true });
 mkdirSync(GENERATED_DIR, { recursive: true });
 for (const f of readdirSync(PUBLIC_DIR)) {
   if (/^graph\.[0-9a-f]{10}\.(bin|json)$/.test(f) && !f.includes(hash)) rmSync(`${PUBLIC_DIR}/${f}`);
+  if (/^poster\.[0-9a-f]{10}\.svg$/.test(f) && !f.includes(posterHash)) rmSync(`${PUBLIC_DIR}/${f}`);
 }
 writeFileSync(`${PUBLIC_DIR}/graph.${hash}.bin`, bin);
 writeFileSync(`${PUBLIC_DIR}/graph.${hash}.json`, JSON.stringify(meta));
+// El póster de la home es un archivo aparte (Stage.tsx lo pinta con <img>): inline iba dos veces en el HTML, como
+// marcado y dentro del payload RSC (spec §5.2). El módulo POSTER_SVG queda para la imagen OG, que se genera en build.
+writeFileSync(`${PUBLIC_DIR}/poster.${posterHash}.svg`, posterSvg);
 writeFileSync(`${GENERATED_DIR}/poster.ts`, `${HEADER}export const POSTER_SVG = ${JSON.stringify(posterSvg)};\n`);
 writeFileSync(
   STATS_FILE,
   `${HEADER}export const GRAPH_STATS = { nodes: ${model.nodes.length}, edges: ${model.edges.length} } as const;\n` +
     `export const GRAPH_ASSET = { bin: '/graph/graph.${hash}.bin', meta: '/graph/graph.${hash}.json' } as const;\n` +
+    `export const POSTER_ASSET = '/graph/poster.${posterHash}.svg';\n` +
     `export const DATA_DATE = '${dataDate()}';\n`,
 );
 console.log(`grafo ${hash}: ${model.nodes.length} nodos, ${model.edges.length} aristas · datos ${dataGz} B gz · póster ${posterGz} B gz`);

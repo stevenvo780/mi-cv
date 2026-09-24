@@ -301,10 +301,12 @@
     position: absolute;
     inset: 0;
   }
-  .home .stage-poster svg {
+  /* object-fit: cover equivale al preserveAspectRatio="xMidYMid slice" del SVG. */
+  .home .stage-poster img {
     display: block;
     width: 100%;
     height: 100%;
+    object-fit: cover;
   }
 
   /* ── Hero ── */

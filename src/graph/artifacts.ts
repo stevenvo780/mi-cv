@@ -11,6 +11,8 @@ export interface Artifacts {
   bin: Uint8Array;
   meta: GraphMeta;
   posterSvg: string;
+  /** 10 hex del SHA-256 del SVG del póster: nombre de `public/graph/poster.<hash>.svg`. */
+  posterHash: string;
   hash: string;
 }
 
@@ -21,5 +23,6 @@ export function buildArtifacts(): Artifacts {
   const { bin, meta } = encodeGraph(model, layouts);
   const posterSvg = renderPosterSvg(model, layouts.red);
   const hash = createHash('sha256').update(bin).update(JSON.stringify(meta)).digest('hex').slice(0, 10);
-  return { model, layouts, bin, meta, posterSvg, hash };
+  const posterHash = createHash('sha256').update(posterSvg).digest('hex').slice(0, 10);
+  return { model, layouts, bin, meta, posterSvg, posterHash, hash };
 }

@@ -39,7 +39,10 @@ for (const locale of ['es', 'en'] as const) {
       await expect(page.locator('script[type="application/ld+json"]')).toHaveCount(1);
       const ld = JSON.parse((await page.locator('script[type="application/ld+json"]').textContent()) ?? '{}');
       expect(ld['@graph'].map((n: { '@type': string }) => n['@type'])).toEqual(['WebSite', 'ProfilePage', 'Person', 'ItemList']);
-      await expect(page.locator('.stage-poster svg')).toBeAttached();
+      // El póster del grafo: archivo con hash en /graph (no SVG inline, spec §5.2), cargado.
+      const poster = page.locator('.stage-poster img');
+      await expect(poster).toHaveAttribute('src', /^\/graph\/poster\.[0-9a-f]{10}\.svg$/);
+      await expect.poll(() => poster.evaluate((img: HTMLImageElement) => img.complete && img.naturalWidth > 0)).toBe(true);
       expect(await page.locator('meta[property="og:image"]').count()).toBeGreaterThan(0);
       const title = await page.title();
       expect(title.length).toBeLessThanOrEqual(60);
@@ -56,6 +59,21 @@ for (const locale of ['es', 'en'] as const) {
       await page.goto(`/${locale}`);
       const hrefs = await page.$$eval('a[href^="/"]', (as) => [...new Set(as.map((a) => a.getAttribute('href')!.split('#')[0]).filter(Boolean))]);
       for (const href of hrefs) expect((await request.get(href)).status(), href).toBe(200);
+    });
+
+    // El póster es una <img> a pantalla completa: Chrome no la toma como candidata a LCP (spec §5.2).
+    test('el LCP es el nombre del h1, no el póster', async ({ page }) => {
+      await page.goto(`/${locale}`, { waitUntil: 'networkidle' });
+      const lcp = await page.evaluate(
+        () =>
+          new Promise<string>((resolve) => {
+            new PerformanceObserver((list) => {
+              const entry = list.getEntries().at(-1) as PerformanceEntry & { element?: Element | null };
+              resolve(entry.element?.closest('h1') ? 'h1' : (entry.element?.outerHTML.slice(0, 80) ?? 'sin elemento'));
+            }).observe({ type: 'largest-contentful-paint', buffered: true });
+          }),
+      );
+      expect(lcp).toBe('h1');
     });
 
     // Presupuesto de la spec §5. El margen es de unos cientos de bytes y el framework ocupa el 98 % (spec §5.1):
