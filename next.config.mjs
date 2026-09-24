@@ -16,14 +16,41 @@
  */
 const isProd = process.env.NODE_ENV === 'production';
 
+/**
+ * Las previews de Vercel también se construyen en producción, así que reciben esta CSP, y Vercel les inyecta la
+ * Vercel Toolbar. Solo con VERCEL_ENV=preview se añaden los orígenes que pide su documentación
+ * (https://vercel.com/docs/vercel-toolbar/managing-toolbar, «Using a Content Security Policy»); producción no cambia.
+ */
+const isPreview = process.env.VERCEL_ENV === 'preview';
+const toolbar = (...sources) => (isPreview ? sources : []);
+const directive = (name, ...sources) => [name, ...sources].join(' ');
+
 const csp = [
   "default-src 'self'",
-  "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com",
-  "style-src 'self' 'unsafe-inline'",
-  "img-src 'self' data: blob: https://www.google-analytics.com https://www.googletagmanager.com",
-  "font-src 'self'",
-  "connect-src 'self' https://www.google-analytics.com https://*.google-analytics.com https://www.googletagmanager.com",
+  directive('script-src', "'self'", "'unsafe-inline'", 'https://www.googletagmanager.com', ...toolbar('https://vercel.live')),
+  directive('style-src', "'self'", "'unsafe-inline'", ...toolbar('https://vercel.live')),
+  directive(
+    'img-src',
+    "'self'",
+    'data:',
+    'blob:',
+    'https://www.google-analytics.com',
+    'https://www.googletagmanager.com',
+    ...toolbar('https://vercel.live', 'https://vercel.com'),
+  ),
+  directive('font-src', "'self'", ...toolbar('https://vercel.live', 'https://assets.vercel.com')),
+  // GA4: *.analytics.google.com lo pide la guía de CSP de Google Tag Manager/GA4 para las peticiones de medición.
+  directive(
+    'connect-src',
+    "'self'",
+    'https://www.google-analytics.com',
+    'https://*.google-analytics.com',
+    'https://*.analytics.google.com',
+    'https://www.googletagmanager.com',
+    ...toolbar('https://vercel.live', 'wss://ws-us3.pusher.com'),
+  ),
   "worker-src 'self' blob:",
+  ...(isPreview ? [directive('frame-src', "'self'", 'https://vercel.live')] : []),
   "frame-ancestors 'none'",
   "base-uri 'self'",
   "form-action 'self'",
