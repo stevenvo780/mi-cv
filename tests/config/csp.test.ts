@@ -22,11 +22,11 @@ const directives = (csp: string) => Object.fromEntries(csp.split('; ').map((d) =
 /** La CSP de producción de la spec §4.1. */
 const PRODUCTION = [
   "default-src 'self'",
-  "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com",
+  "script-src 'self' 'unsafe-inline' https://*.googletagmanager.com",
   "style-src 'self' 'unsafe-inline'",
-  "img-src 'self' data: blob: https://www.google-analytics.com https://www.googletagmanager.com",
+  "img-src 'self' data: blob: https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com https://*.g.doubleclick.net https://*.google.com",
   "font-src 'self'",
-  "connect-src 'self' https://www.google-analytics.com https://*.google-analytics.com https://*.analytics.google.com https://www.googletagmanager.com",
+  "connect-src 'self' https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com https://*.g.doubleclick.net https://*.google.com",
   "worker-src 'self' blob:",
   "frame-ancestors 'none'",
   "base-uri 'self'",
@@ -44,20 +44,28 @@ describe('CSP en producción (next.config.mjs, spec §4.1)', () => {
     vi.unstubAllEnvs();
   });
 
-  it('img-src se restringe a los dos orígenes exactos de la spec, no a "https:" sin acotar', async () => {
+  // Guía de CSP de Google Tag Platform, bloque de GA4 con Google Signals
+  // (https://developers.google.com/tag-platform/security/guides/csp, consultada el 2026-09-24).
+  const GA4_SIGNALS = [
+    'https://*.google-analytics.com',
+    'https://*.analytics.google.com',
+    'https://*.googletagmanager.com',
+    'https://*.g.doubleclick.net',
+    'https://*.google.com',
+  ];
+
+  it('script-src admite gtag.js desde https://*.googletagmanager.com y ningún otro origen externo', async () => {
     vi.stubEnv('NODE_ENV', 'production');
-    const csp = await loadProdCsp();
-    expect(csp).toContain("img-src 'self' data: blob: https://www.google-analytics.com https://www.googletagmanager.com;");
-    expect(csp).not.toMatch(/img-src 'self' data: blob: https:[;]/);
+    expect(directives(await loadProdCsp())['script-src']).toEqual(["'self'", "'unsafe-inline'", 'https://*.googletagmanager.com']);
   });
 
-  // Guía de CSP de Google para GA4: las peticiones de medición también van a *.analytics.google.com.
-  it('connect-src admite los orígenes de medición de GA4, incluido https://*.analytics.google.com', async () => {
+  it.each(['img-src', 'connect-src'])('%s admite los orígenes de GA4 y de las señales de Google de la guía, y solo esos', async (name) => {
     vi.stubEnv('NODE_ENV', 'production');
-    const connect = directives(await loadProdCsp())['connect-src'];
-    expect(connect).toEqual(
-      expect.arrayContaining(['https://www.google-analytics.com', 'https://*.google-analytics.com', 'https://*.analytics.google.com', 'https://www.googletagmanager.com']),
-    );
+    const sources = directives(await loadProdCsp())[name];
+    expect(sources.filter((s: string) => s.startsWith('https:'))).toEqual(GA4_SIGNALS);
+    // Ni "https:" sin acotar ni comodines en el TLD (la CSP no los admite: la guía pide listar cada google.<TLD>).
+    expect(sources).not.toContain('https:');
+    expect(sources.some((s: string) => /\*$|\.\*/.test(s))).toBe(false);
   });
 
   it.each(['', 'production'])('coincide exactamente con el bloque CSP de la spec §4.1 (VERCEL_ENV="%s")', async (vercelEnv) => {

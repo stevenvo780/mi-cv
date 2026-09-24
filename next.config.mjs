@@ -25,30 +25,34 @@ const isPreview = process.env.VERCEL_ENV === 'preview';
 const toolbar = (...sources) => (isPreview ? sources : []);
 const directive = (name, ...sources) => [name, ...sources].join(' ');
 
-const csp = [
-  "default-src 'self'",
-  directive('script-src', "'self'", "'unsafe-inline'", 'https://www.googletagmanager.com', ...toolbar('https://vercel.live')),
-  directive('style-src', "'self'", "'unsafe-inline'", ...toolbar('https://vercel.live')),
-  directive(
-    'img-src',
-    "'self'",
-    'data:',
-    'blob:',
-    'https://www.google-analytics.com',
-    'https://www.googletagmanager.com',
-    ...toolbar('https://vercel.live', 'https://vercel.com'),
-  ),
-  directive('font-src', "'self'", ...toolbar('https://vercel.live', 'https://assets.vercel.com')),
-  // GA4: *.analytics.google.com lo pide la guía de CSP de Google Tag Manager/GA4 para las peticiones de medición.
-  directive(
-    'connect-src',
-    "'self'",
-    'https://www.google-analytics.com',
+/**
+ * GA4 según la guía de CSP de Google Tag Platform (https://developers.google.com/tag-platform/security/guides/csp,
+ * consultada el 2026-09-24; el bloque de GA4 con Google Signals): *.googletagmanager.com en script-src, img-src y
+ * connect-src, y los orígenes de medición y de las señales de Google (*.google-analytics.com, *.analytics.google.com,
+ * *.g.doubleclick.net, *.google.com) en img-src y connect-src.
+ * - Los *.google.<TLD> por país no van: la CSP no admite comodines en el TLD y la guía pide listar uno a uno los 187
+ *   de https://www.google.com/supported_domains (unos 8 KB más en cada respuesta).
+ * - pagead2.googlesyndication.com y frame-src https://www.googletagmanager.com tampoco: la guía los pide solo para las
+ *   propiedades vinculadas a Google Ads. Si se vincula, hay que añadirlos.
+ */
+const GA = {
+  script: ['https://*.googletagmanager.com'],
+  measurement: [
     'https://*.google-analytics.com',
     'https://*.analytics.google.com',
-    'https://www.googletagmanager.com',
-    ...toolbar('https://vercel.live', 'wss://ws-us3.pusher.com'),
-  ),
+    'https://*.googletagmanager.com',
+    'https://*.g.doubleclick.net',
+    'https://*.google.com',
+  ],
+};
+
+const csp = [
+  "default-src 'self'",
+  directive('script-src', "'self'", "'unsafe-inline'", ...GA.script, ...toolbar('https://vercel.live')),
+  directive('style-src', "'self'", "'unsafe-inline'", ...toolbar('https://vercel.live')),
+  directive('img-src', "'self'", 'data:', 'blob:', ...GA.measurement, ...toolbar('https://vercel.live', 'https://vercel.com')),
+  directive('font-src', "'self'", ...toolbar('https://vercel.live', 'https://assets.vercel.com')),
+  directive('connect-src', "'self'", ...GA.measurement, ...toolbar('https://vercel.live', 'wss://ws-us3.pusher.com')),
   "worker-src 'self' blob:",
   ...(isPreview ? [directive('frame-src', "'self'", 'https://vercel.live')] : []),
   "frame-ancestors 'none'",

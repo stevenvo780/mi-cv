@@ -163,14 +163,17 @@ Tokens de la home en `src/styles/home.css` (capa `@layer home`), en OKLCH con re
 - **Cabeceras:** `poweredByHeader: false`. CSP aplicada (no Report-Only):
 
   ```
-  default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com;
-  style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://www.google-analytics.com https://www.googletagmanager.com;
-  font-src 'self'; connect-src 'self' https://www.google-analytics.com https://*.google-analytics.com https://*.analytics.google.com https://www.googletagmanager.com;
+  default-src 'self'; script-src 'self' 'unsafe-inline' https://*.googletagmanager.com;
+  style-src 'self' 'unsafe-inline';
+  img-src 'self' data: blob: https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com https://*.g.doubleclick.net https://*.google.com;
+  font-src 'self';
+  connect-src 'self' https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com https://*.g.doubleclick.net https://*.google.com;
   worker-src 'self' blob:; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'; upgrade-insecure-requests
   ```
 
   - Se valida con cero violaciones: el e2e registra los errores de consola y los eventos `securitypolicyviolation` en la home, en los cuatro frentes y lore de los dos idiomas (bajando hasta el final para que monte lo diferido) y con GA cargado tras una interacción, esperando a `gtag.js` y a su petición `/g/collect`.
-  - `https://*.analytics.google.com` lo pide la guía de CSP de Google para GA4.
+  - Los orígenes de Google son los de la guía de CSP de Google Tag Platform ([Use Tag Manager with a Content Security Policy](https://developers.google.com/tag-platform/security/guides/csp), consultada el 2026-09-24), bloque de GA4 con Google Signals: `*.googletagmanager.com` en `script-src`, `img-src` y `connect-src`, y `*.google-analytics.com`, `*.analytics.google.com`, `*.g.doubleclick.net` y `*.google.com` en `img-src` y `connect-src`. Así la medición no se rompe si se activan las señales de Google (que piden `stats.g.doubleclick.net` y `www.google.com`) ni si gtag cambia de subdominio regional. La versión en inglés de la guía (actualizada el 2026-09-18) funde GA y Ads en un bloque y cita `www.googletagmanager.com`; `*.googletagmanager.com` lo cubre.
+  - Lo que la guía pide y no se añade: los `*.google.<TLD>` por país, porque la CSP no admite comodines en el TLD y habría que listar los 187 dominios de `google.com/supported_domains` (unos 8 KB más en cada respuesta), y `pagead2.googlesyndication.com` y `frame-src https://www.googletagmanager.com`, que la guía pide solo para las propiedades vinculadas a Google Ads.
   - Previews de Vercel: también se construyen en producción y reciben esta CSP. Con `VERCEL_ENV=preview` se añaden los orígenes que la documentación de Vercel pide para la Vercel Toolbar: `https://vercel.live` en `script-src`, `style-src`, `img-src`, `font-src`, `connect-src` y un `frame-src 'self' https://vercel.live`, además de `https://vercel.com` (img), `https://assets.vercel.com` (font) y `wss://ws-us3.pusher.com` (connect). Producción no los lleva.
   - `worker-src 'self' blob:`: con `next build --webpack`, el worker del Plan 2 (`new Worker(new URL(..., import.meta.url))`) sale como chunk del mismo origen y debería bastar `'self'`. `blob:` se queda hasta que la Tarea 5 del Plan 2 lo compruebe con el worker real; si no hace falta, se quita.
 
