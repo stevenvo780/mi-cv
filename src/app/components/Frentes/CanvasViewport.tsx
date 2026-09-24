@@ -30,6 +30,7 @@ export default function CanvasViewport({
   useEffect(() => {
     if (typeof window === 'undefined') return;
     const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- componente heredado, fuera del alcance del rediseño
     setReduced(mq.matches);
     const onChange = () => setReduced(mq.matches);
     mq.addEventListener?.('change', onChange);
@@ -41,6 +42,7 @@ export default function CanvasViewport({
     const el = ref.current;
     if (!el) return;
     if (!('IntersectionObserver' in window)) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- componente heredado, fuera del alcance del rediseño
       setActive(true);
       return;
     }

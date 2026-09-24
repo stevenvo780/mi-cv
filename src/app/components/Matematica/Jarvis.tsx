@@ -12,7 +12,7 @@ interface Particle {
   update: () => void;
 }
 
-export default function JarvisAnimation(): JSX.Element {
+export default function JarvisAnimation(): React.JSX.Element {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   useEffect(() => {

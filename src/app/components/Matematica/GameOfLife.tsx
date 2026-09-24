@@ -82,6 +82,7 @@ export default function GameOfLifeHeader() {
   };
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- componente heredado, fuera del alcance del rediseño
     setMounted(true);
   }, []);
 

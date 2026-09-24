@@ -8,10 +8,11 @@ const VALID_FRENTES: FrenteId[] = ['filosofia', 'ciencias', 'informatica', 'ente
 export async function generateMetadata({
   params,
 }: {
-  params: { locale: string; frente: string };
+  params: Promise<{ locale: string; frente: string }>;
 }): Promise<Metadata> {
-  const locale = params.locale === 'es' ? 'es' : 'en';
-  const frente = params.frente as FrenteId;
+  const { locale: raw, frente: rawFrente } = await params;
+  const locale = raw === 'es' ? 'es' : 'en';
+  const frente = rawFrente as FrenteId;
 
   if (!VALID_FRENTES.includes(frente)) {
     return {};
@@ -38,13 +39,14 @@ export async function generateMetadata({
   };
 }
 
-export default function FrentePage({
+export default async function FrentePage({
   params,
 }: {
-  params: { locale: string; frente: string };
+  params: Promise<{ locale: string; frente: string }>;
 }) {
-  const locale = params.locale === 'es' ? 'es' : 'en';
-  const frente = params.frente as FrenteId;
+  const { locale: raw, frente: rawFrente } = await params;
+  const locale = raw === 'es' ? 'es' : 'en';
+  const frente = rawFrente as FrenteId;
 
   if (!VALID_FRENTES.includes(frente)) {
     notFound();

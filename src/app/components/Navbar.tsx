@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import Navbar from 'react-bootstrap/Navbar';
@@ -13,13 +13,9 @@ export default function CustomNavbar() {
   const t = useTranslate();
   const router = useRouter();
   const pathname = usePathname();
-  const [locale, setLocaleState] = useState<'en' | 'es'>('en');
   const { query, setQuery } = useSearch();
   const isHome = /^\/(es|en)\/?$/.test(pathname || '') || pathname === '/';
-
-  useEffect(() => {
-    setLocaleState(window.location.pathname.startsWith('/es') ? 'es' : 'en');
-  }, [pathname]);
+  const locale: 'en' | 'es' = pathname?.startsWith('/es') ? 'es' : 'en';
 
   const toggleLocale = () => {
     const currentPath = window.location.pathname;

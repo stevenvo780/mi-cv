@@ -5,9 +5,10 @@ import LorePageClient from './LorePageClient';
 export async function generateMetadata({
   params,
 }: {
-  params: { locale: string };
+  params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
-  const locale = params.locale === 'es' ? 'es' : 'en';
+  const { locale: raw } = await params;
+  const locale = raw === 'es' ? 'es' : 'en';
   const t = PORTRAIT[locale];
   const title = `${locale === 'es' ? 'Mi historia' : 'My story'} | Mouseîon · Steven Vallejo`;
   const description = t.heroLead;
@@ -29,11 +30,12 @@ export async function generateMetadata({
   };
 }
 
-export default function LorePage({
+export default async function LorePage({
   params,
 }: {
-  params: { locale: string };
+  params: Promise<{ locale: string }>;
 }) {
-  const locale = params.locale === 'es' ? 'es' : 'en';
+  const { locale: raw } = await params;
+  const locale = raw === 'es' ? 'es' : 'en';
   return <LorePageClient locale={locale} />;
 }

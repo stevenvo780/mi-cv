@@ -106,9 +106,9 @@ function resolveLocale(locale: string | undefined): Locale {
 export async function generateMetadata({
   params,
 }: {
-  params: { locale?: string };
+  params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
-  const locale = resolveLocale(params.locale);
+  const locale = resolveLocale((await params).locale);
   const data = META[locale];
   const localizedUrl = `${baseUrl}/${locale}`;
 
@@ -174,14 +174,14 @@ export async function generateMetadata({
   };
 }
 
-export default function LocaleLayout({
+export default async function LocaleLayout({
   children,
   params,
 }: {
   children: React.ReactNode;
-  params: { locale?: string };
+  params: Promise<{ locale: string }>;
 }) {
-  const locale = resolveLocale(params.locale);
+  const locale = resolveLocale((await params).locale);
   const data = META[locale];
 
   const personJsonLd = {
