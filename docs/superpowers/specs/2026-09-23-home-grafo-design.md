@@ -6,6 +6,7 @@
 - Actualizada el 2026-09-24 con lo construido en el Plan 1 y con el fix de su revisión final: las desviaciones están en §2 (filas 0 y 3), §3.1, §3.2, §4.1, §4.2, §4.3, §4.4, §4.6, §4.7, §4.8, §5, §6 y §8.
 - Tarea 3 del Plan 2 (shaders y `GraphScene`, ronda de fix 1): lo que concreta o cambia está en §3.3 (aristas y niebla), §3.4 (respiración), §4.4 (regulador) y §4.6 (archivos).
 - Tarea 7 del Plan 2 (endurecimiento de `GraphScene`): §3.3 (rango de la niebla y luminancia de las aristas en reposo) y §4.4 (espera del regulador: tope y olvido de las bajadas).
+- Tarea 5 del Plan 2 (e2e del 3D, ronda de fix 1): §3.4 (encuadre en retrato), §3.3 (blanco en Contacto en T1) y §5 (cifras).
 - Lighthouse en móvil cumple desde la ronda de fix 2 de la Tarea 14: Performance 99 en `/es` y `/en` y LCP de laboratorio de 1.7 a 1.9 s, con el objetivo de LCP en ≤ 2.5 s (§5.2).
 
 ## 1. Objetivo
@@ -136,6 +137,7 @@ Tokens de la home en `src/styles/home.css` (capa `@layer home`), en OKLCH con re
       - sin compositor (T1, o si el postprocesado falla), de pantalla (ONE, ONE_MINUS_SRC_COLOR), `1 − (1 − a)(1 − b)`: una arista sola pinta igual y un haz satura suave, sin pasar de 1.
       - Los factores son estado de GL, no del programa: cambiar de nivel no recompila las aristas.
       - Medido después en el e2e: la mayor región blanca de Contacto en T1 es de 28 a 74 px (pulsos sobre el haz), y en el resto de poses de T1, de 4 px como mucho.
+      - Con el encuadre en retrato de §3.4, la lemniscata ocupa menos pantalla en T1 y el haz es más denso: la mayor región blanca de Contacto pasa a 61–103 px (6 corridas, límite del e2e 200 px), y en el resto de poses de T1, a 12 px como mucho.
     - **Convergencia de los satélites en cada pose** (Tarea 5, `e2e/graph3d.spec.ts`, SwiftShader, en pausa, sin pulsos y sin hubs ni nodos delante, el peor caso): en T3 (1440 × 900, con bloom y 8k satélites) ningún píxel llega a blanco puro en ninguna de las seis poses; en T1, como mucho 11 px (en Contacto). En la escena real, T3 no tiene ningún píxel blanco puro en ninguna pose.
   - Pulsos `glow = exp(-k (t - fract(time*speed*w + seed))^2)` en HDR. Al resaltar un nodo, recorren sus aristas desde él hacia los vecinos (§2.2).
 - **Postprocesado (según nivel):**
@@ -150,6 +152,10 @@ Tokens de la home en `src/styles/home.css` (capa `@layer home`), en OKLCH con re
 
 - **Easing:** expo-out.
 - **Cámara:** con amortiguación (`1 - exp(-k·dt)`).
+- **Encuadre en retrato** (Tarea 5 del Plan 2, ronda de fix 1): las distancias de `SECTION_POSE` están pensadas para apaisado, donde manda el alto (el fov de la cámara es vertical, 38°). Con aspecto < 1, `frameAt` aleja la cámara `1/aspect` en todas las poses salvo la del hero, así que el ancho visible es el alto visible de la misma pose con aspecto 1 y la forma cabe a lo ancho como cabe a lo alto.
+  - Antes, a 390 × 844, la lemniscata de Contacto no se reconocía (un haz horizontal cortado por los dos lados), y Método y Trayectoria también tocaban los dos lados.
+  - El hero conserva `CAMERA0`: es la cámara del póster, cuyo `slice` en retrato también recorta por los lados, y el canvas tiene que coincidir con él al fundirse.
+  - Frentes queda como en apaisado: la cámara visita de cerca el cluster activo (§2, L3) y deja otro contra un borde, en retrato y en apaisado.
 - **Respiración:** ruido simplex por instancia en el vertex shader. Es simplex 2D: cada instancia recorre en el tiempo su propia fila del campo, una por eje, con 0.016 de amplitud (misma RMS que la versión con senos del plan).
 - **Morphs:** `mix(layoutA, layoutB, smoothstep(progress))` en el vertex shader. Duración percibida 1.2–1.8 s, ligada al scroll con amortiguación.
 - **Aparición de texto:** CSS con `animation-timeline: view()` dentro de `@supports`. El estado por defecto es visible. El `<h1>` nunca arranca oculto.
@@ -356,8 +362,8 @@ e2e/fixtures.ts                        test y expect de Playwright sin hits real
 
 | Métrica | Límite |
 |---|---|
-| JS de la ruta crítica de la home: los scripts pedidos antes del evento `load` (enmienda H1 del Plan 2) | ≤ 130 KB gz = 133 120 B (antes ~200 KB). Con la puerta del grafo (Plan 2, Tarea 4), 132 947 B con webpack (§4.1): margen de 173 B (§5.1). Antes de la puerta, 132 462 B |
-| 3D: chunk de `GraphStage`, worker y sus chunks (lo que la puerta pide después de `load` o con la primera interacción) | ≤ 175 KB gz = 179 200 B. Medido en la Tarea 4 del Plan 2 (ronda de fix 1): 171 534 B con bloom (niveles T2 y T3) y 154 976 B sin él (T1, móvil). Lo mide el e2e `graph3d.spec.ts` (Tarea 5): 171 672 B en 6 archivos con bloom, margen de 7 528 B (+138 B por la mezcla de las aristas de §3.3) |
+| JS de la ruta crítica de la home: los scripts pedidos antes del evento `load` (enmienda H1 del Plan 2) | ≤ 130 KB gz = 133 120 B (antes ~200 KB). Con la puerta del grafo (Plan 2, Tarea 4), 132 947 B con webpack (§4.1): margen de 173 B (§5.1). Tras la ronda de fix 1 de la Tarea 5, 132 948 B (margen de 172 B). Antes de la puerta, 132 462 B |
+| 3D: chunk de `GraphStage`, worker y sus chunks (lo que la puerta pide después de `load` o con la primera interacción) | ≤ 175 KB gz = 179 200 B. Medido en la Tarea 4 del Plan 2 (ronda de fix 1): 171 534 B con bloom (niveles T2 y T3) y 154 976 B sin él (T1, móvil). Lo mide el e2e `graph3d.spec.ts` (Tarea 5): 171 672 B en 6 archivos con bloom, margen de 7 528 B (+138 B por la mezcla de las aristas de §3.3). Tras el encuadre en retrato (§3.4), 171 754 B, margen de 7 446 B |
 | Datos del grafo | ≤ 60 KB gz |
 | LCP | ≤ 2.5 s en laboratorio móvil (Lighthouse, mediana de 5). Antes decía 1.8 s, que era una estimación de la investigación y no un requisito de Steven. Medido: 1.7–1.9 s en móvil y 0.5–0.6 s en escritorio (§5.2) |
 | TBT | ≤ 100 ms |
@@ -371,7 +377,7 @@ e2e/fixtures.ts                        test y expect de Playwright sin hits real
 ### 5.1 Margen del presupuesto de JS
 
 - **Qué cuenta (enmienda H1 del Plan 2):** los scripts pedidos antes del evento `load`. El e2e lo decide con el Resource Timing de la página, por URL y sin filtrar por `initiatorType` (el runtime de webpack llega por `<link rel="preload">`); un script sin entrada cuenta como crítico. El e2e también exige que la puerta pida algo después de `load` e imprime lo que queda fuera.
-- **Medido con la puerta del grafo (Plan 2, Tarea 4):** 132 947 B de 133 120 B. Quedan **173 B, el 0.13 %** (132 944 B antes de recortar `postprocessing`: el runtime de webpack lista el hash de cada chunk, y al cambiar los del 3D cambia unos bytes, el ruido que se describe abajo). La puerta añade 300 B al chunk de la página (995 B frente a 695) y el runtime de webpack crece unos 180 B, porque lista los chunks nuevos del 3D (el de `GraphStage`, el del worker, los dos de three, el de `GraphScene` y el de `postprocessing`). Después de `load` se pide el chunk de `GraphStage`, 5 510 B (5 101 B antes de `launchScene`, que llegó en la ronda de fix 1 sin mover la ruta crítica), que va al presupuesto del 3D.
+- **Medido con la puerta del grafo (Plan 2, Tarea 4):** 132 947 B de 133 120 B. Quedan **173 B, el 0.13 %** (132 944 B antes de recortar `postprocessing`: el runtime de webpack lista el hash de cada chunk, y al cambiar los del 3D cambia unos bytes, el ruido que se describe abajo). La puerta añade 300 B al chunk de la página (995 B frente a 695) y el runtime de webpack crece unos 180 B, porque lista los chunks nuevos del 3D (el de `GraphStage`, el del worker, los dos de three, el de `GraphScene` y el de `postprocessing`). Después de `load` se pide el chunk de `GraphStage`, 5 510 B (5 101 B antes de `launchScene`, que llegó en la ronda de fix 1 sin mover la ruta crítica), que va al presupuesto del 3D. Tras la ronda de fix 1 de la Tarea 5, 132 948 B (margen de 172 B): el encuadre en retrato (§3.4) cambia el chunk de la escena y, con él, el hash que lista el runtime. El chunk de `GraphStage` pasa a 5 549 B: también lleva `choreography.ts`, que importa `useSectionProgress`.
 - **Medido en el fix de la revisión final** (gzip nivel 6 de cada script, igual que el e2e): 132 462 B de 133 120 B, con 658 B de margen. En la Tarea 14 eran 132 501 B (ronda 2) y 132 505 B (ronda 1): el chunk del layout bajó 41 B al quitar los objetos de `next/font/google`. El script inline del menú móvil no cuenta: no es una respuesta de tipo script.
 - **El framework ocupa el 98.8 %** (medido antes de la puerta del grafo): el runtime de Next, React DOM, el runtime de webpack y `main-app` suman 130 867 B. El código propio de la home eran 1 595 B: el chunk del layout de `[locale]` (cargador de GA y objetos de `next/font` del layout raíz, 900 B) y el de la página (`ProductSearch`, 695 B). No queda código propio cuyo recorte dé un margen real.
 - **Ruido de 2 a 3 B por build:** el runtime de webpack lista los ids de los chunks que solo llevan CSS, y esos ids cambian al añadir o quitar módulos. Las fuentes de la home añadieron uno y el runtime creció 3 B. `ProductSearch` sin `useId` ni input controlado compensó 6 B.

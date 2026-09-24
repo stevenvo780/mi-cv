@@ -69,6 +69,22 @@ function sectionTarget(section: SectionId, progress: number, ctx: FrameContext):
   return [0, 0, 0];
 }
 
+/**
+ * Distancia de la pose al aspecto del escenario. Las de SECTION_POSE están pensadas para apaisado, donde manda el alto
+ * (el fov de la cámara es vertical). En retrato manda el ancho, que es `aspect` veces el alto: la cámara se aleja
+ * 1/aspect y el ancho visible queda como el alto visible con aspecto 1, así que la forma cabe a lo ancho como cabe a lo
+ * alto (a 390 × 844, sin esto, la lemniscata de Contacto, los hemisferios de Método y la hélice de Trayectoria tocaban
+ * los dos lados; lo comprueba e2e/graph3d.spec.ts). Frentes queda como en apaisado: de cerca, en el cluster activo.
+ * El hero no se aleja: es la cámara del póster (CAMERA0), cuyo `slice` en retrato también recorta por los lados, y el
+ * canvas tiene que coincidir con él al fundirse. El suelo de aspecto solo evita la distancia infinita de un escenario
+ * sin ancho.
+ */
+function poseDistance(section: SectionId, aspect: number): number {
+  const d = SECTION_POSE[section].distance;
+  return section === 'hero' ? d : d / Math.min(Math.max(aspect, MIN_ASPECT), 1);
+}
+const MIN_ASPECT = 0.25;
+
 /** `s` = índice de sección + progreso dentro de ella (0..1). Continuo en las fronteras. */
 export function frameAt(s: number, ctx: FrameContext): Frame {
   const clamped = Math.min(Math.max(s, 0), SECTIONS.length - 1);
@@ -81,7 +97,7 @@ export function frameAt(s: number, ctx: FrameContext): Frame {
   const b = SECTION_POSE[next];
   const target = lerp3(sectionTarget(cur, progress, ctx), sectionTarget(next, 0, ctx), mix);
   const pose: Pose = {
-    distance: lerp(a.distance, b.distance, mix),
+    distance: lerp(poseDistance(cur, ctx.aspect), poseDistance(next, ctx.aspect), mix),
     yaw: lerp(a.yaw, b.yaw, mix),
     pitch: lerp(a.pitch, b.pitch, mix),
     target: mix === 0 ? sectionTarget(cur, progress, ctx) : target,
