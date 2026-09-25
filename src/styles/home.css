@@ -494,7 +494,7 @@
     grid-template-columns: 1fr 1fr;
     column-gap: var(--hero-gap);
     align-items: baseline;
-    /* El nombre (elemento LCP) usa un subconjunto de 2 KB con solo sus glifos, el único archivo precargado. */
+    /* LCP: cara + fallback métrico inline en (home)/layout.tsx; aquí layout desktop y sombra. */
     font-family: var(--font-home-hero), var(--f-display);
     font-size: min(12rem, calc((100vw - 2 * var(--gutter) - var(--hero-gap)) / 9.6));
     line-height: 0.86;
@@ -508,8 +508,7 @@
   .home .hero-last {
     justify-self: start;
     white-space: nowrap;
-    /* LCP: texto SSR sólido (Hero.tsx). Fallback métrico de cormorantHero en fonts.ts — sin
-       content-visibility ni opacity tricks (Jefe). */
+    /* Paint sólido: opacity/visibility + color en CSS crítico del layout (sin content-visibility). */
   }
   .home .hero-meta {
     align-self: end;
