@@ -8,7 +8,7 @@ export default function Hero({ t }: { t: HomeCopy }) {
   return (
     <section className="hero" aria-labelledby="hero-title" data-section="hero">
       <p className="hero-kicker">{h.kicker}</p>
-      {/* LCP: SSR sólido — sin SplitChars / opacity reveal (Jefe tip v5). Cara en layout crítico. */}
+      {/* LCP: SSR sólido opacity:1 first paint — sin SplitChars / entrance anim (Jefe tip v6). */}
       <h1 id="hero-title" className="hero-title">
         <span className="hero-first">{h.first}</span> <span className="hero-last">{h.last}</span>
       </h1>

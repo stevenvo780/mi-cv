@@ -4,10 +4,22 @@ import localFont from 'next/font/local';
 // el portal, con solo los pesos y los caracteres que pinta la home. Se regeneran con `bash scripts/subset-fonts.sh`
 // (dentro está cada comando de pyftsubset y el origen fijado de cada TTF).
 //
-// El nombre del h1 (LCP) NO pasa por next/font: su @font-face + preload viven inline en layout.tsx
-// (/fonts/cormorant-hero.woff2) para pintar .hero-last en first paint sin esperar el chunk CSS de home.
-// El resto se pide al aplicar los estilos, sin precarga. Ninguna pila de home.css nombra las familias de
-// Google del layout raíz: si lo hiciera, el navegador las descargaría como respaldo mientras cargan estas.
+// Solo se precarga el nombre del h1 (el elemento LCP): 2 KB con 19 glifos. El resto se pide al aplicar los
+// estilos, sin precarga. Ninguna pila de home.css nombra las familias de Google del layout raíz: si lo hiciera,
+// el navegador las descargaría como respaldo mientras cargan estas.
+
+/** "Steven Vallejo Ortiz" en Cormorant Garamond 500. Si cambia el nombre, cambia el subconjunto. */
+export const cormorantHero = localFont({
+  src: '../../fonts/cormorant-hero.woff2',
+  weight: '500',
+  style: 'normal',
+  variable: '--font-home-hero',
+  display: 'swap',
+  preload: true,
+  // Sin respaldo ajustado propio: mientras carga, el h1 cae en cormorantHome (misma letra y peso) y luego en su
+  // respaldo, que sí está ajustado (home.css: var(--font-home-hero), var(--f-display)).
+  adjustFontFallback: false,
+});
 
 /** Cormorant Garamond 400–500 (titulares, nombres, cifras). La home no pinta cursivas. */
 export const cormorantHome = localFont({
@@ -40,4 +52,4 @@ export const jetbrainsHome = localFont({
   adjustFontFallback: 'Arial',
 });
 
-export const HOME_FONT_VARIABLES = [cormorantHome, geistHome, jetbrainsHome].map((f) => f.variable).join(' ');
+export const HOME_FONT_VARIABLES = [cormorantHero, cormorantHome, geistHome, jetbrainsHome].map((f) => f.variable).join(' ');

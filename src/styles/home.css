@@ -494,7 +494,7 @@
     grid-template-columns: 1fr 1fr;
     column-gap: var(--hero-gap);
     align-items: baseline;
-    /* LCP: cara + fallback métrico inline en (home)/layout.tsx; aquí layout desktop y sombra. */
+    /* El nombre (elemento LCP) usa un subconjunto de 2 KB con solo sus glifos, el único archivo precargado. */
     font-family: var(--font-home-hero), var(--f-display);
     font-size: min(12rem, calc((100vw - 2 * var(--gutter) - var(--hero-gap)) / 9.6));
     line-height: 0.86;
@@ -508,7 +508,17 @@
   .home .hero-last {
     justify-self: start;
     white-space: nowrap;
-    /* Paint sólido: opacity/visibility + color en CSS crítico del layout (sin content-visibility). */
+  }
+  /* LCP tip v6: el nombre SSR debe pintar sólido en first paint — sin opacity/transform/filter
+     ni animation (home-reveal u otras). No content-visibility. Jefe: no defer paint del nombre. */
+  .home .hero-title,
+  .home .hero-first,
+  .home .hero-last {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    filter: none;
+    animation: none;
   }
   .home .hero-meta {
     align-self: end;
@@ -1486,10 +1496,12 @@
   }
 
   /* ── Movimiento como mejora progresiva (el estado por defecto siempre es visible) ── */
+  /* tip v6: `forwards` (no `both`) — `both` aplicaba opacity:0 antes del entry y contradecía el
+     default visible; además competía con el paint LCP del h1 bajo scroll sintético de LH. */
   @supports (animation-timeline: view()) {
     @media (prefers-reduced-motion: no-preference) {
       .home .reveal {
-        animation: home-reveal linear both;
+        animation: home-reveal linear forwards;
         animation-timeline: view();
         animation-range: entry 0% entry 55%;
       }
