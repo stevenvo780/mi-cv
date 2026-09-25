@@ -508,10 +508,8 @@
   .home .hero-last {
     justify-self: start;
     white-space: nowrap;
-    /* LCP: pintura sólida en first paint — sin opacity:0 ni hueco mientras carga la fuente (swap + fallback). */
-    opacity: 1;
-    visibility: visible;
-    content-visibility: visible;
+    /* LCP: texto SSR sólido (Hero.tsx). Fallback métrico de cormorantHero en fonts.ts — sin
+       content-visibility ni opacity tricks (Jefe). */
   }
   .home .hero-meta {
     align-self: end;

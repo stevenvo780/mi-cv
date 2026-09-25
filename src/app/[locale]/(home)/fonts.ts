@@ -14,11 +14,11 @@ export const cormorantHero = localFont({
   weight: '500',
   style: 'normal',
   variable: '--font-home-hero',
-  display: 'swap',
-  preload: true,
-  // Sin respaldo ajustado propio: mientras carga, el h1 cae en cormorantHome (misma letra y peso) y luego en su
-  // respaldo, que sí está ajustado (home.css: var(--font-home-hero), var(--f-display)).
-  adjustFontFallback: false,
+  display: 'swap', // no optional: Jefe/spec — swap + fallback métrico para first paint sólido
+  preload: true, // única cara precargada: el nombre LCP (~2 KB)
+  // Fallback métrico (Times New Roman + size-adjust): el h1 pinta en first paint sin esperar el woff2;
+  // sin esto Chrome alarga Render Delay del LCP hasta el swap (preview 6adb2ef ~3.2 s).
+  adjustFontFallback: 'Times New Roman',
 });
 
 /** Cormorant Garamond 400–500 (titulares, nombres, cifras). La home no pinta cursivas. */

@@ -6,7 +6,7 @@ type Listener = () => void;
 /**
  * `window` de mentira para la puerta del grafo (enmienda H1 del Plan 2, spec §4.4 paso 2): la escena se importa con la
  * primera interacción (pointermove, touchstart, scroll, keydown) o con requestIdleCallback tras `load` (timeout
- * 1.5 s), nunca antes.
+ * 5 s), nunca antes.
  */
 function fakeWindow(opts: { withIdleCallback?: boolean } = {}) {
   const listeners = new Map<string, Set<Listener>>();
@@ -61,12 +61,12 @@ describe('whenGraphMayLoad (puerta de GraphStage)', () => {
     expect(listening()).toEqual([]);
   });
 
-  it('tras load, espera a requestIdleCallback con timeout de 1.5 s', () => {
+  it('tras load, espera a requestIdleCallback con timeout de 5 s', () => {
     const { win, emit, runIdle, idle } = fakeWindow();
     const go = vi.fn();
     whenGraphMayLoad(win as never, { readyState: 'interactive' }, go);
     emit('load');
-    expect(idle()?.timeout).toBe(1500);
+    expect(idle()?.timeout).toBe(5000);
     expect(go).not.toHaveBeenCalled();
     runIdle();
     expect(go).toHaveBeenCalledTimes(1);
