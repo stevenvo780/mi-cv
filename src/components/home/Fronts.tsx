@@ -120,7 +120,11 @@ export default function Fronts({ locale, t }: { locale: Locale; t: HomeCopy }) {
         <ProductSearch targetId="frentes-list" label={f.searchLabel} placeholder={f.searchPlaceholder} noResults={f.noResults} />
         <div id="frentes-list" className="fronts">
           {/* data-front: el buscador oculta la banda entera cuando ningún catálogo coincide (applySearchFilter). */}
-          <article className="cats" data-front="catalogos" aria-label={t.catalogs.eyebrow}>
+          <article className="cats" data-front="catalogos" aria-labelledby="front-catalogos">
+            {/* h3 de grupo: evita el salto h2→h4 de las tarjetas featured antes del primer h3 de frente. */}
+            <h3 id="front-catalogos" className="cats-group-title">
+              {t.catalogs.eyebrow}
+            </h3>
             <ul className="cats-list">
               {catalogos.map((c) => (
                 <CatalogTile key={c.id} c={c} locale={locale} t={t} />

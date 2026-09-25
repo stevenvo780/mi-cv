@@ -817,6 +817,14 @@
      Cada uno es una tarjeta ancha con el color de su propia marca, un borde de luz que la recorre, hojas apiladas
      detrás (contiene más sitios) que se abren en abanico al pasar el puntero, el rótulo «Catálogo · N …» y la lista
      entera de lo que reúne. Todo en CSS: la home no admite JS nuevo (spec §5.1). */
+  /* Título de grupo del bloque Catálogos: cierra el salto h2→h4 (outline a11y/SEO). */
+  .home .cats-group-title {
+    margin: 0 0 1.25rem;
+    font-family: var(--f-display);
+    font-size: clamp(1.75rem, 3vw, 2.4rem);
+    line-height: 1;
+    color: var(--text-strong);
+  }
   .home .cats-list {
     display: grid;
     gap: clamp(3.5rem, 7.5vh, 4.75rem);
@@ -1509,7 +1517,17 @@
       opacity: 0.32;
     }
   }
+
+  /* Below-fold: salta layout/paint inicial (ayuda TBT). `auto` en contain-intrinsic-size recuerda el tamaño
+     real tras el primer paint in-view (CLS). No toca hero/stage Opus. */
+  .home .sec-fronts,
+  .home .sec-contact,
+  .home .footer {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 900px;
+  }
 }
+
 
 /* Ángulo animable del borde del asistente (.ask): @property registra el tipo para que el navegador lo interpole.
    Va fuera de @layer: es una definición global, no una regla de la cascada. */

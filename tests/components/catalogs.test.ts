@@ -65,7 +65,8 @@ describe('datos de los catálogos', () => {
 describe('banda de catálogos en la home', () => {
   it.each(['es', 'en'] as const)('/%s: las tarjetas conservan sus cifras sin la entradilla redundante', async (locale) => {
     const page = await html(locale);
-    expect(page).toContain(`data-front="catalogos" aria-label="${HOME[locale].catalogs.eyebrow}"`);
+    expect(page).toContain('data-front="catalogos" aria-labelledby="front-catalogos"');
+    expect(page).toContain(`id="front-catalogos" class="cats-group-title">${HOME[locale].catalogs.eyebrow}</h3>`);
     expect(page).not.toContain('class="cats-head');
     expect(page).not.toContain('class="cats-lead');
     expect(page).not.toContain('catalogos-title');
