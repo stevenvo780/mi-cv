@@ -132,18 +132,20 @@ test('hover sobre un nodo muestra su ficha', async ({ page }) => {
   await page.screenshot({ path: `${SHOTS}/3d-hover.png` });
 });
 
-// Las tarjetas de los catálogos y la cabecera de su banda son contenido (CONTENT en GraphStage): el puntero sobre ellas
-// no abre la ficha de un nodo, y un clic en su fondo no abre su sitio. Se busca un nodo en el hero y se pone encima,
-// con un estilo de prueba, la tarjeta de Kósmos (y luego la cabecera): la ficha se cierra; sin ella, vuelve (control).
+// Las tarjetas de los catálogos son contenido (CONTENT en GraphStage): el puntero sobre ellas no abre la ficha de un
+// nodo, y un clic en su fondo no abre su sitio. Se busca un nodo en el hero y se pone encima, con un estilo de prueba,
+// la tarjeta de Kósmos: la ficha se cierra; sin ella, vuelve (control).
 test('el puntero sobre la tarjeta de un catálogo es contenido, no grafo', async ({ page }) => {
   await openLive(page);
   const node = await findNode(page);
   expect(node).not.toBeNull();
   const tip = page.locator('.graph-tip');
-  for (const selector of ['.cat[data-cat="complexlab"]', '.cats-head']) {
+  for (const selector of ['.cat[data-cat="complexlab"]']) {
     const cover = await page.addStyleTag({
       // Sin sus hijos (visibility: hidden no recibe el puntero), el puntero cae en el fondo de la tarjeta, no en un enlace.
-      content: `.home ${selector} { position: fixed !important; inset: 0 !important; z-index: 20 !important; animation: none !important; } .home ${selector} > * { visibility: hidden !important; }`,
+      // La tarjeta vive en su frente (.front.reveal): la animación de entrada del frente (transform) sería el bloque
+      // contenedor del position: fixed y la tarjeta no cubriría la pantalla, así que también se apaga.
+      content: `.home .reveal:has(${selector}) { animation: none !important; } .home ${selector} { position: fixed !important; inset: 0 !important; z-index: 20 !important; animation: none !important; } .home ${selector} > * { visibility: hidden !important; }`,
     });
     await page.mouse.move(node!.x + 1, node!.y + 1);
     await expect(tip, `${selector} delante del nodo`).toBeHidden({ timeout: waitCap(20_000) });

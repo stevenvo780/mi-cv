@@ -3,7 +3,6 @@ import {
   type Catalogo,
   catalogoGrupos,
   catalogoKinds,
-  catalogos,
   esCatalogo,
   frenteLinks,
   frenteOrder,
@@ -21,9 +20,9 @@ import SectionHead from './SectionHead';
 const catalogAnchor = (id: string) => `catalogo-${id}`;
 
 /**
- * Un catálogo (Humanizar, Paideía, Kósmos, Daímon) reúne otros sitios. Va en la banda «Catálogos»,
- * al principio del catálogo, como una tarjeta grande con hojas apiladas detrás, su rótulo «Catálogo · N …» y la
- * lista entera de lo que contiene, agrupada por colección. Todo es HTML del servidor y CSS (spec §5.1: sin JS nuevo).
+ * Un catálogo (Humanizar, Paideía, Kósmos, Daímon) reúne otros sitios. Abre la rejilla de su frente como una tarjeta
+ * grande con hojas apiladas detrás, su rótulo «Catálogo · N …» y la lista entera de lo que contiene, agrupada por
+ * colección. Todo es HTML del servidor y CSS (spec §5.1: sin JS nuevo).
  */
 function CatalogTile({ c, locale, t }: { c: Catalogo; locale: Locale; t: HomeCopy }) {
   const meta = frentesMeta[c.frente];
@@ -32,7 +31,7 @@ function CatalogTile({ c, locale, t }: { c: Catalogo; locale: Locale; t: HomeCop
   return (
     <li
       id={catalogAnchor(c.id)}
-      className="cat reveal"
+      className="cat"
       data-cat={c.id}
       data-node={nodeId.producto(c.id)}
       // El buscador también encuentra el catálogo por lo que contiene: títulos de sus ítems y nombres de sus colecciones.
@@ -52,9 +51,6 @@ function CatalogTile({ c, locale, t }: { c: Catalogo; locale: Locale; t: HomeCop
     >
       <div className="cat-face">
         <div className="cat-id">
-          <p className="cat-front">
-            § {meta.secNo} · {meta.nombre[locale]}
-          </p>
           <p className="cat-label">{t.catalogs.label(count, c.unidad[locale])}</p>
           <div className="cat-title">
             <h4>{c.nombre}</h4>
@@ -119,16 +115,9 @@ export default function Fronts({ locale, t }: { locale: Locale; t: HomeCopy }) {
         <SectionHead id="frentes" eyebrow={f.eyebrow} title={f.title} lead={f.lead} />
         <ProductSearch targetId="frentes-list" label={f.searchLabel} placeholder={f.searchPlaceholder} noResults={f.noResults} />
         <div id="frentes-list" className="fronts">
-          {/* data-front: el buscador oculta la banda entera cuando ningún catálogo coincide (applySearchFilter). */}
-          <article className="cats" data-front="catalogos" aria-label={t.catalogs.eyebrow}>
-            <ul className="cats-list">
-              {catalogos.map((c) => (
-                <CatalogTile key={c.id} c={c} locale={locale} t={t} />
-              ))}
-            </ul>
-          </article>
           {frenteOrder.map((fid) => {
             const meta = frentesMeta[fid];
+            const obras = productos.filter((p) => p.frente === fid);
             return (
               <article key={fid} className="front reveal" data-front={fid} data-node={nodeId.frente(fid)} aria-labelledby={`front-${fid}`}>
                 <header className="front-head">
@@ -153,8 +142,14 @@ export default function Fronts({ locale, t }: { locale: Locale; t: HomeCopy }) {
                   ) : null}
                 </header>
                 <ul className="cards">
-                  {productos
-                    .filter((p) => p.frente === fid && !esCatalogo(p))
+                  {/* El catálogo es un trabajo más del frente, uno que reúne otros: abre su rejilla. En una banda aparte,
+                      encima de los frentes y rotulado con su § y su nombre, se leía como el resumen de cada frente y el
+                      frente como su detalle, cuando lo que reúne no está en las tarjetas (spec §4.10). */}
+                  {obras.filter(esCatalogo).map((c) => (
+                    <CatalogTile key={c.id} c={c} locale={locale} t={t} />
+                  ))}
+                  {obras
+                    .filter((p) => !esCatalogo(p))
                     .map((p) => (
                       <li
                         key={p.id}

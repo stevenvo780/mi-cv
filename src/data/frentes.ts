@@ -41,7 +41,7 @@ export interface Producto {
   /**
    * Product type override: 'ponencia' for academic talks/presentations; 'catalogo' for a site that gathers and
    * links a whole collection of other sites, courses or repos (Humanizar, Paideía, Kósmos, Daímon). A catálogo carries
-   * `incluye` and `unidad`, and the home shows it as a big tile of its own (Fronts.tsx).
+   * `incluye` and `unidad`, and the home shows it as a big tile that opens its front's grid (Fronts.tsx).
    */
   tipo?: 'ponencia' | 'catalogo';
   /** Solo catálogos: lo que reúne, ítem a ítem. Toda cifra que la home muestre de un catálogo se deriva de aquí. */
@@ -806,7 +806,10 @@ export function esCatalogo(p: Producto): p is Catalogo {
   return p.tipo === 'catalogo' && Array.isArray(p.incluye) && p.unidad !== undefined;
 }
 
-/** Humanizar abre la banda; los demás conservan el orden de sus frentes y de `productos`. */
+/**
+ * Humanizar va primero (así los lista /compartir); los demás conservan el orden de sus frentes y de `productos`. En la
+ * home cada catálogo abre la rejilla de su frente (Fronts.tsx), así que este orden no se ve allí.
+ */
 export const catalogos: Catalogo[] = frenteOrder
   .flatMap((f) => productos.filter((p) => p.frente === f).filter(esCatalogo))
   .sort((a, b) => Number(b.id === 'humanizar') - Number(a.id === 'humanizar'));

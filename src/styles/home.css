@@ -814,22 +814,19 @@
     }
   }
   /* ── Catálogos: sitios que reúnen otros sitios (Humanizar, Paideía, Kósmos, Daímon) ──
-     Cada uno es una tarjeta ancha con el color de su propia marca, un borde de luz que la recorre, hojas apiladas
-     detrás (contiene más sitios) que se abren en abanico al pasar el puntero, el rótulo «Catálogo · N …» y la lista
-     entera de lo que reúne. Todo en CSS: la home no admite JS nuevo (spec §5.1). */
-  .home .cats-list {
-    display: grid;
-    gap: clamp(3.5rem, 7.5vh, 4.75rem);
-    /* Sitio para las hojas que asoman por encima de la primera tarjeta. */
-    padding-top: 1.5rem;
-  }
+     Cada uno abre la rejilla de su frente a todo lo ancho: una tarjeta con el color de su propia marca, un borde de luz
+     que la recorre, hojas apiladas detrás (contiene más sitios) que se abren en abanico al pasar el puntero, el rótulo
+     «Catálogo · N …» y la lista entera de lo que reúne. Todo en CSS: la home no admite JS nuevo (spec §5.1). */
   .home .cat {
     --cat: var(--gold);
     --cat-2: var(--teal);
     --face: color-mix(in oklab, var(--cat) 5%, #070d10);
     position: relative;
     isolation: isolate;
-    scroll-margin-top: 7rem;
+    grid-column: 1 / -1;
+    /* Sitio para las hojas que asoman por encima y aire antes de las tarjetas del frente. */
+    margin: 1.5rem 0 1rem;
+    scroll-margin-top: 9rem;
   }
   /* Cada catálogo conserva los colores de su marca. */
   .home .cat[data-cat='humanizar'] {
@@ -879,10 +876,10 @@
     .home .cat:is(:hover, :focus-within)::after {
       transform: translateY(-2.7rem) rotate(1deg);
     }
-    .home .cat:nth-child(even):is(:hover, :focus-within)::before {
+    .home .front:nth-child(even) .cat:is(:hover, :focus-within)::before {
       transform: translateY(-1.35rem) rotate(0.8deg);
     }
-    .home .cat:nth-child(even):is(:hover, :focus-within)::after {
+    .home .front:nth-child(even) .cat:is(:hover, :focus-within)::after {
       transform: translateY(-2.7rem) rotate(-1deg);
     }
   }
@@ -896,10 +893,10 @@
     .home .cat::after {
       transform: translateY(-2.7rem) rotate(1deg);
     }
-    .home .cat:nth-child(even)::before {
+    .home .front:nth-child(even) .cat::before {
       transform: translateY(-1.35rem) rotate(0.8deg);
     }
-    .home .cat:nth-child(even)::after {
+    .home .front:nth-child(even) .cat::after {
       transform: translateY(-2.7rem) rotate(-1deg);
     }
   }
@@ -932,12 +929,12 @@
     }
   }
   /* Cara opaca con el borde de luz: un degradado cónico en el border-box que gira (--cat-angle, al final del archivo).
-     background-color también: el test de scrim (e2e) lo busca en un antepasado de cada texto pequeño. */
+     background-color también: el test de scrim (e2e) lo busca en un antepasado de cada texto pequeño. Una sola columna
+     (la ficha arriba y lo que reúne debajo): la rejilla del frente es más estrecha que la página. */
   .home .cat-face {
     position: relative;
     display: grid;
-    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.65fr);
-    gap: clamp(1.5rem, 3.5vw, 3rem);
+    gap: clamp(1.5rem, 3vw, 2.25rem);
     padding: clamp(1.35rem, 3vw, 2.4rem);
     border: 2px solid transparent;
     border-radius: 22px;
@@ -968,11 +965,8 @@
     .home .cat-face {
       animation: home-cat-spin 9s linear infinite;
     }
-    .home .cat:nth-child(2) .cat-face {
-      animation-delay: -3s;
-    }
-    .home .cat:nth-child(3) .cat-face {
-      animation-delay: -6s;
+    .home .front:nth-child(even) .cat-face {
+      animation-delay: -4.5s;
     }
     .home .cat-label::before {
       animation: home-cat-pulse 2.4s ease-in-out infinite;
@@ -1000,13 +994,6 @@
     display: grid;
     align-content: start;
     gap: 0.75rem;
-  }
-  .home .cat-front {
-    font-family: var(--f-mono);
-    font-size: 0.7rem;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: var(--muted);
   }
   /* El rótulo explícito: «Catálogo · 23 proyectos». */
   .home .cat-label {
@@ -1067,6 +1054,7 @@
     color: var(--cat);
   }
   .home .cat-desc {
+    max-width: var(--measure);
     font-size: 0.95rem;
     line-height: 1.6;
     color: var(--text-soft);
@@ -1173,11 +1161,6 @@
     letter-spacing: 0.12em;
     text-transform: uppercase;
     color: var(--muted);
-  }
-  @media (max-width: 1000px) {
-    .home .cat-face {
-      grid-template-columns: 1fr;
-    }
   }
   @media (max-width: 600px) {
     .home .cat::before {

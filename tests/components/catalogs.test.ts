@@ -8,7 +8,7 @@ import { normalizeSearch } from '@/lib/text';
 const html = async (locale: 'es' | 'en') => renderToStaticMarkup(await HomePage({ params: Promise.resolve({ locale }) }));
 
 describe('datos de los catálogos', () => {
-  it('Humanizar abre la banda y los otros catálogos conservan su orden', () => {
+  it('Humanizar va primero (en /compartir) y los otros catálogos conservan su orden', () => {
     expect(catalogos.map((c) => c.nombre)).toEqual(['Humanizar', 'Daímon', 'Paideía', 'Kósmos']);
     expect(productos.filter((p) => p.tipo === 'catalogo').every(esCatalogo)).toBe(true);
   });
@@ -62,21 +62,26 @@ describe('datos de los catálogos', () => {
   });
 });
 
-describe('banda de catálogos en la home', () => {
-  it.each(['es', 'en'] as const)('/%s: las tarjetas conservan sus cifras sin la entradilla redundante', async (locale) => {
+describe('catálogos en la home', () => {
+  // Una banda de catálogos encima de los frentes, cada tarjeta rotulada con el § y el nombre de su frente, se leía como el
+  // resumen de cada frente y el frente como su detalle, cuando lo que reúne un catálogo no está en las tarjetas de su
+  // frente. El catálogo es un trabajo más del frente: abre su rejilla, sin banda ni rótulo del frente (spec §4.10).
+  it.each(['es', 'en'] as const)('/%s: cada catálogo abre la rejilla de su frente, sin banda aparte', async (locale) => {
     const page = await html(locale);
-    expect(page).toContain(`data-front="catalogos" aria-label="${HOME[locale].catalogs.eyebrow}"`);
-    expect(page).not.toContain('class="cats-head');
-    expect(page).not.toContain('class="cats-lead');
-    expect(page).not.toContain('catalogos-title');
-    expect(page).not.toContain(locale === 'es' ? 'trabajos dentro' : 'works inside');
-    for (const c of catalogos) expect(page, c.nombre).toContain(HOME[locale].catalogs.label(c.incluye.length, c.unidad[locale]));
+    expect(page).not.toContain('data-front="catalogos"');
+    expect(page).not.toContain('class="cats');
+    expect(page).not.toContain('class="cat-front"');
+    for (const c of catalogos) {
+      const front = page.match(new RegExp(`<article[^>]*data-front="${c.frente}"[\\s\\S]*?</article>`))?.[0] ?? '';
+      expect(front.match(/<ul class="cards"><li[^>]*>/)?.[0], c.nombre).toContain(`data-node="producto:${c.id}"`);
+      expect(front, c.nombre).toContain(HOME[locale].catalogs.label(c.incluye.length, c.unidad[locale]));
+    }
     expect(HOME.en.catalogs.label(23, 'projects')).toBe('Catalog · 23 projects');
   });
 
   it.each(['es', 'en'] as const)('/%s: cada catálogo sale una sola vez, en su tarjeta grande, con cada ítem enlazado', async (locale) => {
     const page = await html(locale);
-    expect(page.match(/class="cat reveal"/g)).toHaveLength(catalogos.length);
+    expect(page.match(/class="cat"/g)).toHaveLength(catalogos.length);
     expect(page).not.toContain('class="front-cat"');
     for (const c of catalogos) {
       // Una sola tarjeta por producto: el catálogo ya no se repite en la rejilla de su frente.

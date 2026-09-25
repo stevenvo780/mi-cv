@@ -44,8 +44,9 @@ export interface HomeCopy {
     listLink: string;
   };
   fronts: { eyebrow: string; title: string; lead: string; searchLabel: string; searchPlaceholder: string; noResults: string; openFront: string; visit: string; code: string; soon: string };
-  /** Banda de los catálogos, al principio del catálogo. Las cifras llegan de los datos (`incluye` de cada catálogo). */
+  /** Tarjeta de cada catálogo, al frente de su rejilla. Las cifras llegan de los datos (`incluye` de cada catálogo). */
   catalogs: {
+    /** Nombre del tipo, en plural: el buscador encuentra todos los catálogos con él. */
     eyebrow: string;
     /** Rótulo de cada catálogo: «Catálogo · 23 proyectos». */
     label: (items: number, unit: string) => string;
