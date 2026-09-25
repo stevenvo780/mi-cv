@@ -10,9 +10,8 @@ type GateWindow = Pick<Window, 'addEventListener' | 'removeEventListener'> & Par
 const EVENTS = ['pointermove', 'touchstart', 'scroll', 'keydown'];
 
 /**
- * Llama a `go` con la primera interacción o, sin ella, con requestIdleCallback tras `load` (timeout 5 s; sin
- * requestIdleCallback, 200 ms después de `load`). El tope de 5 s (antes 1.5 s) deja fuera de la ventana FCP→TTI
- * de Lighthouse el chunk de GraphStage, sin quitar el póster de first paint (Opus hold). Spec §4.4, paso 2.
+ * Llama a `go` con la primera interacción o, sin ella, con requestIdleCallback tras `load` (timeout 1.5 s; sin
+ * requestIdleCallback, 200 ms después de `load`). Devuelve la limpieza. Spec §4.4, paso 2.
  */
 export function whenGraphMayLoad(win: GateWindow, doc: { readyState: DocumentReadyState }, go: () => void): () => void {
   let idle: number | undefined;
@@ -28,7 +27,7 @@ export function whenGraphMayLoad(win: GateWindow, doc: { readyState: DocumentRea
     go();
   };
   const onLoad = () => {
-    if (win.requestIdleCallback) idle = win.requestIdleCallback(fire, { timeout: 5000 });
+    if (win.requestIdleCallback) idle = win.requestIdleCallback(fire, { timeout: 1500 });
     else timer = setTimeout(fire, 200);
   };
   EVENTS.forEach((e) => win.addEventListener(e, fire, { once: true, passive: true }));

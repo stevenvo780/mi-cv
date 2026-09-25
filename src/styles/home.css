@@ -508,6 +508,10 @@
   .home .hero-last {
     justify-self: start;
     white-space: nowrap;
+    /* LCP: pintura sólida en first paint — sin opacity:0 ni hueco mientras carga la fuente (swap + fallback). */
+    opacity: 1;
+    visibility: visible;
+    content-visibility: visible;
   }
   .home .hero-meta {
     align-self: end;
@@ -1518,14 +1522,6 @@
     }
   }
 
-  /* Below-fold: salta layout/paint inicial (ayuda TBT). `auto` en contain-intrinsic-size recuerda el tamaño
-     real tras el primer paint in-view (CLS). No toca hero/stage Opus. */
-  .home .sec-fronts,
-  .home .sec-contact,
-  .home .footer {
-    content-visibility: auto;
-    contain-intrinsic-size: auto 900px;
-  }
 }
 
 

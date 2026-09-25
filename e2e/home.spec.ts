@@ -190,7 +190,7 @@ for (const locale of ['es', 'en'] as const) {
       await page.goto(`/${locale}`, { waitUntil: 'networkidle' });
       // Resource Timing: si cada script se pidió antes del evento load, en el reloj de la página. Por URL y sin filtrar
       // por initiatorType: el runtime de webpack llega por <link rel="preload"> (initiatorType «link»). Un script sin
-      // entrada cuenta como crítico. Se espera a que la puerta dispare (idle tras load, ≤ 5 s) para comprobar que lo
+      // entrada cuenta como crítico. Se espera a que la puerta dispare (idle tras load, ≤ 1.5 s) para comprobar que lo
       // que difiere sale de verdad después de load.
       const split = async () => {
         const early = await page.evaluate(() => {
