@@ -388,6 +388,23 @@ export const productos: Producto[] = [
     cardIdentity: { label: { es: 'Ciencia en código', en: 'Science in code' }, symbol: 'φ' },
   },
   {
+    id: 'noesis-lab',
+    frente: 'ciencias',
+    nombre: 'Nóesis',
+    subtitulo: {
+      es: 'Atlas interactivo de inteligencia artificial',
+      en: 'Interactive atlas of artificial intelligence',
+    },
+    descripcion: {
+      es: 'Atlas interactivo de IA que recorre lógica, probabilidad, redes neuronales, transformers, modelos generativos, aprendizaje por refuerzo y modelos de mundo. Cada familia combina intuición, fórmulas, historia y límites con laboratorios que calculan en el navegador.',
+      en: 'Interactive AI atlas spanning logic, probability, neural networks, transformers, generative models, reinforcement learning and world models. Each family combines intuition, formulas, history and limitations with labs that compute in the browser.',
+    },
+    url: 'https://noesis-lab.stevenvallejo.com',
+    status: 'live',
+    badge: { es: 'Laboratorios de IA en vivo', en: 'Live AI labs' },
+    cardIdentity: { label: { es: 'Mouseîon · IA', en: 'Mouseîon · AI' }, symbol: 'Ν' },
+  },
+  {
     id: 'estructuras-preontologicas',
     frente: 'ciencias',
     nombre: 'Estructuras Preontológicas',
@@ -740,6 +757,7 @@ export const productTags: Record<string, string[]> = {
   complexlab: ['kósmos', 'catálogo', 'catalog', 'ciencia', 'complejidad', 'emergencia', 'caos', 'redes', 'agentes', 'simulación', 'sistemas complejos', 'autómatas', 'orden natural'],
   'umbral-atlas': ['umbral', 'atlas', 'experimentos', 'matemáticas', 'física', 'autómatas', 'sistemas complejos', '3D', 'simulación', 'resultados documentados'],
   phusis: ['phúsis', 'ciencias de la complejidad', 'educación', 'curso', 'lecciones', 'autómatas celulares', 'caos', 'sistemas dinámicos', 'modelos basados en agentes', 'programación'],
+  'noesis-lab': ['nóesis', 'noesis', 'inteligencia artificial', 'IA', 'machine learning', 'redes neuronales', 'transformers', 'difusión', 'aprendizaje por refuerzo', 'JEPA', 'modelos de mundo', 'laboratorios', 'simulaciones', 'fórmulas'],
   aporia: ['áporía', 'CMS', 'editorial', 'papers', 'publicación académica', 'investigación', 'ciencia', 'paradojas', 'Neon', 'Postgres'],
   'nlp-to-logic': ['órganon', 'lógica formal', 'NLP', 'lenguaje natural', 'SAT solver', 'CDCL', 'ST', 'autologic', 'razonamiento', 'formalización'],
   stevenai: ['daímon', 'catálogo', 'catalog', 'inteligencia artificial', 'IA', 'RAG', 'LLM', 'Jarvis', 'Ollama', 'agentes', 'MCP', 'GPU', 'ChromaDB', 'chat local', 'OCR'],

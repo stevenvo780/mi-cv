@@ -1,6 +1,6 @@
 # Perfil de Steven Vallejo Ortiz
 
-Datos al 2026-09-24. Compilado por scripts/build-assistant-profile.mts (repo mi-cv) a partir de lo publicado en sus sitios: cv-informatico@4e5d102:public/pdf/CV_ai_es.html, cv-filosofo@803dea6:public/index.html, services@3185388:app/content.ts y el catálogo de stevenvallejo.com.
+Datos al 2026-09-25. Compilado por scripts/build-assistant-profile.mts (repo mi-cv) a partir de lo publicado en sus sitios: cv-informatico@4e5d102:public/pdf/CV_ai_es.html, cv-filosofo@803dea6:public/index.html, services@3185388:app/content.ts y el catálogo de stevenvallejo.com.
 
 ## Identidad y contacto
 
@@ -878,7 +878,7 @@ Un usuario edita documentos, corre terminales Linux reales en el navegador y con
 
 ¿Tienes una idea o un dolor de cabeza? Cuéntamelo en una llamada corta y sales con un plan claro y un precio fijo. Sin compromiso —escríbeme ahora.
 
-## Catálogo de trabajos (https://www.stevenvallejo.com): cuatro frentes · 25 trabajos
+## Catálogo de trabajos (https://www.stevenvallejo.com): cuatro frentes · 26 trabajos
 
 Cada trabajo es un sitio o un proyecto propio. «En línea» enlaza su versión actual; «próximamente» aún no tiene dominio propio.
 
@@ -934,6 +934,7 @@ El frente del investigador: sistemas complejos, emergencia, simulación científ
   - Cómputo científico (2): Benchmark y simulación N cuerpos <https://github.com/stevenvo780/TestPcForProgramers> · Prácticas de redes neuronales <https://github.com/stevenvo780/neuronalLearning>
 - Umbral (Atlas interactivo de experimentos) [Exploración científica]: Atlas interactivo de 23 experimentos de matemáticas, física, autómatas y sistemas complejos. Combina escenas 3D exploratorias con 230 resultados documentados y enlaces al código fuente; las escenas no recalculan los resultados originales. (sitio: https://umbral-atlas.stevenvallejo.com · en línea)
 - Phúsis (Aprender complejidad programando) [Plataforma educativa]: Plataforma-curso de ciencias de la complejidad con tres cursos activos y 22 lecciones. Permite programar autómatas, sistemas caóticos y modelos basados en agentes, con vista previa, comprobaciones automáticas y reflexión filosófica. (sitio: https://phusis.stevenvallejo.com · en línea)
+- Nóesis (Atlas interactivo de inteligencia artificial) [Laboratorios de IA en vivo]: Atlas interactivo de IA que recorre lógica, probabilidad, redes neuronales, transformers, modelos generativos, aprendizaje por refuerzo y modelos de mundo. Cada familia combina intuición, fórmulas, historia y límites con laboratorios que calculan en el navegador. (sitio: https://noesis-lab.stevenvallejo.com · en línea)
 - Estructuras Preontológicas (Tesis doctoral · Filosofía de la ciencia) [Investigación doctoral]: Tesis doctoral (Jacob Agudelo + Steven Vallejo, UdeA) en filosofía de la ciencia y ciencias de la complejidad: propone las "estructuras pre-ontológicas" como regularidades operativas previas a la objetualidad, ancladas en un sustrato material dinámico y validadas con la métrica EDI y compresión multiescala sobre evidencia multidominio. Rigor cuantitativo y fundamentación ontológica en un mismo programa. (sitio: https://preontologia.stevenvallejo.com · código: https://github.com/stevenvo780/EstructurasPreontologicas · en línea)
 
 ### Frente Empresarial — Software empresarial en producción, con clientes reales.

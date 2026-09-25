@@ -117,11 +117,12 @@ describe('banda de catálogos en la home', () => {
 });
 
 describe('proyectos del frente Ciencias', () => {
-  it.each(['es', 'en'] as const)('/%s: Umbral y Phúsis tienen una ficha propia y no duplican los catálogos', async (locale) => {
+  it.each(['es', 'en'] as const)('/%s: Umbral, Phúsis y Nóesis tienen una ficha propia y no duplican los catálogos', async (locale) => {
     const page = await html(locale);
     for (const [id, url] of [
       ['umbral-atlas', 'https://umbral-atlas.stevenvallejo.com'],
       ['phusis', 'https://phusis.stevenvallejo.com'],
+      ['noesis-lab', 'https://noesis-lab.stevenvallejo.com'],
     ] as const) {
       expect(productos.find((p) => p.id === id)?.frente).toBe('ciencias');
       expect(catalogos.some((c) => c.id === id)).toBe(false);
