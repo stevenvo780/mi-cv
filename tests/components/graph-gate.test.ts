@@ -4,13 +4,19 @@ import { whenGraphMayLoad } from '@/components/graph/GraphStageLazy';
 type Listener = () => void;
 
 /**
- * `window` de mentira para la puerta del grafo (enmienda H1 del Plan 2, spec §4.4 paso 2): la escena se importa con la
- * primera interacción (pointermove, touchstart, scroll, keydown) o con requestIdleCallback tras `load` (timeout
- * 5 s), nunca antes.
+ * `window` de mentira para la puerta del grafo (spec §4.4 paso 2 + tip WAVE3):
+ * interacción explícita (pointermove, touchstart, keydown) o scheduleAfterLcp
+ * (entrada LCP → settle → idle; hard timeout 8 s). Sin `scroll` (LH lo dispara
+ * en medio del Render Delay).
  */
-function fakeWindow(opts: { withIdleCallback?: boolean } = {}) {
+function fakeWindow(opts: { withIdleCallback?: boolean; withLcpApi?: boolean } = {}) {
   const listeners = new Map<string, Set<Listener>>();
   let idle: { cb: () => void; timeout?: number } | null = null;
+  let observerCb: ((list: { getEntries: () => PerformanceEntry[] }) => void) | null = null;
+  const timers = new Map<number, { cb: () => void; ms: number }>();
+  let nextTimerId = 1;
+  let now = 0;
+
   const win = {
     addEventListener: vi.fn((type: string, listener: Listener) => {
       if (!listeners.has(type)) listeners.set(type, new Set());
@@ -18,6 +24,14 @@ function fakeWindow(opts: { withIdleCallback?: boolean } = {}) {
     }),
     removeEventListener: vi.fn((type: string, listener: Listener) => {
       listeners.get(type)?.delete(listener);
+    }),
+    setTimeout: vi.fn((cb: () => void, ms: number) => {
+      const id = nextTimerId++;
+      timers.set(id, { cb, ms: now + ms });
+      return id;
+    }),
+    clearTimeout: vi.fn((id: number) => {
+      timers.delete(id);
     }),
     requestIdleCallback:
       opts.withIdleCallback === false
@@ -29,85 +43,130 @@ function fakeWindow(opts: { withIdleCallback?: boolean } = {}) {
     cancelIdleCallback: vi.fn(() => {
       idle = null;
     }),
+    PerformanceObserver:
+      opts.withLcpApi === false
+        ? undefined
+        : (vi.fn(function MockPO(this: unknown, cb: typeof observerCb) {
+            observerCb = cb;
+            return {
+              observe: vi.fn(),
+              disconnect: vi.fn(),
+            };
+          }) as unknown as typeof PerformanceObserver),
+    performance: {
+      getEntriesByType: vi.fn(() => [] as PerformanceEntry[]),
+    },
   };
+
   const emit = (type: string) => [...(listeners.get(type) ?? [])].forEach((l) => l());
   const listening = () => [...listeners].filter(([, set]) => set.size > 0).map(([type]) => type).sort();
-  const runIdle = () => idle?.cb();
-  return { win, emit, listening, runIdle, idle: () => idle };
+  const runIdle = () => {
+    const cb = idle?.cb;
+    idle = null;
+    cb?.();
+  };
+  const advance = (ms: number) => {
+    now += ms;
+    for (const [id, t] of [...timers]) {
+      if (t.ms <= now) {
+        timers.delete(id);
+        t.cb();
+      }
+    }
+  };
+  const emitLcp = () => {
+    observerCb?.({ getEntries: () => [{ entryType: 'largest-contentful-paint' } as PerformanceEntry] });
+  };
+
+  return { win, emit, listening, runIdle, idle: () => idle, advance, emitLcp, timers: () => timers };
 }
 
 describe('whenGraphMayLoad (puerta de GraphStage)', () => {
   beforeEach(() => vi.useFakeTimers());
   afterEach(() => vi.useRealTimers());
 
-  it('antes de load y sin interacción no importa nada', () => {
-    const { win } = fakeWindow();
+  it('sin interacción ni LCP no importa nada antes del hard timeout', () => {
+    const { win, advance } = fakeWindow();
     const go = vi.fn();
-    whenGraphMayLoad(win as never, { readyState: 'loading' }, go);
-    vi.advanceTimersByTime(60_000);
+    whenGraphMayLoad(win as never, { readyState: 'complete' }, go);
+    advance(7_999);
     expect(go).not.toHaveBeenCalled();
-    expect(win.requestIdleCallback).not.toHaveBeenCalled();
   });
 
-  it.each(['pointermove', 'touchstart', 'scroll', 'keydown'])('%s dispara la importación una sola vez', (type) => {
+  it.each(['pointermove', 'touchstart', 'keydown'] as const)('%s dispara la importación una sola vez', (type) => {
     const { win, emit, listening } = fakeWindow();
     const go = vi.fn();
     whenGraphMayLoad(win as never, { readyState: 'loading' }, go);
     emit(type);
     emit('keydown');
-    emit('load');
     expect(go).toHaveBeenCalledTimes(1);
-    // Disparada, no deja listeners colgando.
     expect(listening()).toEqual([]);
   });
 
-  it('tras load, espera a requestIdleCallback con timeout de 5 s', () => {
-    const { win, emit, runIdle, idle } = fakeWindow();
+  it('scroll ya no dispara la importación (evita el scroll sintético de Lighthouse)', () => {
+    const { win, emit } = fakeWindow();
     const go = vi.fn();
-    whenGraphMayLoad(win as never, { readyState: 'interactive' }, go);
-    emit('load');
-    expect(idle()?.timeout).toBe(5000);
+    whenGraphMayLoad(win as never, { readyState: 'complete' }, go);
+    emit('scroll');
+    expect(go).not.toHaveBeenCalled();
+  });
+
+  it('tras una entrada LCP, espera settle + idle y entonces importa', () => {
+    const { win, emitLcp, advance, runIdle, idle } = fakeWindow();
+    const go = vi.fn();
+    whenGraphMayLoad(win as never, { readyState: 'complete' }, go);
+    emitLcp();
+    expect(go).not.toHaveBeenCalled();
+    advance(150);
+    expect(idle()?.timeout).toBe(2000);
     expect(go).not.toHaveBeenCalled();
     runIdle();
     expect(go).toHaveBeenCalledTimes(1);
   });
 
-  it('si el documento ya cargó, pide el idle al montarse', () => {
-    const { win, runIdle } = fakeWindow();
+  it('hard timeout 8 s importa sin entrada LCP', () => {
+    const { win, advance, runIdle, idle } = fakeWindow();
     const go = vi.fn();
     whenGraphMayLoad(win as never, { readyState: 'complete' }, go);
-    expect(win.requestIdleCallback).toHaveBeenCalledTimes(1);
+    advance(8000);
+    // hard path también pasa por idle cuando hay requestIdleCallback
+    expect(idle()?.timeout).toBe(2000);
     runIdle();
     expect(go).toHaveBeenCalledTimes(1);
   });
 
-  it('una interacción antes del idle cancela el idle y no importa dos veces', () => {
-    const { win, emit, runIdle } = fakeWindow();
+  it('una interacción antes del idle tras LCP cancela el schedule y no importa dos veces', () => {
+    const { win, emit, emitLcp, advance, runIdle } = fakeWindow();
     const go = vi.fn();
     whenGraphMayLoad(win as never, { readyState: 'complete' }, go);
+    emitLcp();
+    advance(150);
     emit('pointermove');
-    expect(win.cancelIdleCallback).toHaveBeenCalledWith(7);
+    expect(go).toHaveBeenCalledTimes(1);
     runIdle();
     expect(go).toHaveBeenCalledTimes(1);
   });
 
-  it('sin requestIdleCallback (Safari), usa un setTimeout corto tras load', () => {
-    const { win } = fakeWindow({ withIdleCallback: false });
+  it('sin requestIdleCallback, tras LCP usa setTimeout corto', () => {
+    const { win, emitLcp, advance } = fakeWindow({ withIdleCallback: false });
     const go = vi.fn();
     whenGraphMayLoad(win as never, { readyState: 'complete' }, go);
+    emitLcp();
+    advance(150);
     expect(go).not.toHaveBeenCalled();
-    vi.advanceTimersByTime(200);
+    advance(400);
     expect(go).toHaveBeenCalledTimes(1);
   });
 
-  it('la limpieza (desmontaje) quita los listeners y cancela el idle pendiente', () => {
-    const { win, emit, runIdle, listening } = fakeWindow();
+  it('la limpieza (desmontaje) quita los listeners y cancela el schedule pendiente', () => {
+    const { win, emit, emitLcp, advance, runIdle, listening } = fakeWindow();
     const go = vi.fn();
     const stop = whenGraphMayLoad(win as never, { readyState: 'complete' }, go);
     stop();
     expect(listening()).toEqual([]);
-    expect(win.cancelIdleCallback).toHaveBeenCalledWith(7);
-    emit('scroll');
+    emit('keydown');
+    emitLcp();
+    advance(8000);
     runIdle();
     expect(go).not.toHaveBeenCalled();
   });
