@@ -1,4 +1,4 @@
-import { catalogos, esCatalogo, frentesMeta, productos } from '@/data/frentes';
+import { catalogos, esCatalogo, frentesMeta, productoDeItem, productos } from '@/data/frentes';
 import expEs from '@/locales/es/common/experience.json';
 import expEn from '@/locales/en/common/experience.json';
 import toolsEs from '@/locales/es/common/tools.json';
@@ -43,8 +43,6 @@ function bilingual(key: string, dict: { es: Dict; en: Dict }): Bilingual {
 }
 
 /** URL comparable: sin barra final ni mayúsculas. */
-const bareUrl = (url?: string) => url?.replace(/\/+$/, '').toLowerCase();
-
 /** "ReactJS (Redux, sagas, ReactContext)" → "ReactJS". */
 function shortLabel(label: string): string {
   return label.split(' (')[0].trim();
@@ -80,12 +78,10 @@ export function buildGraphModel(): GraphModel {
     });
     addEdge(nodeId.frente(p.frente), nodeId.producto(p.id), 'pertenece-a', 2);
   }
-  // Catálogo → productos del portafolio que reúne: los que comparten sitio o repositorio con uno de sus ítems.
+  // Catálogo → productos del portafolio que reúne (productoDeItem: la misma regla que marca esos ítems en la home).
   for (const c of catalogos) {
-    const urls = new Set(c.incluye.map((i) => bareUrl(i.url)).filter(Boolean));
-    for (const p of productos) {
-      if (p.id !== c.id && (urls.has(bareUrl(p.url)) || urls.has(bareUrl(p.repo)))) addEdge(nodeId.producto(c.id), nodeId.producto(p.id), 'agrupa', 2);
-    }
+    const reunidos = new Set(c.incluye.map((i) => productoDeItem(i)?.id).filter((id): id is string => !!id && id !== c.id));
+    for (const id of reunidos) addEdge(nodeId.producto(c.id), nodeId.producto(id), 'agrupa', 2);
   }
   for (const x of EXTRA_PROJECTS) {
     nodes.push({ id: nodeId.producto(x.id), kind: 'producto', label: x.label, frente: x.frente, weight: 1 });

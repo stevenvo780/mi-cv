@@ -2,7 +2,20 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 import HomePage from '@/app/[locale]/(home)/page';
 import { HOME } from '@/content/home';
-import { catalogoGrupos, catalogoKinds, catalogos, esCatalogo, nombreItem, productos, trabajosEnCatalogos } from '@/data/frentes';
+import {
+  catalogoGrupos,
+  catalogoKinds,
+  catalogos,
+  catalogosDe,
+  esCatalogo,
+  frenteOrder,
+  nombreItem,
+  ordenHome,
+  productoDeItem,
+  productos,
+  tarjetasDeFrente,
+  trabajosEnCatalogos,
+} from '@/data/frentes';
 import { normalizeSearch } from '@/lib/text';
 
 const html = async (locale: 'es' | 'en') => renderToStaticMarkup(await HomePage({ params: Promise.resolve({ locale }) }));
@@ -65,16 +78,20 @@ describe('datos de los catálogos', () => {
 describe('catálogos en la home', () => {
   // Una banda de catálogos encima de los frentes, cada tarjeta rotulada con el § y el nombre de su frente, se leía como el
   // resumen de cada frente y el frente como su detalle, cuando lo que reúne un catálogo no está en las tarjetas de su
-  // frente. El catálogo es un trabajo más del frente: abre su rejilla, sin banda ni rótulo del frente (spec §4.10).
-  it.each(['es', 'en'] as const)('/%s: cada catálogo abre la rejilla de su frente, sin banda aparte', async (locale) => {
+  // frente. El catálogo es un trabajo más del frente: lo abre con su mapa, sin banda ni rótulo del frente, y un separador
+  // («N proyectos con sitio propio») lo corta de las tarjetas que siguen (spec §4.10).
+  it.each(['es', 'en'] as const)('/%s: cada catálogo abre su frente, y un separador lo corta de las tarjetas', async (locale) => {
     const page = await html(locale);
     expect(page).not.toContain('data-front="catalogos"');
     expect(page).not.toContain('class="cats');
     expect(page).not.toContain('class="cat-front"');
     for (const c of catalogos) {
       const front = page.match(new RegExp(`<article[^>]*data-front="${c.frente}"[\\s\\S]*?</article>`))?.[0] ?? '';
-      expect(front.match(/<ul class="cards"><li[^>]*>/)?.[0], c.nombre).toContain(`data-node="producto:${c.id}"`);
+      expect(front.match(/<div class="front-body"><div[^>]*>/)?.[0], c.nombre).toContain(`data-node="producto:${c.id}"`);
       expect(front, c.nombre).toContain(HOME[locale].catalogs.label(c.incluye.length, c.unidad[locale]));
+      const divider = `<p class="cards-divider" id="sitios-${c.frente}">${HOME[locale].fronts.ownSites(ordenHome[c.frente].length)}</p>`;
+      expect(front.indexOf(divider), c.nombre).toBeGreaterThan(front.indexOf('class="cg"'));
+      expect(front.indexOf(divider), c.nombre).toBeLessThan(front.indexOf('class="card"'));
     }
     expect(HOME.en.catalogs.label(23, 'projects')).toBe('Catalog · 23 projects');
   });
@@ -121,18 +138,80 @@ describe('catálogos en la home', () => {
 
 });
 
+describe('mapa de cada catálogo', () => {
+  it.each(['es', 'en'] as const)('/%s: un nodo por ítem, en su colección y su lado, y una arista por colección', async (locale) => {
+    const page = await html(locale);
+    for (const c of catalogos) {
+      const tile = page.match(new RegExp(`<div id="catalogo-${c.id}"[\\s\\S]*?</ul></div>`))?.[0] ?? '';
+      const grupos = catalogoGrupos(c);
+      expect(tile.match(/class="cg-g" data-side="[lr]"/g), c.nombre).toHaveLength(grupos.length);
+      expect(tile.match(/<li (class="cg-own" )?style="--y:[\d.]+"/g), c.nombre).toHaveLength(c.incluye.length);
+      expect(tile.match(/<path d="M50 50C/g), c.nombre).toHaveLength(2 * grupos.length);
+      // Los dos lados llevan colección: el mapa nunca es un abanico de un solo lado.
+      expect(tile, c.nombre).toContain('data-side="l"');
+      expect(tile, c.nombre).toContain('data-side="r"');
+    }
+  });
+
+  // Nodo hueco = el ítem es además una tarjeta de la página, y esa tarjeta dice «También en …». Estructuras
+  // Preontológicas está en Paideía (la tesis) y en Kósmos (su repositorio); Graf, por su `producto` (otro dominio).
+  it('marca los ítems que son una tarjeta de la página, y la tarjeta nombra sus catálogos', async () => {
+    const own = Object.fromEntries(catalogos.map((c) => [c.id, c.incluye.flatMap((i) => productoDeItem(i)?.id ?? [])]));
+    expect(own).toEqual({
+      humanizar: ['demeter', 'graf', 'devkits-crm', 'cauce-v3', 'agora', 'warehouse', 'communityos', 'devkits-hours', 'prizma', 'devkits'],
+      stevenai: [],
+      clavis: ['estructuras-preontologicas'],
+      complexlab: ['estructuras-preontologicas'],
+    });
+    const estructuras = productos.find((p) => p.id === 'estructuras-preontologicas')!;
+    expect(catalogosDe(estructuras).map((c) => c.nombre)).toEqual(['Paideía', 'Kósmos']);
+    const page = await html('es');
+    expect(page.match(/class="cg-own"/g)).toHaveLength(Object.values(own).flat().length);
+    expect(page).toContain('<p class="card-in">También en Paideía y Kósmos</p>');
+    expect(page.match(/<p class="card-in">También en Humanizar<\/p>/g)).toHaveLength(own.humanizar.length);
+    // Sin ítems que sean tarjeta, sin leyenda.
+    const daimon = page.match(/<div id="catalogo-stevenai"[\s\S]*?<\/ul><\/div>(<p class="cg-legend">)?/)?.[0] ?? '';
+    expect(daimon).not.toContain('cg-legend');
+  });
+
+  it('Umbral recorre los repositorios de Kósmos: la tarjeta de Kósmos la enlaza y la de Umbral lo dice', async () => {
+    const umbral = productos.find((p) => p.id === 'umbral-atlas')!;
+    expect(umbral.vistaDe?.catalogo).toBe('complexlab');
+    for (const locale of ['es', 'en'] as const) {
+      const page = await html(locale);
+      const kosmos = page.match(/<div id="catalogo-complexlab"[\s\S]*?class="cg"/)?.[0] ?? '';
+      expect(kosmos).toContain(`<p class="cat-view">${umbral.vistaDe!.texto[locale]} <a href="${umbral.url}"`);
+      expect(umbral.subtitulo![locale]).toContain('Kósmos');
+    }
+  });
+});
+
+describe('orden de las tarjetas en la home', () => {
+  it('ordenHome recorre cada tarjeta de su frente una vez, y la home las pinta en ese orden', async () => {
+    for (const f of frenteOrder) {
+      const esperadas = productos.filter((p) => p.frente === f && !esCatalogo(p)).map((p) => p.id);
+      expect([...ordenHome[f]].sort(), f).toEqual([...esperadas].sort());
+      expect(tarjetasDeFrente(f).map((p) => p.id), f).toEqual(ordenHome[f]);
+    }
+    const page = await html('es');
+    const pintadas = [...page.matchAll(/class="card" data-node="producto:([^"]+)"/g)].map((m) => m[1]);
+    expect(pintadas).toEqual(frenteOrder.flatMap((f) => ordenHome[f]));
+  });
+});
+
 describe('proyectos del frente Ciencias', () => {
   it.each(['es', 'en'] as const)('/%s: Umbral, Phúsis y Nóesis tienen una ficha propia y no duplican los catálogos', async (locale) => {
     const page = await html(locale);
-    for (const [id, url] of [
-      ['umbral-atlas', 'https://umbral-atlas.stevenvallejo.com'],
-      ['phusis', 'https://phusis.stevenvallejo.com'],
-      ['noesis-lab', 'https://noesis-lab.stevenvallejo.com'],
+    for (const [id, url, times] of [
+      // Umbral sale dos veces: su tarjeta y el enlace de la tarjeta de Kósmos («Sus experimentos, en escenas 3D»).
+      ['umbral-atlas', 'https://umbral-atlas.stevenvallejo.com', 2],
+      ['phusis', 'https://phusis.stevenvallejo.com', 1],
+      ['noesis-lab', 'https://noesis-lab.stevenvallejo.com', 1],
     ] as const) {
       expect(productos.find((p) => p.id === id)?.frente).toBe('ciencias');
       expect(catalogos.some((c) => c.id === id)).toBe(false);
       expect(page.match(new RegExp(`data-node="producto:${id}"`, 'g'))).toHaveLength(1);
-      expect(page.match(new RegExp(`href="${url}"`, 'g'))).toHaveLength(1);
+      expect(page.match(new RegExp(`href="${url}"`, 'g'))).toHaveLength(times);
     }
   });
 });

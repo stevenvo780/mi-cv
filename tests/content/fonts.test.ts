@@ -26,7 +26,7 @@ describe('subconjunto de fuente del h1', () => {
     expect(missing, `faltan en cormorant-hero.woff2: ${REGENERATE}`).toEqual([]);
   });
 
-  it('es mínimo: es el único archivo que se precarga y compite con el LCP', () => {
+  it('es mínimo: se precarga y compite con el LCP', () => {
     expect(statSync(HERO).size).toBeLessThanOrEqual(6 * 1024);
   });
 });

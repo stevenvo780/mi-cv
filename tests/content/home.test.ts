@@ -31,8 +31,8 @@ describe('copy de la home', () => {
     for (const locale of ['es', 'en'] as const) {
       const { fronts, hero, contact, nav, meta } = HOME[locale];
       const derived = new Set([fronts.eyebrow]);
-      const texts = [meta.title, meta.description, meta.person, ...Object.values(nav), ...Object.values(fronts), ...Object.values(contact)];
-      texts.push(...Object.values(hero).filter((v): v is string => typeof v === 'string'));
+      const texts = [meta.title, meta.description, meta.person, ...Object.values(nav), ...Object.values(contact)];
+      texts.push(...[...Object.values(hero), ...Object.values(fronts)].filter((v): v is string => typeof v === 'string'));
       for (const text of texts) if (!derived.has(text)) expect(text, `${locale}: ${text}`).not.toMatch(/\d/);
       expect(fronts.title).toBe(locale === 'es' ? 'Catálogo · todos mis trabajos' : 'Catalog · all my work');
     }
@@ -44,6 +44,14 @@ describe('copy de la home', () => {
       for (const text of Object.values(catalogs)) if (typeof text === 'string') expect(text, `${locale}: ${text}`).not.toMatch(/\d/);
       expect(catalogs.label(12, 'x')).toBe(locale === 'es' ? 'Catálogo · 12 x' : 'Catalog · 12 x');
     }
+  });
+  // Las cifras del separador y los nombres de «También en…» llegan de los datos; el texto fijo no lleva ninguna.
+  it('el separador de cada frente y «También en…» reciben cifras y nombres desde los datos', () => {
+    expect(HOME.es.fronts.ownSites(11)).toBe('11 proyectos con sitio propio');
+    expect(HOME.es.fronts.ownSites(1)).toBe('1 proyecto con sitio propio');
+    expect(HOME.en.fronts.ownSites(4)).toBe('4 projects with a site of their own');
+    expect(HOME.es.fronts.alsoIn(['Paideía', 'Kósmos'])).toBe('También en Paideía y Kósmos');
+    expect(HOME.en.fronts.alsoIn(['Humanizar'])).toBe('Also in Humanizar');
   });
   it('countWord da el numeral de cada idioma y no inventa fuera de 2–10', () => {
     expect([countWord('es', 5), countWord('en', 5)]).toEqual(['Cinco', 'Five']);
