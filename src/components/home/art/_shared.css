@@ -13,7 +13,9 @@
    --hl: 0 (sin leyenda activa, --hl no existe: usa var(--hl, 1)).
 
    Movimiento. Toda animación va dentro de @media (prefers-reduced-motion: no-preference); sin ella, la pieza queda en
-   una pose fija que se entiende. La pausa del grafo (html[data-motion='paused']) la detiene aquí abajo para todas.
+   una pose fija que se entiende. La pausa del grafo (html[data-motion='paused']) quita aquí abajo las animaciones de
+   todas: cada pieza queda en esa misma pose, en reposo y al pasar el puntero. Congelarlas no bastaba: una animación que
+   el hover crea con la pausa puesta nace detenida en su primer fotograma y deja la pose a medias.
    Anima transform y opacity (filter o clip-path solo si hace falta, y en pocos elementos).
 
    Color y letra. --art-a y --art-b son los dos colores de la caja (el acento del frente, o los dos de la marca del
@@ -36,7 +38,7 @@
   html[data-motion='paused'] .home .art *,
   html[data-motion='paused'] .home .art *::before,
   html[data-motion='paused'] .home .art *::after {
-    animation-play-state: paused !important;
+    animation: none !important;
   }
 
   /* Leyenda de colecciones → escena: una regla por colección conocida. */

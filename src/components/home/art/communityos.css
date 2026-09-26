@@ -141,10 +141,9 @@
     translate: calc(var(--x)*var(--h)*9.6cqw) calc(var(--y)*var(--h)*1.6cqw);
   }
   /* Activa: --r baja a 0 (los iconos se vuelven squircle y el podio se enciende); --h = 1 trae a los nuevos y reordena
-     el podio, cada uno con su transición; --du acelera la presencia y la voz. */
+     el podio, cada uno con su transición. */
   .home .art-host:is(:hover, :focus-within) .art-communityos {
     --h: 1;
-    --du: 2.5s;
     --art-communityos-r: 0;
   }
 
@@ -153,10 +152,10 @@
       transition: --art-communityos-r 0.5s;
     }
     .home .art-communityos .t i {
-      animation: art-communityos-pulse var(--du,7.5s) calc(var(--i)*0.3s) infinite;
+      animation: art-communityos-pulse 7.5s calc(var(--i)*0.3s) infinite;
     }
     .home .art-communityos u {
-      animation: art-communityos-voice var(--du,7.5s) var(--d) ease-out infinite;
+      animation: art-communityos-voice 7.5s var(--d) ease-out infinite;
     }
     .home .art-communityos kbd {
       animation: art-communityos-plus 7.5s 3.4s ease-out infinite backwards;
@@ -171,10 +170,10 @@
     .home .art-communityos .e {
       transition: scale 0.5s calc(var(--h)*(var(--i)*0.2s + 0.3s));
     }
-    /* Al entrar y al salir sale antes el que cruza dos columnas, por detrás y más despacio; los otros dos van a la par,
-       a una columna el uno del otro. */
+    /* Uno tras otro por puesto (al salir, al revés): el que cruza dos columnas, por detrás y más despacio, se cruza con
+       cada uno por separado y nunca queda entre los dos. */
     .home .art-communityos .lb i {
-      transition: translate calc(0.6s + var(--x)*var(--x)*0.1s) calc(var(--h)*1s + (2 - var(--x))*0.05s);
+      transition: translate calc(0.6s + var(--x)*var(--x)*0.1s) calc(0.6s - var(--p)*0.3s + var(--h)*(0.2s + var(--p)*0.6s));
     }
   }
 
@@ -218,15 +217,16 @@
       translate: 0;
     }
   }
+  /* Los calc() en px: Chromium no interpola uno sin unidad en los trazos y saltaría de fotograma en fotograma. */
   @keyframes art-communityos-xp {
     36%,
     46% {
-      stroke-dashoffset: calc((100 - var(--f))*var(--r));
-      stroke-width: calc(1.8 - var(--r)*0.8);
+      stroke-dashoffset: calc((100 - var(--f))*var(--r)*1px);
+      stroke-width: calc((1.8 - var(--r)*0.8)*1px);
       stroke-opacity: 1;
     }
     47% {
-      stroke-dashoffset: calc(100 - var(--f)*var(--r));
+      stroke-dashoffset: calc((100 - var(--f)*var(--r))*1px);
       stroke-width: 1;
       stroke-opacity: var(--r);
     }

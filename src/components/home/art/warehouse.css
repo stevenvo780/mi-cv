@@ -200,15 +200,16 @@
     }
     .home .art-warehouse .qv:not(.ql) {
       animation: var(--U, art-warehouse-lvl 5s ease-in-out infinite alternate);
-      animation-delay: calc(var(--x) * var(--k, 0.13s));
+      animation-delay: calc((var(--x) + 31) * var(--k, 0.13s));
     }
     .home .art-warehouse :is(.qr, .ql)::before {
       animation: art-warehouse-o 1.3s ease-in-out infinite alternate;
     }
   }
-  /* La pausa global no detiene transiciones: se cancelan. */
+  /* La pausa global no detiene transiciones: se cancelan. Ni el rellenado, que se crearía ya en pausa: fuera. */
   html[data-motion='paused'] .home .art-warehouse * {
     transition: none;
+    --U: none;
   }
   @keyframes art-warehouse-scan {
     0% {
