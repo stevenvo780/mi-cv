@@ -1,16 +1,18 @@
-/* Kósmos: nube 3D de ecuaciones en órbita sobre el fantasma del atractor de Lorenz de su portada.
-   Profundidad: perspectiva + tres velos de niebla a distintas z (lo lejano se apaga sin sincronizar opacidades).
-   Activa: la nube se inclina hacia el espectador, gira más rápido (una segunda órbita que solo corre al pasar) y se
-   enciende. Las ecuaciones siempre miran al frente: cada una deshace el giro de las dos órbitas. */
+/* Kósmos: esfera de ecuaciones en órbita sobre el fantasma del atractor de Lorenz de su portada.
+   Profundidad: perspectiva + tres velos de niebla a distintas z (lo lejano se apaga sin animar opacidades) y un halo
+   oscuro tras cada ecuación, para que la de delante tape a la de atrás en vez de mezclarse con ella.
+   Activa: la nube se acerca y se endereza, gira más rápido (una segunda órbita que solo corre al pasar) y se enciende.
+   Las ecuaciones siempre miran al frente: cada una deshace el giro de las dos órbitas. --o es la pose de partida. */
 @layer home {
   .home .art-complexlab {
     --lime: #d9f46c;
     --navy: #080d15;
-    --R: 35cqw;
-    --Y: 2.8cqh;
-    --fs: 3.5cqmin;
+    --R: 34cqw;
+    --V: 32cqh;
+    --fs: 3.4cqmin;
+    --o: -15deg;
     background:
-      radial-gradient(50% 58% at 50% 50%, rgb(217 244 108 / 0.08), transparent 72%),
+      radial-gradient(50% 58% at 50% 45%, rgb(217 244 108 / 0.08), transparent 72%),
       radial-gradient(130% 100% at 50% 40%, #0e1928, var(--navy) 55%, #04070c);
   }
   /* Rejilla tenue, como la portada. */
@@ -28,9 +30,9 @@
   .home .art-complexlab .cl-g {
     position: absolute;
     left: 50%;
-    top: 50%;
-    height: 104cqh;
-    aspect-ratio: 200 / 220;
+    top: 47%;
+    height: 92cqh;
+    aspect-ratio: 324 / 340;
     translate: -50% -50%;
     overflow: visible;
     fill: none;
@@ -39,23 +41,23 @@
   }
   .home .art-complexlab .cl-g1 {
     stroke: var(--lime);
-    stroke-width: 3.4;
-    opacity: 0.12;
+    stroke-width: 6;
+    opacity: 0.1;
   }
   .home .art-complexlab .cl-g2 {
     stroke: color-mix(in oklab, var(--lime) 70%, #8ee6c4);
-    stroke-width: 0.5;
-    opacity: 0.8;
+    stroke-width: 1;
+    opacity: 0.7;
   }
   .home .art-complexlab .cl-c {
     stroke: #f6ffd6;
-    stroke-width: 1.3;
-    stroke-dasharray: 4 96;
+    stroke-width: 2.6;
+    stroke-dasharray: 3 97;
     stroke-dashoffset: 62;
   }
   .home .art-complexlab .cl-c2 {
     stroke: var(--art-b);
-    stroke-dasharray: 7 93;
+    stroke-dasharray: 6 94;
     stroke-dashoffset: 12;
     opacity: 0;
   }
@@ -86,8 +88,8 @@
   .home .art-complexlab .cl-st {
     position: absolute;
     inset: 0;
-    perspective: 100cqw;
-    perspective-origin: 50% 43%;
+    perspective: 140cqw;
+    perspective-origin: 50% 42%;
   }
   .home .art-complexlab :is(.cl-tl, .cl-o, .cl-s, .cl-e, .cl-sp) {
     position: absolute;
@@ -99,29 +101,32 @@
   }
   .home .art-complexlab .cl-tl {
     left: 50%;
-    top: 43%;
-    transform: rotateX(-10deg) rotateZ(-4deg);
+    top: 42%;
+    transform: rotateZ(-4deg);
+  }
+  .home .art-complexlab .cl-o {
+    rotate: y var(--o);
   }
   .home .art-complexlab .cl-f {
     position: absolute;
-    left: -100cqw;
-    top: -100cqh;
-    width: 200cqw;
-    height: 200cqh;
-    background: rgb(8 13 21 / 0.22);
+    left: -65cqw;
+    top: -65cqh;
+    width: 130cqw;
+    height: 130cqh;
+    background: radial-gradient(closest-side, rgb(8 13 21 / 0.22) 72%, transparent);
     transform: translateZ(calc(var(--R) * 0.2));
   }
   .home .art-complexlab .cl-f:nth-child(2) {
-    background: rgb(8 13 21 / 0.3);
+    background: radial-gradient(closest-side, rgb(8 13 21 / 0.3) 72%, transparent);
     transform: translateZ(calc(var(--R) * -0.25));
   }
   .home .art-complexlab .cl-f:nth-child(3) {
-    background: rgb(8 13 21 / 0.36);
+    background: radial-gradient(closest-side, rgb(8 13 21 / 0.36) 72%, transparent);
     transform: translateZ(calc(var(--R) * -0.65));
   }
   .home .art-complexlab .cl-e {
-    transform: translateY(calc(var(--y) * var(--Y))) rotateY(calc(var(--a) * 1deg)) translateZ(var(--R))
-      rotateY(calc(var(--a) * -1deg));
+    transform: translateY(calc(var(--s) * var(--V))) rotateY(calc(var(--a) * 1deg))
+      translateZ(calc(var(--r) * var(--R))) rotateY(calc(var(--a) * -1deg - var(--o)));
   }
   .home .art-complexlab .cl-sp {
     display: flex;
@@ -146,10 +151,12 @@
     --c: #cfe3f0;
   }
   .home .art-complexlab .cl-t {
+    padding: 0.2em 0.55em;
     font: 400 var(--fs) / 1.2 var(--f-math);
     white-space: nowrap;
     color: color-mix(in oklab, var(--c) 62%, #e8ecf2);
     text-shadow: 0 0 1.4cqmin color-mix(in oklab, var(--c) 45%, transparent);
+    background: radial-gradient(farthest-side, rgb(8 13 21 / 0.72) 50%, transparent);
     opacity: calc(0.12 + 0.88 * var(--hl, 1));
   }
   .home .art-complexlab .cl-t :is(sub, sup) {
@@ -159,23 +166,27 @@
   .home .art-complexlab .cl-lz {
     display: flex;
     flex-direction: column;
-    padding: 0.15em 0 0.15em 0.55em;
+    padding: 0.35em 0.9em 0.35em 0.6em;
     border-left: 0.35cqmin solid var(--lime);
-    font-size: calc(var(--fs) * 1.35);
+    font-size: calc(var(--fs) * 1.12);
     line-height: 1.28;
     color: #f0fac8;
     text-shadow: 0 0 2cqmin rgb(217 244 108 / 0.6);
+    background: radial-gradient(farthest-side at 0 50%, rgb(8 13 21 / 0.8) 55%, transparent);
   }
+  /* Rótulo con su velo, por encima de la nube. */
   .home .art-complexlab .cl-k {
     position: absolute;
-    left: 4cqmin;
-    top: 4cqmin;
+    left: 2cqmin;
+    top: 2cqmin;
     display: flex;
     align-items: center;
     gap: 1.4cqmin;
+    padding: 2cqmin 3cqmin;
     font: 500 2.3cqmin / 1 var(--f-code);
     letter-spacing: 0.12em;
-    color: rgb(217 244 108 / 0.85);
+    color: rgb(217 244 108 / 0.9);
+    background: radial-gradient(farthest-side, rgb(8 13 21 / 0.9) 60%, transparent);
   }
   .home .art-complexlab .cl-k::before {
     content: '';
@@ -188,7 +199,7 @@
 
   /* Activa: la nube se acerca y se endereza, la niebla se abre, todo se enciende. */
   .home .art-host:is(:hover, :focus-within) .art-complexlab .cl-tl {
-    transform: translateZ(4cqw) rotateX(-5deg) rotateZ(0deg);
+    transform: translateZ(3cqw) rotateX(-5deg) rotateZ(0deg);
   }
   .home .art-host:is(:hover, :focus-within) .art-complexlab .cl-f {
     opacity: 0.45;
@@ -198,42 +209,36 @@
     text-shadow: 0 0 2.2cqmin color-mix(in oklab, var(--c) 80%, transparent);
   }
   .home .art-host:is(:hover, :focus-within) .art-complexlab .cl-g1 {
-    opacity: 0.17;
+    opacity: 0.16;
   }
-  .home .art-host:is(:hover, :focus-within) .art-complexlab .cl-g2 {
-    opacity: 1;
-  }
-  .home .art-host:is(:hover, :focus-within) .art-complexlab .cl-c2 {
+  .home .art-host:is(:hover, :focus-within) .art-complexlab :is(.cl-g2, .cl-c2) {
     opacity: 1;
   }
 
   /* Leyenda: la colección señalada crece y brilla; las demás se apagan (--hl). */
   .home .cat:has(.cat-kinds [data-k]:is(:hover, :focus-visible)) .art-complexlab .cl-t {
-    scale: calc(1 + 0.2 * var(--hl, 1));
+    scale: calc(1 + 0.12 * var(--hl, 1));
     color: color-mix(in oklab, var(--c) 80%, #fff);
     text-shadow: 0 0 2.4cqmin var(--c);
   }
 
-  /* Retrato 4:5: órbita más estrecha y alta, letra algo mayor. */
+  /* Retrato 4:5: esfera más estrecha, perspectiva más corta, otra pose de partida. */
   @container scene (aspect-ratio < 1) {
     .home .art-complexlab {
-      --R: 23cqw;
-      --Y: 3.9cqh;
-      --fs: 3.4cqmin;
+      --R: 24cqw;
+      --fs: 3.1cqmin;
+      --o: -55deg;
     }
     .home .art-complexlab .cl-st {
-      perspective: 75cqw;
-      perspective-origin: 50% 47%;
-    }
-    .home .art-complexlab .cl-tl {
-      top: 47%;
+      perspective: 120cqw;
     }
     .home .art-complexlab .cl-g {
+      top: 44%;
       height: auto;
-      width: 112cqw;
+      width: 96cqw;
     }
     .home .art-complexlab .cl-lz {
-      font-size: calc(var(--fs) * 1.15);
+      font-size: var(--fs);
     }
     .home .art-complexlab .cl-k {
       display: none;
@@ -257,16 +262,15 @@
     .home .art-host:is(:hover, :focus-within) .art-complexlab :is(.cl-s, .cl-sp, .cl-c2) {
       animation-play-state: running;
     }
+    /* Un solo vaivén para toda la nube. */
+    .home .art-complexlab .cl-tl {
+      animation: art-complexlab-bob 7s ease-in-out infinite alternate;
+      transition: transform 1.6s var(--ease-out);
+    }
     .home .art-complexlab .cl-t {
-      animation: art-complexlab-bob 7s ease-in-out calc(var(--a) * -0.02s) infinite alternate;
       transition:
-        color 0.6s,
-        text-shadow 0.6s,
         opacity 0.4s,
         scale 0.5s var(--ease-out);
-    }
-    .home .art-complexlab .cl-tl {
-      transition: transform 1.6s var(--ease-out);
     }
     .home .art-complexlab :is(.cl-f, .cl-g1, .cl-g2, .cl-c2) {
       transition: opacity 0.9s;
@@ -302,29 +306,25 @@
     }
   }
   @keyframes art-complexlab-bill {
-    from {
-      transform: translateY(calc(var(--y) * var(--Y))) rotateY(calc(var(--a) * 1deg)) translateZ(var(--R))
-        rotateY(calc(var(--a) * -1deg));
-    }
     to {
-      transform: translateY(calc(var(--y) * var(--Y))) rotateY(calc(var(--a) * 1deg)) translateZ(var(--R))
-        rotateY(calc(var(--a) * -1deg - 360deg));
+      transform: translateY(calc(var(--s) * var(--V))) rotateY(calc(var(--a) * 1deg))
+        translateZ(calc(var(--r) * var(--R))) rotateY(calc(var(--a) * -1deg - var(--o) - 360deg));
     }
   }
   @keyframes art-complexlab-bob {
     from {
-      transform: translateY(-0.8cqh);
+      translate: 0 -0.8cqh;
     }
     to {
-      transform: translateY(0.8cqh);
+      translate: 0 0.8cqh;
     }
   }
   @keyframes art-complexlab-sway {
     from {
-      transform: perspective(120cqw) rotateY(-16deg) rotateX(5deg);
+      transform: perspective(120cqw) rotateY(-14deg) rotateX(5deg);
     }
     to {
-      transform: perspective(120cqw) rotateY(16deg) rotateX(-5deg);
+      transform: perspective(120cqw) rotateY(14deg) rotateX(-5deg);
     }
   }
   @keyframes art-complexlab-run {

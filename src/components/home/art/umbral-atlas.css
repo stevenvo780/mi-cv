@@ -1,7 +1,8 @@
 @layer home {
-  /* Umbral: la paleta de su sitio (carbón, teal, oro, crema, violeta, óxido; con alfa, en hexadecimal de 8). El muro tapa lo que está detrás del
-     umbral y solo deja verlo por la puerta; lo que la cruza sale por delante del marco. Sin preserve-3d: el orden de
-     pintado lo lleva z-index (detrás del muro, 1–19; el muro y el suelo de delante, 20; delante, 21–29). */
+  /* Umbral: la paleta de su sitio (carbón, tinta, teal, oro, crema, violeta, óxido; con alfa, en hexadecimal de 8).
+     El muro tapa lo que está detrás del umbral y solo deja verlo por la puerta; lo que la cruza sale por delante del
+     marco. Sin preserve-3d: el orden de pintado lo lleva z-index (detrás del muro, 1–19; el muro y el suelo de
+     delante, 20; delante, 21–29). */
   .home .art-umbral-atlas {
     --c: #0b1417;
     --g: #f0c887;
@@ -73,7 +74,7 @@
     stroke-width: 0.6;
     stroke-linecap: round;
     stroke-linejoin: round;
-    background: #091114db;
+    background: #091012db;
     border: 0.2cqw solid #e8e0d452;
     z-index: calc(25 - var(--i) * 6);
     transform: translate(calc(sin(var(--i) * 72deg) * 7cqw), calc(cos(var(--i) * 72deg) * -14cqh))
@@ -194,7 +195,7 @@
       animation: art-umbral-atlas-ray 1.3s calc(var(--i) * -0.29s) ease-in infinite;
     }
   }
-  /* Con el grafo en pausa, tampoco corren las transiciones de la entrada (el marco encendido no transita: se enciende). */
+  /* Con el grafo en pausa, tampoco corren las transiciones de la entrada (el marco no transita: se enciende). */
   html[data-motion='paused'] .home .art-umbral-atlas * {
     transition: none;
   }

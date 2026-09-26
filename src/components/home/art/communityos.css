@@ -1,48 +1,55 @@
 /* Koinonía (comunidades de Discord, multi-tenant): tres islas, una por comunidad y aisladas por tenantId, cada una un
-   anillo de miembros dentro de su anillo de XP; abajo, el top de usuarios con el oro, la plata y el bronce del sitio.
-   Reposo: la presencia recorre los anillos y la voz salta de isla en isla. Activa: la XP se llena y sube de nivel con
-   un estallido de estrellas, los servidores se vuelven squircle como en Discord, llegan miembros a la comunidad
-   nueva y el ranking se reordena. */
+   anillo de miembros dentro de su anillo de XP; bajo Koinonía y dentro de su muro, su propio podio con el oro, la plata
+   y el bronce del top de usuarios del sitio.
+   Reposo: la presencia recorre los anillos y la voz suena en cada isla. Activa: la XP se llena y sube de nivel con
+   un abanico de estrellas, los servidores se vuelven squircle como en Discord, llegan miembros a la comunidad nueva y
+   el tercero del podio sube a primero. */
 @layer home {
   .home .art-communityos {
+    --bg: var(--ink-1);
     --g: #10b981;
+    --gs: #10b98159;
+    --bl: #5865f2;
+    --au: #ffd700;
+    --ag: #c0c0c0;
+    --cu: #cd7f32;
   }
   .home .art-communityos * {
     position: absolute;
   }
-  /* Muros entre tenants. */
+  /* Muros entre tenants, de arriba abajo: el podio queda dentro de Koinonía. */
   .home .art-communityos::before {
     content: '';
     position: absolute;
-    inset: 11.5cqw 34cqw 17cqw;
-    border-inline: 1px dashed #e8e0d42e;
+    inset: 11.5cqw 34cqw 2cqw;
+    border-inline: 1px dashed var(--line-strong);
   }
-    .home .art-communityos svg {
-    inset: -16cqw auto auto -16cqw;
+  .home .art-communityos svg {
+    inset: -16cqw;
     width: 32cqw;
     height: 32cqw;
     overflow: visible;
     fill: none;
     stroke: var(--c);
     stroke-width: 0.45;
+    color: var(--c);
   }
   /* Anillo de XP: pathLength 100, así que el trazo visible es la XP en %. */
   .home .art-communityos .k {
     stroke-dashoffset: calc(100 - var(--f));
   }
-  /* Icono del servidor. */
+  /* Icono del servidor; el «+» de añadir servidor, en el verde de Discord. */
   .home .art-communityos .t b {
-    inset: -4.6cqw auto auto -4.6cqw;
+    inset: -4.6cqw;
     width: 9.2cqw;
     height: 9.2cqw;
-    display: grid;
-    place-items: center;
-    border: 0.3cqw solid var(--c);
-    border-radius: 50%;
-    background: #0b1417;
+    border: 0.3cqw solid;
+    border-radius: calc(50% - var(--h, 0) * 18%);
+    background: var(--bg);
     box-shadow: 0 0 9cqw 1cqw rgb(from var(--c) r g b / 0.4);
-    font: 600 3.6cqw/1 var(--f-sans);
-    color: var(--c);
+    font: 300 8cqw/8.6cqw var(--f-sans);
+    text-align: center;
+    color: var(--k, var(--c));
   }
   /* Miembros, en anillo; uno habla en voz (el aro verde de Discord) y su onda. */
   .home .art-communityos .t :is(i, u) {
@@ -54,17 +61,14 @@
     border-radius: 50%;
   }
   .home .art-communityos i {
-    --m: calc(30% + mod(var(--i), 3) * 22%);
-    --b:
-      radial-gradient(circle 1.15cqw at 50% 38%, #e8e0d4e0 94%, #0000),
-      radial-gradient(2.4cqw 1.8cqw at 50% 106%, #e8e0d4e0 94%, #0000),
-      color-mix(in oklab, var(--c) var(--m), #0b1417);
+    --m: calc(30% + mod(var(--i),3)*22%);
+    --b: radial-gradient(circle 1.15cqw at 50% 38%,var(--text) 94%,#0000),radial-gradient(2.4cqw 1.8cqw at 50% 106%,var(--text) 94%,#0000),color-mix(in oklab,var(--c) var(--m),var(--bg));
     background: var(--b);
-    box-shadow: 0 0 0 0.3cqw #0b1417;
+    box-shadow: 0 0 0 0.3cqw var(--bg);
   }
   .home .art-communityos .v {
     box-shadow:
-      0 0 0 0.3cqw #0b1417,
+      0 0 0 0.3cqw var(--bg),
       0 0 0 0.65cqw var(--g),
       0 0 2cqw var(--g);
   }
@@ -74,67 +78,68 @@
   }
   .home .art-communityos u {
     border: 0.35cqw solid var(--g);
-    outline: 0.2cqw solid #10b98159;
+    outline: 0.2cqw solid var(--gs);
     outline-offset: 0.9cqw;
     opacity: 0.4;
     scale: 1.5;
   }
-  .home .art-communityos s {
-    inset: -21.5cqw auto auto -3.5cqw;
+  .home .art-communityos kbd {
+    inset: -21.5cqw -2.4cqw;
     font: 500 2.7cqw/1 var(--f-code);
-    text-decoration: none;
-    color: #f0c887;
+    color: var(--gold-2);
   }
-  /* Estrellas de experiencia, como el icono del sitio. */
+  /* Estrellas de experiencia (la del sitio), en abanico desde donde se cierra el anillo de XP. */
   .home .art-communityos em {
-    inset: -1.8cqw auto auto -1.8cqw;
+    inset: -16.8cqw -1.8cqw;
     width: 3.6cqw;
     height: 3.6cqw;
-    background: #ffd700;
+    rotate: var(--a);
+    background: var(--au);
     clip-path: polygon(50% 0, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
     opacity: 0;
   }
+  /* Podio 2·1·3: el puesto p va en la columna mod(1 − p, 3). */
   .home .art-communityos .lb {
-    inset: 50.5cqw 0 0 17.5cqw;
+    --c: var(--teal);
+    inset: auto 34cqw 2cqw 35.9cqw;
+  }
+  .home .art-communityos .lb :is(b, i) {
+    left: calc(mod(1 - var(--p), 3) * 9.6cqw);
   }
   .home .art-communityos .lb b {
-    left: calc(var(--p) * 22.5cqw);
-    width: 20.5cqw;
-    height: 5.4cqw;
-    padding-left: 1.6cqw;
-    border-radius: 1.2cqw;
-    font: 700 2.5cqw/5.4cqw var(--f-code);
-    color: #0b1417;
+    bottom: 0;
+    width: 9cqw;
+    height: calc(6.4cqw - var(--p)*1.6cqw);
+    border-radius: 1cqw 1cqw 0 0;
+    background: var(--pc);
+    font: 700 2.3cqw/3.3cqw var(--f-code);
+    text-align: center;
+    color: var(--bg);
   }
   .home .art-communityos .lb i {
-    --m: 62%;
-    left: calc(var(--p) * 22.5cqw + 14.6cqw);
-    top: 0.7cqw;
-    width: 4cqw;
-    height: 4cqw;
+    --m: calc(36% + var(--p)*22%);
+    margin-left: 2cqw;
+    bottom: calc(7cqw - var(--p) * 1.6cqw);
+    width: 5cqw;
+    height: 5cqw;
     border-radius: 50%;
+    translate: calc((mod(1 - var(--q), 3) - mod(1 - var(--p), 3)) * var(--h, 0) * 9.6cqw) calc((var(--q) - var(--p)) * var(--h, 0) * 1.6cqw);
   }
   .home .art-communityos .up::after {
     content: '▲';
     position: absolute;
-    left: -3.4cqw;
-    top: 0.6cqw;
+    top: -3.4cqw;
+    left: 1.8cqw;
     font: 2.4cqw/1 var(--f-code);
-    color: #0b7a55;
-    opacity: 0;
+    color: var(--g);
+    opacity: var(--h, 0);
   }
-  .home .art-host:is(:hover, :focus-within) .art-communityos .t b {
-    border-radius: 32%;
+  .home .art-host:is(:hover, :focus-within) .art-communityos {
+    --h: 1;
   }
   .home .art-host:is(:hover, :focus-within) .art-communityos .e {
     border: 0;
     background: var(--b);
-  }
-  .home .art-host:is(:hover, :focus-within) .art-communityos .lb i {
-    translate: calc((var(--q) - var(--p)) * 22.5cqw);
-  }
-  .home .art-host:is(:hover, :focus-within) .art-communityos .up::after {
-    opacity: 1;
   }
 
   @media (prefers-reduced-motion: no-preference) {
@@ -144,15 +149,14 @@
     .home .art-communityos u {
       animation: art-communityos-voice 7.5s var(--d) ease-out infinite;
     }
-    .home .art-communityos s {
+    .home .art-communityos kbd {
       animation: art-communityos-plus 7.5s 3.4s ease-out infinite backwards;
     }
     .home .art-host:is(:hover, :focus-within) .art-communityos :is(.t i, u) {
       animation-duration: 2.5s;
     }
-    .home .art-host:is(:hover, :focus-within) .art-communityos .e,
-    .home .art-host:is(:hover, :focus-within) .art-communityos .up::after {
-      animation: art-communityos-join 0.6s calc(var(--i, 5) * 0.2s + 0.3s) backwards;
+    .home .art-host:is(:hover, :focus-within) .art-communityos .e {
+      animation: art-communityos-join 0.6s calc(var(--i) * 0.2s + 0.3s) backwards;
     }
     .home .art-host:is(:hover, :focus-within) .art-communityos .k {
       animation: art-communityos-xp calc(3s + var(--d) / 4) ease-in-out infinite;
@@ -219,19 +223,16 @@
   @keyframes art-communityos-star {
     0%,
     34% {
-      transform: rotate(var(--a)) translateY(-3cqw) scale(0.2);
+      transform: translateY(-1cqw) scale(0.2);
       opacity: 0;
     }
-    40% {
-      opacity: 1;
-    }
     58% {
-      transform: rotate(var(--a)) translateY(-16cqw) scale(1);
+      transform: translateY(-7.5cqw) scale(1);
       opacity: 1;
     }
     72%,
     100% {
-      transform: rotate(var(--a)) translateY(-20cqw) scale(0.6);
+      transform: translateY(-9.5cqw) scale(0.6);
       opacity: 0;
     }
   }
