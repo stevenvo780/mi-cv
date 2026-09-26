@@ -6,8 +6,9 @@ import type { ArtProps } from './types';
    puntos por bloques de 2 × 2 (escala media) y luego en el centro del bloque grande (escala gruesa): compresión en
    tres escalas. Encima, los bloques anidados de cada escala y, en el centro, el objeto que se estabiliza al final. */
 const S = [-3, -1, 1, 3];
-// Desfase de la vibración de cada subred (s): sin orden, para que el sustrato no marche al paso.
-const D = [3.1, 7.4, 0.6, 5.2, 8.3, 1.9, 6.1, 4.4, 2.5, 5.8, 0.2, 7.9, 4.9, 1.3, 8.8, 3.6];
+// Dirección de la agitación de cada subred (p, q): sin orden, para que el sustrato no marche al paso.
+const P = [0.5, 0.2, -0.7, 1, -0.4, -0.1, 0.7, -0.7, 0.6, -0.1, -0.4, 0.8, -0.9, 0.2, 0.4, -0.9];
+const Q = [0.9, -0.7, 0.5, 0.2, -0.5, 0.8, -0.7, 0, 0.6, -1, 0.6, -0.2, -0.5, 0.7, -0.8, 0.4];
 const ID = 'art-estructuras-preontologicas-';
 
 /** Bloques de una escala: un cuadrado redondeado por celda, alineado con el centro de la caja (80, 50). */
@@ -25,16 +26,17 @@ function Blocks({ k, s, r }: { k: string; s: number; r: number }) {
   );
 }
 
-export default function Art(_: ArtProps) {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export default function Art({ locale }: ArtProps) {
   return (
     <div className="art art-estructuras-preontologicas" aria-hidden="true">
-      {S.flatMap((b, j) => S.map((a, i) => <i key={`${a},${b}`} style={{ '--a': a, '--b': b, '--d': D[j * 4 + i] } as CSSProperties} />))}
+      {S.flatMap((b, j) => S.map((a, i) => <i key={`${a},${b}`} style={{ '--a': a, '--b': b, '--p': P[j * 4 + i], '--q': Q[j * 4 + i] } as CSSProperties} />))}
       <Blocks k="m" s={12} r={4.6} />
       <Blocks k="c" s={24} r={11.4} />
       <b className="ep-nm" />
       <b className="ep-nc" />
+      <b className="ep-f" />
       <b className="ep-obj" />
-      <b className="ep-v" />
     </div>
   );
 }

@@ -767,7 +767,6 @@
     align-content: start;
     gap: 0.4rem;
     padding-bottom: 1.05rem;
-    overflow: hidden;
     background: var(--scrim);
     border: 1px solid var(--line);
     border-radius: var(--radius);
@@ -781,6 +780,7 @@
     margin-inline: 1.25rem;
   }
   .home .card:is(:hover, :focus-within) {
+    z-index: 4;
     border-color: color-mix(in oklab, var(--accent) 55%, transparent);
     box-shadow: 0 24px 60px -34px color-mix(in oklab, var(--accent) 70%, transparent);
   }
@@ -801,6 +801,7 @@
     contain-intrinsic-size: auto 16rem;
     overflow: hidden;
     border-bottom: 1px solid var(--line);
+    border-radius: calc(var(--radius) - 1px) calc(var(--radius) - 1px) 0 0;
     background:
       radial-gradient(120% 90% at 50% 110%, color-mix(in oklab, var(--accent) 18%, transparent), transparent 60%),
       linear-gradient(180deg, var(--ink-1), var(--ink-0));
@@ -857,74 +858,95 @@
     display: none;
   }
 
-  /* Con puntero: el texto se abre sobre toda la tarjeta como un portal que nace del centro del emblema, en cristal
-     (el arte sigue detrás, desenfocado); el nombre y el texto aparecen de arriba abajo tras una máscara que se desliza y
-     un desenfoque que se aclara, y la insignia llega al final. Los enlaces del pie quedan encima. Se abre también al
-     enfocar un enlace de la tarjeta (teclado). */
+  /* Con puntero: un tooltip encima de la tarjeta, que se despliega hacia arriba desde su borde con una muesca que la
+     señala; el nombre y el texto aparecen de arriba abajo tras una máscara que se desliza y un desenfoque que se aclara,
+     y la insignia llega al final. No tapa nada de la tarjeta: el emblema sigue a la vista con su estado activo, y los
+     enlaces también. Se abre también al enfocar un enlace de la tarjeta (teclado). */
   @media (hover: hover) and (pointer: fine) {
     .home .card-info {
       display: flex;
       flex-direction: column;
-      gap: 0.55rem;
+      gap: 0.5rem;
       position: absolute;
-      inset: 0;
-      z-index: 2;
+      inset: auto 0 calc(100% + 0.85rem);
+      z-index: 5;
       width: auto;
       height: auto;
       margin: 0;
-      padding: 1.25rem 1.25rem 3.6rem;
-      overflow: hidden;
-      border: 0;
+      padding: 1.1rem 1.2rem 1.05rem;
+      overflow: visible;
+      border: 1px solid color-mix(in oklab, var(--accent) 45%, transparent);
+      border-radius: 16px;
       background:
-        radial-gradient(120% 70% at 50% 0%, color-mix(in oklab, var(--accent) 16%, transparent), transparent 70%),
-        rgb(5 9 11 / 0.84);
-      backdrop-filter: blur(7px) saturate(0.8);
+        radial-gradient(120% 90% at 50% 100%, color-mix(in oklab, var(--accent) 16%, transparent), transparent 70%),
+        rgb(8 13 16 / 0.96);
+      box-shadow:
+        0 24px 50px -18px rgb(0 0 0 / 0.85),
+        0 0 40px -22px color-mix(in oklab, var(--accent) 80%, transparent);
       color: var(--text);
       pointer-events: none;
-      clip-path: circle(0% at 50% 31%);
-      transition: clip-path 0.7s var(--ease-out);
+      clip-path: inset(100% 0 0 round 16px);
+      transition: clip-path 0.55s var(--ease-out);
     }
-    .home .card-foot {
-      position: relative;
-      z-index: 3;
+    /* La muesca: un rombo en el borde inferior, sobre el centro de la tarjeta. */
+    .home .card-info::after {
+      content: '';
+      position: absolute;
+      left: 50%;
+      bottom: -0.45rem;
+      width: 0.8rem;
+      height: 0.8rem;
+      border-right: 1px solid color-mix(in oklab, var(--accent) 45%, transparent);
+      border-bottom: 1px solid color-mix(in oklab, var(--accent) 45%, transparent);
+      background: rgb(8 13 16);
+      transform: translateX(-50%) rotate(45deg);
     }
     .home .card-info .card-info-name {
       display: block;
       font-family: var(--f-display);
-      font-size: 1.5rem;
+      font-size: 1.35rem;
       line-height: 1;
       color: var(--text-strong);
     }
     .home .card-info > :is(.card-info-name, .card-desc, .card-badge) {
       opacity: 0;
       filter: blur(5px);
-      transform: translateY(0.7rem);
+      transform: translateY(0.6rem);
       mask-image: linear-gradient(180deg, #000 40%, transparent 60%);
       mask-size: 100% 250%;
       mask-position: 0 100%;
       transition:
-        opacity 0.35s,
-        filter 0.6s,
-        transform 0.7s var(--ease-out),
-        mask-position 1s var(--ease-out);
+        opacity 0.3s,
+        filter 0.55s,
+        transform 0.65s var(--ease-out),
+        mask-position 0.9s var(--ease-out);
     }
     .home .card-info .card-desc {
-      font-size: 0.88rem;
+      font-size: 0.86rem;
       line-height: 1.5;
-      transition-delay: 0.1s;
     }
     .home .card-info .card-badge {
-      margin-top: auto;
-      transition-delay: 0.3s;
+      margin-top: 0.25rem;
     }
+    /* Al entrar, con un respiro (0.15 s) para que cruzar la rejilla con el puntero no abra cada tarjeta; al salir, ya. */
     .home .card:is(:hover, :focus-within) .card-info {
-      clip-path: circle(150% at 50% 31%);
+      clip-path: inset(0 0 -1rem round 16px);
+      transition-delay: 0.15s;
     }
     .home .card:is(:hover, :focus-within) .card-info > * {
       opacity: 1;
       filter: none;
       transform: none;
       mask-position: 0 0;
+    }
+    .home .card:is(:hover, :focus-within) .card-info .card-info-name {
+      transition-delay: 0.2s;
+    }
+    .home .card:is(:hover, :focus-within) .card-info .card-desc {
+      transition-delay: 0.3s;
+    }
+    .home .card:is(:hover, :focus-within) .card-info .card-badge {
+      transition-delay: 0.5s;
     }
   }
   @media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: reduce) {

@@ -1,16 +1,17 @@
 /* Kósmos: esfera de ecuaciones en órbita sobre el fantasma del atractor de Lorenz de su portada.
    Profundidad: perspectiva + tres velos de niebla a distintas z (lo lejano se apaga sin animar opacidades) y un halo
    oscuro tras cada ecuación, para que la de delante tape a la de atrás en vez de mezclarse con ella.
-   Activa: la nube se acerca y se endereza, gira más rápido (una segunda órbita que solo corre al pasar) y se enciende.
+   Activa: la nube se acerca y se inclina hacia quien mira, gira más rápido (una segunda órbita que solo corre al pasar)
+   y se enciende.
    Las ecuaciones siempre miran al frente: cada una deshace el giro de las dos órbitas. --o es la pose de partida. */
 @layer home {
   .home .art-complexlab {
     --lime: #d9f46c;
     --navy: #080d15;
-    --R: 34cqw;
-    --V: 32cqh;
-    --fs: 3.4cqmin;
-    --o: -15deg;
+    --R: 44.9cqw;
+    --V: 42.3cqh;
+    --fs: 4.49cqmin;
+    --o: -17deg;
     background:
       radial-gradient(50% 58% at 50% 45%, rgb(217 244 108 / 0.08), transparent 72%),
       radial-gradient(130% 100% at 50% 40%, #0e1928, var(--navy) 55%, #04070c);
@@ -50,7 +51,7 @@
     opacity: 0.7;
   }
   .home .art-complexlab .cl-c {
-    stroke: #f6ffd6;
+    stroke: #effcb4;
     stroke-width: 2.6;
     stroke-dasharray: 3 97;
     stroke-dashoffset: 62;
@@ -99,20 +100,22 @@
     height: 0;
     transform-style: preserve-3d;
   }
+  /* La nube va empujada −R hacia el fondo (y todo medido en proporción, ×P/(P − R)): lo más cercano queda a escala 1
+     y el texto no se rasteriza pequeño para luego ampliarse. */
   .home .art-complexlab .cl-tl {
     left: 50%;
     top: 42%;
-    transform: rotateZ(-4deg);
+    transform: translateZ(calc(var(--R) * -1)) rotateX(0deg) rotateZ(-4deg);
   }
   .home .art-complexlab .cl-o {
     rotate: y var(--o);
   }
   .home .art-complexlab .cl-f {
     position: absolute;
-    left: -65cqw;
-    top: -65cqh;
-    width: 130cqw;
-    height: 130cqh;
+    left: -75cqw;
+    top: -75cqh;
+    width: 150cqw;
+    height: 150cqh;
     background: radial-gradient(closest-side, rgb(8 13 21 / 0.22) 72%, transparent);
     transform: translateZ(calc(var(--R) * 0.2));
   }
@@ -128,10 +131,13 @@
     transform: translateY(calc(var(--s) * var(--V))) rotateY(calc(var(--a) * 1deg))
       translateZ(calc(var(--r) * var(--R))) rotateY(calc(var(--a) * -1deg - var(--o)));
   }
+  /* La letra se compone al doble y se reduce a la mitad (en 3D, para que conmute con los giros): así la capa se
+     rasteriza con el doble de detalle y la letra pequeña no sale pixelada en pantallas densas. */
   .home .art-complexlab .cl-sp {
     display: flex;
     align-items: center;
     justify-content: center;
+    scale: 0.5 0.5 0.5;
   }
 
   /* Una ecuación por repositorio; el color dice su colección. */
@@ -152,10 +158,10 @@
   }
   .home .art-complexlab .cl-t {
     padding: 0.2em 0.55em;
-    font: 400 var(--fs) / 1.2 var(--f-math);
+    font: 400 calc(var(--fs) * 2) / 1.2 var(--f-math);
     white-space: nowrap;
     color: color-mix(in oklab, var(--c) 62%, #e8ecf2);
-    text-shadow: 0 0 1.4cqmin color-mix(in oklab, var(--c) 45%, transparent);
+    text-shadow: 0 0 0.4em color-mix(in oklab, var(--c) 45%, transparent);
     background: radial-gradient(farthest-side, rgb(8 13 21 / 0.72) 50%, transparent);
     opacity: calc(0.12 + 0.88 * var(--hl, 1));
   }
@@ -167,11 +173,11 @@
     display: flex;
     flex-direction: column;
     padding: 0.35em 0.9em 0.35em 0.6em;
-    border-left: 0.35cqmin solid var(--lime);
-    font-size: calc(var(--fs) * 1.12);
+    border-left: 0.1em solid var(--lime);
+    font-size: calc(var(--fs) * 2.24);
     line-height: 1.28;
     color: #f0fac8;
-    text-shadow: 0 0 2cqmin rgb(217 244 108 / 0.6);
+    text-shadow: 0 0 0.45em rgb(217 244 108 / 0.6);
     background: radial-gradient(farthest-side at 0 50%, rgb(8 13 21 / 0.8) 55%, transparent);
   }
   /* Rótulo con su velo, por encima de la nube. */
@@ -197,16 +203,16 @@
     box-shadow: 0 0 1.6cqmin var(--lime);
   }
 
-  /* Activa: la nube se acerca y se endereza, la niebla se abre, todo se enciende. */
+  /* Activa: la nube se acerca y se inclina hacia quien mira, la niebla se abre, todo se enciende. */
   .home .art-host:is(:hover, :focus-within) .art-complexlab .cl-tl {
-    transform: translateZ(3cqw) rotateX(-5deg) rotateZ(0deg);
+    transform: translateZ(calc(4cqw - var(--R))) rotateX(-5deg) rotateZ(0deg);
   }
   .home .art-host:is(:hover, :focus-within) .art-complexlab .cl-f {
     opacity: 0.45;
   }
   .home .art-host:is(:hover, :focus-within) .art-complexlab .cl-t {
     color: color-mix(in oklab, var(--c) 72%, #fff);
-    text-shadow: 0 0 2.2cqmin color-mix(in oklab, var(--c) 80%, transparent);
+    text-shadow: 0 0 0.5em color-mix(in oklab, var(--c) 80%, transparent);
   }
   .home .art-host:is(:hover, :focus-within) .art-complexlab .cl-g1 {
     opacity: 0.16;
@@ -219,26 +225,29 @@
   .home .cat:has(.cat-kinds [data-k]:is(:hover, :focus-visible)) .art-complexlab .cl-t {
     scale: calc(1 + 0.12 * var(--hl, 1));
     color: color-mix(in oklab, var(--c) 80%, #fff);
-    text-shadow: 0 0 2.4cqmin var(--c);
+    text-shadow: 0 0 0.55em var(--c);
   }
 
-  /* Retrato 4:5: esfera más estrecha, perspectiva más corta, otra pose de partida. */
+  /* Retrato 4:5: esfera más estrecha y alta, vista un poco desde arriba, otra pose de partida. */
   @container scene (aspect-ratio < 1) {
     .home .art-complexlab {
-      --R: 24cqw;
-      --fs: 3.1cqmin;
-      --o: -55deg;
+      --R: 23.1cqw;
+      --V: 41.5cqh;
+      --fs: 3.46cqmin;
+      --o: -57deg;
     }
     .home .art-complexlab .cl-st {
-      perspective: 120cqw;
+      perspective: 150cqw;
+      perspective-origin: 50% 43%;
+    }
+    .home .art-complexlab .cl-tl {
+      top: 43%;
+      transform: translateZ(calc(var(--R) * -1)) rotateX(-5deg) rotateZ(-4deg);
     }
     .home .art-complexlab .cl-g {
       top: 44%;
       height: auto;
       width: 96cqw;
-    }
-    .home .art-complexlab .cl-lz {
-      font-size: var(--fs);
     }
     .home .art-complexlab .cl-k {
       display: none;
