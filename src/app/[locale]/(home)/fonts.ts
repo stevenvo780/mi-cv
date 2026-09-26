@@ -4,9 +4,10 @@ import localFont from 'next/font/local';
 // el portal, con solo los pesos y los caracteres que pinta la home. Se regeneran con `bash scripts/subset-fonts.sh`
 // (dentro está cada comando de pyftsubset y el origen fijado de cada TTF).
 //
-// Solo se precarga el nombre del h1 (el elemento LCP): 2 KB con 19 glifos. El resto se pide al aplicar los
-// estilos, sin precarga. Ninguna pila de home.css nombra las familias de Google del layout raíz: si lo hiciera,
-// el navegador las descargaría como respaldo mientras cargan estas.
+// Se precargan el nombre del h1 (el elemento LCP, 2 KB con 19 glifos) y Geist (13 KB), la letra del panel del hero:
+// con su respaldo ajustado, el lead y los botones de /en partían línea en otro sitio y el panel saltaba 87 px al
+// llegar la fuente (CLS 0.089 en móvil). El resto se pide al aplicar los estilos. Ninguna pila de home.css nombra las
+// familias de Google del layout raíz: si lo hiciera, el navegador las descargaría como respaldo mientras cargan estas.
 
 /** "Steven Vallejo Ortiz" en Cormorant Garamond 500. Si cambia el nombre, cambia el subconjunto. */
 export const cormorantHero = localFont({
@@ -32,13 +33,13 @@ export const cormorantHome = localFont({
   adjustFontFallback: 'Times New Roman',
 });
 
-/** Geist 400–600 (texto). */
+/** Geist 400–600 (texto). Precargada: ver arriba. */
 export const geistHome = localFont({
   src: '../../fonts/geist-home.woff2',
   weight: '400 600',
   variable: '--font-home-sans',
   display: 'swap',
-  preload: false,
+  preload: true,
   adjustFontFallback: 'Arial',
 });
 

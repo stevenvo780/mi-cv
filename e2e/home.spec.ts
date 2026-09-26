@@ -215,8 +215,8 @@ for (const locale of ['es', 'en'] as const) {
 
 for (const locale of ['es', 'en'] as const) {
   // Solo los cuatro subconjuntos propios, una vez cada uno: ninguna fuente de Google del layout raíz (son del portal)
-  // ni copias duplicadas. Solo se precarga el del h1, el elemento LCP (spec §5.2).
-  test(`/${locale} descarga solo sus subconjuntos de fuente y precarga solo el del h1`, async ({ page }) => {
+  // ni copias duplicadas. Se precargan el del h1 (el elemento LCP) y Geist, la letra del panel del hero (spec §3.2).
+  test(`/${locale} descarga solo sus subconjuntos de fuente y precarga solo el del h1 y Geist`, async ({ page }) => {
     const fonts: Promise<{ url: string; hash: string }>[] = [];
     page.on('response', (r) => {
       if (r.request().resourceType() === 'font') fonts.push(r.body().then((b) => ({ url: r.url(), hash: sha1(b) })));
@@ -227,8 +227,7 @@ for (const locale of ['es', 'en'] as const) {
     const byHash = new Map<string, string>(HOME_FONTS.map((name) => [sha1(fontBytes(name)), name]));
     expect(list.map((f) => byHash.get(f.hash) ?? f.url).sort()).toEqual([...HOME_FONTS].sort());
     const preloads = await page.$$eval('link[rel="preload"][as="font"]', (ls) => ls.map((l) => (l as HTMLLinkElement).href));
-    expect(preloads).toHaveLength(1);
-    expect(list.find((f) => f.url === preloads[0])?.hash).toBe(sha1(fontBytes('cormorant-hero')));
+    expect(preloads.map((url) => byHash.get(list.find((f) => f.url === url)?.hash ?? '')).sort()).toEqual(['cormorant-hero', 'geist-home']);
   });
 
   // Cada carácter que pinta la home tiene glifo en el subconjunto de su familia; si el contenido trae uno nuevo, se
