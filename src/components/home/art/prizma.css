@@ -1,2 +1,254 @@
 @layer home {
+  /* Prizma: el fondo #0b1417 y el halo turquesa de su portada; cada módulo con su color (--c, desde el TSX).
+     La caja mide 160 × 100 unidades del SVG: 1 unidad = 0.625cqw. */
+  .home .art-prizma {
+    background: radial-gradient(130% 110% at 45% 50%, #0b1417 50%, #05090b);
+  }
+  .home .art-prizma::before,
+  .home .art-prizma::after {
+    content: '';
+    position: absolute;
+  }
+  .home .art-prizma::before {
+    inset: 0;
+    background: radial-gradient(circle at 38% 50%, #2dcbd142, transparent 34%);
+    opacity: 0.75;
+  }
+  /* Destello donde el haz sale del prisma y se abre. */
+  .home .art-prizma::after {
+    left: 42.1cqw;
+    top: 27.5cqw;
+    width: 7.5cqw;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: radial-gradient(closest-side, #ecfeffb3, #ecfeff1f 45%, transparent);
+    z-index: 1;
+  }
+  .home .art-prizma :is(svg, .q, i) {
+    position: absolute;
+    inset: 0;
+  }
+  .home .art-prizma svg {
+    width: 100%;
+    height: 100%;
+  }
+  /* Máscara de los rayos: nacen tenues en el prisma y llegan plenos al módulo. */
+  .home .art-prizma mask rect {
+    width: 160px;
+    height: 100px;
+    fill: url(#art-prizma-g);
+  }
+  .home .art-prizma line {
+    stroke: var(--c);
+    stroke-width: 0.8;
+    stroke-linecap: round;
+  }
+  .home .art-prizma .w {
+    stroke-width: 3;
+    opacity: 0.2;
+  }
+  .home .art-prizma .h {
+    --c: #ecfeff;
+    --i: 0;
+    stroke-width: 1.1;
+  }
+  .home .art-prizma .h .w {
+    stroke-width: 3;
+    opacity: 0.2;
+    filter: blur(0.35cqw);
+  }
+  .home .art-prizma .in {
+    fill: #ecfeff;
+    opacity: 0.45;
+  }
+  /* Eventos: núcleo blanco con el anillo del color de su módulo. */
+  .home .art-prizma .p {
+    r: 1.3px;
+    fill: #fff;
+    stroke: var(--c);
+    stroke-width: 1.1;
+    stroke-opacity: 0.55;
+    opacity: 0;
+  }
+
+  /* Módulos: baldosas de cristal oscuro con su icono (rejilla de 24 escalada). */
+  .home .art-prizma .n rect {
+    x: -5px;
+    y: -5px;
+    width: 10px;
+    height: 10px;
+    rx: 2.6px;
+    fill: #0b1417e6;
+    stroke: var(--c);
+    stroke-width: 0.45;
+  }
+  .home .art-prizma .n path {
+    fill: none;
+    stroke: var(--c);
+    stroke-width: 1.9;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    transform: scale(0.29) translate(-12px, -12px);
+  }
+
+  /* Prisma de cristal en 3D (lado 44, fondo 16): tapa trasera, base, cara izquierda, cara de salida con el espectro
+     y tapa delantera con el punto naranja del logo. */
+  .home .art-prizma .pz {
+    position: absolute;
+    left: 23.75cqw;
+    top: 15.4cqw;
+    width: 27.5cqw;
+    height: 23.8cqw;
+    transform: perspective(80cqw) rotateX(-8deg) rotateY(-24deg);
+  }
+  .home .art-prizma :is(.pz, .q) {
+    transform-style: preserve-3d;
+  }
+  .home .art-prizma i:is(:first-child, :last-child) {
+    clip-path: polygon(50% 0, 100% 100%, 0 100%);
+    background: linear-gradient(165deg, #ecfeff40, #ecfeff0a 55%, #2dcbd124);
+    transform: translateZ(5cqw);
+  }
+  .home .art-prizma i:first-child {
+    opacity: 0.5;
+    transform: translateZ(-5cqw);
+  }
+  .home .art-prizma i:last-child::after {
+    content: '';
+    position: absolute;
+    left: 47.2%;
+    top: 21%;
+    width: 5.6%;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: #ff5a2b;
+    box-shadow: 0 0 1.4cqw #ff5a2b;
+  }
+  .home .art-prizma i:not(:first-child, :last-child) {
+    inset: 6.9cqw auto auto var(--x, 0);
+    width: 27.5cqw;
+    height: 10cqw;
+    border: 0.18cqw solid #ecfeff47;
+    border-bottom-color: #ecfeffbf;
+    background: #ecfeff0d;
+    transform: rotate(var(--r, 0deg)) rotateX(90deg);
+  }
+  .home .art-prizma i:nth-child(2) {
+    top: 18.8cqw;
+  }
+  .home .art-prizma i:nth-child(3) {
+    --x: -6.875cqw;
+    --r: -60deg;
+  }
+  .home .art-prizma i:nth-child(4) {
+    --x: 6.875cqw;
+    --r: 60deg;
+    background: linear-gradient(90deg, #ff5a2b, #e0a85e, #22a45a, #2dcbd1, #8b7cf6);
+    opacity: 0.4;
+  }
+
+  /* Activa (también sin movimiento): halo más vivo, eventos a medio camino y módulos encendidos. */
+  .home .art-host:is(:hover, :focus-within) .art-prizma::before {
+    opacity: 1;
+  }
+  .home .art-host:is(:hover, :focus-within) .art-prizma .p {
+    opacity: 1;
+    translate: calc(var(--l) * 0.6px) 0;
+  }
+  .home .art-host:is(:hover, :focus-within) .art-prizma .n rect {
+    fill: color-mix(in oklab, var(--c) 22%, #0b1417);
+  }
+  .home .art-host:is(:hover, :focus-within) .art-prizma i:nth-child(4) {
+    opacity: 0.6;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    /* Reposo: el prisma se mece, el haz zumba y los rayos titilan. */
+    .home .art-prizma .pz {
+      animation: art-prizma-sway 11s ease-in-out infinite alternate;
+    }
+    .home .art-prizma .h .w {
+      animation: art-prizma-hum 1.6s ease-in-out infinite alternate;
+    }
+    .home .art-prizma .r > line:not(.w) {
+      animation: art-prizma-shim 4.2s ease-in-out calc(var(--i) * -0.7s) infinite alternate;
+    }
+    /* Activa: el prisma gira, un evento entra con el haz y Nous lo reparte: cada color viaja a su módulo, que se
+       enciende al recibirlo. */
+    .home .art-host:is(:hover, :focus-within) .art-prizma .q {
+      animation: art-prizma-turn 3.2s ease-in-out infinite alternate;
+    }
+    .home .art-host:is(:hover, :focus-within) .art-prizma .p {
+      animation: art-prizma-ev 2.4s linear calc(var(--i) * 0.1s) infinite;
+    }
+    .home .art-host:is(:hover, :focus-within) .art-prizma .h .p {
+      animation-name: art-prizma-in;
+      animation-delay: 0s;
+    }
+    .home .art-host:is(:hover, :focus-within) .art-prizma .n rect {
+      animation: art-prizma-ping 2.4s ease-out calc(var(--i) * 0.1s) infinite;
+    }
+  }
+  @keyframes art-prizma-sway {
+    to {
+      transform: perspective(80cqw) rotateX(-5deg) rotateY(-17deg) translateY(-0.6cqw);
+    }
+  }
+  @keyframes art-prizma-hum {
+    to {
+      opacity: 0.34;
+    }
+  }
+  @keyframes art-prizma-shim {
+    from {
+      opacity: 0.55;
+    }
+  }
+  @keyframes art-prizma-turn {
+    to {
+      transform: rotateY(-16deg) rotateZ(3deg);
+    }
+  }
+  @keyframes art-prizma-in {
+    0% {
+      translate: 0 0;
+      opacity: 0;
+    }
+    6%,
+    28% {
+      opacity: 1;
+    }
+    32%,
+    100% {
+      translate: calc(var(--l) * 1px) 0;
+      opacity: 0;
+    }
+  }
+  @keyframes art-prizma-ev {
+    0%,
+    30% {
+      translate: 0 0;
+      opacity: 0;
+    }
+    36%,
+    76% {
+      opacity: 1;
+    }
+    80%,
+    100% {
+      translate: calc(var(--l) * 1px) 0;
+      opacity: 0;
+    }
+  }
+  @keyframes art-prizma-ping {
+    0%,
+    76%,
+    100% {
+      scale: 1;
+    }
+    84% {
+      scale: 1.2;
+      fill: color-mix(in oklab, var(--c) 55%, #0b1417);
+    }
+  }
 }

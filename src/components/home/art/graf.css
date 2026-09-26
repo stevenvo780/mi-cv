@@ -1,2 +1,317 @@
 @layer home {
+  /* Graf: calles en el marino de la marca, rutas en su verde azulado; pines coral y luces doradas de su paleta. */
+  .home .art-graf {
+    --gt: #06817e;
+    --gl: #4fd8c9;
+    --t: 8s;
+    --d: 0s;
+    background: #0f2240;
+  }
+  .home .art-graf svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+  .home .art-graf svg + svg {
+    z-index: 1;
+  }
+  /* Niebla al fondo (arriba) y viñeta: solo sobre la ciudad (el segundo svg queda encima). */
+  .home .art-graf::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(rgb(5 9 11 / 0.9), transparent 40%),
+      radial-gradient(95% 85% at 45% 55%, transparent 45%, rgb(5 9 11 / 0.8));
+  }
+  .home .art-graf .rf {
+    fill: url(#art-graf-b);
+  }
+  .home .art-graf .sd {
+    filter: brightness(0.4);
+  }
+  .home .art-graf pattern rect {
+    fill: #081426;
+    stroke: rgb(79 216 201 / 0.1);
+    stroke-width: 0.35;
+  }
+  .home .art-graf #art-graf-w rect {
+    fill: #0b2b2e;
+    stroke: none;
+  }
+  .home .art-graf .lt {
+    fill: url(#art-graf-w);
+  }
+  .home .art-graf .y {
+    fill: none;
+    stroke: #0f2240;
+    stroke-width: 0.8;
+  }
+  .home .art-graf .l {
+    fill: #f0c56a;
+    opacity: 0.6;
+  }
+  .home .art-graf :is(.rv, .fl, .av, .lp, .rb, .rt, .cr, .hs, .bag, .ck path) {
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .home .art-graf .rv {
+    stroke: #071a30;
+    stroke-width: 11;
+    filter: drop-shadow(0 0 0.5cqw rgb(79 216 201 / 0.55));
+  }
+  .home .art-graf .fl {
+    stroke: #7fd0dc;
+    stroke-width: 0.6;
+    stroke-dasharray: 5 13;
+    opacity: 0.45;
+  }
+  .home .art-graf .av {
+    stroke: #142b52;
+    stroke-width: 5;
+  }
+  .home .art-graf .lp {
+    stroke: #f0c56a;
+    stroke-width: 0.8;
+    stroke-dasharray: 0 4.5;
+    opacity: 0.4;
+  }
+
+  /* Rutas: la planeada (punteada), la recorrida (luz) y el domiciliario (un punto al frente de la luz). */
+  .home .art-graf .rb {
+    stroke: var(--gl);
+    stroke-width: 0.5;
+    stroke-dasharray: 1.2 1.4;
+    opacity: 0.6;
+  }
+  .home .art-graf .rt {
+    stroke: var(--gl);
+    stroke-width: 1.4;
+    stroke-dasharray: var(--l) 200;
+    stroke-dashoffset: calc((1 - var(--p)) * var(--l) * 1px);
+    filter: drop-shadow(0 0 0.7cqw var(--gt));
+  }
+  .home .art-graf .cr {
+    stroke: #eafffb;
+    stroke-width: 3;
+    stroke-dasharray: 0 200;
+    stroke-dashoffset: calc(var(--p) * var(--l) * -1px);
+    opacity: min(1, var(--p) * 50, (1 - var(--p)) * 50);
+  }
+  /* Marcador de la puerta: anillo, pin y ✓ (k = 1 al entregar). */
+  .home .art-graf #art-graf-m {
+    scale: 1.15;
+    --k: clamp(0, (var(--p) - 0.99) * 100, 1);
+  }
+  .home .art-graf .pn {
+    fill: #ef6470;
+    fill-rule: evenodd;
+    scale: calc(1 - var(--k));
+  }
+  .home .art-graf .ck {
+    opacity: var(--k);
+  }
+  .home .art-graf .ck circle {
+    fill: var(--gt);
+    stroke: var(--gl);
+    stroke-width: 0.5;
+  }
+  .home .art-graf :is(.ck path, .bag) {
+    stroke: #fff;
+    stroke-width: 0.8;
+  }
+  .home .art-graf .rg {
+    fill: none;
+    stroke: var(--gl);
+    stroke-width: 0.5;
+    opacity: 0;
+  }
+  .home .art-graf .hp {
+    fill: rgb(79 216 201 / 0.14);
+    stroke: var(--gl);
+    stroke-width: 0.4;
+  }
+  .home .art-graf .hs {
+    stroke: var(--gl);
+    stroke-width: 0.5;
+  }
+  .home .art-graf .bag {
+    stroke-width: 0.6;
+  }
+  /* La órbita del colibrí de Graf, alrededor del despacho. */
+  .home .art-graf .ob {
+    fill: none;
+    stroke: var(--gl);
+    stroke-width: 0.35;
+    opacity: 0.6;
+    rotate: -16deg;
+    transform-origin: 0 -10.6px;
+  }
+  .home .art-host:is(:hover, :focus-within) .art-graf .l {
+    opacity: 1;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .home .art-graf :is(.rb, .rt, .cr, .rg, .pn, .ck) {
+      animation: var(--z, var(--n)) var(--t) var(--d) infinite ease-in-out both;
+    }
+    .home .art-graf .rb {
+      --n: art-graf-rb;
+    }
+    .home .art-graf .rt {
+      --n: art-graf-rt;
+    }
+    .home .art-graf .cr {
+      --n: art-graf-cr;
+    }
+    .home .art-graf .rg {
+      --n: art-graf-rg;
+    }
+    .home .art-graf .pn {
+      --n: art-graf-pn;
+    }
+    .home .art-graf .ck {
+      --n: art-graf-ck;
+    }
+    /* Reposo: un solo pedido en curso; los demás salen al pasar el cursor (y arrancan desde cero). */
+    .home .art-graf .x {
+      --t: 4.8s;
+      --z: none;
+      opacity: 0;
+    }
+    .home .art-host:is(:hover, :focus-within) .art-graf .x {
+      --z: initial;
+      opacity: 1;
+      transition: opacity 0.3s;
+    }
+    .home .art-graf .hp {
+      animation: art-graf-hp 2.6s ease-out infinite;
+    }
+    .home .art-host:is(:hover, :focus-within) .art-graf .hp {
+      animation-duration: 1.1s;
+    }
+    .home .art-graf .fl {
+      animation: art-graf-fl 6s linear infinite;
+    }
+  }
+  @keyframes art-graf-pn {
+    0% {
+      scale: 0;
+    }
+    4% {
+      scale: 1.25;
+    }
+    7%,
+    58% {
+      scale: 1;
+    }
+    62%,
+    100% {
+      scale: 0;
+    }
+  }
+  @keyframes art-graf-rb {
+    0% {
+      opacity: 0;
+    }
+    6%,
+    62% {
+      opacity: 0.6;
+    }
+    70%,
+    100% {
+      opacity: 0;
+    }
+  }
+  @keyframes art-graf-rt {
+    0%,
+    7% {
+      stroke-dashoffset: calc(var(--l) * 1px);
+      opacity: 1;
+    }
+    58% {
+      stroke-dashoffset: 0;
+    }
+    72% {
+      opacity: 1;
+    }
+    92%,
+    100% {
+      stroke-dashoffset: 0;
+      opacity: 0;
+    }
+  }
+  @keyframes art-graf-cr {
+    0%,
+    7% {
+      stroke-dashoffset: 0;
+      opacity: 0;
+    }
+    10% {
+      opacity: 1;
+    }
+    58% {
+      stroke-dashoffset: calc(var(--l) * -1px);
+      opacity: 1;
+    }
+    62%,
+    100% {
+      stroke-dashoffset: calc(var(--l) * -1px);
+      opacity: 0;
+    }
+  }
+  @keyframes art-graf-rg {
+    0%,
+    58% {
+      scale: 0.2;
+      opacity: 1;
+    }
+    74%,
+    100% {
+      scale: 2;
+      opacity: 0;
+    }
+  }
+  @keyframes art-graf-ck {
+    0%,
+    58% {
+      opacity: 0;
+      translate: 0 -7px;
+    }
+    63% {
+      opacity: 1;
+      translate: 0 0;
+    }
+    66% {
+      translate: 0 -1.2px;
+    }
+    69% {
+      translate: 0 0;
+    }
+    88% {
+      opacity: 1;
+    }
+    96%,
+    100% {
+      opacity: 0;
+      translate: 0 0;
+    }
+  }
+  @keyframes art-graf-hp {
+    0% {
+      scale: 0.4;
+      opacity: 1;
+    }
+    100% {
+      scale: 2.2;
+      opacity: 0;
+    }
+  }
+  @keyframes art-graf-fl {
+    to {
+      stroke-dashoffset: -30;
+    }
+  }
 }
