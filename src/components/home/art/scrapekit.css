@@ -1,2 +1,238 @@
 @layer home {
+  /* Nómos: colores de su sitio (teal de marca, dorado del <mark>, papel y tinta). En el SVG, px = unidades del viewBox. */
+  .home .art-scrapekit {
+    --nt: var(--art-a);
+    --ng: #e0a85e;
+    --np: #f3ece0;
+    --nk: #14202e;
+    --D: 7s;
+    width: 100%;
+    height: 100%;
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .home .art-scrapekit text {
+    stroke: none;
+  }
+
+  /* Balanza: poste, astil y platillos en trazo fino. */
+  .home .art-scrapekit :is(.sc, .pan) path {
+    stroke: var(--nt);
+    stroke-width: 0.8;
+  }
+  .home .art-scrapekit .sc {
+    opacity: 0.7;
+  }
+  .home .art-scrapekit .sc circle {
+    fill: var(--nt);
+  }
+  .home .art-scrapekit .bm {
+    transform-origin: 80px 16px;
+  }
+  .home .art-scrapekit .pan path:last-of-type {
+    fill: var(--ink-0);
+  }
+  .home .art-scrapekit .pan .arc {
+    stroke-width: 0.5;
+    stroke-dasharray: 1 2;
+    opacity: 0.6;
+  }
+  .home .art-scrapekit .pan :is(.fly, .rs) {
+    fill: var(--np);
+    stroke: var(--ink-0);
+    stroke-width: 0.35;
+  }
+  .home .art-scrapekit .pan .fly {
+    opacity: 0;
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+  .home .art-scrapekit .pan text {
+    fill: var(--text-strong);
+    font: 500 4.8px var(--f-code);
+    letter-spacing: 0.4px;
+    text-anchor: middle;
+  }
+
+  /* El índice: pila de hojas, la página, sus coincidencias y el haz. */
+  .home .art-scrapekit .bk {
+    fill: var(--np);
+    opacity: 0.2;
+    transform: rotate(var(--r));
+    transform-origin: 80px 85px;
+  }
+  .home .art-scrapekit .bk + .bk {
+    opacity: 0.34;
+  }
+  .home .art-scrapekit .pg {
+    filter: drop-shadow(0 0 5px color-mix(in oklab, var(--nt) 40%, transparent));
+  }
+  .home .art-scrapekit .m {
+    fill: var(--ng);
+    transform-box: fill-box;
+    transform-origin: 0 50%;
+  }
+  .home .art-scrapekit .x {
+    opacity: 0;
+  }
+  .home .art-scrapekit .ln {
+    stroke: var(--nk);
+    stroke-width: 1.3;
+    stroke-linecap: butt;
+    stroke-dasharray: 5 1.5 3 1.5 7 1.5 4 1.5 2.5 1.5;
+    opacity: 0.55;
+  }
+  .home .art-scrapekit .ar {
+    fill: var(--nk);
+    font: 500 6.2px var(--f-display);
+    font-variant-numeric: lining-nums;
+  }
+  .home .art-scrapekit .ss {
+    fill: #0f766e;
+    font: 500 5px var(--f-code);
+    text-anchor: end;
+  }
+  .home .art-scrapekit .bb {
+    transform: translateY(58.5px);
+  }
+  .home .art-scrapekit .bb path {
+    stroke: #6fd3c4;
+    stroke-width: 0.5;
+    filter: drop-shadow(0 0 1px #6fd3c4);
+  }
+
+  /* Activa: la balanza se enciende, aparecen más coincidencias y la página brilla (la transición, solo al entrar). */
+  .home .art-host:is(:hover, :focus-within) .art-scrapekit :is(.sc, .x, .pg) {
+    opacity: 1;
+    transition: 0.5s;
+  }
+  .home .art-host:is(:hover, :focus-within) .art-scrapekit .pg {
+    filter: drop-shadow(0 0 3px var(--nt));
+  }
+  .home .art-host:is(:hover, :focus-within) .art-scrapekit .pan path:last-of-type {
+    fill: color-mix(in oklab, var(--nt) 26%, var(--ink-0));
+    transition: 0.5s;
+  }
+  .home .art-host:is(:hover, :focus-within) .art-scrapekit .pan text {
+    fill: #6fd3c4;
+    transition: 0.5s;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .home .art-scrapekit .bm {
+      animation: art-scrapekit-sway 9s ease-in-out infinite alternate;
+    }
+    .home .art-scrapekit .pan {
+      animation: art-scrapekit-pan 9s ease-in-out infinite alternate;
+    }
+    .home .art-scrapekit .bk {
+      animation: art-scrapekit-bk 8s ease-in-out infinite alternate;
+    }
+    .home .art-scrapekit .bk + .bk {
+      animation-delay: -4s;
+    }
+    .home .art-scrapekit .arc {
+      animation: art-scrapekit-dash 3s linear infinite;
+    }
+    .home .art-scrapekit .bb {
+      animation: art-scrapekit-beam var(--D) linear infinite;
+    }
+    /* Cada marca se enciende cuando el haz cruza su renglón: mismo ciclo, desfasado por --f. */
+    .home .art-scrapekit .m {
+      animation: art-scrapekit-m var(--D) linear calc((var(--f) - 1) * var(--D)) infinite;
+    }
+    .home .art-scrapekit .x {
+      animation-name: none;
+    }
+    .home .art-host:is(:hover, :focus-within) .art-scrapekit {
+      --D: 2.6s;
+    }
+    .home .art-host:is(:hover, :focus-within) .art-scrapekit .x {
+      animation-name: art-scrapekit-m;
+    }
+    .home .art-host:is(:hover, :focus-within) .art-scrapekit .arc {
+      animation-duration: 1s;
+    }
+    .home .art-host:is(:hover, :focus-within) .art-scrapekit .fly {
+      animation: art-scrapekit-fly 2.1s linear calc(var(--i) * -0.7s) infinite;
+    }
+  }
+  @keyframes art-scrapekit-sway {
+    from {
+      transform: rotate(-2deg);
+    }
+    to {
+      transform: rotate(2deg);
+    }
+  }
+  @keyframes art-scrapekit-pan {
+    from {
+      transform: translateY(calc(var(--s) * 1.75px));
+    }
+    to {
+      transform: translateY(calc(var(--s) * -1.75px));
+    }
+  }
+  @keyframes art-scrapekit-bk {
+    to {
+      transform: rotate(calc(var(--r) * 1.3));
+    }
+  }
+  @keyframes art-scrapekit-dash {
+    to {
+      stroke-dashoffset: -3;
+    }
+  }
+  @keyframes art-scrapekit-beam {
+    0% {
+      transform: translateY(28px);
+      opacity: 0;
+    }
+    6%,
+    94% {
+      opacity: 1;
+    }
+    100% {
+      transform: translateY(86px);
+      opacity: 0;
+    }
+  }
+  @keyframes art-scrapekit-m {
+    0% {
+      transform: scaleX(0);
+      opacity: 1;
+    }
+    5%,
+    72% {
+      transform: scaleX(1);
+      opacity: 1;
+    }
+    86%,
+    100% {
+      transform: scaleX(1);
+      opacity: 0;
+    }
+  }
+  /* Una hoja salta del platillo en arco y cae detrás de la página. */
+  @keyframes art-scrapekit-fly {
+    0% {
+      transform: none;
+      opacity: 0;
+    }
+    12%,
+    78% {
+      opacity: 1;
+    }
+    33% {
+      transform: translate(calc(var(--s) * 14.7px), -11px) rotate(calc(var(--s) * 8deg));
+    }
+    66% {
+      transform: translate(calc(var(--s) * 29.3px), -12.4px) rotate(calc(var(--s) * 16deg));
+    }
+    100% {
+      transform: translate(calc(var(--s) * 44px), -4px) rotate(calc(var(--s) * 24deg)) scale(0.8);
+      opacity: 0;
+    }
+  }
 }

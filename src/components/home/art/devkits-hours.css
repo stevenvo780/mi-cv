@@ -1,2 +1,347 @@
+/* Chrónos (horas + cuentas de cobro): el reloj, con el isotipo de cuatro anillos en la esfera, barre las horas; caen en
+   la semana (L–D) y ruedan a una cuenta de cobro. Reloj, barras y cuenta apoyan en la misma línea base.
+   Reposo: la aguja barre, las horas saltan al día de hoy y su barra se llena; la cuenta espera de lado, en sombra.
+   Activa: el tiempo corre, la semana se llena de golpe, la cuenta sale al frente, el total rueda hasta $1.785.000
+   (42 h × 42.500 COP/h), se firma y se sella. */
 @layer home {
+  .home .art-devkits-hours {
+    --t: #43b5a6;
+    --t2: #6fd3c4;
+    --t3: #2a7a70;
+    --k: #0b1417;
+  }
+  .home .art-devkits-hours > *,
+  .home .art-devkits-hours :is(.dl, .iv) > *,
+  .home .art-devkits-hours ::before,
+  .home .art-devkits-hours ::after {
+    position: absolute;
+  }
+  /* Estrellas del icono de la app y horas en vuelo. */
+  .home .art-devkits-hours :is(.s, .ch) {
+    left: calc(var(--x) * 1cqw);
+    top: calc(var(--y) * 1cqw);
+    width: 0.9cqw;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: var(--c);
+    box-shadow: 0 0 1.4cqw var(--c);
+  }
+  .home .art-devkits-hours .ch {
+    --x: 39.75;
+    --y: 29;
+    --c: var(--t2);
+    width: 1.5cqw;
+    border-radius: 0.4cqw;
+    opacity: 0;
+  }
+
+  /* El reloj: doce marcas, el isotipo en la esfera, minutero con su estela, horario a las 10:10 y eje violeta. */
+  .home .art-devkits-hours .dl {
+    left: 3.5cqw;
+    top: 11.25cqw;
+    width: 39cqw;
+    aspect-ratio: 1;
+    border: 1px solid #43b5a666;
+    border-radius: 50%;
+    background: radial-gradient(circle at 50% 36%, #172a30, var(--k) 72%);
+    box-shadow:
+      0 0 0 0.6cqw var(--k),
+      0 0 0 0.9cqw #43b5a626,
+      0 0 8cqw #43b5a638;
+  }
+  .home .art-devkits-hours :is(.tk, .sw) {
+    inset: 0;
+    border-radius: 50%;
+  }
+  .home .art-devkits-hours .tk {
+    background:
+      repeating-conic-gradient(from -1.2deg, var(--t2) 0 2.4deg, #0000 0 90deg),
+      repeating-conic-gradient(from -0.7deg, #e8e0d470 0 1.4deg, #0000 0 30deg);
+    mask: radial-gradient(closest-side, #0000 84%, #000 85% 95%, #0000 96%);
+  }
+  .home .art-devkits-hours .qf {
+    inset: 18%;
+    opacity: 0.6;
+  }
+  .home .art-devkits-hours .sw {
+    background: conic-gradient(#0000 60%, #43b5a608 66%, #43b5a680);
+    rotate: 60deg;
+  }
+  .home .art-devkits-hours .sw::after {
+    content: '';
+    left: calc(50% - 0.3cqw);
+    top: 6%;
+    width: 0.6cqw;
+    height: 44%;
+    border-radius: 0.3cqw;
+    background: linear-gradient(#d8fff8, var(--t));
+    box-shadow: 0 0 1.4cqw var(--t2);
+  }
+  .home .art-devkits-hours .hh {
+    left: calc(50% - 0.65cqw);
+    bottom: 50%;
+    width: 1.3cqw;
+    height: 25%;
+    border-radius: 0.65cqw;
+    background: #e8e0d4;
+    box-shadow: 0 0 1cqw #000a;
+    transform-origin: 50% 100%;
+    rotate: 305deg;
+  }
+  .home .art-devkits-hours .dl::after {
+    content: '';
+    inset: calc(50% - 1.5cqw);
+    border-radius: 50%;
+    background: radial-gradient(#c5b6f5, #8d7cc0 60%);
+    box-shadow:
+      0 0 0 0.5cqw var(--k),
+      0 0 2.4cqw #8d7cc0;
+  }
+
+  /* La semana, de 0 a 9 h con rejilla cada 3 h; el fin de semana en oro y el día de hoy con su meta punteada. */
+  .home .art-devkits-hours .bs {
+    left: 45.5cqw;
+    top: 19cqw;
+    width: 27cqw;
+    height: 31cqw;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    border-bottom: 1px solid #43b5a680;
+    background: linear-gradient(#e8e0d414 1px, #0000 0) 0 0 / 100% 33.34%;
+  }
+  .home .art-devkits-hours .b {
+    position: relative;
+    width: 2.6cqw;
+    height: calc(var(--h) * 3.444cqw);
+    min-height: 0.5cqw;
+    border-radius: 0.7cqw 0.7cqw 0 0;
+  }
+  .home .art-devkits-hours .b::before {
+    --f: scaleY(0);
+    content: '';
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(var(--t2), var(--t) 35%, var(--t3));
+    box-shadow: 0 0 2cqw #43b5a64d;
+    transform-origin: 50% 100%;
+  }
+  .home .art-devkits-hours .w::before,
+  .home .art-devkits-hours .w::after {
+    background: linear-gradient(#f0c887, #e0a85e 35%, #9a6712);
+    box-shadow: none;
+  }
+  .home .art-devkits-hours .t {
+    outline: 1px dashed #6fd3c499;
+    outline-offset: 0.4cqw;
+  }
+  .home .art-devkits-hours .b i {
+    position: absolute;
+    left: 50%;
+    top: calc(100% + 1.5cqw);
+    translate: -50%;
+    font: 500 2.3cqw/1 var(--f-code);
+    color: var(--muted);
+  }
+  .home .art-devkits-hours .t i {
+    color: var(--t2);
+  }
+
+  /* La cuenta de cobro: encabezado, conceptos (un renglón por día), total en COP, firma y sello. */
+  .home .art-devkits-hours .iv {
+    --f: none;
+    left: 76cqw;
+    top: 14.5cqw;
+    width: 22cqw;
+    height: 35.5cqw;
+    border-radius: 1cqw;
+    background:
+      linear-gradient(90deg, var(--t3), var(--t)) 0 0 / 100% 4.4cqw no-repeat,
+      linear-gradient(#1c2b31 0 0) 2cqw 6.2cqw / 11.5cqw 0.9cqw no-repeat,
+      linear-gradient(#8fa3a8 0 0) 2cqw 8.2cqw / 7.5cqw 0.6cqw no-repeat,
+      linear-gradient(170deg, #f6f1e8, #ded5c5);
+    box-shadow: 0 2.4cqw 5cqw -1cqw #000d;
+    rotate: -3deg;
+  }
+  .home .art-devkits-hours .r {
+    --f: scaleX(0);
+    --dl: 0.6s;
+    left: 2cqw;
+    top: calc(10.6cqw + var(--i) * 1.75cqw);
+    width: 18cqw;
+    height: 0.7cqw;
+    background:
+      linear-gradient(#8fa3a8 0 0) 0 0 / 2.6cqw 100% no-repeat,
+      linear-gradient(#b3aa9b 0 0) 100% 0 / 3.4cqw 100% no-repeat;
+    transform-origin: 0;
+  }
+  .home .art-devkits-hours .r::after {
+    content: '';
+    left: 3.6cqw;
+    width: calc(var(--h) * 1.15cqw);
+    height: 100%;
+    border-radius: 0.35cqw;
+    background: var(--t);
+  }
+  .home .art-devkits-hours .to {
+    --dl: 0.4s;
+    --du: 0.9s;
+    left: 2cqw;
+    right: 2cqw;
+    top: 23.4cqw;
+    padding-top: 0.9cqw;
+    border-top: 1px solid #0b141733;
+    color: var(--k);
+  }
+  .home .art-devkits-hours .to small {
+    font: 700 1.7cqw/1 var(--f-code);
+    letter-spacing: 0.12em;
+    color: var(--t3);
+  }
+  .home .art-devkits-hours .to b {
+    display: flex;
+    margin-top: 0.6cqw;
+    font: 700 2.9cqw/1 var(--f-code);
+  }
+  /* Rodillos del total: cada cifra es una columna 0–9 que sube hasta su parada. */
+  .home .art-devkits-hours .d {
+    height: 1em;
+    overflow: hidden;
+  }
+  .home .art-devkits-hours .d span {
+    display: block;
+    width: 1ch;
+    word-break: break-all;
+    transform: translateY(calc(var(--d) * -1em));
+  }
+  .home .art-devkits-hours .sg {
+    --sd: 1;
+    --dl: 1s;
+    left: 2cqw;
+    top: 30.4cqw;
+    width: 9cqw;
+    height: 3cqw;
+    border-bottom: 1px solid #0b141740;
+    fill: none;
+    stroke: #1c3a44;
+    stroke-width: 1.6;
+    stroke-linecap: round;
+    stroke-dasharray: 1;
+  }
+  .home .art-devkits-hours .st {
+    --f: scale(2.2);
+    --o: 0;
+    --dl: 1.2s;
+    right: 1.6cqw;
+    top: 29cqw;
+    width: 5.4cqw;
+    aspect-ratio: 1;
+    border: 0.4cqw solid #10b981;
+    border-radius: 50%;
+    background: #10b98117;
+    rotate: -14deg;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .home .art-devkits-hours .qf {
+      animation: art-devkits-hours-turn 60s linear infinite;
+    }
+    .home .art-devkits-hours .sw {
+      animation: art-devkits-hours-turn var(--sp, 8s) linear infinite;
+    }
+    .home .art-devkits-hours .ch {
+      animation:
+        art-devkits-hours-cx var(--cd, 8s) calc(var(--i) * var(--cd, 8s) / -3 + 1s) linear infinite,
+        art-devkits-hours-cy var(--cd, 8s) calc(var(--i) * var(--cd, 8s) / -3 + 1s) infinite;
+    }
+    .home .art-devkits-hours .t::before {
+      animation: art-devkits-hours-day 8s linear infinite;
+    }
+    /* En reposo la cuenta espera de lado, en sombra, sin firma ni sello. */
+    .home .art-devkits-hours .iv {
+      transform: translate(5cqw, 2cqw) rotate(11deg);
+      filter: brightness(0.45) saturate(0.6);
+      transition:
+        transform 0.8s var(--ease-out) 0.15s,
+        filter 0.6s 0.15s;
+    }
+    html[data-motion='paused'] .home .art-devkits-hours .iv {
+      transition: none;
+    }
+    .home .art-devkits-hours :is(.st, .sg) {
+      opacity: 0;
+    }
+
+    .home .art-host:is(:hover, :focus-within) .art-devkits-hours {
+      --sp: 1s;
+      --cd: 2.4s;
+    }
+    .home .art-host:is(:hover, :focus-within) .art-devkits-hours .hh {
+      animation: art-devkits-hours-turn 12s linear infinite;
+    }
+    .home .art-host:is(:hover, :focus-within) .art-devkits-hours :is(.iv, .st, .sg) {
+      transform: none;
+      filter: none;
+      opacity: 1;
+    }
+    .home .art-host:is(:hover, :focus-within) .art-devkits-hours :is(.r, .d span, .st, .sg),
+    .home .art-host:is(:hover, :focus-within) .art-devkits-hours .b::before {
+      animation: art-devkits-hours-in var(--du, 0.6s) calc(var(--dl, 0s) + var(--i, 0) * 70ms) cubic-bezier(0.3, 1.3, 0.5, 1) backwards;
+    }
+  }
+
+  @keyframes art-devkits-hours-turn {
+    to {
+      transform: rotate(1turn);
+    }
+  }
+  @keyframes art-devkits-hours-in {
+    from {
+      transform: var(--f);
+      opacity: var(--o, 1);
+      stroke-dashoffset: var(--sd, 0);
+    }
+  }
+  @keyframes art-devkits-hours-day {
+    0% {
+      transform: scaleY(0);
+    }
+    85%,
+    94% {
+      transform: none;
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+    }
+  }
+  @keyframes art-devkits-hours-cx {
+    0% {
+      translate: 0;
+      opacity: 0;
+    }
+    3%,
+    15% {
+      opacity: 1;
+    }
+    18%,
+    100% {
+      translate: 18.5cqw;
+      opacity: 0;
+    }
+  }
+  @keyframes art-devkits-hours-cy {
+    0% {
+      transform: none;
+      animation-timing-function: ease-out;
+    }
+    9% {
+      transform: translateY(-19cqw);
+      animation-timing-function: ease-in;
+    }
+    18%,
+    100% {
+      transform: translateY(-0.5cqw);
+    }
+  }
 }

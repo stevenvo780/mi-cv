@@ -1,2 +1,243 @@
+/* Érgon (tres starter kits PYME): «el 80 % ya está hecho». Tres kits en isométrico verdadero sobre la cuadrícula de
+   un plano: cuatro losas teal construidas (80 %) y, arriba, el hueco del 20 % dibujado a trazos. La pieza a medida,
+   ámbar como el acento del sitio, flota encima. Reposo: un anillo de obra sube hasta el 80 % y la pieza respira.
+   Activa: cada pieza cae, rebota y encaja con un destello; el anillo recorre el kit entero. */
 @layer home {
+  .home .art-devkits {
+    --b: 24cqw;
+    --u: 6cqw;
+    --fh: var(--b);
+    background: linear-gradient(135deg, #1a3a3899, #0000 40% 62%, #1a3a3866);
+  }
+  .home .art-devkits *,
+  .home .art-devkits ::before {
+    position: absolute;
+    transform-style: preserve-3d;
+  }
+  /* El plano: rotateX(arctan √2) y 45° dan el isométrico verdadero, sin perspectiva. */
+  .home .art-devkits .ek {
+    left: 4cqw;
+    top: 7.5cqw;
+    padding: 39cqw;
+    transform: rotateX(54.7356deg) rotate(45deg);
+  }
+  .home .art-devkits .eg {
+    inset: 0;
+    background: conic-gradient(from 90deg at 0.2cqw 0.2cqw, #0000 25%, #43b5a638 0) 0 0 / 3cqw 3cqw;
+    mask: radial-gradient(closest-side, #000 25%, #0000);
+  }
+  .home .art-devkits .ec {
+    left: calc(15cqw + var(--i) * 18cqw);
+    top: calc(51cqw - var(--i) * 18cqw);
+    padding: 6cqw;
+  }
+  /* Tapa a la altura --fh; cara +y (frente-izquierda) levantada sobre su borde inferior; cara +x (frente-derecha)
+     sobre el derecho, con su izquierda arriba. Colores teal salvo en la pieza, que define los suyos. */
+  .home .art-devkits .pt {
+    inset: 0;
+    transform: translateZ(var(--fh));
+    --bw: 0.2cqw;
+  }
+  .home .art-devkits .fy {
+    --d: 180deg;
+    --c1: var(--y1, #1b4843);
+    --c2: var(--y2, #0e2225);
+    --bw: 0 0.2cqw;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: var(--fh);
+    transform-origin: bottom;
+    transform: rotateX(-90deg);
+  }
+  .home .art-devkits .fx {
+    --d: 90deg;
+    --c1: var(--x1, #2c7169);
+    --c2: var(--x2, #163a3a);
+    --bw: 0.2cqw 0 0;
+    top: 0;
+    right: 0;
+    width: var(--fh);
+    height: 100%;
+    transform-origin: right;
+    transform: rotateY(90deg);
+  }
+  /* Lo construido, y la pieza: juntas teal cada 20 % (en la pieza, la de su base). */
+  .home .art-devkits :is(.k, .ep i) {
+    background:
+      repeating-linear-gradient(var(--d), #0000 0 calc(var(--u) - 0.2cqw), #43b5a666 0 var(--u)),
+      linear-gradient(var(--d), var(--c1), var(--c2));
+    box-shadow: inset 0 0 0 0.2cqw var(--e, #43b5a6cc);
+  }
+  .home .art-devkits .et {
+    background:
+      radial-gradient(closest-side, #e0a85e59, #0000),
+      linear-gradient(135deg, #31887c, #1c524c);
+    box-shadow: inset 0 0 0 0.2cqw #6fd3c4;
+  }
+  /* Placa del kit, con su glifo. */
+  .home .art-devkits svg {
+    left: 2cqw;
+    top: 7cqw;
+    width: 8cqw;
+    padding: 1cqw;
+    border: 0.2cqw solid #43b5a680;
+    border-radius: 1cqw;
+    background: var(--ink-1);
+    opacity: 0.75;
+  }
+  /* El hueco del 20 %, a trazos y un pelo menor que la pieza: al encajar queda dentro. */
+  .home .art-devkits .eo {
+    --fh: calc(var(--u) - 0.3cqw);
+    inset: 0.15cqw;
+    translate: 0 0 calc(var(--b) + 0.15cqw);
+  }
+  .home .art-devkits .eo i {
+    border: 0 dashed #6fd3c4;
+    border-width: var(--bw);
+  }
+  /* Anillo de obra y destello del encaje: un collar apenas mayor que el kit. */
+  .home .art-devkits :is(.es, .ef) {
+    inset: -0.4cqw;
+    border: 0.25cqw solid #6fd3c4;
+    translate: 0 0 var(--b);
+    box-shadow: 0 0 1.6cqw var(--art-a);
+  }
+  .home .art-devkits .ef {
+    border-color: var(--art-b);
+    box-shadow: 0 0 2.4cqw #e0a85e;
+    opacity: 0;
+  }
+  /* La pieza a medida, ámbar. */
+  .home .art-devkits .ep {
+    --fh: var(--u);
+    --y1: #c98d46;
+    --y2: #8f5e2b;
+    --x1: #eab067;
+    --x2: #b57838;
+    --e: var(--art-b);
+    inset: 0;
+    translate: 0 0 calc(var(--b) + 8cqw);
+  }
+  .home .art-devkits .ep i {
+    opacity: 0.85;
+  }
+  .home .art-devkits .ep .pt {
+    background: linear-gradient(135deg, #fbe4ba, #e0a85e);
+    box-shadow:
+      0 0 3.5cqw #e0a85eb3,
+      inset 0 0 0 0.2cqw #fff2d6;
+  }
+  /* Cota del plano junto al tercer kit: 100 % arriba, 80 % en la junta, 0 en el piso. */
+  .home .art-devkits .ed {
+    inset: 22cqw 18.4cqw 16cqw 78cqw;
+    border-block: 0.2cqw dashed var(--muted);
+    box-shadow: inset -0.2cqw 0 var(--art-a);
+  }
+  .home .art-devkits .ed::before {
+    content: '';
+    inset: 0 0 auto;
+    height: 4.8cqw;
+    border-bottom: 0.2cqw dashed var(--muted);
+    box-shadow: inset -0.2cqw 0 var(--art-b);
+  }
+  .home .art-devkits span {
+    left: 4.8cqw;
+    top: 0.3cqw;
+    font: 500 4.2cqw/1 var(--f-display);
+    color: var(--art-b);
+  }
+  .home .art-devkits span + span {
+    top: 10.9cqw;
+    font-size: 7.4cqw;
+    color: var(--art-a);
+    text-shadow: 0 0 2cqw #43b5a666;
+  }
+
+  /* Activa: la pieza baja al hueco y queda sólida (el plano a trazos queda dentro); el 20 % se enciende. */
+  .home .art-host:is(:hover, :focus-within) .art-devkits .ep {
+    translate: 0 0 var(--b);
+  }
+  .home .art-host:is(:hover, :focus-within) .art-devkits :is(.ep i, svg) {
+    opacity: 1;
+  }
+  .home .art-host:is(:hover, :focus-within) .art-devkits span:first-child {
+    color: #fff2d6;
+    text-shadow: 0 0 2cqw #e0a85e;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .home .art-devkits .es {
+      animation: art-devkits-build 7s ease-in-out calc(var(--i) * 0.45s) infinite both;
+    }
+    .home .art-devkits .ep {
+      transition: translate 0.5s ease-out;
+      animation: art-devkits-bob 2.6s ease-in-out calc(var(--i) * -0.9s) infinite alternate;
+    }
+    .home .art-devkits .eo i {
+      animation: art-devkits-dash 3.2s ease-in-out infinite alternate;
+    }
+    .home .art-devkits :is(.ep i, svg) {
+      transition: opacity 0.35s;
+    }
+    /* Caída con rebote: acelera, toca (40 %), sube un poco y asienta. */
+    .home .art-host:is(:hover, :focus-within) .art-devkits .ep {
+      transition: translate 0.6s linear(0, 0.06 10%, 0.25 20%, 0.56 30%, 1 40%, 0.93 49%, 1 58%, 0.985 65%, 1 72%)
+        calc(var(--i) * 0.07s);
+      animation: none;
+    }
+    .home .art-host:is(:hover, :focus-within) .art-devkits .es {
+      animation: art-devkits-seal 0.9s ease-in-out calc(0.3s + var(--i) * 0.07s) both;
+    }
+    .home .art-host:is(:hover, :focus-within) .art-devkits .ef {
+      animation: art-devkits-snap 0.7s ease-out calc(0.24s + var(--i) * 0.07s) both;
+    }
+  }
+  html[data-motion='paused'] .home .art-devkits * {
+    transition: none;
+  }
+  @keyframes art-devkits-build {
+    0% {
+      translate: 0 0 0;
+      opacity: 0;
+    }
+    42%,
+    86% {
+      translate: 0 0 var(--b);
+      opacity: 1;
+    }
+    100% {
+      translate: 0 0 var(--b);
+      opacity: 0;
+    }
+  }
+  @keyframes art-devkits-bob {
+    to {
+      transform: translateZ(1.4cqw);
+    }
+  }
+  @keyframes art-devkits-dash {
+    from {
+      opacity: 0.35;
+    }
+  }
+  @keyframes art-devkits-snap {
+    from {
+      scale: 0.96;
+      opacity: 1;
+    }
+    to {
+      scale: 1.8;
+      opacity: 0;
+    }
+  }
+  /* El kit completo: el anillo lo recorre del piso a la tapa. */
+  @keyframes art-devkits-seal {
+    from {
+      translate: 0 0 0;
+    }
+    to {
+      translate: 0 0 calc(var(--b) + var(--u));
+    }
+  }
 }

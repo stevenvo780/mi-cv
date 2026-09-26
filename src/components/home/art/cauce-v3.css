@@ -1,2 +1,286 @@
+/* Cauce V3: el director (núcleo del bus, anillo de orquestación) y la flota de agentes en el cauce. En reposo la flota
+   navega en tres carriles; al activarse forma ›› y los contratos saltan de agente en agente hasta el fan-in (done).
+   Cada pieza guarda su animación de reposo en --ai y el nombre de la activa en --an: todas las activas comparten el
+   ciclo --T, así el despacho, los traspasos y el destello de la punta quedan sincronizados. */
 @layer home {
+  .home .art-cauce-v3 {
+    --cx: #35e3f0;
+    --lm: #c8ff63;
+    --T: 3.2s;
+    background:
+      radial-gradient(26% 46% at 20% 50%, #5b82ff38, #0000),
+      linear-gradient(#0a0f20, #05070f);
+  }
+  .home .art-cauce-v3 *,
+  .home .art-cauce-v3 i::before,
+  .home .art-cauce-v3 i::after {
+    position: absolute;
+  }
+  .home .art-cauce-v3 svg {
+    width: 100%;
+    height: 100%;
+    fill: none;
+  }
+  .home .art-cauce-v3 .cu {
+    --ai: art-cauce-v3-cu 12s linear infinite;
+    --an: art-cauce-v3-cu;
+  }
+  /* Las órbitas del átomo avanzan de a 60° (su simetría): lentas en reposo, un clic por despacho al activarse. */
+  .home .art-cauce-v3 .ob {
+    --ai: art-cauce-v3-ob 9s linear infinite;
+    --an: art-cauce-v3-ob;
+    transform-origin: 32px 50px;
+  }
+  .home .art-cauce-v3 :is(.f i, .pk, .dp, .ok, .z, .sw, .pg, .co, .bm) {
+    --px: var(--x, 32);
+    --py: var(--y, 50);
+    translate: calc(var(--px) * 1cqh - 50%) calc(var(--py) * 1cqh - 50%);
+    rotate: var(--r);
+    border-radius: 50%;
+  }
+  .home .art-cauce-v3 .sw {
+    --ai: art-cauce-v3-sp 8s linear infinite;
+    --an: art-cauce-v3-sp;
+    width: 56cqh;
+    height: 56cqh;
+    border: 0.3cqh solid #9db6ff38;
+    background: conic-gradient(from 100deg, #0000 72%, #35e3f04d 99.4%, var(--cx) 0);
+    opacity: 0.6;
+  }
+  .home .art-cauce-v3 .pg {
+    --ai: art-cauce-v3-rg 8s ease-out infinite;
+    --an: art-cauce-v3-dp;
+    --dl: calc(var(--T) * -0.74);
+    width: 26cqh;
+    height: 26cqh;
+    border: 0.45cqh solid var(--cx);
+    opacity: 0;
+  }
+  .home .art-cauce-v3 .co {
+    --ai: art-cauce-v3-br 2.6s ease-in-out infinite alternate;
+    --an: art-cauce-v3-fl;
+    width: 9cqh;
+    height: 9cqh;
+    background: radial-gradient(closest-side, #fff1d6 35%, #ffb86b 60%, #0000);
+    box-shadow: 0 0 5cqh 1cqh #ffb86b66;
+  }
+
+  /* La flota: cada agente es un dardo con su halo; el color es su harness (Claude Code, Codex, OpenClaw). */
+  .home .art-cauce-v3 .f i {
+    --c: #8b6cff;
+    --dl: calc((var(--t) - 0.03) * var(--T));
+    --ai: art-cauce-v3-bob 2.8s ease-in-out calc(var(--x) * 0.05s - 12s) infinite alternate;
+    --an: art-cauce-v3-fl;
+    width: 6cqh;
+    height: 6cqh;
+    scale: calc(0.5 + var(--px) / 190);
+    background: radial-gradient(closest-side, var(--c) -122%, #0000);
+  }
+  .home .art-cauce-v3 .f i:nth-child(n + 6) {
+    --c: var(--cx);
+  }
+  .home .art-cauce-v3 .f i:nth-child(n + 10) {
+    --c: #46d99e;
+  }
+  .home .art-cauce-v3 .f i::before {
+    content: '';
+    inset: 22% 14%;
+    background: var(--c);
+    clip-path: polygon(0 0, 100% 50%, 0 100%, 32% 50%);
+  }
+  .home .art-cauce-v3 .f i::after {
+    content: '';
+    inset: 0;
+    border: 0.35cqh solid var(--c);
+    border-radius: 50%;
+    opacity: 0;
+  }
+  .home .art-host:is(:hover, :focus-within) .art-cauce-v3 .f i {
+    --px: var(--X);
+    --py: var(--Y);
+  }
+
+  /* Contratos (solo al activarse): los que despacha el director hacia los brazos y los que saltan de agente en agente. */
+  .home .art-cauce-v3 .bm {
+    --x: 26;
+    --an: art-cauce-v3-bm;
+    width: 13cqh;
+    height: 1.3cqh;
+    background: linear-gradient(90deg, #0000, var(--lm) 85%, #fff);
+    transform-origin: 100% 50%;
+    opacity: 0;
+  }
+  .home .art-cauce-v3 .pk {
+    --an: art-cauce-v3-hop;
+    width: 2.2cqh;
+    height: 2.2cqh;
+    background: #fff;
+    box-shadow: 0 0 1.4cqh 0.4cqh var(--lm);
+    opacity: 0;
+  }
+  .home .art-cauce-v3 .dp {
+    --x: 146;
+    --an: art-cauce-v3-dp;
+    width: 12cqh;
+    height: 12cqh;
+    border: 0.45cqh solid var(--lm);
+    opacity: 0;
+  }
+  .home .art-cauce-v3 :is(.z, .ok) {
+    font: 500 3.8cqh/1 var(--f-code);
+  }
+  .home .art-cauce-v3 .z {
+    --y: 87;
+    color: #8391b3;
+  }
+  .home .art-cauce-v3 .ok {
+    --x: 151;
+    --y: 39;
+    --an: art-cauce-v3-ok;
+    color: var(--lm);
+    opacity: 0;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .home .art-cauce-v3 :is(.cu, .ob, .sw, .pg, .co, .f i) {
+      animation: var(--ai);
+    }
+    .home .art-cauce-v3 .f i {
+      transition: 0.9s var(--ease-out) calc(var(--t) * 0.6s);
+      transition-property: translate, scale;
+    }
+    /* Activa: el director despacha, la flota forma ›› y los contratos saltan hasta el fan-in de la punta. */
+    .home .art-host:is(:hover, :focus-within) .art-cauce-v3 :is(.cu, .ob, .sw, .pg, .co, .f i, .bm, .pk, .dp, .ok) {
+      animation: var(--an) var(--T) var(--dl, 0s) infinite;
+    }
+    .home .art-host:is(:hover, :focus-within) .art-cauce-v3 .f i::after {
+      animation: art-cauce-v3-rg var(--T) var(--dl) infinite;
+    }
+  }
+  html[data-motion='paused'] .home .art-cauce-v3 * {
+    transition: none;
+  }
+
+  @keyframes art-cauce-v3-cu {
+    to {
+      stroke-dashoffset: -24;
+    }
+  }
+  @keyframes art-cauce-v3-ob {
+    to {
+      transform: rotate(60deg);
+    }
+  }
+  @keyframes art-cauce-v3-sp {
+    to {
+      transform: rotate(1turn);
+    }
+  }
+  @keyframes art-cauce-v3-br {
+    to {
+      transform: scale(1.15);
+    }
+  }
+  @keyframes art-cauce-v3-bob {
+    to {
+      transform: translate(1cqh, -1.6cqh);
+    }
+  }
+  @keyframes art-cauce-v3-fl {
+    3% {
+      transform: scale(1.7);
+    }
+    9% {
+      transform: none;
+    }
+  }
+  @keyframes art-cauce-v3-rg {
+    0% {
+      opacity: 1;
+      transform: scale(0.5);
+    }
+    14%,
+    to {
+      opacity: 0;
+      transform: scale(2);
+    }
+  }
+  @keyframes art-cauce-v3-bm {
+    0% {
+      opacity: 0;
+      transform: translate(6cqh) scaleX(0.3);
+    }
+    4%,
+    24% {
+      opacity: 1;
+    }
+    24% {
+      transform: translate(88cqh) scaleX(1);
+    }
+    28%,
+    to {
+      opacity: 0;
+      transform: translate(89cqh) scaleX(0.1);
+    }
+  }
+  @keyframes art-cauce-v3-hop {
+    0%,
+    24% {
+      opacity: 0;
+    }
+    0%,
+    26% {
+      transform: none;
+    }
+    26%,
+    48% {
+      opacity: var(--v);
+    }
+    38% {
+      transform: translate(8.75cqh);
+    }
+    50% {
+      transform: translate(17.5cqh);
+    }
+    50%,
+    74% {
+      opacity: 1;
+    }
+    62% {
+      transform: translate(26.25cqh);
+    }
+    74% {
+      transform: translate(35cqh);
+    }
+    86%,
+    to {
+      opacity: 0;
+      transform: translate(35cqh) scale(2.5);
+    }
+  }
+  @keyframes art-cauce-v3-dp {
+    0%,
+    73% {
+      opacity: 0;
+      transform: scale(0.2);
+    }
+    75% {
+      opacity: 1;
+    }
+    96%,
+    to {
+      opacity: 0;
+      transform: scale(2.4);
+    }
+  }
+  @keyframes art-cauce-v3-ok {
+    0%,
+    72% {
+      opacity: 0;
+    }
+    78%,
+    94% {
+      opacity: 1;
+    }
+  }
 }

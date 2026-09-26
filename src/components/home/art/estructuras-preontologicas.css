@@ -1,2 +1,238 @@
 @layer home {
+  /* Estructuras Pre-Ontológicas: un sustrato de puntos que se ordena antes de que haya objetos. Reposo: los puntos
+     vibran y el patrón de bloques anidados (y el objeto que aún no es) asoma y se va. Activo: la red se fija, se
+     comprime por bloques de 2×2 en dos escalas y el bloque central se vuelve objeto (el naranja y la chispa de la marca
+     del sitio); luego se expande y se disuelve. Sin movimiento: la estructura anidada con su objeto. Paleta del sitio:
+     tinta #0e1219, naranja #e4760a, gris de línea #dde1e9. */
+  .home .art-estructuras-preontologicas {
+    background:
+      radial-gradient(50% 60% at 50% 50%, rgb(228 118 10 / 0.14), transparent 80%),
+      linear-gradient(180deg, #0e1219, #070a10);
+  }
+  .home .art-estructuras-preontologicas :is(svg, b) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+  /* Subredes del sustrato: un punto por celda de 24, llevado a su sitio (a, b) de la red fina (paso 6). */
+  .home .art-estructuras-preontologicas i {
+    --u: clamp(-1, var(--a), 1);
+    --v: clamp(-1, var(--b), 1);
+    --r: 0.6cqmin;
+    position: absolute;
+    inset: -12cqmin;
+    background: radial-gradient(circle, rgb(221 225 233 / 0.7) 0 var(--r), transparent calc(var(--r) + 0.3cqmin)) 50% 50% / 24cqmin 24cqmin;
+    translate: calc(var(--a) * 3cqmin) calc(var(--b) * 3cqmin);
+  }
+  .home .art-estructuras-preontologicas i:nth-child(3n) {
+    opacity: 0.5;
+  }
+  .home .art-estructuras-preontologicas i:nth-child(5n + 1) {
+    --r: 0.85cqmin;
+  }
+  .home .art-estructuras-preontologicas pattern rect {
+    fill: none;
+    stroke: #f7a04b;
+    stroke-width: 0.28;
+  }
+  /* --an: su animación activa; --pk: su pico en el reposo. La opacidad de base es la de la pose fija. */
+  .home .art-estructuras-preontologicas .ep-m {
+    --an: art-estructuras-preontologicas-m;
+    --pk: 0.4;
+    opacity: 0.35;
+  }
+  .home .art-estructuras-preontologicas .ep-c {
+    --an: art-estructuras-preontologicas-c;
+    --pk: 0.4;
+    opacity: 0.65;
+  }
+  .home .art-estructuras-preontologicas .ep-c rect {
+    stroke: #e4760a;
+    stroke-width: 0.42;
+  }
+  /* Nodos de escala media y gruesa: donde caen los puntos al comprimirse. */
+  .home .art-estructuras-preontologicas .ep-nm {
+    --an: art-estructuras-preontologicas-nm;
+    opacity: 0;
+    background: radial-gradient(circle, #fff 0 0.8cqmin, rgb(247 160 75 / 0.45) 1.1cqmin, transparent 2.8cqmin) calc(50% + 6cqmin) calc(50% + 6cqmin) / 12cqmin 12cqmin;
+  }
+  .home .art-estructuras-preontologicas .ep-nc {
+    --an: art-estructuras-preontologicas-nc;
+    --pk: 0.35;
+    opacity: 0.25;
+    background: radial-gradient(circle, #fff 0 1.2cqmin, #f7a04b 1.6cqmin, rgb(228 118 10 / 0.3) 3.4cqmin, transparent 7.5cqmin) 50% 50% / 24cqmin 24cqmin;
+  }
+  /* El objeto: la estabilización del bloque central, con la chispa de la marca del sitio. */
+  .home .art-estructuras-preontologicas .ep-obj {
+    --an: art-estructuras-preontologicas-o;
+    --pk: 0.16;
+    margin: auto;
+    width: 22.8cqmin;
+    height: 22.8cqmin;
+    border-radius: 3.35cqmin;
+    background: linear-gradient(140deg, #f59a3c, #c9560a);
+    box-shadow: 0 0 7cqmin rgb(228 118 10 / 0.55);
+  }
+  .home .art-estructuras-preontologicas .ep-obj::after {
+    content: '';
+    position: absolute;
+    inset: 22%;
+    background: #fff;
+    clip-path: polygon(50% 0, 58% 42%, 100% 50%, 58% 58%, 50% 100%, 42% 58%, 0 50%, 42% 42%);
+  }
+  .home .art-estructuras-preontologicas .ep-v {
+    background: radial-gradient(62% 78% at 50% 50%, transparent 28%, rgb(7 10 16 / 0.96) 96%);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .home .art-estructuras-preontologicas i {
+      animation:
+        art-estructuras-preontologicas-j 9s ease-in-out calc(var(--d) * -1s) infinite,
+        art-estructuras-preontologicas-d 12s ease-in-out infinite;
+    }
+    .home .art-estructuras-preontologicas :is(.ep-c, .ep-nc, .ep-obj) {
+      animation: art-estructuras-preontologicas-p 12s ease-in-out infinite;
+    }
+    .home .art-estructuras-preontologicas .ep-m {
+      animation: art-estructuras-preontologicas-f 12s ease-out infinite;
+    }
+    .home .art-host:is(:hover, :focus-within) .art-estructuras-preontologicas i {
+      transform: none;
+      animation: art-estructuras-preontologicas-k 6s cubic-bezier(0.65, 0, 0.25, 1) infinite;
+    }
+    .home .art-host:is(:hover, :focus-within) .art-estructuras-preontologicas :is(svg, b) {
+      animation: var(--an) 6s infinite;
+    }
+  }
+
+  /* Reposo: vibración del sustrato y un tirón leve hacia los bloques medios cuando asoma el patrón. */
+  @keyframes art-estructuras-preontologicas-j {
+    25% {
+      transform: translate(calc(var(--u) * 1.8cqmin), calc(var(--v) * -1.3cqmin));
+    }
+    50% {
+      transform: translate(calc(var(--v) * -0.9cqmin), calc(var(--u) * 1.7cqmin));
+    }
+    75% {
+      transform: translate(calc(var(--u) * -1.6cqmin), calc(var(--v) * 0.7cqmin));
+    }
+  }
+  @keyframes art-estructuras-preontologicas-d {
+    50%,
+    60% {
+      translate: calc(var(--a) * 2cqmin + var(--u) * 2cqmin) calc(var(--b) * 2cqmin + var(--v) * 2cqmin);
+    }
+  }
+  @keyframes art-estructuras-preontologicas-p {
+    0%,
+    32%,
+    80%,
+    100% {
+      opacity: calc(var(--pk) * 0.4);
+    }
+    50%,
+    60% {
+      opacity: var(--pk);
+    }
+  }
+  /* El patrón medio nace en el centro y se extiende como un frente de cristalización. */
+  @keyframes art-estructuras-preontologicas-f {
+    0%,
+    30% {
+      opacity: var(--pk);
+      clip-path: circle(0);
+    }
+    60% {
+      opacity: var(--pk);
+      clip-path: circle(75%);
+    }
+    84%,
+    100% {
+      opacity: 0;
+    }
+  }
+  /* Activo: red fina → bloques de 2×2 → bloque grueso → objeto → expansión. */
+  @keyframes art-estructuras-preontologicas-k {
+    0%,
+    8%,
+    96%,
+    100% {
+      translate: calc(var(--a) * 3cqmin) calc(var(--b) * 3cqmin);
+    }
+    22%,
+    32% {
+      translate: calc(var(--u) * 6cqmin) calc(var(--v) * 6cqmin);
+    }
+    46%,
+    80% {
+      translate: 0 0;
+    }
+  }
+  @keyframes art-estructuras-preontologicas-m {
+    0% {
+      opacity: 0;
+      clip-path: circle(0);
+    }
+    8%,
+    34% {
+      opacity: 0.9;
+      clip-path: circle(75%);
+    }
+    46%,
+    100% {
+      opacity: 0;
+    }
+  }
+  @keyframes art-estructuras-preontologicas-c {
+    0%,
+    30%,
+    96%,
+    100% {
+      opacity: 0.2;
+    }
+    46%,
+    82% {
+      opacity: 1;
+    }
+  }
+  @keyframes art-estructuras-preontologicas-nm {
+    16%,
+    44% {
+      opacity: 0;
+    }
+    22%,
+    34% {
+      opacity: 1;
+    }
+  }
+  @keyframes art-estructuras-preontologicas-nc {
+    0%,
+    38%,
+    94%,
+    100% {
+      opacity: 0;
+    }
+    48%,
+    82% {
+      opacity: 1;
+    }
+  }
+  @keyframes art-estructuras-preontologicas-o {
+    0%,
+    44% {
+      opacity: 0;
+      transform: scale(0.4);
+    }
+    54%,
+    80% {
+      opacity: 1;
+      transform: none;
+    }
+    94%,
+    100% {
+      opacity: 0;
+      transform: scale(1.25);
+    }
+  }
 }

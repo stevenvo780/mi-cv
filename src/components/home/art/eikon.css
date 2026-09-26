@@ -1,2 +1,297 @@
+/* Eikón: isotipo procedural. Reposo: el átomo respira, sus órbitas precesan y el punto las recorre. Activo: regenera
+   eikon → mouseion → pinakotheke → prizma (siempre en ese orden) con la paleta y el contraste de cada marca. */
 @layer home {
+  .home .art-eikon {
+    --te: #43b5a6;
+    --go: #e0a85e;
+    --vi: #8d7cc0;
+    --ez: cubic-bezier(0.65, 0, 0.25, 1);
+    --sn: cubic-bezier(0.37, 0, 0.63, 1);
+  }
+  .home .art-eikon svg {
+    width: 100%;
+    height: 100%;
+    fill: none;
+    stroke-width: 0.35;
+  }
+  .home .art-eikon .cx {
+    stroke: var(--line-strong);
+    stroke-dasharray: 1 1.6;
+  }
+  .home .art-eikon .pl {
+    fill: #131e22c0;
+    stroke: var(--line-strong);
+  }
+  .home .art-eikon .gu {
+    stroke: var(--te);
+    stroke-opacity: 0.4;
+    stroke-dasharray: 0.4 2.4;
+  }
+  .home .art-eikon .bx {
+    stroke: #8fa3a850;
+  }
+  .home .art-eikon .hd {
+    fill: #0b1417;
+    stroke: var(--te);
+  }
+  .home .art-eikon .m {
+    filter: drop-shadow(0 0 1.4px #43b5a680);
+  }
+  .home .art-eikon .r {
+    --an: art-eikon-r;
+    stroke: var(--te);
+    stroke-width: 1.5;
+    stroke-dasharray: 1 1.05;
+    stroke-linecap: round;
+    transform: rotate(-90deg);
+  }
+  /* Las órbitas se estiran hasta el anillo o se aplanan en aristas: trazo que no escala con ellas. */
+  .home .art-eikon :is(.ea, .eb) {
+    --an: art-eikon-e;
+    --s: var(--go);
+    stroke: var(--s);
+    stroke-width: 1.35cqh;
+    transform: rotate(var(--r));
+  }
+  .home .art-eikon .ea {
+    --r: -25deg;
+    --r2: -20deg;
+    --r3: -61.6deg;
+  }
+  .home .art-eikon .eb {
+    --r: 45deg;
+    --r2: 60deg;
+    --r3: 61.6deg;
+    --s: var(--vi);
+  }
+  .home .art-eikon .ox {
+    transform: translate(27px);
+  }
+  .home .art-eikon .d {
+    fill: var(--go);
+    stroke: none;
+  }
+  .home .art-eikon .c {
+    --an: art-eikon-c;
+    fill: var(--te);
+    transform: scale(0.38);
+  }
+  .home .art-eikon :is(.h, .q) {
+    --z: 0;
+    --i: 1;
+    scale: 0;
+  }
+  .home .art-eikon .p {
+    --an: art-eikon-p;
+    stroke: var(--vi);
+    stroke-width: 2;
+    stroke-linejoin: round;
+    stroke-linecap: round;
+    stroke-dasharray: 1 1.05;
+    stroke-dashoffset: 1.02;
+  }
+  .home .art-eikon .q {
+    --i: 3;
+    fill: var(--vi);
+  }
+  .home .art-eikon .tx {
+    font: 500 4px var(--f-code);
+    letter-spacing: 0.6px;
+    fill: var(--muted);
+  }
+  .home .art-eikon .n {
+    opacity: calc(1 - min(var(--i), 1));
+  }
+  .home .art-eikon .sw {
+    --an: art-eikon-s;
+    stroke: var(--line-strong);
+    translate: var(--a);
+  }
+  .home .art-eikon :is(.pr, .bd) {
+    stroke: #f6f1e899;
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+  .home .art-eikon :is(.bd, .ck) {
+    fill: #43b5a624;
+    stroke: var(--te);
+  }
+  .home .art-eikon .ck {
+    fill: none;
+    stroke-width: 0.6;
+  }
+  .home .art-eikon .aa {
+    fill: var(--te);
+    font-weight: 700;
+    letter-spacing: 0.3px;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .home .art-eikon :is(.ea, .eb) {
+      animation: art-eikon-o 7s var(--sn) infinite alternate;
+    }
+    .home .art-eikon .eb {
+      animation-duration: 9s;
+    }
+    .home .art-eikon .c {
+      animation: art-eikon-z 3.5s var(--sn) infinite alternate;
+    }
+    .home .art-eikon .ox {
+      animation: art-eikon-x 3s var(--sn) infinite alternate;
+    }
+    .home .art-eikon .d {
+      animation: art-eikon-y 3s var(--sn) -1.5s infinite alternate;
+    }
+    .home .art-eikon .gu {
+      animation: art-eikon-u 14s linear infinite;
+    }
+    /* Activo: la secuencia determinista de cuatro marcas (1,2 s cada una); el lienzo se reajusta con cada una. */
+    .home .art-host:is(:hover, :focus-within) .art-eikon :is(.r, .ea, .eb, .c, .p, .sw) {
+      animation: var(--an) 4.8s var(--ez) infinite;
+    }
+    .home .art-host:is(:hover, :focus-within) .art-eikon :is(.n, .h, .q) {
+      animation: art-eikon-w 4.8s var(--ez) calc(var(--i) * 1.2s - 4.8s) infinite;
+    }
+    .home .art-host:is(:hover, :focus-within) .art-eikon .ox {
+      animation:
+        art-eikon-x 3s var(--sn) infinite alternate,
+        art-eikon-w 4.8s var(--ez) infinite;
+    }
+    .home .art-host:is(:hover, :focus-within) .art-eikon :is(.bx, .pr, .bd) {
+      animation: art-eikon-k 1.2s var(--ez) infinite;
+    }
+    .home .art-host:is(:hover, :focus-within) .art-eikon .gu {
+      animation-duration: 4.8s;
+      stroke-opacity: 0.9;
+    }
+  }
+
+  @keyframes art-eikon-o {
+    to {
+      transform: rotate(calc(var(--r) + 14deg));
+    }
+  }
+  @keyframes art-eikon-z {
+    to {
+      transform: scale(0.45);
+    }
+  }
+  @keyframes art-eikon-x {
+    to {
+      transform: translate(-27px);
+    }
+  }
+  @keyframes art-eikon-y {
+    from {
+      transform: translate(0, -9.88px);
+    }
+    to {
+      transform: translate(0, 9.88px);
+    }
+  }
+  @keyframes art-eikon-u {
+    to {
+      transform: rotate(1turn);
+    }
+  }
+  /* Fases: eikon 0–18 %, mouseion 25–43 %, pinakotheke 50–68 %, prizma 75–93 %; entre ellas, la transformación. */
+  @keyframes art-eikon-r {
+    0%, 43%, 100% {
+      stroke: var(--te);
+      stroke-dashoffset: 0;
+    }
+    50%, 68% {
+      stroke: var(--go);
+      stroke-dashoffset: 0;
+    }
+    75%, 93% {
+      stroke: var(--vi);
+      stroke-dashoffset: 1.02;
+    }
+  }
+  @keyframes art-eikon-e {
+    0%, 18%, 100% {
+      transform: rotate(var(--r)) scale(1);
+      opacity: 1;
+      stroke: var(--s);
+    }
+    25%, 43% {
+      transform: rotate(var(--r)) scale(0.95, 2.6);
+      opacity: 0;
+      stroke: var(--s);
+    }
+    50%, 68% {
+      transform: rotate(var(--r2)) scale(0.976);
+      opacity: 1;
+      stroke: var(--go);
+    }
+    75%, 93% {
+      transform: rotate(var(--r3)) scale(1, 0);
+      opacity: 0;
+      stroke: var(--go);
+    }
+  }
+  @keyframes art-eikon-c {
+    0%, 18%, 100% {
+      transform: scale(0.38);
+      fill: var(--te);
+    }
+    25%, 43% {
+      transform: scale(1);
+      fill: var(--te);
+    }
+    50%, 68% {
+      transform: scale(0.48);
+      fill: var(--go);
+    }
+    75%, 93% {
+      transform: scale(0);
+      fill: var(--vi);
+    }
+  }
+  @keyframes art-eikon-p {
+    0%, 68% {
+      stroke-dashoffset: 1.02;
+    }
+    75%, 93% {
+      stroke-dashoffset: 0;
+    }
+    100% {
+      stroke-dashoffset: -1.02;
+    }
+  }
+  @keyframes art-eikon-s {
+    0%, 18%, 100% {
+      translate: var(--a);
+    }
+    25%, 43% {
+      translate: var(--b);
+    }
+    50%, 68% {
+      translate: var(--c);
+    }
+    75%, 93% {
+      translate: var(--d);
+    }
+  }
+  /* Ventana de una fase (la --i-ésima): textos, el punto, el hueco de Mouseion y el núcleo de Prizma. */
+  @keyframes art-eikon-w {
+    0%, 18%, 100% {
+      opacity: 1;
+      scale: 1;
+    }
+    25%, 93% {
+      opacity: 0;
+      scale: var(--z, 1);
+    }
+  }
+  @keyframes art-eikon-k {
+    0% {
+      transform: scale(1.08);
+      opacity: 0.3;
+    }
+    35%, 100% {
+      transform: none;
+    }
+  }
 }
