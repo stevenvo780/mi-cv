@@ -1,2 +1,191 @@
+/* Koinonía: el icono del sitio (dos anillos que se cruzan, verde UdeA sobre papel) hecho de voces. En reposo la gente
+   murmura por turnos y los argumentos corren por sus hilos hacia la lente donde los anillos coinciden, con el sello de
+   la decisión en el centro. Al activarse los dos anillos se funden en uno, cada voz baja por su hilo hasta rodear el
+   sello y el sello se estampa: el ✓ se traza y deja una onda. */
 @layer home {
+  .home .art-koinonia-udea {
+    --kg: #026937;
+    --kl: #3fcf88;
+    --kp: #faf8f4;
+  }
+  .home .art-koinonia-udea::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(34cqw 46cqh at 50% 50%, #02693766, #0000 72%);
+    opacity: 0.75;
+  }
+  .home .art-koinonia-udea svg {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+  .home .art-koinonia-udea .o {
+    fill: var(--kl);
+    fill-opacity: 0.06;
+    stroke: var(--kp);
+    stroke-opacity: 0.42;
+    stroke-width: 0.5;
+  }
+  .home .art-koinonia-udea .sp {
+    fill: none;
+    stroke: var(--kl);
+    stroke-width: 0.34;
+    stroke-linecap: round;
+    stroke-dasharray: 1.4 5.2;
+    opacity: 0.5;
+  }
+  .home .art-koinonia-udea .vs circle {
+    fill: var(--kp);
+    opacity: 0.8;
+    transform: rotate(calc(var(--a) * 1deg)) translateX(calc(var(--r) * 1px));
+  }
+  .home .art-koinonia-udea .vs circle:nth-child(3n) {
+    fill: var(--kl);
+  }
+  .home .art-koinonia-udea .e {
+    fill: none;
+    stroke: var(--art-a);
+    stroke-width: 1.4;
+    stroke-dasharray: 0.42 0.58;
+  }
+  .home .art-koinonia-udea .c {
+    fill: var(--kg);
+    stroke: var(--kl);
+    stroke-width: 0.5;
+  }
+  .home .art-koinonia-udea .v {
+    fill: none;
+    stroke: var(--kp);
+    stroke-width: 1.9;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-dasharray: 1;
+  }
+  .home .art-koinonia-udea .w {
+    fill: none;
+    stroke: var(--kl);
+    stroke-width: 0.5;
+    opacity: 0;
+  }
+  .home .art-koinonia-udea .s {
+    filter: drop-shadow(0 0 2px #3fcf8899);
+  }
+
+  /* Activa sin movimiento: sólo se enciende. */
+  .home .art-host:is(:hover, :focus-within) .art-koinonia-udea::before {
+    opacity: 1;
+  }
+  .home .art-host:is(:hover, :focus-within) .art-koinonia-udea .o {
+    stroke-opacity: 0.75;
+  }
+  .home .art-host:is(:hover, :focus-within) .art-koinonia-udea .sp {
+    opacity: 0.9;
+  }
+  .home .art-host:is(:hover, :focus-within) .art-koinonia-udea .s {
+    filter: drop-shadow(0 0 4px #3fcf88cc);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .home .art-koinonia-udea :is(.o, .vs circle, .sp),
+    .home .art-koinonia-udea::before {
+      transition:
+        transform 1.2s var(--ease-out),
+        opacity 0.6s;
+    }
+    /* La pausa global no detiene transiciones: se cancelan. */
+    html[data-motion='paused'] .home .art-koinonia-udea *,
+    html[data-motion='paused'] .home .art-koinonia-udea::before {
+      transition: none;
+    }
+    .home .art-koinonia-udea .o {
+      animation: art-koinonia-udea-b 7s ease-in-out infinite alternate;
+    }
+    .home .art-koinonia-udea .vs circle {
+      animation: art-koinonia-udea-m 6s ease-in-out calc(var(--r) * -1.9s) infinite;
+    }
+    .home .art-koinonia-udea .sp {
+      animation: art-koinonia-udea-f 3s linear infinite;
+    }
+    .home .art-koinonia-udea .e {
+      animation: art-koinonia-udea-r 14s linear infinite;
+    }
+
+    /* Los anillos se funden, las voces bajan por su hilo y el sello se estampa. */
+    .home .art-host:is(:hover, :focus-within) .art-koinonia-udea .o {
+      transform: translateX(calc(var(--s) * 22px));
+      animation: none;
+    }
+    .home .art-host:is(:hover, :focus-within) .art-koinonia-udea .vs circle {
+      transform: rotate(calc(var(--a) * 1deg)) translateX(calc(var(--r) * 0.13px + 14px));
+      opacity: 1;
+    }
+    .home .art-host:is(:hover, :focus-within) .art-koinonia-udea .sp {
+      animation-duration: 0.9s;
+    }
+    .home .art-host:is(:hover, :focus-within) .art-koinonia-udea .e {
+      animation-duration: 4s;
+    }
+    .home .art-host:is(:hover, :focus-within) .art-koinonia-udea .s {
+      animation: art-koinonia-udea-st 0.8s cubic-bezier(0.2, 1.5, 0.4, 1) 0.5s both;
+    }
+    .home .art-host:is(:hover, :focus-within) .art-koinonia-udea .v {
+      animation: art-koinonia-udea-v 0.45s ease-out 1s both;
+    }
+    .home .art-host:is(:hover, :focus-within) .art-koinonia-udea .w {
+      animation: art-koinonia-udea-w 1.3s ease-out 0.85s both;
+    }
+
+    @keyframes art-koinonia-udea-b {
+      to {
+        translate: calc(var(--s) * 1.6px) 0;
+      }
+    }
+    @keyframes art-koinonia-udea-m {
+      0%,
+      30%,
+      100% {
+        scale: 1;
+        opacity: 0.7;
+      }
+      12% {
+        scale: 0.92;
+        opacity: 1;
+      }
+    }
+    @keyframes art-koinonia-udea-f {
+      to {
+        stroke-dashoffset: -6.6;
+      }
+    }
+    @keyframes art-koinonia-udea-r {
+      to {
+        rotate: 1turn;
+      }
+    }
+    @keyframes art-koinonia-udea-st {
+      from {
+        transform: scale(2.2);
+        opacity: 0;
+      }
+      60% {
+        opacity: 1;
+      }
+    }
+    @keyframes art-koinonia-udea-v {
+      from {
+        stroke-dashoffset: 1;
+      }
+    }
+    @keyframes art-koinonia-udea-w {
+      from {
+        opacity: 0.9;
+      }
+      to {
+        opacity: 0;
+        transform: scale(2.8);
+      }
+    }
+  }
 }

@@ -1,2 +1,260 @@
 @layer home {
+  /* Ágora: editor de ST con los colores del sitio (CodeMirror sobre #020617) y la marca mandy → púrpura.
+     --on vale 1 con la tarjeta activa. Una sola entrada (art-agora-in) sirve a todo: cada pieza dice de dónde viene
+     (--t0, --o0) y, con movimiento, --p/--k0/--q/--sw/--rg/--ty eligen la animación de cada estado. */
+  .home .art-agora {
+    --on: 0;
+    --o0: 1;
+    background: #0a0a0f;
+    font-family: var(--f-code);
+  }
+  .home .art-host:is(:hover, :focus-within) .art-agora {
+    --on: 1;
+  }
+  .home .art-agora :is(.bg, .ed, .pf, .hl, .cur, .ok, .rule *, .gut, .code) {
+    position: absolute;
+  }
+  .home .art-agora .ok::after,
+  .home .art-agora :is(.cur, .ok)::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+  .home .art-agora .bg {
+    inset: -8%;
+    background:
+      radial-gradient(40% 48% at 14% 10%, #e9456070, #0000 70%),
+      radial-gradient(48% 55% at 92% 96%, #533483d0, #0000 72%);
+    --t0: translate(-3cqw, 2cqh) scale(1.1);
+  }
+
+  .home .art-agora .ed {
+    left: 4cqw;
+    top: 7cqh;
+    width: 72cqw;
+    height: 74cqh;
+    overflow: hidden;
+    border: 0.3cqw solid color-mix(in srgb, #3a3a56, #e94560 calc(70% * var(--on)));
+    border-radius: 2.2cqw;
+    background: #020617;
+    box-shadow: 0 4cqw 8cqw -3cqw #000;
+    transform: perspective(110cqw) rotateY(calc(9deg - 9deg * var(--on)));
+    transform-origin: 0;
+    --t0: perspective(110cqw) rotateY(9deg);
+  }
+  .home .art-agora .tb {
+    height: 12cqh;
+    padding: 0 2.6cqw;
+    border-bottom: 0.4cqw solid;
+    border-image: linear-gradient(90deg, #e94560, #9a6ee0) 1;
+    background: #16161f;
+    font-size: 2.9cqw;
+    line-height: 12cqh;
+  }
+  .home .art-agora .run {
+    float: right;
+    margin-top: 2.3cqh;
+    padding: 0 2.6cqw;
+    border-radius: 1cqw;
+    background: #059669;
+    font-size: 2.2cqw;
+    line-height: 4.6cqw;
+    --t0: scale(0.7);
+  }
+  .home .art-agora :is(.gut, .code) {
+    inset: 12cqh 0 0 7cqw;
+    padding: 3cqh 0 0 3cqw;
+    line-height: 7.2cqw;
+    white-space: pre;
+  }
+  .home .art-agora .gut {
+    left: 0;
+    width: 7cqw;
+    background: #0f172a99;
+    font-size: 2.6cqw;
+    color: #475569;
+  }
+  .home .art-agora .code {
+    font-size: 4.4cqw;
+    font-weight: 500;
+    font-variant-ligatures: none;
+    color: #e2e8f0;
+  }
+  .home .art-agora .code p {
+    position: relative;
+  }
+  /* Línea activa (la del cursor); al ejecutar, salta de línea en línea. */
+  .home .art-agora .hl {
+    inset: 3cqh 0 auto;
+    height: 7.2cqw;
+    border-left: 0.6cqw solid rgb(233 69 96 / var(--on));
+    background: color-mix(in srgb, #0e1222, #e94560 calc(22% * var(--on)));
+    transform: translateY(14.4cqw);
+    --t0: none;
+  }
+  /* La máquina de escribir: una cortina del color de la línea, con el cursor en su borde. */
+  .home .art-agora .cur {
+    inset: 0 auto 0 0;
+    width: 24ch;
+    background: rgb(14 18 34 / calc(1 - var(--on)));
+    transform: translateX(22ch);
+  }
+  .home .art-agora .cur::before {
+    inset: 16% auto 16% 0;
+    width: 0.5cqw;
+    background: #e2e8f0;
+  }
+
+  /* La salida: árbol de deducción natural. */
+  .home .art-agora .pf {
+    left: 49cqw;
+    top: 58cqh;
+    width: 47cqw;
+    height: 36cqh;
+    display: grid;
+    align-content: center;
+    justify-items: center;
+    gap: 1.2cqh;
+    border: 0.3cqw solid #505076;
+    border-radius: 2.2cqw;
+    background: #181824;
+    box-shadow:
+      0 3cqw 7cqw -2cqw #000,
+      0 0 9cqw rgb(16 185 129 / calc(0.35 * var(--on)));
+    font: 5.8cqw/1.1 var(--f-math);
+    color: #2dd4bf;
+    transform: translateY(calc(-3cqh * var(--on))) scale(calc(1 + var(--on) / 20));
+    --t0: none;
+  }
+  .home .art-agora .pf > * {
+    --t0: translateY(2cqh);
+    --o0: 0;
+  }
+  .home .art-agora .pr {
+    display: flex;
+    gap: 6cqw;
+    --t0: scale(0.85);
+    --o0: 0.5;
+  }
+  .home .art-agora .rule {
+    position: relative;
+    width: 64%;
+    height: 0.6cqw;
+  }
+  .home .art-agora .rule i {
+    inset: 0;
+    border-radius: 1cqw;
+    background: linear-gradient(90deg, #e94560, #9a6ee0);
+    transform-origin: 0;
+  }
+  .home .art-agora .rule b {
+    left: calc(100% + 1.4cqw);
+    top: -1.3cqw;
+    font: 500 2.5cqw var(--f-code);
+    color: #e94560;
+  }
+  .home .art-agora .cq {
+    font-size: 7cqw;
+    color: #99f6e4;
+    text-shadow: 0 0 2cqw #2dd4bfb3;
+  }
+  .home .art-agora .ok {
+    top: -3cqw;
+    right: -2.4cqw;
+    width: 7.4cqw;
+    height: 7.4cqw;
+    border-radius: 50%;
+    background: #10b981;
+    box-shadow: 0 0 3cqw #10b981a6;
+  }
+  /* ✓ dibujado: la fuente de código no trae el glifo. */
+  .home .art-agora .ok::before {
+    inset: 20% 36% 32% 37%;
+    border: solid #022c22;
+    border-width: 0 0.7cqw 0.7cqw 0;
+    rotate: 45deg;
+  }
+  .home .art-agora .ok::after {
+    border: 0.4cqw solid #10b981;
+    border-radius: 50%;
+    opacity: 0;
+    transform: scale(2.2);
+    --o0: 0.8;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    /* Reposo: la última línea se escribe despacio y el resultado llega solo, en bucle. */
+    .home .art-agora {
+      --p: art-agora-loop 12s infinite;
+      --k0: -1.5s;
+      --ty: art-agora-type 12s steps(22) -1.5s infinite;
+    }
+    /* Activa: el programa corre; la línea activa recorre las tres y cada una enciende su pieza del árbol. */
+    .home .art-host:is(:hover, :focus-within) .art-agora {
+      --p: art-agora-in 0.5s cubic-bezier(0.3, 1.6, 0.5, 1) both;
+      --k0: 0.15s;
+      --q: art-agora-in 0.8s var(--ease-out) both;
+      --sw: art-agora-in 1.2s steps(3, jump-none) both;
+      --rg: art-agora-in 2s 1.7s ease-out infinite;
+      --ty: none;
+    }
+    .home .art-agora .bg {
+      animation: art-agora-in 13s ease-in-out infinite alternate;
+    }
+    .home .art-agora :is(.ed, .pf, .run) {
+      animation: var(--q);
+    }
+    .home .art-agora .hl {
+      animation: var(--sw);
+    }
+    .home .art-agora .cur {
+      animation: var(--ty);
+    }
+    .home .art-agora .cur::before {
+      animation: art-agora-blink 1.1s steps(1) infinite;
+    }
+    .home .art-agora .ok::after {
+      animation: var(--rg);
+    }
+    .home .art-agora :is(.pr > span, .rule *, .cq, .ok) {
+      animation: var(--p);
+      animation-delay: calc(var(--d, 0) * 0.4s + var(--k0));
+    }
+  }
+
+  @keyframes art-agora-in {
+    from {
+      opacity: var(--o0);
+      transform: var(--t0);
+    }
+  }
+  @keyframes art-agora-loop {
+    0%,
+    45%,
+    97%,
+    to {
+      opacity: var(--o0);
+      transform: var(--t0);
+    }
+    50%,
+    92% {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  @keyframes art-agora-type {
+    0%,
+    5% {
+      transform: none;
+    }
+    35%,
+    to {
+      transform: translateX(22ch);
+    }
+  }
+  @keyframes art-agora-blink {
+    50% {
+      opacity: 0;
+    }
+  }
 }
