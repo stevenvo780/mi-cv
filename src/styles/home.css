@@ -1346,6 +1346,11 @@
   .home .cat-art {
     display: contents;
   }
+  /* Hasta que llega la hoja del arte (ArtStyles), la pieza no se maqueta ni pide sus fuentes. Especificidad 0: la regla
+     .home .art de art/_shared.css la muestra. Las cajas tienen su tamaño fijado (aspect-ratio y contención). */
+  :where(.home .card-art, .home .cat-art) > :where(.art) {
+    display: none;
+  }
   .home .cat-scene:is(:hover, :focus-visible) {
     border-color: color-mix(in oklab, var(--cat) 70%, transparent);
     box-shadow: 0 0 60px -20px color-mix(in oklab, var(--cat) 70%, transparent);

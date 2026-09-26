@@ -28,6 +28,7 @@
    reciba el foco: el texto de la tarjeta ya lo dice todo. */
 @layer home {
   .home .art {
+    display: block;
     position: absolute;
     inset: 0;
     overflow: hidden;

@@ -1,8 +1,8 @@
 // Generado por scripts/build-art.mts — no editar a mano.
 import type { Locale } from '@/lib/site';
 
-export const ART_CSS = '/art/art.f8924ea17f.css' as const;
-export const ART_CSS_BYTES = 129643;
+export const ART_CSS = '/art/art.9f62edff20.css' as const;
+export const ART_CSS_BYTES = 129657;
 
 /** El HTML de cada pieza: uno solo si no depende del idioma. */
 export const ART_HTML: Record<string, string | Record<Locale, string>> = {
