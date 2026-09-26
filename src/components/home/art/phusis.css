@@ -8,22 +8,24 @@
     --ph-gold-2: #f0c887;
     --ph-cream: #e8e0d4;
     --ph-coral: #d9776b;
-    background: radial-gradient(55% 60% at 50% 10%, rgb(67 181 166 / 0.13), transparent 70%);
+    /* Retícula vacía: un punto por celda (48 × 30), pintado por la caja y no por el SVG. */
+    background:
+      radial-gradient(circle, rgb(232 224 212 / 0.16) 0.14cqw, transparent 0.2cqw) 0 0 / calc(100% / 48)
+        calc(100% / 30),
+      radial-gradient(55% 60% at 50% 10%, rgb(67 181 166 / 0.13), transparent 70%);
   }
   .home .art-phusis svg {
     display: block;
     width: 100%;
     height: 100%;
   }
-  .home .art-phusis .lat {
-    fill: url(#art-phusis-p);
-  }
-  .home .art-phusis pattern circle {
-    fill: var(--ph-cream);
-    opacity: 0.14;
+  .home .art-phusis pattern path {
+    fill: none;
+    stroke: var(--ph-cream);
+    stroke-width: 0.12;
   }
   /* Cada tramo se parte en cuadritos: 0,84 de celda y 0,16 de junta, centrados en su casilla. */
-  .home .art-phusis :is(use, .rl path) {
+  .home .art-phusis :is(use, .rl path, .md) {
     fill: none;
     stroke-width: 0.84;
     stroke-dasharray: 0.84 0.16;
@@ -53,9 +55,6 @@
   .home .art-phusis .on {
     clip-path: url(#art-phusis-k);
   }
-  .home .art-phusis .md {
-    clip-path: url(#art-phusis-m);
-  }
   .home .art-phusis .gh {
     opacity: 0.22;
   }
@@ -68,7 +67,6 @@
   .home .art-phusis .fr {
     clip-path: url(#art-phusis-f);
     stroke: var(--text-strong);
-    filter: drop-shadow(0 0 0.5px var(--ph-teal-2));
   }
   .home .art-phusis .sc {
     fill: url(#art-phusis-s);
@@ -89,13 +87,14 @@
   .home .art-phusis .ct {
     fill: var(--ph-teal-2);
   }
+  /* Tabla: celdas apagadas en contorno, vecindarios en crema y salidas en turquesa. */
   .home .art-phusis .r0 {
-    stroke: var(--ph-cream);
-    opacity: 0.14;
+    fill: url(#art-phusis-p);
+    opacity: 0.5;
   }
   .home .art-phusis .r1 {
     stroke: var(--ph-cream);
-    opacity: 0.75;
+    opacity: 0.85;
   }
   .home .art-phusis .r2 {
     stroke: var(--ph-teal-2);
@@ -109,9 +108,10 @@
   }
 
   @media (prefers-reduced-motion: no-preference) {
-    /* Reposo: una fila cada 0,36 s; el frente brilla y deja estela; al final todo vuelve a su fantasma. */
+    /* Reposo: una fila cada 0,36 s; el frente brilla y deja estela; al final todo vuelve a su fantasma. Arranca (y
+       vuelve al soltar) casi completa. */
     .home .art-phusis :is(.k, .f, .sc, .fr, .on) {
-      animation: 12s -4.3s infinite;
+      animation: 12s -8.2s infinite;
     }
     .home .art-phusis .k {
       animation-name: art-phusis-k;
@@ -134,9 +134,13 @@
     .home .art-phusis .ct {
       animation: art-phusis-ct 1.1s steps(1) infinite;
     }
-    /* Activa: la cascada vuelve a nacer de la semilla y baja en 1 s; el frente pasa a oro y la tabla late. */
-    .home .art-host:is(:hover, :focus-within) .art-phusis :is(.k, .f, .sc, .fr) {
-      animation-duration: 1.4s;
+    .home .art-phusis .gh {
+      transition: opacity 0.5s;
+    }
+    /* Activa: la cascada vuelve a nacer de la semilla y baja en 1,2 s, se sostiene entera y se funde antes de volver
+       a empezar (ciclo de 2,2 s); el frente pasa a oro y las salidas de la tabla laten al mismo compás. */
+    .home .art-host:is(:hover, :focus-within) .art-phusis :is(.k, .f, .sc, .fr, .on) {
+      animation-duration: 2.2s;
       animation-delay: 0s;
     }
     .home .art-host:is(:hover, :focus-within) .art-phusis .k {
@@ -153,11 +157,15 @@
       stroke: var(--ph-gold-2);
     }
     .home .art-host:is(:hover, :focus-within) .art-phusis .on {
-      animation: none;
+      animation-name: art-phusis-on2;
     }
     .home .art-host:is(:hover, :focus-within) .art-phusis .r2 {
-      animation: art-phusis-r 1.4s infinite;
+      animation: art-phusis-r 2.2s infinite;
     }
+  }
+  /* Con el movimiento en pausa, tampoco transiciones. */
+  html[data-motion='paused'] .home .art-phusis * {
+    transition: none;
   }
   @keyframes art-phusis-k {
     0% {
@@ -191,7 +199,7 @@
     0% {
       transform: translateY(-24px);
     }
-    75%,
+    55%,
     100% {
       transform: none;
     }
@@ -200,17 +208,26 @@
     0% {
       transform: none;
     }
-    75%,
+    55%,
     100% {
       transform: translateY(24px);
     }
   }
   @keyframes art-phusis-fr2 {
     0%,
-    75% {
+    55% {
       opacity: 1;
     }
-    90%,
+    68%,
+    100% {
+      opacity: 0;
+    }
+  }
+  @keyframes art-phusis-on2 {
+    84% {
+      opacity: 1;
+    }
+    97%,
     100% {
       opacity: 0;
     }

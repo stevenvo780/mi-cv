@@ -15,6 +15,7 @@
   }
   .home .art-graf svg + svg {
     z-index: 1;
+    --on: inline;
   }
   /* Niebla al fondo (arriba) y viñeta: solo sobre la ciudad (el segundo svg queda encima). */
   .home .art-graf::after {
@@ -22,7 +23,7 @@
     position: absolute;
     inset: 0;
     background:
-      linear-gradient(rgb(5 9 11 / 0.9), transparent 40%),
+      linear-gradient(rgb(5 9 11 / 0.75), transparent 40%),
       radial-gradient(95% 85% at 45% 55%, transparent 45%, rgb(5 9 11 / 0.8));
   }
   .home .art-graf .rf {
@@ -48,25 +49,22 @@
     stroke: #0f2240;
     stroke-width: 0.8;
   }
+  /* Ventanas: trazos de largo cero con remate cuadrado. */
   .home .art-graf .l {
-    fill: #f0c56a;
+    stroke: #f0c56a;
+    stroke-linecap: square;
     opacity: 0.6;
   }
-  .home .art-graf :is(.rv, .fl, .av, .lp, .rb, .rt, .cr, .hs, .bag, .ck path) {
+  .home .art-graf :is(.rv, .av, .lp, .rb, .rt, .cr, .hs, .bag, .ck path) {
     fill: none;
     stroke-linecap: round;
     stroke-linejoin: round;
   }
+  /* El río: agua más clara que las calles, con un brillo suave en las orillas. */
   .home .art-graf .rv {
-    stroke: #071a30;
+    stroke: #123a5a;
     stroke-width: 11;
-    filter: drop-shadow(0 0 0.5cqw rgb(79 216 201 / 0.55));
-  }
-  .home .art-graf .fl {
-    stroke: #7fd0dc;
-    stroke-width: 0.6;
-    stroke-dasharray: 5 13;
-    opacity: 0.45;
+    filter: drop-shadow(0 0 0.5cqw rgb(79 216 201 / 0.3));
   }
   .home .art-graf .av {
     stroke: #142b52;
@@ -110,7 +108,8 @@
     fill-rule: evenodd;
     scale: calc(1 - var(--k));
   }
-  .home .art-graf .ck {
+  /* La animación va en el disco y la marca, no en su grupo: un <g> oculto con display sigue animando. */
+  .home .art-graf .ck * {
     opacity: var(--k);
   }
   .home .art-graf .ck circle {
@@ -154,8 +153,11 @@
   }
 
   @media (prefers-reduced-motion: no-preference) {
-    .home .art-graf :is(.rb, .rt, .cr, .rg, .pn, .ck) {
-      animation: var(--z, var(--n)) var(--t) var(--d) infinite ease-in-out both;
+    /* --on: sin display no hay animación; los originales del marcador (en defs) no la gastan. */
+    .home .art-graf :is(.rb, .rt, .cr, .rg, .pn, .ck *) {
+      display: var(--on, none);
+      transition: display 0.3s allow-discrete;
+      animation: var(--n) var(--t) var(--d) infinite ease-in-out both;
     }
     .home .art-graf .rb {
       --n: art-graf-rb;
@@ -172,28 +174,30 @@
     .home .art-graf .pn {
       --n: art-graf-pn;
     }
-    .home .art-graf .ck {
+    .home .art-graf .ck * {
       --n: art-graf-ck;
     }
-    /* Reposo: un solo pedido en curso; los demás salen al pasar el cursor (y arrancan desde cero). */
+    /* Reposo: un solo pedido en curso; los demás salen al pasar el cursor y arrancan desde cero (vuelven a mostrarse).
+       Al salir se desvanecen sin detenerse: display espera a que acabe la opacidad. */
     .home .art-graf .x {
       --t: 4.8s;
-      --z: none;
+      --on: none;
       opacity: 0;
+      transition: opacity 0.3s;
     }
     .home .art-host:is(:hover, :focus-within) .art-graf .x {
-      --z: initial;
+      --on: inline;
       opacity: 1;
-      transition: opacity 0.3s;
+    }
+    .home .art-graf .l {
+      transition: opacity 0.4s;
+    }
+    /* Con el movimiento en pausa, tampoco se desvanecen: se van de una vez. */
+    html[data-motion='paused'] .home .art-graf * {
+      transition: none;
     }
     .home .art-graf .hp {
       animation: art-graf-hp 2.6s ease-out infinite;
-    }
-    .home .art-host:is(:hover, :focus-within) .art-graf .hp {
-      animation-duration: 1.1s;
-    }
-    .home .art-graf .fl {
-      animation: art-graf-fl 6s linear infinite;
     }
   }
   @keyframes art-graf-pn {
@@ -307,11 +311,6 @@
     100% {
       scale: 2.2;
       opacity: 0;
-    }
-  }
-  @keyframes art-graf-fl {
-    to {
-      stroke-dashoffset: -30;
     }
   }
 }

@@ -1,14 +1,14 @@
 import type { CSSProperties } from 'react';
 
 /* Etapas abiertas del pipeline de negocios de Xenía, con la probabilidad y el color que les da la app
-   (Prospección, Calificación, Propuesta, Negociación, Cierre). s: franja; e: borde tenue. n: tarjetas de la
-   columna, un embudo. t: momento del ciclo activo en que el negocio viajero cruza la columna (la enciende). */
+   (Prospección, Calificación, Propuesta, Negociación, Cierre). s: franja (el borde tenue sale de ella en el CSS).
+   n: tarjetas de la columna, un embudo. t: momento del ciclo activo en que el negocio viajero cruza la columna. */
 const ETAPAS = [
-  { p: 10, n: 4, s: '#6c8388', e: '#9db0b53d', t: 0.64 },
-  { p: 25, n: 3, s: '#2a7a6e', e: '#2a7a6e80', t: 0.74 },
-  { p: 50, n: 3, s: '#43b5a6', e: '#43b5a666', t: 0.84 },
-  { p: 70, n: 2, s: '#b98535', e: '#9a671299', t: 0.07 },
-  { p: 90, n: 1, s: '#e0a85e', e: '#e0a85e73', t: 0.14 },
+  { p: 10, n: 4, s: '#6c8388', t: '.63' },
+  { p: 25, n: 3, s: '#2a7a6e', t: '.76' },
+  { p: 50, n: 2, s: '#43b5a6', t: '.88' },
+  { p: 70, n: 2, s: '#b98535', t: '.06' },
+  { p: 90, n: 1, s: '#e0a85e', t: '.13' },
 ];
 
 const css = (o: Record<string, string | number>) => o as CSSProperties;
@@ -18,10 +18,10 @@ export default function Art() {
   return (
     <div className="art art-devkits-crm" aria-hidden="true">
       {ETAPAS.map((e, i) => (
-        <div key={e.p} className="xc" style={css({ '--i': i, '--p': e.p, '--s': e.s, '--e': e.e, '--t': e.t })}>
+        <div key={e.p} className="xc" style={css({ '--i': i, '--p': e.p, '--s': e.s, '--t': e.t })}>
           <b>{e.p}%</b>
           {Array.from({ length: e.n }, (_, j) => (
-            <i key={j} style={css({ '--j': j })} />
+            <i key={j} />
           ))}
         </div>
       ))}
@@ -41,7 +41,7 @@ export default function Art() {
       <div className="xd" />
       <div className="xo">
         <svg viewBox="0 0 24 24">
-          <path d="m6 12.5 4 4 8-9" fill="none" stroke="#0b1417" strokeWidth="3.4" />
+          <path d="m6 12.5 4 4 8-9" fill="none" stroke="#fff" strokeWidth="3.4" />
         </svg>
       </div>
     </div>

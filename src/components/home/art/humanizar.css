@@ -1,16 +1,17 @@
 @layer home {
-  /* Humanizar: la ciudad de noche del catálogo en isométrico. Manzana = --c; alturas en décimas (--u); --sp acelera. */
+  /* Humanizar: la ciudad de noche del catálogo en isométrico. Rejilla --C × --R (de los datos), manzana = --c, alturas
+     en décimas (--u). Las velocidades no cambian al pasar: así nada salta de sitio al entrar ni al salir. */
   .home .art-humanizar {
-    --C: 4;
-    --R: 3;
-    --c: 13cqw;
+    --C: var(--gc, 4);
+    --R: var(--gr, 3);
+    --c: calc(52cqw / var(--C));
     --u: calc(var(--c) / 10);
     --rx: 56deg;
     --rz: 40deg;
-    --sp: 1;
     --on: 0;
     --sod: #ffb020;
     --chalk: #eef2fa;
+    --st: var(--chalk);
     perspective: 260cqw;
     perspective-origin: 50% 0;
     background:
@@ -21,10 +22,11 @@
     font-family: var(--f-code);
   }
   .home .art-host:is(:hover, :focus-within) .art-humanizar {
-    --sp: 3.2;
     --on: 1;
+    --st: var(--sod);
+    --ez: linear(0, 3.3 50%, 1);
   }
-  /* Horizonte: siluetas de la ciudad del sitio, con el sodio detrás. */
+  /* Horizonte: siluetas de la ciudad del sitio; su base se pierde en la bruma de sodio (sin borde duro). */
   .home .art-humanizar::before {
     content: '';
     position: absolute;
@@ -34,10 +36,9 @@
       repeating-linear-gradient(90deg, #0c1226 0 5cqw, transparent 0 13cqw) 0 100% / 100% 52% no-repeat,
       repeating-linear-gradient(90deg, transparent 0 2cqw, #0c1226 0 9cqw, transparent 0 23cqw) 0 100% / 100% 38%
         no-repeat,
-      repeating-linear-gradient(90deg, transparent 0 7cqw, #111a3c 0 10cqw, transparent 0 17cqw) 0 100% / 100% 92%
-        no-repeat,
       repeating-linear-gradient(90deg, transparent 0 15cqw, #111a3c 0 18cqw, transparent 0 31cqw) 0 100% / 100% 70%
         no-repeat;
+    mask-image: linear-gradient(#000 45%, transparent);
   }
 
   /* El plano: manzanas en rejilla; calles en los bordes de celda, farolas de sodio en cada cruce. */
@@ -84,16 +85,19 @@
     height: 100%;
     margin: 0 0 0 -0.4cqmin;
   }
-  /* Módulos (productos): azotea, fachada sur y fachada este; --hl los apaga desde la leyenda. */
+  /* Módulos (productos): azotea, fachada sur y fachada este; el retiro crece con la altura. */
   .home .art-humanizar .b {
     --z: calc(var(--h) * var(--u));
     position: relative;
-    margin: calc(var(--c) * var(--m));
+    margin: calc(var(--c) * (0.13 + 0.012 * var(--h)));
     transform-style: preserve-3d;
   }
   .home .art-humanizar .b > * {
     position: absolute;
     border: 0.15cqmin solid #3d4d8c;
+  }
+  /* La leyenda los apaga (--hl); el filtro solo existe mientras manda la leyenda. */
+  .home .cat:has(.cat-kinds [data-k]:is(:hover, :focus-visible)) .art-humanizar .b > * {
     filter: brightness(calc(0.3 + 0.7 * var(--hl, 1)));
   }
   .home .art-humanizar .t {
@@ -119,12 +123,14 @@
     transform-origin: 0 0;
     transform: rotateY(-90deg);
   }
-  /* Ventanas por piso: bandas de luz recortadas por parteluces. */
-  .home .art-humanizar :is(.s, .e)::before {
+  /* Ventanas por piso: bandas de luz recortadas por parteluces. ::before, a media luz; ::after es la misma luz
+     encendida, que entra en ola al pasar. */
+  .home .art-humanizar :is(.s, .e)::before,
+  .home .art-humanizar :is(.s, .e)::after {
     content: '';
     position: absolute;
     inset: 7%;
-    opacity: calc((0.5 + 0.5 * var(--on)) * var(--hl, 1));
+    opacity: calc(0.5 * var(--hl, 1));
     background: repeating-linear-gradient(
       var(--g, 180deg),
       transparent 0 calc(var(--u) * 0.35),
@@ -137,7 +143,10 @@
       transparent 0 calc(var(--u) * 0.75)
     );
   }
-  .home .art-humanizar .e::before {
+  .home .art-humanizar :is(.s, .e)::after {
+    opacity: calc(var(--on) * var(--hl, 1));
+  }
+  .home .art-humanizar .e {
     --g: 90deg;
     --gm: 180deg;
   }
@@ -154,7 +163,7 @@
     translate: -50% -50%;
   }
   .home .art-humanizar .t::before {
-    border: 0.6cqmin solid color-mix(in oklab, var(--sod) calc(var(--on) * 100%), var(--chalk));
+    border: 0.6cqmin solid var(--st);
     background: #0a0e1c;
     box-shadow: 0 0 calc(var(--on) * 2.4cqmin) var(--sod);
   }
@@ -163,45 +172,66 @@
     opacity: 0;
   }
 
-  /* Pedidos: cápsulas de sodio que llegan como factura (turquesa). --s es la pose quieta. */
+  /* Pedidos: una cápsula de sodio (::before) que a mitad de camino se sella como factura, un ticket turquesa
+     (::after). --s es la pose quieta: antes de la mitad, pedido; después, factura. */
   .home .art-humanizar .p {
     --ex: calc(var(--C) * var(--c));
     --ey: 0px;
+    --f: clamp(0, (var(--s) - 0.5) * 999, 1);
     left: 0;
     top: calc(var(--r) * var(--c));
-    width: 11cqmin;
-    height: 1.8cqmin;
-    margin: -0.9cqmin 0 0 -10cqmin;
-    border-radius: 1cqmin;
-    background: linear-gradient(var(--pg, 90deg), transparent, var(--sod) 80%, #fff);
-    transform: translate3d(calc(var(--s) * var(--ex)), calc(var(--s) * var(--ey)), 0.5cqmin);
+    width: 13cqmin;
+    height: 3cqmin;
+    margin: -1.5cqmin 0 0 -11.5cqmin;
+    translate: calc(var(--s) * var(--ex)) calc(var(--s) * var(--ey)) 0.5cqmin;
   }
   .home .art-humanizar .p.v {
     --ex: 0px;
     --ey: calc(var(--R) * var(--c));
+    --pg: 180deg;
     left: calc(var(--r) * var(--c));
     top: 0;
-    --pg: 180deg;
-    width: 1.8cqmin;
-    height: 11cqmin;
-    margin: -10cqmin 0 0 -0.9cqmin;
+    width: 3cqmin;
+    height: 13cqmin;
+    margin: -11.5cqmin 0 0 -1.5cqmin;
   }
+  .home .art-humanizar .p::before,
   .home .art-humanizar .p::after {
     content: '';
     position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    background: linear-gradient(var(--pg, 90deg), transparent, var(--art-a) 80%, #fff);
+  }
+  .home .art-humanizar .p::before {
+    inset: 0.5cqmin;
+    border-radius: 1cqmin;
+    background: linear-gradient(var(--pg, 90deg), transparent, var(--sod) 75%, #fff);
+    opacity: calc(1 - var(--f));
+  }
+  .home .art-humanizar .p::after {
+    right: 0;
+    bottom: 0;
+    width: 3cqmin;
+    height: 3cqmin;
+    border-radius: 0.4cqmin;
+    background:
+      repeating-linear-gradient(transparent 0 0.5cqmin, rgb(255 255 255 / 0.8) 0 0.85cqmin) 50% / 1.7cqmin 1.7cqmin
+        no-repeat,
+      var(--art-a);
+    box-shadow: 0 0 1.8cqmin var(--art-a);
     opacity: var(--f);
   }
 
-  /* Agentes (servicios): sombra en el suelo, haz y núcleo que mira siempre a la cámara. */
+  /* Agentes (servicios): un destello ✦ que vuela por encima de todas las azoteas, mirando siempre a la cámara, y su
+     anillo en el suelo (sin mástil: no es un alfiler). Ruta: rectángulo de (x, y) a (X, Y). */
   .home .art-humanizar .ag {
-    --zz: calc(var(--za) * var(--u));
+    --a: calc(var(--x) * var(--c));
+    --b: calc(var(--y) * var(--c));
+    --A: calc(var(--X) * var(--c));
+    --B: calc(var(--Y) * var(--c));
+    --zz: calc((17 - var(--k)) * var(--u));
     left: 0;
     top: 0;
     transform-style: preserve-3d;
-    translate: var(--a0);
+    translate: var(--a) var(--b);
   }
   .home .art-humanizar .ag > * {
     position: absolute;
@@ -214,40 +244,28 @@
     aspect-ratio: 1;
     border: 0.45cqmin solid var(--ac);
     border-radius: 50%;
-    box-shadow:
-      0 0 2cqmin var(--ac),
-      inset 0 0 2cqmin var(--ac);
+    box-shadow: 0 0 2cqmin var(--ac);
     transform: translateZ(0.3cqmin);
   }
-  .home .art-humanizar .bm {
-    left: -0.2cqmin;
-    top: 0;
-    width: 0.4cqmin;
-    height: var(--zz);
-    background: linear-gradient(transparent, var(--ac));
-    transform-origin: 0 0;
-    transform: rotateX(90deg);
-  }
   .home .art-humanizar .orb {
-    left: -5cqmin;
-    top: -5cqmin;
-    width: 10cqmin;
+    left: -4.5cqmin;
+    top: -4.5cqmin;
+    width: 9cqmin;
     aspect-ratio: 1;
     border-radius: 50%;
-    background: radial-gradient(
-      closest-side,
-      #fff 0 12%,
-      var(--ac) 19%,
-      transparent 25% 36%,
-      var(--ac) 39% 45%,
-      rgb(255 255 255 / 0.1) 50%,
-      transparent
-    );
+    background: radial-gradient(closest-side, color-mix(in srgb, var(--ac) 45%, transparent), transparent);
     transform: translateZ(var(--zz)) rotateZ(calc(-1 * var(--rz))) rotateX(calc(-1 * var(--rx)));
     scale: calc(1 + 0.3 * var(--on));
   }
+  .home .art-humanizar .orb::before {
+    content: '';
+    position: absolute;
+    inset: 20%;
+    background: radial-gradient(#fff 0 16%, var(--ac) 34%);
+    clip-path: polygon(50% 0, 60% 40%, 100% 50%, 60% 60%, 50% 100%, 40% 60%, 0 50%, 40% 40%);
+  }
 
-  /* HUD del sitio: rótulo, contador de estaciones y brújula. */
+  /* HUD del sitio: rótulo, contador de estaciones y brújula (aguja en rombo dentro de su anillo). */
   .home .art-humanizar :is(.hud, .ct) {
     position: absolute;
     left: 4.5cqmin;
@@ -294,15 +312,21 @@
     aspect-ratio: 1;
     border: 0.25cqmin solid #344277;
     border-radius: 50%;
-    background: linear-gradient(#ff4b3e 50%, var(--chalk) 0) 50% / 0.8cqmin 72% no-repeat;
+  }
+  .home .art-humanizar .cp::before {
+    content: '';
+    position: absolute;
+    inset: 12% 34%;
+    background: linear-gradient(#ff4b3e 50%, var(--chalk) 0);
+    clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%);
   }
 
   /* Retrato: la rejilla se apila (3×4) y la cámara se levanta. */
   @container scene (aspect-ratio < 1) {
     .home .art-humanizar {
-      --C: 3;
-      --R: 4;
-      --c: 18cqw;
+      --C: var(--gr, 3);
+      --R: var(--gc, 4);
+      --c: calc(54cqw / var(--C));
       --rz: 34deg;
       --rx: 52deg;
     }
@@ -317,46 +341,59 @@
 
   @media (prefers-reduced-motion: no-preference) {
     .home .art-humanizar .p {
+      --t: calc(var(--d) * 1s) linear calc(var(--s) * var(--d) * -1s) infinite;
       animation:
-        art-humanizar-run calc(var(--d) / var(--sp)) linear var(--dl) infinite,
-        art-humanizar-fade calc(var(--d) / var(--sp)) linear var(--dl) infinite;
+        art-humanizar-run var(--t),
+        art-humanizar-fade var(--t);
+    }
+    .home .art-humanizar .p::before {
+      animation: art-humanizar-ord var(--t);
     }
     .home .art-humanizar .p::after {
-      animation: art-humanizar-inv calc(var(--d) / var(--sp)) linear var(--dl) infinite;
+      animation: art-humanizar-inv var(--t);
     }
     .home .art-humanizar .ag {
-      animation: art-humanizar-route calc(var(--d) * 1.25 / var(--sp)) cubic-bezier(0.65, 0, 0.35, 1) var(--dl) infinite;
+      animation: art-humanizar-route calc((15 + 4 * var(--k)) * 1.25s) cubic-bezier(0.65, 0, 0.35, 1)
+        calc(var(--k) * -3s) infinite;
     }
     .home .art-humanizar .rg {
-      animation: art-humanizar-ping calc(3.2s / var(--sp)) ease-out calc(var(--j) * -0.7s) infinite;
+      animation: art-humanizar-ping 3.2s ease-out calc(var(--j) * -0.7s) infinite;
     }
-    .home .art-humanizar :is(.s, .e)::before {
-      animation: art-humanizar-glow 7s ease-in-out calc(var(--i) * -1.3s) infinite;
+    /* Activa: la ola enciende los módulos uno a uno y luego los agentes (con un rebote, --ez); el contador suma los
+       servicios. Todo son transiciones con retardo por módulo: al salir, la ola se apaga igual de suave. */
+    .home .art-humanizar :is(.s, .e, .t) {
+      transition: 0.5s ease-out calc(var(--i) * 90ms);
+      transition-property: opacity, border-color, box-shadow;
     }
-    /* Activa: la ola enciende los módulos uno a uno, luego los agentes; el contador la sigue. */
-    .home .art-host:is(:hover, :focus-within) .art-humanizar :is(.s, .e)::before {
-      animation: art-humanizar-on 0.5s ease-out calc(var(--i) * 90ms) both;
+    .home .art-humanizar .ln {
+      transition: opacity 0.5s;
     }
-    .home .art-host:is(:hover, :focus-within) .art-humanizar .t::before {
-      animation: art-humanizar-lit 0.4s calc(var(--i) * 90ms) both;
+    .home .art-humanizar .orb {
+      transition: scale 0.6s var(--ez, ease) calc(var(--on) * var(--j) * 90ms);
+    }
+    .home .art-humanizar .od i {
+      transition: transform 0.36s steps(var(--n)) calc(var(--on) * var(--j) * 90ms);
     }
     .home .art-host:is(:hover, :focus-within) .art-humanizar .t::after {
       animation: art-humanizar-rip 2.4s ease-out calc(var(--i) * 90ms) infinite;
     }
-    .home .art-host:is(:hover, :focus-within) .art-humanizar .orb {
-      animation: art-humanizar-flash 0.6s calc(var(--j) * 90ms) both;
-    }
-    .home .art-host:is(:hover, :focus-within) .art-humanizar .od i {
-      animation: art-humanizar-odo 1.35s steps(var(--n)) both;
-    }
+  }
+  /* Las luces heredan la transición de su fachada o azotea, y la pausa la quita de todas. */
+  .home .art-humanizar :is(.s, .e)::after,
+  .home .art-humanizar .t::before {
+    transition: inherit;
+  }
+  /* Con el movimiento en pausa, tampoco transiciones: quitarlas cancela las que estén en curso. */
+  html[data-motion='paused'] .home .art-humanizar * {
+    transition: none;
   }
 
   @keyframes art-humanizar-run {
     from {
-      transform: translate3d(0, 0, 0.5cqmin);
+      translate: 0 0 0.5cqmin;
     }
     to {
-      transform: translate3d(var(--ex), var(--ey), 0.5cqmin);
+      translate: var(--ex) var(--ey) 0.5cqmin;
     }
   }
   @keyframes art-humanizar-fade {
@@ -369,33 +406,46 @@
       opacity: 1;
     }
   }
-  @keyframes art-humanizar-inv {
+  @keyframes art-humanizar-ord {
     0%,
-    48% {
+    47% {
+      opacity: 1;
+    }
+    51%,
+    100% {
       opacity: 0;
     }
-    56%,
+  }
+  /* El sello: el ticket cae grande y se asienta en la cabeza del pedido. */
+  @keyframes art-humanizar-inv {
+    0%,
+    47% {
+      opacity: 0;
+      scale: 2.4;
+    }
+    52%,
     100% {
       opacity: 1;
+      scale: 1;
     }
   }
   @keyframes art-humanizar-route {
     0%,
     8%,
     100% {
-      translate: var(--a0);
+      translate: var(--a) var(--b);
     }
     25%,
     33% {
-      translate: var(--a1);
+      translate: var(--A) var(--b);
     }
     50%,
     58% {
-      translate: var(--a2);
+      translate: var(--A) var(--B);
     }
     75%,
     83% {
-      translate: var(--a3);
+      translate: var(--a) var(--B);
     }
   }
   @keyframes art-humanizar-ping {
@@ -408,26 +458,6 @@
       transform: translateZ(0.3cqmin) scale(1.6);
     }
   }
-  @keyframes art-humanizar-glow {
-    0%,
-    100% {
-      opacity: calc(0.36 * var(--hl, 1));
-    }
-    50% {
-      opacity: calc(0.64 * var(--hl, 1));
-    }
-  }
-  @keyframes art-humanizar-on {
-    from {
-      opacity: calc(0.4 * var(--hl, 1));
-    }
-  }
-  @keyframes art-humanizar-lit {
-    from {
-      border-color: var(--chalk);
-      box-shadow: none;
-    }
-  }
   @keyframes art-humanizar-rip {
     from {
       opacity: var(--hl, 1);
@@ -437,19 +467,6 @@
     to {
       opacity: 0;
       transform: scale(2.6);
-    }
-  }
-  @keyframes art-humanizar-flash {
-    from {
-      scale: 1;
-    }
-    50% {
-      scale: 2;
-    }
-  }
-  @keyframes art-humanizar-odo {
-    from {
-      transform: none;
     }
   }
 }

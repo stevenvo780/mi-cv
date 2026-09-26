@@ -6,11 +6,11 @@
     --go: #e0a85e;
     --vi: #8d7cc0;
     --ez: cubic-bezier(0.65, 0, 0.25, 1);
-    --sn: cubic-bezier(0.37, 0, 0.63, 1);
+    /* Halo del isotipo: centro (80, 46) y radio 48 del lienzo de 160. */
+    background: radial-gradient(circle 30cqw at 50% 46%, #43b5a64d, #0000);
   }
   .home .art-eikon svg {
     width: 100%;
-    height: 100%;
     fill: none;
     stroke-width: 0.35;
   }
@@ -34,9 +34,6 @@
     fill: #0b1417;
     stroke: var(--te);
   }
-  .home .art-eikon .m {
-    filter: drop-shadow(0 0 1.4px #43b5a680);
-  }
   .home .art-eikon .r {
     --an: art-eikon-r;
     stroke: var(--te);
@@ -46,6 +43,9 @@
     transform: rotate(-90deg);
   }
   /* Las órbitas se estiran hasta el anillo o se aplanan en aristas: trazo que no escala con ellas. */
+  .home .art-eikon ellipse {
+    vector-effect: non-scaling-stroke;
+  }
   .home .art-eikon :is(.ea, .eb) {
     --an: art-eikon-e;
     --s: var(--go);
@@ -65,9 +65,11 @@
     --s: var(--vi);
   }
   .home .art-eikon .ox {
-    transform: translate(27px);
+    translate: 27px;
   }
+  /* El punto: activo queda quieto en la punta de su órbita (sin heredar la animación de la órbita). */
   .home .art-eikon .d {
+    --an: none;
     fill: var(--go);
     stroke: none;
   }
@@ -79,6 +81,7 @@
   .home .art-eikon :is(.h, .q) {
     --z: 0;
     --i: 1;
+    fill: #0b1417;
     scale: 0;
   }
   .home .art-eikon .p {
@@ -94,17 +97,21 @@
     --i: 3;
     fill: var(--vi);
   }
-  .home .art-eikon .tx {
+  .home .art-eikon text {
     font: 500 4px var(--f-code);
     letter-spacing: 0.6px;
     fill: var(--muted);
   }
   .home .art-eikon .n {
-    opacity: calc(1 - min(var(--i), 1));
+    opacity: calc(1 - var(--i, 0));
   }
+  /* La casilla del fondo (#0b1417) se lee por su borde. */
   .home .art-eikon .sw {
     --an: art-eikon-s;
-    stroke: var(--line-strong);
+    width: 9px;
+    height: 6.5px;
+    rx: 1.4px;
+    stroke: #d1d5db50;
     translate: var(--a);
   }
   .home .art-eikon :is(.pr, .bd) {
@@ -128,37 +135,37 @@
 
   @media (prefers-reduced-motion: no-preference) {
     .home .art-eikon :is(.ea, .eb) {
-      animation: art-eikon-o 7s var(--sn) infinite alternate;
+      animation: art-eikon-o 7s ease-in-out infinite alternate;
     }
     .home .art-eikon .eb {
       animation-duration: 9s;
     }
     .home .art-eikon .c {
-      animation: art-eikon-z 3.5s var(--sn) infinite alternate;
+      animation: art-eikon-z 3.5s ease-in-out infinite alternate;
     }
     .home .art-eikon .ox {
-      animation: art-eikon-x 3s var(--sn) infinite alternate;
+      animation: art-eikon-x 3s ease-in-out infinite alternate;
     }
     .home .art-eikon .d {
-      animation: art-eikon-y 3s var(--sn) -1.5s infinite alternate;
+      animation: art-eikon-y 3s ease-in-out -1.5s infinite alternate;
     }
     .home .art-eikon .gu {
       animation: art-eikon-u 14s linear infinite;
     }
-    /* Activo: la secuencia determinista de cuatro marcas (1,2 s cada una); el lienzo se reajusta con cada una. */
-    .home .art-host:is(:hover, :focus-within) .art-eikon :is(.r, .ea, .eb, .c, .p, .sw) {
-      animation: var(--an) 4.8s var(--ez) infinite;
+    /* Al salir, el isotipo y la paleta vuelven al reposo con un fundido en vez de saltar. */
+    .home .art-eikon :is(.m, .sw) {
+      animation: art-eikon-f 0.45s ease-out;
     }
-    .home .art-host:is(:hover, :focus-within) .art-eikon :is(.n, .h, .q) {
-      animation: art-eikon-w 4.8s var(--ez) calc(var(--i) * 1.2s - 4.8s) infinite;
+    /* Activo: la secuencia determinista de cuatro marcas (1,2 s cada una), que entra ya en la primera transformación
+       (−0,9 s); el lienzo se reajusta con cada marca. */
+    .home .art-host:is(:hover, :focus-within) .art-eikon :is(.m, .d, .r, .ea, .eb, .c, .p, .sw) {
+      animation: var(--an) 4.8s var(--ez) -0.9s infinite;
     }
-    .home .art-host:is(:hover, :focus-within) .art-eikon .ox {
-      animation:
-        art-eikon-x 3s var(--sn) infinite alternate,
-        art-eikon-w 4.8s var(--ez) infinite;
+    .home .art-host:is(:hover, :focus-within) .art-eikon :is(.n, .ox, .h, .q) {
+      animation: art-eikon-w 4.8s var(--ez) calc(var(--i, 0) * 1.2s - 5.7s) infinite;
     }
     .home .art-host:is(:hover, :focus-within) .art-eikon :is(.bx, .pr, .bd) {
-      animation: art-eikon-k 1.2s var(--ez) infinite;
+      animation: art-eikon-k 1.2s var(--ez) -0.9s infinite;
     }
     .home .art-host:is(:hover, :focus-within) .art-eikon .gu {
       animation-duration: 4.8s;
@@ -178,15 +185,15 @@
   }
   @keyframes art-eikon-x {
     to {
-      transform: translate(-27px);
+      translate: -27px;
     }
   }
   @keyframes art-eikon-y {
     from {
-      transform: translate(0, -9.88px);
+      translate: 0 -9.88px;
     }
     to {
-      transform: translate(0, 9.88px);
+      translate: 0 9.88px;
     }
   }
   @keyframes art-eikon-u {
@@ -194,93 +201,141 @@
       transform: rotate(1turn);
     }
   }
-  /* Fases: eikon 0–18 %, mouseion 25–43 %, pinakotheke 50–68 %, prizma 75–93 %; entre ellas, la transformación. */
+  @keyframes art-eikon-f {
+    1% {
+      opacity: 0.2;
+    }
+  }
+  /* Fases: eikon 0–18 %, mouseion 25–43 %, pinakotheke 50–68 %, prizma 75–93 %; entre ellas, la transformación.
+     Los cambios de color que no se ven (anillo deshecho, núcleo en cero) ocurren mientras la pieza está oculta. */
   @keyframes art-eikon-r {
-    0%, 43%, 100% {
+    43%,
+    93% {
       stroke: var(--te);
-      stroke-dashoffset: 0;
     }
-    50%, 68% {
+    50%,
+    75% {
       stroke: var(--go);
+    }
+    68% {
       stroke-dashoffset: 0;
     }
-    75%, 93% {
-      stroke: var(--vi);
+    75%,
+    93% {
       stroke-dashoffset: 1.02;
     }
   }
+  /* Las órbitas se apagan antes de aplanarse sobre el triángulo y no vuelven hasta que este se deshace. */
   @keyframes art-eikon-e {
-    0%, 18%, 100% {
-      transform: rotate(var(--r)) scale(1);
+    18% {
+      transform: rotate(var(--r));
       opacity: 1;
-      stroke: var(--s);
     }
-    25%, 43% {
+    25%,
+    43% {
       transform: rotate(var(--r)) scale(0.95, 2.6);
       opacity: 0;
       stroke: var(--s);
     }
-    50%, 68% {
+    50%,
+    68% {
       transform: rotate(var(--r2)) scale(0.976);
       opacity: 1;
+    }
+    50%,
+    96% {
       stroke: var(--go);
     }
-    75%, 93% {
-      transform: rotate(var(--r3)) scale(1, 0);
+    72%,
+    96% {
       opacity: 0;
-      stroke: var(--go);
+    }
+    75%,
+    93% {
+      transform: rotate(var(--r3)) scale(1, 0);
     }
   }
   @keyframes art-eikon-c {
-    0%, 18%, 100% {
+    18% {
       transform: scale(0.38);
-      fill: var(--te);
     }
-    25%, 43% {
+    25%,
+    43% {
       transform: scale(1);
+    }
+    50%,
+    68% {
+      transform: scale(0.48);
+    }
+    75%,
+    93% {
+      transform: scale(0);
+    }
+    43%,
+    93% {
       fill: var(--te);
     }
-    50%, 68% {
-      transform: scale(0.48);
+    50%,
+    75% {
       fill: var(--go);
-    }
-    75%, 93% {
-      transform: scale(0);
-      fill: var(--vi);
     }
   }
   @keyframes art-eikon-p {
-    0%, 68% {
+    68% {
       stroke-dashoffset: 1.02;
     }
-    75%, 93% {
+    75%,
+    93% {
       stroke-dashoffset: 0;
     }
     100% {
       stroke-dashoffset: -1.02;
     }
   }
+  /* La paleta se reordena por carriles (uno por casilla, según su sitio en reposo) para que ninguna tape a otra. */
   @keyframes art-eikon-s {
-    0%, 18%, 100% {
+    18% {
       translate: var(--a);
     }
-    25%, 43% {
+    25%,
+    43% {
       translate: var(--b);
     }
-    50%, 68% {
+    50%,
+    68% {
       translate: var(--c);
     }
-    75%, 93% {
+    75%,
+    93% {
       translate: var(--d);
     }
+    18%,
+    25%,
+    43%,
+    50%,
+    68%,
+    75%,
+    93% {
+      transform: none;
+    }
+    21.5%,
+    46.5%,
+    71.5%,
+    96.5% {
+      transform: translateY(calc((var(--a) - 21px) / 7));
+    }
   }
-  /* Ventana de una fase (la --i-ésima): textos, el punto, el hueco de Mouseion y el núcleo de Prizma. */
+  /* Ventana de una fase (la --i-ésima): textos, el punto, el hueco de Mouseion y el núcleo de Prizma. Sale y luego
+     entra la siguiente, sin cruzarse. */
   @keyframes art-eikon-w {
-    0%, 18%, 100% {
+    0%,
+    18%,
+    100% {
       opacity: 1;
       scale: 1;
     }
-    25%, 93% {
+    21.5%,
+    96.5% {
       opacity: 0;
       scale: var(--z, 1);
     }
@@ -290,7 +345,8 @@
       transform: scale(1.08);
       opacity: 0.3;
     }
-    35%, 100% {
+    35%,
+    100% {
       transform: none;
     }
   }

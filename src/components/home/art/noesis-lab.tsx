@@ -55,16 +55,14 @@ const EDGES = [1, 2, 3, 4].map((b) => {
 const MAP = 'M0 0A2 2 0 0 0 4 0A6 6 0 0 0-8 0A10 10 0 0 0 12 0A14 14 0 0 0-16 0A16 16 0 0 0 16 0A14 14 0 0 1-12 0A10 10 0 0 1 8 0A6 6 0 0 1-4 0A2 2 0 0 1 0 0Z';
 const DATA = 'M-2 0A4 4 0 0 0 6 0A8 8 0 0 0-10 0A12 12 0 0 0 14 0M2 0A4 4 0 0 0-6 0A8 8 0 0 0 10 0A12 12 0 0 0-14 0';
 
-// Marcas de registro en las esquinas, como en el sitio (arriba a la izquierda va su ∞).
-const MARKS = tidy(
-  [
-    [154, 6],
-    [6, 94],
-    [154, 94],
-  ]
-    .map(([x, y]) => `M${x - 1.5} ${y}a1.5 1.5 0 1 0 3 0a1.5 1.5 0 1 0 -3 0M${x - 3} ${y}h6M${x} ${y - 3}v6`)
-    .join(''),
-);
+// Marcas de registro en las esquinas, como en el sitio (arriba a la izquierda va su ∞): cruz y anillo de un solo arco.
+const MARKS = [
+  [154, 6],
+  [6, 94],
+  [154, 94],
+]
+  .map(([x, y]) => `M${x - 3} ${y}h6M${x} ${y - 3}v6m1.5-3a1.5 1.5 0 1 0 0 .1`)
+  .join('');
 
 const t = (v: number) => ({ '--t': v }) as CSSProperties;
 
@@ -89,16 +87,17 @@ export default function Art() {
         ))}
         {/* Salida: el mapa sobre su sombra de papel; el marco pinta el rojo y el azul va encima. */}
         <g className="o" style={t(8)}>
-          <rect className="os" x="119.5" y="34.5" width="32" height="32" />
-          <rect className="ob" x="117" y="32" width="32" height="32" />
-          <svg x="117.6" y="32.6" width="30.8" height="30.8" viewBox="-12 -12 24 24">
+          <path className="os" d="M119.5 34.5h32v32h-32z" />
+          <path className="ob" d="M117 32h32v32h-32z" />
+          <svg x="118" y="33" width="30" height="30" viewBox="-12 -12 24 24">
             <g className="sp">
               <path className="mb" d={MAP} />
               <path className="d" d={DATA} />
             </g>
           </svg>
         </g>
-        <text className="f" x="12" y="91">
+        {/* Pie de la figura: la capa oculta en una línea. */}
+        <text className="f" x="80" y="92">
           ℎ = tanh(𝑊𝑥 + 𝑏)
         </text>
       </svg>

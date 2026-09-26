@@ -200,9 +200,9 @@
     stroke-linejoin: round;
   }
   .home .art-clavis .b {
-    stroke-width: 0.7;
+    stroke-width: 0.9;
     stroke-dasharray: 0.1 2.2;
-    opacity: 0.55;
+    opacity: 0.72;
   }
   .home .art-clavis .ln {
     stroke-width: 0.9;
@@ -261,12 +261,19 @@
     width: calc(var(--w) * 1cqw);
   }
 
-  /* Vertical (4:5): la esfera arriba; las constelaciones en las esquinas y λόγοι tendido abajo. */
+  /* Vertical (4:5): la esfera arriba; las constelaciones en las esquinas y λόγοι tendido abajo. El limbo, algo
+     menor, deja aire a los nombres de las esquinas; su inscripción, a este tamaño, es solo textura. */
   @container scene (aspect-ratio < 1) {
     .home .art-clavis {
       --u: 0.72cqw;
       --cy: 36cqh;
       --sz: 5.8;
+    }
+    .home .art-clavis .rim {
+      width: calc(var(--u) * 92);
+    }
+    .home .art-clavis .rim text {
+      opacity: 0.35;
     }
     .home .art-clavis .t {
       font-size: 4.6cqw;

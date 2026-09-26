@@ -1,7 +1,8 @@
 @layer home {
   /* Ágora: editor de ST con los colores del sitio (CodeMirror sobre #020617) y la marca mandy → púrpura.
      --on vale 1 con la tarjeta activa. Una sola entrada (art-agora-in) sirve a todo: cada pieza dice de dónde viene
-     (--t0, --o0) y, con movimiento, --p/--k0/--q/--sw/--rg/--ty eligen la animación de cada estado. */
+     (--t0, --o0) y, con movimiento, --p/--k0/--sw/--rg/--ty eligen la animación de cada estado; lo que depende de --on
+     cruza con transición al entrar y al salir. */
   .home .art-agora {
     --on: 0;
     --o0: 1;
@@ -40,7 +41,6 @@
     box-shadow: 0 4cqw 8cqw -3cqw #000;
     transform: perspective(110cqw) rotateY(calc(9deg - 9deg * var(--on)));
     transform-origin: 0;
-    --t0: perspective(110cqw) rotateY(9deg);
   }
   .home .art-agora .tb {
     height: 12cqh;
@@ -59,7 +59,7 @@
     background: #059669;
     font-size: 2.2cqw;
     line-height: 4.6cqw;
-    --t0: scale(0.7);
+    --t0: scale(0.8);
   }
   .home .art-agora :is(.gut, .code) {
     inset: 12cqh 0 0 7cqw;
@@ -124,22 +124,23 @@
     font: 5.8cqw/1.1 var(--f-math);
     color: #2dd4bf;
     transform: translateY(calc(-3cqh * var(--on))) scale(calc(1 + var(--on) / 20));
-    --t0: none;
   }
   .home .art-agora .pf > * {
     --t0: translateY(2cqh);
     --o0: 0;
   }
+  /* En espera, el andamio de la prueba: premisas, la pista de la regla y 𝑄 en sombra. */
   .home .art-agora .pr {
     display: flex;
     gap: 6cqw;
-    --t0: scale(0.85);
-    --o0: 0.5;
+    --t0: scale(0.9);
+    --o0: 0.85;
   }
   .home .art-agora .rule {
     position: relative;
-    width: 64%;
+    width: 58%;
     height: 0.6cqw;
+    background: #fff2;
   }
   .home .art-agora .rule i {
     inset: 0;
@@ -149,14 +150,15 @@
   }
   .home .art-agora .rule b {
     left: calc(100% + 1.4cqw);
-    top: -1.3cqw;
-    font: 500 2.5cqw var(--f-code);
+    top: -1.6cqw;
+    font: 500 3cqw var(--f-code);
     color: #e94560;
   }
   .home .art-agora .cq {
     font-size: 7cqw;
     color: #99f6e4;
     text-shadow: 0 0 2cqw #2dd4bfb3;
+    --o0: 0.2;
   }
   .home .art-agora .ok {
     top: -3cqw;
@@ -183,17 +185,17 @@
   }
 
   @media (prefers-reduced-motion: no-preference) {
-    /* Reposo: la última línea se escribe despacio y el resultado llega solo, en bucle. */
+    /* Reposo: la última línea se escribe despacio y el resultado llega solo, en bucle. Empieza (y vuelve al salir)
+       con la prueba hecha, igual que la deja la ejecución. */
     .home .art-agora {
       --p: art-agora-loop 12s infinite;
-      --k0: -1.5s;
-      --ty: art-agora-type 12s steps(22) -1.5s infinite;
+      --k0: -7.5s;
+      --ty: art-agora-type 12s steps(22) -7.5s infinite;
     }
     /* Activa: el programa corre; la línea activa recorre las tres y cada una enciende su pieza del árbol. */
     .home .art-host:is(:hover, :focus-within) .art-agora {
       --p: art-agora-in 0.5s cubic-bezier(0.3, 1.6, 0.5, 1) both;
       --k0: 0.15s;
-      --q: art-agora-in 0.8s var(--ease-out) both;
       --sw: art-agora-in 1.2s steps(3, jump-none) both;
       --rg: art-agora-in 2s 1.7s ease-out infinite;
       --ty: none;
@@ -201,8 +203,8 @@
     .home .art-agora .bg {
       animation: art-agora-in 13s ease-in-out infinite alternate;
     }
-    .home .art-agora :is(.ed, .pf, .run) {
-      animation: var(--q);
+    .home .art-agora :is(.ed, .pf, .hl, .cur) {
+      transition: 0.7s var(--ease-out);
     }
     .home .art-agora .hl {
       animation: var(--sw);
@@ -216,12 +218,15 @@
     .home .art-agora .ok::after {
       animation: var(--rg);
     }
-    .home .art-agora :is(.pr > span, .rule *, .cq, .ok) {
+    .home .art-agora :is(.run, .pr > span, .rule *, .cq, .ok) {
       animation: var(--p);
       animation-delay: calc(var(--d, 0) * 0.4s + var(--k0));
     }
   }
 
+  html[data-motion='paused'] .home .art-agora * {
+    transition: none;
+  }
   @keyframes art-agora-in {
     from {
       opacity: var(--o0);

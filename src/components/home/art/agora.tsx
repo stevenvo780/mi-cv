@@ -4,7 +4,7 @@ import type { CSSProperties } from 'react';
 const C = { k: '#c084fc', v: '#2dd4bf', o: '#22d3ee', b: '#fbbf24', u: '#64748b' } as const;
 type Tok = readonly [cls: keyof typeof C | '', text: string];
 
-// El programa de «Motor ST — Pruébalo en vivo» en agora.elenxos.com; sin clase, identificador.
+// Las líneas 2–4 del programa de «Motor ST — Pruébalo en vivo» en agora.elenxos.com (la 1 fija la lógica); sin clase, identificador.
 const LINES: readonly (readonly Tok[])[] = [
   [['k', 'axiom'], ['', ' a1 '], ['u', ':'], ['', ' '], ['v', 'P'], ['', ' '], ['o', '->'], ['', ' '], ['v', 'Q']],
   [['k', 'axiom'], ['', ' a2 '], ['u', ':'], ['', ' '], ['v', 'P']],

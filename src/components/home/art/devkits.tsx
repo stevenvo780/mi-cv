@@ -26,7 +26,7 @@ export default function Art() {
         {KITS.map((k, i) => (
           <div key={k.k} className="ec" style={{ '--i': i } as CSSProperties}>
             <i className="fy k">
-              <svg viewBox="0 0 24 24" fill="none" stroke="#6fd3c4" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <svg viewBox="2.5 2.5 19 19">
                 <path d={k.d} />
               </svg>
             </i>

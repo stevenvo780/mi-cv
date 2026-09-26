@@ -6,8 +6,8 @@ import type { CSSProperties } from 'react';
 const D = 22;
 const R = 33;
 const VAIVEN = [0, 1.7, -1.3, 0.9, -0.5];
-const TALLA = [1.7, 1.25, 1.5, 2, 1.35];
-const f = (n: number) => Math.round(n * 10) / 10;
+const TALLA = [1.7, 1.2, 1.5, 2, 1.3];
+const f = Math.round;
 
 // [ángulo, distancia, radio] de cada voz vista desde el sello: --a y --r la ubican, y al activarse baja por su hilo.
 const VOCES = [-1, 1].flatMap((s) =>
@@ -20,11 +20,11 @@ const VOCES = [-1, 1].flatMap((s) =>
   }),
 );
 
-// Los argumentos: un hilo por voz, de la voz al borde del sello.
+// Los argumentos: un hilo por voz, de la voz al centro (el sello tapa el final). Enteros: el signo menos separa.
 const HILOS = VOCES.map(([a, r]) => {
-  const c = Math.cos((a * Math.PI) / 180);
-  const s = Math.sin((a * Math.PI) / 180);
-  return `M${f(c * (r - 2.8))} ${f(s * (r - 2.8))}L${f(c * 13.5)} ${f(s * 13.5)}`;
+  const x = f(Math.cos((a * Math.PI) / 180) * (r - 2.8));
+  const y = f(Math.sin((a * Math.PI) / 180) * (r - 2.8));
+  return `M${x}${y < 0 ? '' : ' '}${y}L0 0`;
 }).join('');
 
 const v = (o: Record<string, number>) => o as CSSProperties;
@@ -35,8 +35,8 @@ export default function Art() {
     <div className="art art-koinonia-udea" aria-hidden="true">
       <svg viewBox="0 0 160 100">
         <g transform="translate(80 50)">
-          <circle className="o" cx={-D} r={R} style={v({ '--s': 1 })} />
-          <circle className="o" cx={D} r={R} style={v({ '--s': -1 })} />
+          <circle className="o" cx={-D} r={R} />
+          <circle className="o" cx={D} r={R} />
           <path className="sp" d={HILOS} />
           <g className="vs">
             {VOCES.map(([a, r, z], i) => (
@@ -45,8 +45,10 @@ export default function Art() {
           </g>
           <circle className="w" r="11.5" />
           <g className="s">
-            <circle className="e" r="11.5" pathLength={60} />
+            <circle className="e" r="11.5" />
             <circle className="c" r="8.8" />
+            {/* El ✓ en espera (tenue) y el que se traza al decidir. */}
+            <path d="M-4.2.2-1.3 3.1 4.4-3.2" />
             <path className="v" pathLength={1} d="M-4.2.2-1.3 3.1 4.4-3.2" />
           </g>
         </g>

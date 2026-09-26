@@ -1,7 +1,8 @@
 import type { CSSProperties } from 'react';
 
 const NA = '#e67e22';
-const PAPEL = '#f3ece2';
+// Papel (#f3ece2): el color por defecto del asiento en la hoja.
+const PAPEL = '';
 // La mesa del Consejo Superior (Ley 30 de 1992, art. 64): nueve asientos con voto y el Rector, con voz y sin voto
 // (silueta hueca, índice 5). [ángulo en la elipse (0° a la derecha, sentido horario), color]: en naranja el
 // Gobernador (preside, arriba) y los delegados del Ministerio y de la Presidencia; en amarillo el sector productivo; en
@@ -44,12 +45,14 @@ const rad = (a: number) => (a * Math.PI) / 180;
 const P = SEATS.map(([a]) => [f(80 + 59 * Math.cos(rad(a))), f(50 + 23.5 * Math.sin(rad(a)))]);
 // Cada tramo del anillo (radio 47): largo y desfase en unidades del trazo, con una ranura entre tramos.
 const C = (2 * Math.PI * 47) / 100;
-const RING = FN.map(([v, c], i) => [f((v - 0.9) * C), c, f(FN.slice(0, i).reduce((s, [w]) => s + w, 0) * C)] as const);
-const css = (o: Record<string, string | number>) => o as CSSProperties;
+const RING = FN.map(([v, c], i) => [Math.round((v - 0.9) * C), c, Math.round(FN.slice(0, i).reduce((s, [w]) => s + w, 0) * C)] as const);
+const css = (o: Record<string, string | number | undefined>) => o as CSSProperties;
 const line = (i: number) => `M${P[T[i][0]]} ${P[T[i][1]]}`;
+// Índice para escalonar las animaciones (sin él, 0).
+const idx = (i: number) => (i ? css({ '--i': i }) : undefined);
 
 function Seat({ i }: { i: number }) {
-  return <i className={i === 5 ? 's r' : 's'} style={css({ '--x': P[i][0], '--y': P[i][1], '--c': SEATS[i][1] })} />;
+  return <i className={i === 5 ? 's r' : 's'} style={css({ '--x': P[i][0], '--y': P[i][1], '--c': SEATS[i][1] || undefined })} />;
 }
 
 /** Gobierno Universitario UdeA: el Consejo Superior como una mesa de actores cruzada por tensiones, 2010-2013. */
@@ -60,7 +63,6 @@ export default function Art() {
   const near = order.filter((i) => P[i][1] >= 50);
   return (
     <div className="art art-gobierno-universitario-udea" aria-hidden="true">
-      <b className="ch" />
       {far.map((i) => (
         <Seat key={i} i={i} />
       ))}
@@ -71,27 +73,21 @@ export default function Art() {
             <circle key={c} r="47" stroke={c} strokeDasharray={`${w} 300`} strokeDashoffset={s ? -s : undefined} />
           ))}
         </g>
-        <g stroke="#ff5a4a" strokeWidth=".8">
-          {T.map((_, i) => (
-            <path key={i} className={i ? 't' : 't m'} d={line(i)} style={css({ '--i': i })} />
-          ))}
-        </g>
-        <g stroke="#ffe3c6" strokeWidth="1.7" strokeDasharray=".01 2">
-          {T.map((_, i) => (
-            <path key={i} className={i ? 'k' : 'k m'} d={line(i)} pathLength={1} style={css({ '--i': i })} />
-          ))}
-        </g>
+        {T.map((_, i) => (
+          <path key={i} className={i ? 't' : 't m'} d={line(i)} style={idx(i)} />
+        ))}
+        {T.map((_, i) => (
+          <path key={i} className={i ? 'k' : 'k m'} d={line(i)} pathLength={1} style={idx(i)} />
+        ))}
         {/* El periodo analizado: la línea naranja del sitio, un hito por año y el cursor que la recorre. */}
         <path d="M30 87H130" stroke={NA} strokeWidth=".4" opacity=".7" />
         <path d="M30 87h0M63.3 87h0M96.7 87h0M130 87h0" stroke={NA} strokeWidth="1.6" />
         <circle className="d" cx="30" cy="87" r="1.3" fill="#ffe3c6" />
-        <g fill="#fdfbf8" fontSize="4.4" textAnchor="middle">
-          {[2010, 2011, 2012, 2013].map((y, i) => (
-            <text key={y} x={f(30 + (i * 100) / 3)} y="94.6" style={css({ '--i': i })}>
-              {y}
-            </text>
-          ))}
-        </g>
+        {[2010, 2011, 2012, 2013].map((y, i) => (
+          <text key={y} x={f(30 + (i * 100) / 3)} y="94.6" style={idx(i)}>
+            {y}
+          </text>
+        ))}
       </svg>
       {near.map((i) => (
         <Seat key={i} i={i} />

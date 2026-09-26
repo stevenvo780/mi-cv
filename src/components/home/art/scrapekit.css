@@ -5,7 +5,7 @@
     --ng: #e0a85e;
     --np: #f3ece0;
     --nk: #14202e;
-    --D: 7s;
+    --D: 5s;
     width: 100%;
     height: 100%;
     fill: none;
@@ -56,6 +56,13 @@
   }
 
   /* El índice: pila de hojas, la página, sus coincidencias y el haz. */
+  .home .art-scrapekit :is(.bk, .pg) {
+    x: 59px;
+    y: 28px;
+    width: 42px;
+    height: 57px;
+    rx: 1.5px;
+  }
   .home .art-scrapekit .bk {
     fill: var(--np);
     opacity: 0.2;
@@ -68,13 +75,18 @@
   .home .art-scrapekit .pg {
     filter: drop-shadow(0 0 5px color-mix(in oklab, var(--nt) 40%, transparent));
   }
+  /* Cada marca, 1.8 por encima de su renglón (y = 28 + 58·f). */
   .home .art-scrapekit .m {
+    y: calc(26.2px + var(--f) * 58px);
+    height: 3.6px;
+    rx: 0.9px;
     fill: var(--ng);
     transform-box: fill-box;
     transform-origin: 0 50%;
   }
+  /* Las marcas de más corren siempre con el haz (mismo reloj), pero solo se ven en la tarjeta activa. */
   .home .art-scrapekit .x {
-    opacity: 0;
+    fill-opacity: 0;
   }
   .home .art-scrapekit .ln {
     stroke: var(--nk);
@@ -102,29 +114,33 @@
     filter: drop-shadow(0 0 1px #6fd3c4);
   }
 
-  /* Activa: la balanza se enciende, aparecen más coincidencias y la página brilla (la transición, solo al entrar). */
-  .home .art-host:is(:hover, :focus-within) .art-scrapekit :is(.sc, .x, .pg) {
+  /* Activa: la balanza se enciende, aparecen más coincidencias y la página brilla. */
+  .home .art-host:is(:hover, :focus-within) .art-scrapekit .sc {
     opacity: 1;
-    transition: 0.5s;
+  }
+  .home .art-host:is(:hover, :focus-within) .art-scrapekit .x {
+    fill-opacity: 1;
   }
   .home .art-host:is(:hover, :focus-within) .art-scrapekit .pg {
     filter: drop-shadow(0 0 3px var(--nt));
   }
   .home .art-host:is(:hover, :focus-within) .art-scrapekit .pan path:last-of-type {
     fill: color-mix(in oklab, var(--nt) 26%, var(--ink-0));
-    transition: 0.5s;
   }
   .home .art-host:is(:hover, :focus-within) .art-scrapekit .pan text {
     fill: #6fd3c4;
-    transition: 0.5s;
   }
 
   @media (prefers-reduced-motion: no-preference) {
+    /* En la base: al entrar y al salir, el mismo fundido. */
+    .home .art-scrapekit :where(.sc, .x, .pg, .pan :last-of-type) {
+      transition: 0.5s;
+    }
     .home .art-scrapekit .bm {
-      animation: art-scrapekit-sway 9s ease-in-out infinite alternate;
+      animation: art-scrapekit-sway 6.5s ease-in-out infinite alternate;
     }
     .home .art-scrapekit .pan {
-      animation: art-scrapekit-pan 9s ease-in-out infinite alternate;
+      animation: art-scrapekit-pan 6.5s ease-in-out infinite alternate;
     }
     .home .art-scrapekit .bk {
       animation: art-scrapekit-bk 8s ease-in-out infinite alternate;
@@ -138,25 +154,18 @@
     .home .art-scrapekit .bb {
       animation: art-scrapekit-beam var(--D) linear infinite;
     }
-    /* Cada marca se enciende cuando el haz cruza su renglón: mismo ciclo, desfasado por --f. */
+    /* Cada marca se enciende cuando el haz cruza su renglón: mismo ciclo, desfasado por --f. El ritmo no cambia al
+       activar (cambiar la duración de algo que corre lo haría saltar). */
     .home .art-scrapekit .m {
       animation: art-scrapekit-m var(--D) linear calc((var(--f) - 1) * var(--D)) infinite;
-    }
-    .home .art-scrapekit .x {
-      animation-name: none;
-    }
-    .home .art-host:is(:hover, :focus-within) .art-scrapekit {
-      --D: 2.6s;
-    }
-    .home .art-host:is(:hover, :focus-within) .art-scrapekit .x {
-      animation-name: art-scrapekit-m;
-    }
-    .home .art-host:is(:hover, :focus-within) .art-scrapekit .arc {
-      animation-duration: 1s;
     }
     .home .art-host:is(:hover, :focus-within) .art-scrapekit .fly {
       animation: art-scrapekit-fly 2.1s linear calc(var(--i) * -0.7s) infinite;
     }
+  }
+  /* La pausa global no detiene transiciones: se cancelan. */
+  html[data-motion='paused'] .home .art-scrapekit * {
+    transition: none;
   }
   @keyframes art-scrapekit-sway {
     from {

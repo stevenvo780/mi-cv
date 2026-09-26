@@ -2,7 +2,7 @@ import type { CSSProperties } from 'react';
 import type { ArtProps } from './types';
 
 /* Una semana de ejemplo (lunes a domingo; sábado y domingo en oro, como los filtros por día) y su cuenta de cobro:
-   42 h × 42.500 COP/h = $1.785.000. En el total, d es la parada de cada rodillo (las cifras bajas dan más vueltas). */
+   42 h × 42.500 COP/h = $1.785.000. En el total, d es la parada de cada rodillo (los ceros dan una vuelta entera). */
 const DIAS = [
   { es: 'L', en: 'M', h: 8 },
   { es: 'M', en: 'T', h: 7 },
@@ -13,8 +13,8 @@ const DIAS = [
   { es: 'D', en: 'S', h: 0 },
 ] as const;
 const HOY = 3;
-const TOTAL: (number | '$' | '.')[] = ['$', 1, '.', 7, 8, 15, '.', 20, 20, 20];
-const RODILLO = '012345678901234567890';
+const TOTAL: (number | '$' | '.')[] = ['$', 1, '.', 7, 8, 5, '.', 10, 10, 10];
+const RODILLO = '01234567890';
 
 const css = (o: Record<string, string | number>) => o as CSSProperties;
 
@@ -23,17 +23,18 @@ export default function Art({ locale }: ArtProps) {
   return (
     <div className="art art-devkits-hours" aria-hidden="true">
       <div className="dl">
-        {/* Esfera: doce marcas (las cuatro mayores en verde azulado), el isotipo de Chrónos y el horario a las 10:10. */}
-        <svg className="qf" viewBox="0 0 100 100" fill="none" strokeWidth="4.5">
-          <circle cx="50" cy="50" r="45" stroke="#e8e0d470" pathLength={240} strokeDasharray="1.2 18.8" strokeDashoffset=".6" />
-          <circle cx="50" cy="50" r="45" stroke="#6fd3c4" pathLength={240} strokeDasharray="2.4 57.6" strokeDashoffset="1.2" />
+        {/* Esfera centrada en el origen: doce marcas (las cuatro mayores en verde azulado), el isotipo de Chrónos y el
+            horario, que sale de las 10:10 y avanza doce veces más lento que el minutero (también cuando se acelera). */}
+        <svg className="qf" viewBox="-50 -50 100 100" fill="none" strokeWidth="4.5">
+          <circle r="45" stroke="#e8e0d470" pathLength={240} strokeDasharray="1.2 18.8" strokeDashoffset=".6" />
+          <circle r="45" stroke="#6fd3c4" pathLength={240} strokeDasharray="2.4 57.6" strokeDashoffset="1.2" />
           <g stroke="#43b5a699" strokeWidth="2.1">
-            <circle cx="49.5" cy="35.9" r="15.1" />
-            <circle cx="36.1" cy="50.3" r="15.1" />
-            <circle cx="63.9" cy="49.5" r="15.1" />
-            <circle cx="50.5" cy="63.9" r="15.1" />
+            <circle cx="-.5" cy="-14.1" r="15.1" />
+            <circle cx="-13.9" cy=".3" r="15.1" />
+            <circle cx="13.9" cy="-.5" r="15.1" />
+            <circle cx=".5" cy="13.9" r="15.1" />
           </g>
-          <path d="M50 50 29.5 35.7" stroke="#e8e0d4" strokeWidth="3.4" strokeLinecap="round" />
+          <path d="M0 0-20.5-14.3" stroke="#e8e0d4" strokeWidth="3.4" strokeLinecap="round" style={{ animationDuration: '96s,13.7s' }} />
         </svg>
         <div className="sw" />
       </div>
@@ -65,11 +66,10 @@ export default function Art({ locale }: ArtProps) {
             )}
           </b>
         </div>
-        <i className="st">
-          <svg viewBox="0 0 24 24" width="100%" height="100%" fill="none" stroke="#10b981" strokeWidth="3.2" strokeLinecap="round">
-            <path d="m6.5 12.5 3.8 3.8 7.2-8" />
-          </svg>
-        </i>
+        <svg className="st" viewBox="-12 -12 24 24" fill="none" stroke="#10b981" strokeWidth="3.2" strokeLinecap="round">
+          <circle r="11" strokeWidth="1.9" />
+          <path d="m-5.5.5 3.8 3.8 7.2-8" />
+        </svg>
       </div>
     </div>
   );

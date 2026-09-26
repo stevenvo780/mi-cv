@@ -5,6 +5,7 @@
     --t: #43b5a6;
     --a: 0;
     --n: calc(1 - var(--a));
+    --dl: 0.7s;
   }
   .home .art-host:is(:hover, :focus-within) .art-warehouse {
     --a: 1;
@@ -45,8 +46,9 @@
   }
   .home .art-warehouse .qg {
     background:
-      repeating-linear-gradient(90deg, #43b5a62b 0 0.15cqw, #0000 0 11cqw),
-      repeating-linear-gradient(#43b5a62b 0 0.15cqw, #0000 0 11cqw);
+      linear-gradient(90deg, #43b5a62b 0.15cqw, #0000 0),
+      linear-gradient(#43b5a62b 0.15cqw, #0000 0);
+    background-size: 11cqw 11cqw;
     mask-image: radial-gradient(closest-side at 50% 46%, #000 30%, #0000);
   }
   .home .art-warehouse .qb {
@@ -88,8 +90,12 @@
     width: 1.4cqw;
     background: #132d2c;
   }
-  /* Cajas: frente (el elemento), tapa (::before) y costado (::after), con la cinta del embalaje. */
+  /* Cajas (9 × 8.5 salvo aviso), apoyadas en su balda --b: frente (el elemento), tapa (::before) y costado (::after),
+     con la cinta del embalaje. */
   .home .art-warehouse .qc {
+    --w: 9;
+    --h: 8.5;
+    --y: calc(var(--b) - var(--h));
     --z: 5.5;
     background:
       linear-gradient(90deg, #0000 43%, #5c462a66 0 57%, #0000 0) top / 100% 36% no-repeat,
@@ -105,24 +111,27 @@
     width: 11cqw;
     background: #77603f;
   }
-  /* La reposición llega desde delante y el pedido sale hacia delante (escala, no opacidad: la opacidad aplanaría
-     la caja 3D). */
+  /* La reposición crece en su hueco desde el canto (escala, no opacidad: la opacidad aplanaría la caja 3D); el pedido
+     sale entero hacia el espectador y se pierde por el borde. */
   .home .art-warehouse .qn {
+    --dl: 0s;
     transform-origin: bottom;
-    transform: translateZ(calc(var(--n) * 20cqw)) scale3d(var(--a), var(--a), var(--a));
+    transform: scale3d(var(--a), var(--a), var(--a));
   }
   .home .art-warehouse .qo {
-    transform-origin: bottom;
-    transform: translateZ(calc(var(--a) * 20cqw)) scale3d(var(--n), var(--n), var(--n));
+    --dl: 0s;
+    transform: translateZ(calc(var(--a) * 80cqw));
   }
+  /* El aviso rojo se va deprisa: el cruce de los dos textos no llega a leerse. */
   .home .art-warehouse :is(.qx, .qr) {
-    --dl: 0.8s;
+    --td: 0.4s;
     opacity: var(--n);
   }
-  /* Barras de nivel de stock; la del hueco bajo mínimo, roja hasta la reposición. */
+  /* Barras de nivel de stock; la del hueco bajo mínimo, roja (y más gruesa) hasta la reposición. */
   .home .art-warehouse .qv {
     --w: 18;
     --h: 0.75;
+    --y: calc(var(--b) + 0.45);
     --z: 8.05;
     transform-origin: left;
     transform: scaleX(var(--s));
@@ -130,7 +139,7 @@
     box-shadow: 0 0 0.9cqw var(--t);
   }
   .home .art-warehouse .ql {
-    --dl: 0.8s;
+    --h: 1.1;
     --t: var(--c, #ef4444);
     transform: scaleX(calc(0.18 + 0.6 * var(--a)));
   }
@@ -140,47 +149,47 @@
     transform: translateX(19cqw) rotateY(90deg);
     background: linear-gradient(90deg, #e6fffa 0.4cqw, #a3e4d780 0, #43b5a624 30%, #0000 85%);
   }
-  /* Aviso: la condición con la que la app dispara low_stock, con su guía punteada hasta el hueco. */
+  /* Aviso: la condición con la que la app dispara low_stock, con su guía punteada hasta el charco rojo. */
   .home .art-warehouse .qa {
     position: absolute;
     left: 53%;
     top: 3cqw;
     translate: -50%;
     display: grid;
-    padding: 0.9cqw 1cqw;
+    padding: 0.9cqw 1.5cqw;
     border: 0.15cqw solid;
     border-radius: 9cqw;
-    --dl: 0.8s;
     background: #0b1417;
-    font: 2.8cqw/1 var(--f-code);
+    box-shadow: 0 0 2.4cqw -0.4cqw var(--c);
+    font: 3cqw/1 var(--f-code);
     color: var(--c, #ff8f86);
   }
   .home .art-warehouse .qa::after {
     left: 50%;
     top: 100%;
     width: 0;
-    height: 16cqw;
+    height: 20.5cqw;
     border-left: 0.3cqw dotted;
   }
   /* «stock > minStock» espera debajo; el aviso rojo, encima, se desvanece al reponer. */
   .home .art-warehouse .qa span {
     grid-area: 1 / 1;
-    padding: 0 0.5cqw;
     background: #0b1417;
   }
 
   @media (prefers-reduced-motion: no-preference) {
     .home .art-host:is(:hover, :focus-within) .art-warehouse {
       --B: none;
-      --d: 2.2s;
       --k: 8ms;
       --U: art-warehouse-upd 0.8s var(--ease-out) both;
     }
-    .home .art-host:is(:hover, :focus-within) .art-warehouse :is(.qn, .qo, .qx, .qr, .ql, .qa) {
-      transition: 1.1s ease-in-out var(--dl, 0s);
+    /* En la base, no solo al activar: al salir, todo vuelve con la misma calma. El aviso cambia cuando llega la
+       reposición (--dl). */
+    .home .art-warehouse :is(.qn, .qo, .qx, .qr, .ql, .qa) {
+      transition: var(--td, 1.1s) ease-in-out var(--dl);
     }
     .home .art-warehouse .qz {
-      animation: art-warehouse-scan var(--d, 7s) linear infinite;
+      animation: art-warehouse-scan 7s linear infinite;
     }
     .home .art-warehouse .qv {
       animation: var(--U, art-warehouse-lvl 5s ease-in-out infinite alternate);
@@ -189,6 +198,10 @@
     .home .art-warehouse :is(.qr, .ql) {
       animation: var(--B, art-warehouse-o 1.3s ease-in-out infinite alternate);
     }
+  }
+  /* La pausa global no detiene transiciones: se cancelan. */
+  html[data-motion='paused'] .home .art-warehouse * {
+    transition: none;
   }
   @keyframes art-warehouse-scan {
     0% {

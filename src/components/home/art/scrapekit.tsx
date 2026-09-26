@@ -1,9 +1,9 @@
 import type { CSSProperties } from 'react';
 
-// Nómos: la balanza de la ley sostiene el índice. En sus platillos, las dos fuentes (CO y RD); al centro, la página de
-// un texto legislativo («Art. 1», «Art. 2») que un haz de búsqueda recorre marcando coincidencias en dorado, como el
-// <mark> del buscador del sitio. Activa: los documentos saltan de ambos platillos al índice y se encienden más marcas.
-// En el SVG, px son unidades del viewBox: todo escala con la caja.
+// Nómos: la balanza de la ley sostiene el índice. En sus platillos, las dos fuentes (CO y DO, códigos ISO); al centro,
+// la página de un texto legislativo («Art. 1», «Art. 2») que un haz de búsqueda recorre marcando coincidencias en
+// dorado, como el <mark> del buscador del sitio. Activa: los documentos saltan de ambos platillos al índice y se
+// encienden más marcas. En el SVG, px son unidades del viewBox: todo escala con la caja.
 const v = (o: Record<string, number | string>) => o as CSSProperties;
 
 // Renglones de la página (y, largo); los pares se trazan de derecha a izquierda para que las «palabras» no se alineen.
@@ -19,14 +19,15 @@ const RENGLONES: [number, number][] = [
 ];
 const texto = RENGLONES.map(([y, l], i) => (i % 2 ? `M${63.5 + l} ${y}h-${l}` : `M63.5 ${y}h${l}`)).join('');
 
-// Coincidencias: x, renglón, ancho y si solo aparece al activar. --f es la fracción del barrido en que el haz la cruza.
+// Coincidencias: x, renglón, ancho (palabras enteras del trazo discontinuo, con 0.6 de margen) y si solo aparece al
+// activar. --f es la fracción del barrido en que el haz la cruza; el CSS saca de ella la altura.
 const MARCAS: [number, number, number, boolean][] = [
-  [70, 46.5, 12, false],
-  [82, 50.5, 12, true],
-  [63.5, 54.5, 11, false],
-  [78, 68, 14, false],
-  [63.5, 72, 9, true],
-  [69, 76, 12, true],
+  [69.4, 46.5, 13.7, false],
+  [82.4, 50.5, 9.2, true],
+  [63.9, 54.5, 8.2, false],
+  [73.9, 68, 13.7, false],
+  [62.9, 72, 8.7, true],
+  [69.4, 76, 12.7, true],
 ];
 
 // Un platillo: el arco por donde salta al índice, las hojas que salen, las que esperan, cadenas y platillo, y su fuente.
@@ -69,13 +70,14 @@ export default function Art() {
         </g>
       </g>
       <Platillo x={30} s={1} fuente="CO" />
-      <Platillo x={130} s={-1} fuente="RD" />
+      <Platillo x={130} s={-1} fuente="DO" />
       <g className="st">
-        <rect className="bk" x="59" y="28" width="42" height="57" rx="1.5" style={v({ '--r': '-7deg' })} />
-        <rect className="bk" x="59" y="28" width="42" height="57" rx="1.5" style={v({ '--r': '5deg' })} />
-        <rect className="pg" x="59" y="28" width="42" height="57" rx="1.5" fill="url(#art-scrapekit-p)" />
+        {/* Dos hojas debajo y la página: su caja (59, 28, 42 × 57) va en el CSS. */}
+        <rect className="bk" style={v({ '--r': '-7deg' })} />
+        <rect className="bk" style={v({ '--r': '5deg' })} />
+        <rect className="pg" fill="url(#art-scrapekit-p)" />
         {MARCAS.map(([x, y, w, extra]) => (
-          <rect key={`${x},${y}`} className={extra ? 'm x' : 'm'} x={x} y={y - 1.8} width={w} height={3.6} rx={0.9} style={v({ '--f': +((y - 28) / 58).toFixed(3) })} />
+          <rect key={y} className={extra ? 'm x' : 'm'} x={x} width={w} style={v({ '--f': ((y - 28) / 58).toFixed(3).slice(1) })} />
         ))}
         <path className="ln" d={texto} />
         <text className="ar" x="63.5" y="37.6">

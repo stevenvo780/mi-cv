@@ -21,7 +21,7 @@ const ORDERS = [
   // l: largo en pantalla, para que la luz y el domiciliario avancen juntos por la ruta.
   const v: Record<`--${string}`, string | number> = { '--p': p, '--l': Math.round(l) };
   if (d) v['--d'] = `${d}s`;
-  return { d: 'M' + pts.map((q) => q.join(' ')).join('L'), end: pts[pts.length - 1], style: v as CSSProperties };
+  return { d: 'M' + pts.join(' '), end: pts[pts.length - 1], style: v as CSSProperties };
 });
 
 export default function Art() {
@@ -37,7 +37,7 @@ export default function Art() {
           <pattern id="art-graf-w" width="60" height="42" patternUnits="userSpaceOnUse">
             <rect x="22" y="16" width="16" height="10" />
             <path className="y" d="M10 2v10M42 7h16M50 16v10M2 35h16" />
-            <path className="l" d="M5 5h1v1H5zM25 4h1v1h-1zM34 9h1v1h-1zM54 10h1v1h-1zM6 20h1v1H6zM45 22h1v1h-1zM14 32h1v1h-1zM27 33h1v1h-1zM35 38h1v1h-1zM53 37h1v1h-1z" />
+            <path className="l" d="M5.5 5.5h0m20-1h0m9 5h0m20 1h0M6.5 20.5h0m39 2h0M14.5 32.5h0m13 1h0m8 5h0m18-1h0" />
           </pattern>
           <radialGradient id="art-graf-g" cx=".35" cy=".3" r=".8">
             <stop offset="0" stopColor="#1fa89f" />
@@ -57,10 +57,7 @@ export default function Art() {
         <g id="art-graf-c" transform="translate(80 52) scale(1 .56) rotate(28)">
           <rect className="rf" x="-150" y="-150" width="300" height="300" />
           <rect className="lt" x="-150" y="-150" width="300" height="300" />
-          <g className="rv">
-            <path id="art-graf-v" d="M-150 54C-80 40-40 60 10 50S90 42 150 58" />
-          </g>
-          <use href="#art-graf-v" className="fl" />
+          <path className="rv" d="M-150 54C-80 40-40 60 10 50S90 42 150 58" />
           <g className="av">
             <path id="art-graf-a" d="M-150-42H150M-150 42H150M-60-150V150M0-150V150M60-150V150" />
           </g>
@@ -82,7 +79,7 @@ export default function Art() {
           <path className="hs" d="M0 0v-5" />
           <circle cy="-10.6" r="5.6" fill="url(#art-graf-g)" />
           <ellipse className="ob" cy="-10.6" rx="8.6" ry="2.4" />
-          <path className="bag" d="M-2.5-12.2h5l.5 4.5h-6zM-1.3-12.2v-.7a1.3 1.3 0 0 1 2.6 0v.7" />
+          <path className="bag" d="M-1.8-14.2h3.6l1.8 2.3v4.5h-7.2v-4.5zM-3.6-11.9h7.2M-1.4-10.4a1.4 1.4 0 0 0 2.8 0" />
         </g>
       </svg>
     </div>

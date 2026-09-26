@@ -19,7 +19,7 @@
     left: 4cqw;
     top: 7.5cqw;
     padding: 39cqw;
-    transform: rotateX(54.7356deg) rotate(45deg);
+    transform: rotateX(54.74deg) rotate(45deg);
   }
   .home .art-devkits .eg {
     inset: 0;
@@ -36,16 +36,14 @@
   .home .art-devkits .pt {
     inset: 0;
     transform: translateZ(var(--fh));
-    --bw: 0.2cqw;
+    --bw: 0.25cqw;
   }
   .home .art-devkits .fy {
     --d: 180deg;
     --c1: var(--y1, #1b4843);
     --c2: var(--y2, #0e2225);
-    --bw: 0 0.2cqw;
-    left: 0;
-    bottom: 0;
-    width: 100%;
+    --bw: 0 0.25cqw;
+    inset: auto 0 0;
     height: var(--fh);
     transform-origin: bottom;
     transform: rotateX(-90deg);
@@ -54,18 +52,17 @@
     --d: 90deg;
     --c1: var(--x1, #2c7169);
     --c2: var(--x2, #163a3a);
-    --bw: 0.2cqw 0 0;
-    top: 0;
-    right: 0;
+    --bw: 0.25cqw 0 0;
+    inset: 0 0 0 auto;
     width: var(--fh);
-    height: 100%;
     transform-origin: right;
     transform: rotateY(90deg);
   }
-  /* Lo construido, y la pieza: juntas teal cada 20 % (en la pieza, la de su base). */
+  /* Lo construido, y la pieza: juntas teal cada 20 % (en la pieza, la de su base), de al menos 1px para que las
+     cuatro losas se cuenten también en móvil. */
   .home .art-devkits :is(.k, .ep i) {
     background:
-      repeating-linear-gradient(var(--d), #0000 0 calc(var(--u) - 0.2cqw), #43b5a666 0 var(--u)),
+      repeating-linear-gradient(var(--d), #0000 0 calc(var(--u) - max(1px, 0.25cqw)), #43b5a680 0 var(--u)),
       linear-gradient(var(--d), var(--c1), var(--c2));
     box-shadow: inset 0 0 0 0.2cqw var(--e, #43b5a6cc);
   }
@@ -75,16 +72,21 @@
       linear-gradient(135deg, #31887c, #1c524c);
     box-shadow: inset 0 0 0 0.2cqw #6fd3c4;
   }
-  /* Placa del kit, con su glifo. */
+  /* Placa del kit, con su glifo recortado a su caja (viewBox 2.5–21.5) para que se lea de un vistazo. */
   .home .art-devkits svg {
-    left: 2cqw;
+    left: 1cqw;
     top: 7cqw;
-    width: 8cqw;
-    padding: 1cqw;
-    border: 0.2cqw solid #43b5a680;
+    width: 8.4cqw;
+    padding: 0.8cqw;
+    border: 0.2cqw solid #43b5a699;
     border-radius: 1cqw;
     background: var(--ink-1);
-    opacity: 0.75;
+    fill: none;
+    stroke: #6fd3c4;
+    stroke-width: 1.6;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    opacity: 0.9;
   }
   /* El hueco del 20 %, a trazos y un pelo menor que la pieza: al encajar queda dentro. */
   .home .art-devkits .eo {
@@ -177,8 +179,8 @@
     .home .art-devkits .eo i {
       animation: art-devkits-dash 3.2s ease-in-out infinite alternate;
     }
-    .home .art-devkits :is(.ep i, svg) {
-      transition: opacity 0.35s;
+    .home .art-devkits :is(.ep i, svg, span) {
+      transition: 0.35s;
     }
     /* Caída con rebote: acelera, toca (40 %), sube un poco y asienta. */
     .home .art-host:is(:hover, :focus-within) .art-devkits .ep {
@@ -207,7 +209,6 @@
       opacity: 1;
     }
     100% {
-      translate: 0 0 var(--b);
       opacity: 0;
     }
   }
@@ -218,7 +219,7 @@
   }
   @keyframes art-devkits-dash {
     from {
-      opacity: 0.35;
+      opacity: 0.5;
     }
   }
   @keyframes art-devkits-snap {
@@ -228,7 +229,6 @@
     }
     to {
       scale: 1.8;
-      opacity: 0;
     }
   }
   /* El kit completo: el anillo lo recorre del piso a la tapa. */

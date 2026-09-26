@@ -5,15 +5,21 @@
     --nb: #2a3cff;
     --nl: #9aa6ff;
     --np: #efebe2;
-    --T: 7s;
-    --s: 0.28s;
-    --F: 3s;
     background:
       radial-gradient(circle, rgb(239 235 226 / 0.08) 0.16cqw, transparent 0.22cqw) 0 0 / 1.5cqw 1.5cqw,
       radial-gradient(40% 60% at 82% 48%, rgb(42 60 255 / 0.28), transparent 70%),
       #121116;
   }
+  /* Halo de la salida: capa ya difuminada bajo el SVG; en activa solo cambia su opacidad. */
+  .home .art-noesis-lab::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(19% 30% at 83% 49%, rgb(154 166 255 / 0.5), transparent);
+    opacity: 0;
+  }
   .home .art-noesis-lab > svg {
+    position: relative;
     display: block;
     width: 100%;
     height: 100%;
@@ -24,12 +30,14 @@
     stroke-width: 0.3;
     opacity: 0.4;
   }
+  /* El ∞ del logo: papel con el rojo abajo y el azul arriba, desplazados como en su marca. */
   .home .art-noesis-lab .lg {
     fill: none;
-    stroke: var(--nl);
+    stroke: var(--np);
     stroke-width: 1.1;
+    filter: drop-shadow(-0.4px 0.3px 0 var(--nr)) drop-shadow(0.4px -0.3px 0 var(--nb));
   }
-  /* Pesos: partículas en fila (trazo de puntos redondos); los datos del mapa, igual. */
+  /* Pesos: partículas en fila (trazo de puntos redondos); los datos del mapa, igual pero quietos. */
   .home .art-noesis-lab :is(.b path, .d) {
     fill: none;
     stroke: var(--nl);
@@ -50,6 +58,9 @@
   }
   .home .art-noesis-lab .l {
     --lo: 0.7;
+  }
+  .home .art-noesis-lab .o {
+    --lo: 0.8;
   }
   /* Neuronas: cuadrito rojo con la mitad azul de su respuesta. */
   .home .art-noesis-lab .l :first-child {
@@ -76,41 +87,63 @@
   }
   .home .art-noesis-lab .f {
     font-family: var(--f-math);
-    font-size: 5.2px;
+    font-size: 5.6px;
+    text-anchor: middle;
     fill: var(--np);
-    opacity: 0.7;
   }
-
-  @media (prefers-reduced-motion: no-preference) {
-    .home .art-noesis-lab :is(.b, .l, .o) {
-      animation: art-noesis-lab-w var(--T) calc(var(--t) * var(--s)) infinite both;
-    }
-    .home .art-noesis-lab .o {
-      --lo: 0.8;
-    }
-    .home .art-noesis-lab :is(.b path, .d) {
-      animation: art-noesis-lab-f var(--F) linear infinite;
-    }
-    /* Activa: la cascada se acelera, las corrientes engordan y la salida se enciende. */
-    .home .art-host:is(:hover, :focus-within) .art-noesis-lab {
-      --T: 1.7s;
-      --s: 0.1s;
-      --F: 0.6s;
-    }
-    .home .art-host:is(:hover, :focus-within) .art-noesis-lab .b {
-      --lo: 0.25;
-    }
+  /* Activa: las corrientes engordan, la sombra de la salida pasa a lavanda y el halo se enciende. */
+  .home .art-host:is(:hover, :focus-within) .art-noesis-lab::before {
+    opacity: 1;
   }
   .home .art-host:is(:hover, :focus-within) .art-noesis-lab .b path {
     stroke-width: 1.5;
-  }
-  .home .art-host:is(:hover, :focus-within) .art-noesis-lab .o {
-    filter: drop-shadow(0 0 3px var(--nl));
   }
   .home .art-host:is(:hover, :focus-within) .art-noesis-lab .os {
     fill: var(--nl);
   }
 
+  @media (prefers-reduced-motion: no-preference) {
+    /* Reposo: un pulso cruza la red capa por capa cada 7 s; las partículas corren por los pesos. */
+    .home .art-noesis-lab :is(.b, .l, .o) {
+      animation: art-noesis-lab-w 7s calc(var(--t) * 0.28s) infinite both;
+    }
+    .home .art-noesis-lab .b path {
+      animation: art-noesis-lab-f 3s linear infinite;
+      transition: stroke-width 0.4s;
+    }
+    .home .art-noesis-lab::before {
+      transition: opacity 0.5s;
+    }
+    .home .art-noesis-lab .os {
+      transition: fill 0.4s;
+    }
+    .home .art-noesis-lab .sp {
+      transition: transform 1.2s cubic-bezier(0.5, 0, 0.2, 1);
+    }
+    /* Activa: el pulso lento sigue igual y se le suman una cascada rápida y un flujo más veloz (composición
+       aditiva), así nada salta de fase al entrar ni al salir. La salida da media vuelta: las espirales se cruzan. */
+    .home .art-host:is(:hover, :focus-within) .art-noesis-lab :is(.b, .l, .o) {
+      animation:
+        art-noesis-lab-w 7s calc(var(--t) * 0.28s) infinite both,
+        art-noesis-lab-c 1.5s calc(var(--t) * 0.09s) infinite both;
+      animation-composition: replace, add;
+    }
+    .home .art-host:is(:hover, :focus-within) .art-noesis-lab .b path {
+      animation:
+        art-noesis-lab-f 3s linear infinite,
+        art-noesis-lab-g 1s linear infinite;
+      animation-composition: replace, add;
+    }
+    .home .art-host:is(:hover, :focus-within) .art-noesis-lab .sp {
+      transform: rotate(150deg);
+    }
+  }
+
+  /* Con el movimiento en pausa, tampoco transiciones: quitarlas cancela las que estén en curso. */
+  html[data-motion='paused'] .home .art-noesis-lab *,
+  html[data-motion='paused'] .home .art-noesis-lab::before {
+    transition: none;
+  }
   @keyframes art-noesis-lab-w {
     0%,
     30%,
@@ -121,7 +154,22 @@
       opacity: 1;
     }
   }
+  @keyframes art-noesis-lab-c {
+    0%,
+    32%,
+    100% {
+      opacity: 0;
+    }
+    7% {
+      opacity: 0.45;
+    }
+  }
   @keyframes art-noesis-lab-f {
+    to {
+      stroke-dashoffset: -4.2;
+    }
+  }
+  @keyframes art-noesis-lab-g {
     to {
       stroke-dashoffset: -4.2;
     }

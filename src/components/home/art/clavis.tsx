@@ -32,8 +32,8 @@ const FIGURA: Partial<Record<CatalogoKind, Figura>> = {
     w: 100,
     h: 60,
     p: [[10, 44], [50, 11], [88, 40], [66, 55], [30, 54]],
-    caja: [3.5, 8, 19, 3, 2, 26],
-    rotulo: [13, 31, 11, 16.5],
+    caja: [3.5, 8, 19, 3, 1.5, 26],
+    rotulo: [13, 31, 12, 15],
   },
   ponencia: {
     nombre: ['λόγος', 'λόγοι'],
@@ -51,8 +51,8 @@ const FIGURA: Partial<Record<CatalogoKind, Figura>> = {
     w: 40,
     h: 40,
     p: [[20, 20], [8, 8], [32, 10]],
-    caja: [83, 8, 11, 76, 1.5, 18],
-    rotulo: [88.5, 31, 85, 20.5],
+    caja: [83, 8, 11, 77, 0, 18],
+    rotulo: [88.5, 31, 86, 17.5],
   },
   ensayo: {
     nombre: ['δοκίμιον', 'δοκίμια'],
@@ -68,15 +68,16 @@ const FIGURA: Partial<Record<CatalogoKind, Figura>> = {
 // Brillo relativo de cada estrella, por orden.
 const BRILLO = [1.2, 0.85, 1.05, 0.8, 1.15, 0.9, 1, 0.75, 1.1, 0.9];
 
-// Dodecaedro: 12 pentágonos (cara superior, anillo alto, anillo bajo, cara inferior) y 20 vértices en cuatro anillos.
+// Dodecaedro: 12 pentágonos (cara superior, anillo alto, anillo bajo, cara inferior) y 20 vértices en cuatro anillos;
+// el anillo alto de caras y el primero de vértices son la pose por defecto del CSS (sin clase).
 const CARAS: [string, number][] = [
   ['f0', 0],
-  ...[0, 72, 144, 216, 288].map((y): [string, number] => ['f1', y]),
+  ...[0, 72, 144, 216, 288].map((y): [string, number] => ['', y]),
   ...[36, 108, 180, 252, 324].map((y): [string, number] => ['f2', y]),
   ['f3', 0],
 ];
 const VERTICES: [string, number][] = [0, 72, 144, 216, 288].flatMap((y): [string, number][] => [
-  ['v1', y + 36],
+  ['', y + 36],
   ['v2', y + 36],
   ['v3', y],
   ['v4', y],
@@ -101,7 +102,9 @@ export default function Art() {
       <svg className="rim" viewBox="-50 -50 100 100">
         <defs>
           <path id="art-clavis-o" d="M0-37.6a37.6 37.6 0 1 1 0 75.2a37.6 37.6 0 1 1 0-75.2" />
-          <polygon id="art-clavis-p" points="0,-1 .951,-.309 .588,.809 -.588,.809 -.951,-.309" />
+          <symbol id="art-clavis-p" viewBox="-1 -1 2 2" overflow="visible">
+            <polygon points="0,-1 .951,-.309 .588,.809 -.588,.809 -.951,-.309" />
+          </symbol>
         </defs>
         <circle className="r1" r="47.5" />
         <circle className="tk" r="45.4" />
@@ -131,12 +134,12 @@ export default function Art() {
             <div className="dsp">
               <div className="dx">
                 {CARAS.map(([k, y], n) => (
-                  <svg key={`f${n}`} className={`f ${k}`} viewBox="-1 -1 2 2" style={{ '--ry': y } as Vars}>
+                  <svg key={`f${n}`} className={k ? `f ${k}` : 'f'} style={{ '--ry': y } as Vars}>
                     <use href="#art-clavis-p" />
                   </svg>
                 ))}
                 {VERTICES.map(([k, y], n) => (
-                  <b key={`v${n}`} className={`v ${k}`} style={{ '--ry': y } as Vars} />
+                  <b key={`v${n}`} className={k ? `v ${k}` : 'v'} style={{ '--ry': y } as Vars} />
                 ))}
               </div>
             </div>
@@ -188,11 +191,10 @@ export default function Art() {
               <i
                 key={`s${i}`}
                 className="s"
-                data-k={kind}
                 style={
                   {
-                    '--x': `${+((x / f.w) * 100).toFixed(1)}%`,
-                    '--y': `${+((y / f.h) * 100).toFixed(1)}%`,
+                    '--x': `${Math.round((x / f.w) * 100)}%`,
+                    '--y': `${Math.round((y / f.h) * 100)}%`,
                     '--s': n === 1 ? 2.1 : BRILLO[i % BRILLO.length],
                     '--i': g * 3 + i,
                   } as Vars
