@@ -861,14 +861,23 @@
   /* Con puntero: un tooltip encima de la tarjeta, que se despliega hacia arriba desde su borde con una muesca que la
      señala; el nombre y el texto aparecen de arriba abajo tras una máscara que se desliza y un desenfoque que se aclara,
      y la insignia llega al final. No tapa nada de la tarjeta: el emblema sigue a la vista con su estado activo, y los
-     enlaces también. Se abre también al enfocar un enlace de la tarjeta (teclado). */
+     enlaces también. Se abre también al enfocar un enlace de la tarjeta (teclado).
+     Si arriba no cabe (la tarjeta está a menos de 23rem del borde superior, bajo la cabecera fija), va debajo: la línea
+     de tiempo de vista de la tarjeta, con ese margen, pone --tip-below a 1 desde que su borde superior lo cruza, y la
+     posición, la muesca y el despliegue se calculan con él. Sin líneas de tiempo de desplazamiento, siempre arriba. */
   @media (hover: hover) and (pointer: fine) {
+    .home .card {
+      view-timeline: --card-tip block;
+      view-timeline-inset: 23rem 0;
+    }
     .home .card-info {
+      --b: var(--tip-below);
       display: flex;
       flex-direction: column;
       gap: 0.5rem;
       position: absolute;
-      inset: auto 0 calc(100% + 0.85rem);
+      inset: calc(var(--b) * (100% + 0.85rem)) 0 auto;
+      translate: 0 calc((var(--b) - 1) * (100% + 0.85rem));
       z-index: 5;
       width: auto;
       height: auto;
@@ -885,21 +894,25 @@
         0 0 40px -22px color-mix(in oklab, var(--accent) 80%, transparent);
       color: var(--text);
       pointer-events: none;
-      clip-path: inset(100% 0 0 round 16px);
+      /* Se despliega desde el borde que da a la tarjeta. */
+      clip-path: inset(calc((1 - var(--b)) * 100%) 0 calc(var(--b) * 100%) round 16px);
       transition: clip-path 0.55s var(--ease-out);
+      animation: card-tip-below linear forwards;
+      animation-timeline: --card-tip;
+      animation-range: exit-crossing 0% exit-crossing 100%;
     }
-    /* La muesca: un rombo en el borde inferior, sobre el centro de la tarjeta. */
+    /* La muesca: un rombo en el borde que da a la tarjeta, sobre su centro. */
     .home .card-info::after {
       content: '';
       position: absolute;
       left: 50%;
-      bottom: -0.45rem;
+      top: calc((1 - var(--b)) * 100% - 0.45rem);
       width: 0.8rem;
       height: 0.8rem;
       border-right: 1px solid color-mix(in oklab, var(--accent) 45%, transparent);
       border-bottom: 1px solid color-mix(in oklab, var(--accent) 45%, transparent);
       background: rgb(8 13 16);
-      transform: translateX(-50%) rotate(45deg);
+      transform: translateX(-50%) rotate(calc(45deg + var(--b) * 180deg));
     }
     .home .card-info .card-info-name {
       display: block;
@@ -930,7 +943,7 @@
     }
     /* Al entrar, con un respiro (0.15 s) para que cruzar la rejilla con el puntero no abra cada tarjeta; al salir, ya. */
     .home .card:is(:hover, :focus-within) .card-info {
-      clip-path: inset(0 0 -1rem round 16px);
+      clip-path: inset(calc(var(--b) * -1rem) 0 calc((1 - var(--b)) * -1rem) round 16px);
       transition-delay: 0.15s;
     }
     .home .card:is(:hover, :focus-within) .card-info > * {
@@ -1795,6 +1808,19 @@
     to {
       opacity: 0.32;
     }
+  }
+}
+
+/* Si el tooltip de una tarjeta va debajo (1) o encima (0): lo fija la línea de tiempo de vista de la tarjeta. */
+@property --tip-below {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 0;
+}
+@keyframes card-tip-below {
+  from,
+  to {
+    --tip-below: 1;
   }
 }
 
