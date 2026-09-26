@@ -154,8 +154,10 @@ try {
       if (locale === 'es') {
         const facts = await pg.evaluate(
           ({ id, box }) => {
-            const art = document.querySelector(`${box} > .art`) as HTMLElement | null;
-            const root = document.querySelector(box)!.firstElementChild as HTMLElement | null;
+            // En las escenas, la pieza va dentro de .cat-art (display: contents; ArtBox) y se mide contra .cat-scene.
+            const holder = document.querySelector(`${box} > .cat-art`) ?? document.querySelector(box)!;
+            const art = holder.querySelector(':scope > .art') as HTMLElement | null;
+            const root = holder.firstElementChild as HTMLElement | null;
             const running = () => document.getAnimations().filter((a) => a.playState === 'running' && art && a.effect && 'target' in a.effect && art.contains((a.effect as KeyframeEffect).target as Node)).length;
             const texts: { ch: string; family: string }[] = [];
             if (art) {
@@ -208,7 +210,7 @@ try {
           await pg.waitForTimeout(100);
           const stillRunning = await pg.evaluate(
             ({ box }) => {
-              const art = document.querySelector(`${box} > .art`);
+              const art = document.querySelector(`${box} > .art, ${box} > .cat-art > .art`);
               return document.getAnimations().filter((a) => a.playState === 'running' && art && (a.effect as KeyframeEffect)?.target && art.contains((a.effect as KeyframeEffect).target as Node)).length;
             },
             { box },
