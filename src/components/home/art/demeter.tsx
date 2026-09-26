@@ -6,12 +6,13 @@ import type { CSSProperties } from 'react';
 const v = (o: Record<string, number | string>) => o as CSSProperties;
 // Granos por el tallo: desfase (s) en el ciclo de reposo; sin movimiento, fija su lugar en la ruta.
 const FLUJO = [0, 1.2, 2.1, 3.4, 4.3, 5.6, 6.3];
-// Paradas a 20, 50 y 80 % de la ruta: [x, y, desfase (s) del salto en el ciclo activo de 4 s: sube cuando llega la
-// cabina y baja cuando la cola ya pasó]. La escena baja 5 unidades (viewBox) para asentarse en la caja.
+// Paradas a 20, 50 y 80 % de la ruta: [x, y (esquina de la chincheta de 7 × 7, con la punta en la ruta), desfase
+// (décimas de s) del salto en el ciclo activo de 4 s: sube cuando llega la cabina y baja cuando la cola ya pasó]. La
+// escena baja 5 unidades (viewBox) para asentarse en la caja.
 const PARADAS = [
-  [51.7, 77.6, 1.52],
-  [76.2, 65.8, 2.81],
-  [102, 57.1, 0.08],
+  [48.2, 69.1, 15.2],
+  [72.7, 57.3, 28.1],
+  [98.5, 48.6, 0.8],
 ];
 
 export default function Art() {
@@ -19,7 +20,7 @@ export default function Art() {
     <div className="art art-demeter" aria-hidden="true">
       {/* Las paradas van antes del SVG: el camión pasa por delante de ellas. */}
       {PARADAS.map(([x, y, t], i) => (
-        <b key={i} className="pn" style={v({ left: `${x}cqh`, top: `${y}cqh`, '--dl': `${t}s` })}>
+        <b key={i} className="pn" style={v({ left: `${x}cqh`, top: `${y}cqh`, '--i': t })}>
           {i + 1}
         </b>
       ))}
@@ -38,8 +39,8 @@ export default function Art() {
             <ellipse key={i} className="gr" rx="1.6" ry=".9" style={v({ '--d': d })} />
           ))}
         </g>
-        {/* El camión: estacionado (en el 65 % de la ruta) y, al activar, su copia en marcha (la anima el CSS). */}
-        <defs>
+        {/* El camión en marcha (lo lleva el CSS) y su copia estacionada en el 65 % del tramo. */}
+        <g className="td">
           <g id="art-demeter-k" fill="#06140c" stroke="#4ade80" strokeWidth=".6" strokeLinejoin="round">
             <rect x="-8.5" y="-9.4" width="10.8" height="7.6" rx="1" fill="#16a34a" />
             <path d="M2.3-7.4H6l2.8 3v2.5H2.3z" />
@@ -47,9 +48,8 @@ export default function Art() {
             <circle cx="5.3" cy="-1.6" r="1.6" />
             <ellipse cx="-3.1" cy="-5.6" rx="1.1" ry="2" fill="#f0c46a" stroke="none" />
           </g>
-        </defs>
+        </g>
         <use href="#art-demeter-k" className="tk" transform="translate(88.8 55.6) rotate(-18.8)" />
-        <use href="#art-demeter-k" className="td" />
       </svg>
       <div className="ea">
         {Array.from({ length: 11 }, (_, i) => (

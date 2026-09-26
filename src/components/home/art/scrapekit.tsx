@@ -7,6 +7,7 @@ import type { CSSProperties } from 'react';
 const v = (o: Record<string, number | string>) => o as CSSProperties;
 
 // Renglones de la página (y, largo); los pares se trazan de derecha a izquierda para que las «palabras» no se alineen.
+// Cada renglón empieza con un movimiento relativo desde el final del anterior (un trazo más corto).
 const RENGLONES: [number, number][] = [
   [42.5, 33],
   [46.5, 30],
@@ -17,7 +18,14 @@ const RENGLONES: [number, number][] = [
   [76, 33],
   [80, 22],
 ];
-const texto = RENGLONES.map(([y, l], i) => (i % 2 ? `M${63.5 + l} ${y}h-${l}` : `M63.5 ${y}h${l}`)).join('');
+let px = 0;
+let py = 0;
+const texto = RENGLONES.map(([y, l], i) => {
+  const x = i % 2 ? 63.5 + l : 63.5;
+  const d = `${i ? `m${x - px} ${y - py}` : `M${x} ${y}`}h${i % 2 ? -l : l}`;
+  [px, py] = [i % 2 ? 63.5 : 63.5 + l, y];
+  return d;
+}).join('');
 
 // Coincidencias: x, renglón, ancho (palabras enteras del trazo discontinuo, con 0.6 de margen) y si solo aparece al
 // activar. --f es la fracción del barrido en que el haz la cruza; el CSS saca de ella la altura.
@@ -30,16 +38,17 @@ const MARCAS: [number, number, number, boolean][] = [
   [69.4, 76, 12.7, true],
 ];
 
-// Un platillo: el arco por donde salta al índice, las hojas que salen, las que esperan, cadenas y platillo, y su fuente.
+// Un platillo: el arco por donde salta al índice, las hojas que salen (su caja, en el CSS), las que esperan, cadenas y
+// platillo, y su fuente.
 function Platillo({ x, s, fuente }: { x: number; s: number; fuente: string }) {
   return (
     <g className="pan" style={v({ '--s': s })}>
       <path className="arc" d={`M${x} 39Q${x + s * 22} 15 ${x + s * 44} 35`} />
       {[0, 1, 2].map((i) => (
-        <path key={i} className="fly" d={`M${x - 2.5} 35.8h3.4l1.6 1.6v4.9h-5z`} style={v({ '--i': i })} />
+        <rect key={i} className="fly" style={i ? v({ '--i': i }) : undefined} />
       ))}
-      <path className="rs" d={`M${x - 6.7} 35.5l6.9-1 1.4 9.9-6.9 1zM${x - 0.4} 33.6l7 .9-1.2 9.9-7-.9z`} />
-      <path d={`M${x} 16 ${x - 11} 44M${x} 16 ${x + 11} 44M${x - 12} 44h24a12 6.5 0 0 1-24 0z`} />
+      <path className="rs" d={`M${x - 6.7} 35.5l6.9-1 1.4 9.9-6.9 1zm6.3-1.9 7 .9-1.2 9.9-7-.9z`} />
+      <path d={`M${x} 16 ${x - 11} 44m11-28 11 28M${x - 12} 44h24a12 6.5 0 0 1-24 0z`} />
       <text x={x} y={49.5}>
         {fuente}
       </text>
@@ -52,12 +61,12 @@ export default function Art() {
     <svg className="art art-scrapekit" viewBox="0 0 160 100" aria-hidden="true">
       <defs>
         <linearGradient id="art-scrapekit-b" x2="0" y2="1">
-          <stop offset="0" stopColor="#43b5a6" stopOpacity="0" />
-          <stop offset=".5" stopColor="#43b5a6" stopOpacity=".42" />
-          <stop offset="1" stopColor="#43b5a6" stopOpacity="0" />
+          <stop stopColor="#43b5a600" />
+          <stop offset=".5" stopColor="#43b5a66b" />
+          <stop offset="1" stopColor="#43b5a600" />
         </linearGradient>
         <linearGradient id="art-scrapekit-p" x2="0" y2="1">
-          <stop offset="0" stopColor="#f6f1e8" />
+          <stop stopColor="#f6f1e8" />
           <stop offset="1" stopColor="#ddd3c3" />
         </linearGradient>
       </defs>
@@ -72,10 +81,11 @@ export default function Art() {
       <Platillo x={30} s={1} fuente="CO" />
       <Platillo x={130} s={-1} fuente="DO" />
       <g className="st">
-        {/* Dos hojas debajo y la página: su caja (59, 28, 42 × 57) va en el CSS. */}
+        {/* Dos hojas debajo, el halo y la página: su caja (59, 28, 42 × 57) y su relleno van en el CSS. */}
         <rect className="bk" style={v({ '--r': '-7deg' })} />
         <rect className="bk" style={v({ '--r': '5deg' })} />
-        <rect className="pg" fill="url(#art-scrapekit-p)" />
+        <rect className="gl" />
+        <rect className="pg" />
         {MARCAS.map(([x, y, w, extra]) => (
           <rect key={y} className={extra ? 'm x' : 'm'} x={x} width={w} style={v({ '--f': ((y - 28) / 58).toFixed(3).slice(1) })} />
         ))}
@@ -90,7 +100,7 @@ export default function Art() {
           §
         </text>
         <g className="bb">
-          <rect x="59" y="-5" width="42" height="10" fill="url(#art-scrapekit-b)" />
+          <rect />
           <path d="M53 0H107" />
         </g>
       </g>

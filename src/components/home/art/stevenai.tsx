@@ -35,6 +35,9 @@ const ICON: Partial<Record<CatalogoKind, ReactNode>> = {
   inferencia: <path d="M4 20v-7m4 7V7m4 13v-9m4 9V4m4 16v-6" />,
 };
 
+// El latido del núcleo (el nodo «modelo» del sitio): una traza tenue y dos pulsos, lento (reposo) y rápido (activa).
+const BEAT = 'M2 14h9l3-7 5 12 5-14 3 9h11';
+
 export default function Art({ locale }: ArtProps) {
   return (
     <div className="art art-stevenai" aria-hidden="true">
@@ -74,13 +77,11 @@ export default function Art({ locale }: ArtProps) {
           <b>$</b> tsx atlas.ts<i />
         </p>
         <p className="sa-out">
-          {grupos.map((g, r) =>
-            g.items.map((_, i) => (
-              <i key={`${g.kind}${i}`} data-k={g.kind} style={v({ '--j': inicio[r] + i, '--c': COLOR[g.kind] })}>
-                ●
-              </i>
-            )),
-          )}
+          {grupos.map((g, r) => (
+            <span key={g.kind} data-k={g.kind} style={v({ '--j': inicio[r], '--m': g.items.length, '--c': COLOR[g.kind] })}>
+              {'●'.repeat(g.items.length)}
+            </span>
+          ))}
           <em>
             {' → '}
             {total} {cat?.unidad[locale]}
@@ -91,8 +92,9 @@ export default function Art({ locale }: ArtProps) {
       <div className="sa-graph">
         <div className="sa-core">
           <svg viewBox="0 0 40 24">
-            <path d="M2 14h9l3-7 5 12 5-14 3 9h11" />
-            <path className="sa-beat" pathLength={100} d="M2 14h9l3-7 5 12 5-14 3 9h11" />
+            <path d={BEAT} />
+            <path className="sa-beat" pathLength={100} d={BEAT} />
+            <path className="sa-beat" pathLength={100} d={BEAT} />
           </svg>
         </div>
         <ul className="sa-rows">
@@ -101,7 +103,7 @@ export default function Art({ locale }: ArtProps) {
               <svg viewBox="0 0 24 24">{ICON[g.kind]}</svg>
               <span>
                 {g.items.map((it, i) => (
-                  <i key={i} data-k={g.kind} data-p={it.url ? undefined : ''} style={v({ '--i': i })} />
+                  <i key={i} data-p={it.url ? undefined : ''} style={v({ '--i': i })} />
                 ))}
               </span>
             </li>

@@ -25,7 +25,7 @@
     stroke-width: 0.12;
   }
   /* Cada tramo se parte en cuadritos: 0,84 de celda y 0,16 de junta, centrados en su casilla. */
-  .home .art-phusis :is(use, .rl path, .md) {
+  .home .art-phusis :is(use, .r1, .r2, .md) {
     fill: none;
     stroke-width: 0.84;
     stroke-dasharray: 0.84 0.16;
@@ -137,6 +137,11 @@
     .home .art-phusis .gh {
       transition: opacity 0.5s;
     }
+    /* Al soltar, la cascada (y el latido de la tabla) no salta a su pose de reposo: baja un poco y se funde (también
+       al cargar). */
+    .home .art-phusis .w {
+      animation: art-phusis-in 0.6s ease-out;
+    }
     /* Activa: la cascada vuelve a nacer de la semilla y baja en 1,2 s, se sostiene entera y se funde antes de volver
        a empezar (ciclo de 2,2 s); el frente pasa a oro y las salidas de la tabla laten al mismo compás. */
     .home .art-host:is(:hover, :focus-within) .art-phusis :is(.k, .f, .sc, .fr, .on) {
@@ -162,10 +167,21 @@
     .home .art-host:is(:hover, :focus-within) .art-phusis .r2 {
       animation: art-phusis-r 2.2s infinite;
     }
+    .home .art-host:is(:hover, :focus-within) .art-phusis .w {
+      animation: none;
+    }
+    /* Al entrar, el fantasma sube de golpe: el corte a la semilla cae sobre él y no sobre el vacío. */
+    .home .art-host:is(:hover, :focus-within) .art-phusis .gh {
+      transition: none;
+    }
   }
-  /* Con el movimiento en pausa, tampoco transiciones. */
+  /* Con el movimiento en pausa, la pose fija de movimiento reducido, también al pasar (.art-host pone la regla por
+     encima de las de la activa), sin transiciones ni fundidos a medias. */
   html[data-motion='paused'] .home .art-phusis * {
     transition: none;
+  }
+  html[data-motion='paused'] .home .art-host .art-phusis :is(.k, .f, .sc, .fr, .on, .r2, .w, .ct) {
+    animation: none;
   }
   @keyframes art-phusis-k {
     0% {
@@ -241,9 +257,14 @@
       opacity: 0;
     }
   }
+  @keyframes art-phusis-in {
+    from {
+      opacity: 0.4;
+    }
+  }
   @keyframes art-phusis-ct {
     50% {
-      opacity: 0;
+      fill-opacity: 0;
     }
   }
   @keyframes art-phusis-r {

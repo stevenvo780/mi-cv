@@ -1,4 +1,9 @@
 @layer home {
+  @property --art-noesis-lab-k {
+    syntax: '<number>';
+    inherits: true;
+    initial-value: 0;
+  }
   /* Nóesis: tinta, papel, rojo y azul eléctrico de su sitio; grano de puntos como su papel. */
   .home .art-noesis-lab {
     --nr: #f2402a;
@@ -91,7 +96,11 @@
     text-anchor: middle;
     fill: var(--np);
   }
-  /* Activa: las corrientes engordan, la sombra de la salida pasa a lavanda y el halo se enciende. */
+  /* Activa: las corrientes engordan, la sombra de la salida pasa a lavanda y el halo se enciende; --art-noesis-lab-k
+     (0 → 1, interpolada) sube la cascada rápida. */
+  .home .art-host:is(:hover, :focus-within) .art-noesis-lab {
+    --art-noesis-lab-k: 1;
+  }
   .home .art-host:is(:hover, :focus-within) .art-noesis-lab::before {
     opacity: 1;
   }
@@ -103,13 +112,31 @@
   }
 
   @media (prefers-reduced-motion: no-preference) {
-    /* Reposo: un pulso cruza la red capa por capa cada 7 s; las partículas corren por los pesos. */
+    /* Reposo: un pulso cruza la red capa por capa cada 7 s; las partículas corren por los pesos. Activa, sumadas
+       (composición aditiva): una cascada rápida, siempre en marcha, cuya amplitud es k (se desliza, no salta de
+       brillo), y un flujo veloz que en reposo queda en pausa (el punto guarda su sitio: cambia la velocidad, no la
+       posición). */
+    .home .art-noesis-lab {
+      transition: --art-noesis-lab-k 1.2s;
+    }
+    .home .art-host:is(:hover, :focus-within) .art-noesis-lab {
+      transition-duration: 0.5s;
+    }
     .home .art-noesis-lab :is(.b, .l, .o) {
-      animation: art-noesis-lab-w 7s calc(var(--t) * 0.28s) infinite both;
+      animation:
+        art-noesis-lab-w 7s calc(var(--t) * 0.28s) infinite both,
+        art-noesis-lab-c 1.5s calc(var(--t) * 0.09s) infinite both;
+      animation-composition: replace, add;
     }
     .home .art-noesis-lab .b path {
-      animation: art-noesis-lab-f 3s linear infinite;
+      animation:
+        art-noesis-lab-f 3s linear infinite,
+        art-noesis-lab-g 1s linear infinite paused;
+      animation-composition: replace, add;
       transition: stroke-width 0.4s;
+    }
+    .home .art-host:is(:hover, :focus-within) .art-noesis-lab .b path {
+      animation-play-state: running;
     }
     .home .art-noesis-lab::before {
       transition: opacity 0.5s;
@@ -117,22 +144,9 @@
     .home .art-noesis-lab .os {
       transition: fill 0.4s;
     }
+    /* La salida da media vuelta: las espirales se cruzan. */
     .home .art-noesis-lab .sp {
       transition: transform 1.2s cubic-bezier(0.5, 0, 0.2, 1);
-    }
-    /* Activa: el pulso lento sigue igual y se le suman una cascada rápida y un flujo más veloz (composición
-       aditiva), así nada salta de fase al entrar ni al salir. La salida da media vuelta: las espirales se cruzan. */
-    .home .art-host:is(:hover, :focus-within) .art-noesis-lab :is(.b, .l, .o) {
-      animation:
-        art-noesis-lab-w 7s calc(var(--t) * 0.28s) infinite both,
-        art-noesis-lab-c 1.5s calc(var(--t) * 0.09s) infinite both;
-      animation-composition: replace, add;
-    }
-    .home .art-host:is(:hover, :focus-within) .art-noesis-lab .b path {
-      animation:
-        art-noesis-lab-f 3s linear infinite,
-        art-noesis-lab-g 1s linear infinite;
-      animation-composition: replace, add;
     }
     .home .art-host:is(:hover, :focus-within) .art-noesis-lab .sp {
       transform: rotate(150deg);
@@ -140,6 +154,7 @@
   }
 
   /* Con el movimiento en pausa, tampoco transiciones: quitarlas cancela las que estén en curso. */
+  html[data-motion='paused'] .home .art-noesis-lab,
   html[data-motion='paused'] .home .art-noesis-lab *,
   html[data-motion='paused'] .home .art-noesis-lab::before {
     transition: none;
@@ -161,7 +176,7 @@
       opacity: 0;
     }
     7% {
-      opacity: 0.45;
+      opacity: calc(var(--art-noesis-lab-k) * 0.45);
     }
   }
   @keyframes art-noesis-lab-f {

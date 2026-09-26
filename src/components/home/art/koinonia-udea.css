@@ -70,7 +70,7 @@
     stroke-width: 1.9;
     stroke-linecap: round;
     stroke-linejoin: round;
-    opacity: 0.4;
+    opacity: 0.3;
   }
   .home .art-koinonia-udea .s .v {
     opacity: 1;
@@ -122,10 +122,7 @@
     .home .art-koinonia-udea .vs circle {
       animation: art-koinonia-udea-m 6s ease-in-out calc(var(--r) * -1.9s) infinite;
     }
-    .home .art-koinonia-udea .o + .o {
-    --s: -1;
-  }
-  .home .art-koinonia-udea .sp {
+    .home .art-koinonia-udea .sp {
       animation: art-koinonia-udea-f 3s linear infinite;
     }
     .home .art-koinonia-udea .e {

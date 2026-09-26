@@ -26,6 +26,13 @@
       linear-gradient(rgb(5 9 11 / 0.75), transparent 40%),
       radial-gradient(95% 85% at 45% 55%, transparent 45%, rgb(5 9 11 / 0.8));
   }
+  /* El suelo: manzanas y, encima, parques, callejones y ventanas (la geometría del rect, aquí y no en el marcado). */
+  .home .art-graf :is(.rf, .lt) {
+    x: -150px;
+    y: -150px;
+    width: 300px;
+    height: 300px;
+  }
   .home .art-graf .rf {
     fill: url(#art-graf-b);
   }
@@ -98,10 +105,13 @@
     stroke-dashoffset: calc(var(--p) * var(--l) * -1px);
     opacity: min(1, var(--p) * 50, (1 - var(--p)) * 50);
   }
-  /* Marcador de la puerta: anillo, pin y ✓ (k = 1 al entregar). */
+  /* Marcador de la puerta: anillo, pin y ✓ (k = 1 al entregar). --k va en el pedido y llega por herencia a la copia
+     del <use>, sin depender de que el selector alcance el árbol clonado. */
+  .home .art-graf svg + svg > g {
+    --k: clamp(0, (var(--p) - 0.99) * 100, 1);
+  }
   .home .art-graf #art-graf-m {
     scale: 1.15;
-    --k: clamp(0, (var(--p) - 0.99) * 100, 1);
   }
   .home .art-graf .pn {
     fill: #ef6470;

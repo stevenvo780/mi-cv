@@ -2,8 +2,8 @@
    del sitio (las funciones del CSU, 51,9 % financieras en naranja); a su alrededor, diez sillas con su actor, líneas de
    tensión que los cruzan y debajo el periodo estudiado. Paleta del sitio (naranja #E67E22, papel #FDFBF8) de noche.
    Reposo: los asientos respiran en ola y late la tensión estudiantes–Gobernador. Activa (--a: 1, y cada elemento toma
-   su animación activa de la raíz): se encienden todas las tensiones, los actores se agitan y el cursor recorre
-   2010 → 2013. Medidas en cqw sobre el viewBox 160 × 100 (1 unidad = 0,625cqw). */
+   su animación activa de la raíz): se encienden todas las tensiones, los actores se ponen de pie en ola y el cursor
+   recorre 2010 → 2013. Medidas en cqw sobre el viewBox 160 × 100 (1 unidad = 0,625cqw). */
 @layer home {
   .home .art-gobierno-universitario-udea {
     font: 500 4.4px var(--f-sans);
@@ -14,7 +14,7 @@
   }
   .home .art-gobierno-universitario-udea > *,
   .home .art-gobierno-universitario-udea > ::after,
-  .home .art-gobierno-universitario-udea .s::before {
+  .home .art-gobierno-universitario-udea i::before {
     position: absolute;
     content: '';
   }
@@ -42,19 +42,20 @@
     background: radial-gradient(closest-side, #ff5a4a73, #0000);
     opacity: calc(0.25 + 0.75 * var(--a, 0));
   }
-  /* El anillo, en sordina en reposo: manda la red de tensiones. */
+  /* El anillo, en sordina: manda la red de tensiones. Tramos rectos, como el gráfico del sitio. */
   .home .art-gobierno-universitario-udea .dn {
-    opacity: calc(0.5 + 0.5 * var(--a, 0));
+    stroke-linecap: butt;
+    opacity: calc(0.5 + 0.3 * var(--a, 0));
   }
   /* Asiento: el respaldo de la silla en el color de su estamento (el elemento, con la base en su punto de la mesa) y
      delante su actor, hombros (::before) y cabeza encendida (::after); más cerca, mayor. */
-  .home .art-gobierno-universitario-udea .s {
+  .home .art-gobierno-universitario-udea i {
     --c: #f3ece2;
     left: calc(var(--x) * 0.625cqw);
     top: calc(var(--y) * 0.625cqw);
     width: 6.4cqw;
     height: 7.6cqw;
-    translate: -50% -100%;
+    translate: -50% calc(-100% - 1.2cqw * var(--a, 0));
     scale: calc(0.62 + var(--y) * 0.0055);
     transform-origin: 50% 100%;
     border: 0.3cqw solid color-mix(in srgb, var(--c) 60%, #0000);
@@ -62,7 +63,7 @@
     border-radius: 3.2cqw 3.2cqw 0 0;
     background: linear-gradient(color-mix(in srgb, var(--c) 25%, #0000), #0000 90%);
   }
-  .home .art-gobierno-universitario-udea .s::before {
+  .home .art-gobierno-universitario-udea i::before {
     left: 0.4cqw;
     right: 0.4cqw;
     bottom: 0;
@@ -72,7 +73,7 @@
     border-radius: 50% 50% 0 0 / 85% 85% 0 0;
     background: linear-gradient(var(--f, var(--c)), #0000);
   }
-  .home .art-gobierno-universitario-udea .s::after {
+  .home .art-gobierno-universitario-udea i::after {
     left: 50%;
     bottom: 2.9cqw;
     width: 3cqw;
@@ -121,34 +122,31 @@
   }
 
   @media (prefers-reduced-motion: no-preference) {
-    /* Lo que depende de --a se funde al entrar y al salir. */
-    .home .art-gobierno-universitario-udea :is(.dn, .t, .d, text),
+    /* Lo que depende de --a se funde (y los actores se levantan en ola) al entrar y al salir. El cursor no: al salir
+       se va sin volver a 2010. */
+    .home .art-gobierno-universitario-udea :is(.dn, .t, text),
     .home .art-gobierno-universitario-udea .tb::after {
       transition: opacity 0.5s;
+    }
+    .home .art-gobierno-universitario-udea i {
+      transition: translate 0.5s var(--ease-out) calc(var(--x) * 4ms - 0.1s);
+      animation: art-gobierno-universitario-udea-br 7s ease-in-out calc(var(--x) * -0.06s) infinite alternate;
     }
     html[data-motion='paused'] .home .art-gobierno-universitario-udea *,
     html[data-motion='paused'] .home .art-gobierno-universitario-udea .tb::after {
       transition: none;
     }
     .home .art-host:is(:hover, :focus-within) .art-gobierno-universitario-udea {
-      --sa: art-gobierno-universitario-udea-up 1.4s ease-in-out;
       --ta: art-gobierno-universitario-udea-fl 1.8s linear;
-      --ka: art-gobierno-universitario-udea-sp 1.8s linear;
       --da: art-gobierno-universitario-udea-mv 4.5s linear;
       --ya: art-gobierno-universitario-udea-yr 4.5s ease-out;
     }
     .home .art-gobierno-universitario-udea .m {
       --m: art-gobierno-universitario-udea-fl 5s linear;
-      --n: art-gobierno-universitario-udea-sp 5s linear;
     }
-    .home .art-gobierno-universitario-udea .s {
-      animation: var(--sa, art-gobierno-universitario-udea-br 7s ease-in-out) calc(var(--x) * -0.06s) infinite alternate;
-    }
-    .home .art-gobierno-universitario-udea .t {
+    /* La tensión y su chispa comparten ciclo: la línea parpadea y el punto la recorre. */
+    .home .art-gobierno-universitario-udea :is(.t, .k) {
       animation: var(--ta, var(--m, none)) calc(var(--i, 0) * -0.7s) infinite;
-    }
-    .home .art-gobierno-universitario-udea .k {
-      animation: var(--ka, var(--n, none)) calc(var(--i, 0) * -0.7s) infinite;
     }
     .home .art-gobierno-universitario-udea .d {
       animation: var(--da, none) infinite;
@@ -162,15 +160,10 @@
       opacity: 0.6;
     }
   }
-  @keyframes art-gobierno-universitario-udea-up {
-    to {
-      transform: translateY(-0.6cqw);
-    }
-  }
   @keyframes art-gobierno-universitario-udea-fl {
-    0%,
-    100% {
+    0% {
       opacity: 0.35;
+      stroke-dashoffset: 0.05;
     }
     8%,
     14% {
@@ -181,24 +174,29 @@
     }
     60% {
       opacity: 0.8;
+      stroke-dashoffset: -1.05;
     }
-  }
-  @keyframes art-gobierno-universitario-udea-sp {
-    0% {
-      stroke-dashoffset: 0.05;
-    }
-    60%,
     100% {
+      opacity: 0.35;
       stroke-dashoffset: -1.05;
     }
   }
+  /* El cursor aparece en 2010, recorre el periodo, espera en 2013 y se apaga antes de volver. */
   @keyframes art-gobierno-universitario-udea-mv {
     0% {
+      opacity: 0;
       transform: none;
+    }
+    5%,
+    90% {
+      opacity: 1;
     }
     73%,
     100% {
       transform: translate(100px);
+    }
+    100% {
+      opacity: 0;
     }
   }
   @keyframes art-gobierno-universitario-udea-yr {

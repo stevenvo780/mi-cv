@@ -43,7 +43,13 @@
     stroke: var(--ink-0);
     stroke-width: 0.35;
   }
+  /* Hoja que salta: su caja sobre el platillo (x 27.5 o 127.5 según --s) y la esquina doblada. */
   .home .art-scrapekit .pan .fly {
+    x: calc(77.5px - var(--s) * 50px);
+    y: 35.8px;
+    width: 5px;
+    height: 6.5px;
+    clip-path: polygon(0 0, 68% 0, 100% 25%, 100% 100%, 0 100%);
     opacity: 0;
     transform-box: fill-box;
     transform-origin: center;
@@ -55,8 +61,8 @@
     text-anchor: middle;
   }
 
-  /* El índice: pila de hojas, la página, sus coincidencias y el haz. */
-  .home .art-scrapekit :is(.bk, .pg) {
+  /* El índice: pila de hojas, halo, la página, sus coincidencias y el haz. */
+  .home .art-scrapekit :is(.bk, .gl, .pg) {
     x: 59px;
     y: 28px;
     width: 42px;
@@ -72,8 +78,15 @@
   .home .art-scrapekit .bk + .bk {
     opacity: 0.34;
   }
+  /* El halo es un filtro fijo en su propio rectángulo, tapado por la página: al activar solo cambia su opacidad (el
+     filtro no se interpola ni se vuelve a rasterizar). */
+  .home .art-scrapekit .gl {
+    fill: var(--np);
+    filter: drop-shadow(0 0 4px var(--nt));
+    opacity: 0.4;
+  }
   .home .art-scrapekit .pg {
-    filter: drop-shadow(0 0 5px color-mix(in oklab, var(--nt) 40%, transparent));
+    fill: url(#art-scrapekit-p);
   }
   /* Cada marca, 1.8 por encima de su renglón (y = 28 + 58·f). */
   .home .art-scrapekit .m {
@@ -108,6 +121,13 @@
   .home .art-scrapekit .bb {
     transform: translateY(58.5px);
   }
+  .home .art-scrapekit .bb rect {
+    x: 59px;
+    y: -5px;
+    width: 42px;
+    height: 10px;
+    fill: url(#art-scrapekit-b);
+  }
   .home .art-scrapekit .bb path {
     stroke: #6fd3c4;
     stroke-width: 0.5;
@@ -121,8 +141,8 @@
   .home .art-host:is(:hover, :focus-within) .art-scrapekit .x {
     fill-opacity: 1;
   }
-  .home .art-host:is(:hover, :focus-within) .art-scrapekit .pg {
-    filter: drop-shadow(0 0 3px var(--nt));
+  .home .art-host:is(:hover, :focus-within) .art-scrapekit .gl {
+    opacity: 1;
   }
   .home .art-host:is(:hover, :focus-within) .art-scrapekit .pan path:last-of-type {
     fill: color-mix(in oklab, var(--nt) 26%, var(--ink-0));
@@ -133,7 +153,7 @@
 
   @media (prefers-reduced-motion: no-preference) {
     /* En la base: al entrar y al salir, el mismo fundido. */
-    .home .art-scrapekit :where(.sc, .x, .pg, .pan :last-of-type) {
+    .home .art-scrapekit :where(.sc, .x, .gl, .pan :last-of-type) {
       transition: 0.5s;
     }
     .home .art-scrapekit .bm {
@@ -159,8 +179,9 @@
     .home .art-scrapekit .m {
       animation: art-scrapekit-m var(--D) linear calc((var(--f) - 1) * var(--D)) infinite;
     }
+    /* Retrasos positivos: cada hoja espera oculta en su platillo hasta despegar; el chorro se completa en 1.4 s. */
     .home .art-host:is(:hover, :focus-within) .art-scrapekit .fly {
-      animation: art-scrapekit-fly 2.1s linear calc(var(--i) * -0.7s) infinite;
+      animation: art-scrapekit-fly 2.1s linear calc(var(--i, 0) * 0.7s) infinite;
     }
   }
   /* La pausa global no detiene transiciones: se cancelan. */

@@ -60,7 +60,7 @@ export default function Art() {
         {NIVELES.map(([x, b, s]) => (
           <i key={`${x},${b}`} className="qv" style={v({ '--x': x, '--b': b, '--s': s })} />
         ))}
-        <i className="qv ql" style={v({ '--x': -9, '--b': -7, '--s': '.18' })} />
+        <i className="qv ql" style={v({ '--x': -9, '--b': -7 })} />
         <i className="qz" style={v({ '--w': 19, '--h': 40, '--x': 0, '--y': -20.5, '--z': 10 })} />
       </div>
       <p className="qa">

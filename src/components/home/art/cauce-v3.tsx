@@ -4,35 +4,38 @@ import type { CSSProperties } from 'react';
 // Coordenadas en cqh: la caja es 16:10, así que mide 160 × 100 (lo mismo que el viewBox). Z = 14: los agentes del
 // inventario canónico, como en el átomo de cauce.humanizar.tech.
 
-// [x, y] en reposo (tres carriles: Claude Code, Codex, OpenClaw) → [X, Y] en la formación ›› al despachar;
-// t = fracción del ciclo en que el agente recibe la entrega (traspaso por los brazos hasta el fan-in en la punta).
+// [x, y] en reposo (tres carriles paralelos por el cauce; los colores de los tres harness, mezclados en cada uno) →
+// [X, Y] en la formación ›› al despachar (una punta afilada: brazos de paso 8 × 5, a 32°); t = fracción del ciclo en
+// que el agente recibe la entrega (traspaso por los brazos hasta el fan-in en la punta).
 const FLOTA: [number, number, number, number, number][] = [
-  [64, 48.8, 111, 39.5, 0.5],
-  [82, 46.5, 118, 29, 0.26],
-  [101, 41.7, 125, 34.25, 0.38],
-  [120, 36.6, 132, 39.5, 0.5],
-  [140, 31.8, 139, 44.75, 0.62],
-  [72, 54, 118, 44.75, 0.62],
-  [92, 52.6, 118, 55.25, 0.62],
-  [112, 50.2, 125, 50, 0.74],
-  [133, 47.6, 146, 50, 0.74],
-  [60, 57.4, 111, 60.5, 0.5],
-  [78, 60.4, 118, 71, 0.26],
-  [97, 61.3, 125, 65.75, 0.38],
-  [116, 61.6, 132, 60.5, 0.5],
-  [137, 62.3, 139, 55.25, 0.62],
+  [68, 41, 98, 40, 0.5],
+  [88, 40, 114, 30, 0.26],
+  [108, 39, 122, 35, 0.38],
+  [128, 38, 130, 40, 0.5],
+  [148, 36, 138, 45, 0.62],
+  [78, 50, 106, 45, 0.62],
+  [98, 50, 106, 55, 0.62],
+  [118, 50, 114, 50, 0.74],
+  [138, 50, 146, 50, 0.74],
+  [72, 60, 98, 60, 0.5],
+  [92, 60, 114, 70, 0.26],
+  [112, 61, 122, 65, 0.38],
+  [132, 62, 130, 60, 0.5],
+  [152, 65, 138, 55, 0.62],
 ];
 
 // Contratos que saltan de agente en agente por cada brazo: [x, y, giro, visible]; los del brazo corto salen a mitad.
 const SALTOS: [number, number, number, number][] = [
-  [118, 29, 36.87, 1],
-  [118, 71, -36.87, 1],
-  [97, 29, 36.87, 0],
-  [97, 71, -36.87, 0],
+  [114, 30, 32, 1],
+  [114, 70, -32, 1],
+  [82, 30, 32, 0],
+  [82, 70, -32, 0],
 ];
 
 const css = (o: Record<string, number | string>) => o as CSSProperties;
 const ORBITA = { cx: 32, cy: 50, rx: 24, ry: 7.2 };
+// Orillas del cauce: se abren desde el director, corren casi paralelas y se ensanchan en la boca.
+const ORILLAS = 'M38 45.5C56 45 58 31 78 31S112 28 126 27S152 18 166 6';
 
 export default function Art() {
   return (
@@ -45,8 +48,8 @@ export default function Art() {
             <stop offset="1" stopColor="#8b6cff" stopOpacity=".1" />
           </linearGradient>
         </defs>
-        <path fill="url(#art-cauce-v3-g)" opacity=".8" d="M38 45.5C58 45 66 43 80 39S134 18 166 9V85C134 74 98 70 80 67S54 58 38 54.5Z" />
-        <path stroke="#9db6ff" strokeOpacity=".33" strokeWidth=".4" d="M38 45.5C58 45 66 43 80 39S134 18 166 9M38 54.5C54 58 62 64 80 67S134 74 166 85" />
+        <path fill="url(#art-cauce-v3-g)" opacity=".8" d={`${ORILLAS}V94C152 82 140 74 126 73S98 69 78 69S56 55 38 54.5Z`} />
+        <path stroke="#9db6ff" strokeOpacity=".33" strokeWidth=".4" d={`${ORILLAS}M38 54.5C56 55 58 69 78 69S112 72 126 73S152 82 166 94`} />
         <path
           className="cu"
           stroke="#35e3f0"
@@ -54,7 +57,7 @@ export default function Art() {
           strokeWidth=".5"
           strokeLinecap="round"
           strokeDasharray=".1 2.4 1.5 3 .1 4.9"
-          d="M44 46.8C62 47 74 45 92 40.3S136 26 160 20.5M48 49C62 50 76 49.4 92 46.5S140 36 160 34M41 50.3C60 53 76 54 92 52.6S140 47 160 47M46 53C60 56 76 58.5 92 58.8S140 58 160 60M43 54.1C60 59 76 63 92 64.9S140 69 160 73.5"
+          d="M38 47C56 46.5 58 36.5 78 36.5S112 34 126 33.5S152 27 166 18.5M38 48.5C56 48 58 43 78 43S112 42 126 41.5S152 38.5 166 34M38 51.5C56 52 58 57 78 57S112 58 126 58.5S152 61.5 166 66M38 53C56 53.5 58 63.5 78 63.5S112 66 126 66.5S152 73 166 81.5M38 50H160"
         />
         <circle cx="32" cy="50" r="25.8" stroke="#9db6ff" strokeOpacity=".45" strokeWidth="1.7" strokeDasharray=".35 3.03" />
         <g className="ob" stroke="#9db6ff" strokeOpacity=".55" strokeWidth=".45" strokeDasharray="0 1.15" strokeLinecap="round">
@@ -71,8 +74,8 @@ export default function Art() {
           <i key={i} style={css({ '--x': x, '--y': y, '--X': X, '--Y': Y, '--t': t })} />
         ))}
       </div>
-      <b className="bm" style={css({ '--r': '-13.7deg' })} />
-      <b className="bm" style={css({ '--r': '13.7deg' })} />
+      <b className="bm" style={css({ '--r': '-12.8deg' })} />
+      <b className="bm" style={css({ '--r': '12.8deg' })} />
       {SALTOS.map(([x, y, r, v], i) => (
         <b key={i} className="pk" style={css({ '--x': x, '--y': y, '--r': `${r}deg`, '--v': v })} />
       ))}

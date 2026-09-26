@@ -1,6 +1,20 @@
-/* Áporía: tribar de Penrose hecho de hojas. Reposo: las hojas de la esquina imposible flotan y se acercan sin posarse.
-   Activo: se posan, el lazo se cierra, se enciende y gira de 120° en 120°. */
+/* Áporía: tribar de Penrose hecho de hojas. Reposo: las hojas de la esquina imposible van hacia su sitio y no llegan a
+   posarse. Activo: se posan, el lazo se cierra y se enciende (halo y juntas), gira 120° (que lo deja igual) y tres
+   luces recorren sin fin su arista media. Al salir, deshace el giro y el tramo vuelve a alzarse: nada salta. La figura
+   cabe en la caja durante todo el giro. */
 @layer home {
+  /* Del tramo suelto: --art-aporia-w, cuánto se ha posado (0 a 1, con transición por hoja); --art-aporia-f, cuánto se
+     acerca al flotar (lo anima art-aporia-flota). Así entrar y salir parten de donde va la hoja: nada salta. */
+  @property --art-aporia-w {
+    syntax: '<number>';
+    inherits: false;
+    initial-value: 0;
+  }
+  @property --art-aporia-f {
+    syntax: '<number>';
+    inherits: false;
+    initial-value: 0;
+  }
   .home .art-aporia {
     --pa: #efe6d5;
     --ink: #0b1417;
@@ -11,7 +25,20 @@
     width: 100%;
     height: 100%;
   }
-  /* Papel de cada cara: claro, acento y sombra, con sus renglones. */
+  /* Papel de cada cara: claro, acento y sombra. Los renglones heredan el trazo de su patrón (los de x e y son <use>). */
+  .home .art-aporia pattern {
+    stroke: var(--ink);
+    stroke-width: 0.045;
+    stroke-linecap: round;
+    stroke-opacity: 0.4;
+  }
+  /* La hoja en su tesela, con la junta alrededor. */
+  .home .art-aporia pattern rect {
+    x: 0.05px;
+    y: 0.05px;
+    width: 0.9px;
+    height: 0.9px;
+  }
   .home .art-aporia #art-aporia-t rect {
     fill: var(--pa);
   }
@@ -21,20 +48,13 @@
   .home .art-aporia #art-aporia-y rect {
     fill: var(--dk);
   }
-  .home .art-aporia pattern path {
-    fill: none;
-    stroke: var(--ink);
-    stroke-width: 0.045;
-    stroke-linecap: round;
-    stroke-opacity: 0.4;
-  }
-  .home .art-aporia #art-aporia-y path {
+  .home .art-aporia #art-aporia-y {
     stroke: var(--art-a);
     stroke-opacity: 0.6;
   }
   .home .art-aporia .v {
-    width: 160px;
-    height: 100px;
+    width: 100%;
+    height: 100%;
     fill: url(#art-aporia-r);
   }
   .home .art-aporia stop {
@@ -43,7 +63,7 @@
   .home .art-aporia stop + stop {
     stop-opacity: 0;
   }
-  .home .art-aporia #art-aporia-g path {
+  .home .art-aporia #art-aporia-g {
     stroke: var(--art-a);
     stroke-width: 0.16;
     stroke-opacity: 0.55;
@@ -63,7 +83,35 @@
   }
   .home .art-aporia .fig {
     transform-box: view-box;
-    transform-origin: 82px 58.7px;
+    transform-origin: 82px 54.5px;
+  }
+  /* Halo sin filtro: la silueta (con su hueco vacío), detrás de las hojas, enciende las juntas y asoma como un borde de
+     luz. */
+  .home .art-aporia .h {
+    fill: var(--art-a);
+    fill-opacity: 0.45;
+    stroke: var(--art-a);
+    stroke-width: 3;
+    stroke-opacity: 0.14;
+    stroke-linejoin: round;
+  }
+  /* Tres luces, una por barra (el orden 3 del giro), por la junta de la arista media; encima, su resplandor (.w). */
+  .home .art-aporia .l {
+    fill: none;
+    stroke: #fff4dc;
+    stroke-width: 1.3;
+    stroke-linecap: round;
+    stroke-dasharray: 0.09 0.2433;
+  }
+  /* El resplandor, en la cabeza de cada luz: un tramo corto que va por delante (animation-delay, abajo). */
+  .home .art-aporia .w {
+    stroke-width: 5;
+    stroke-opacity: 0.45;
+    stroke-dasharray: 0.04 0.2933;
+    filter: blur(1px);
+  }
+  .home .art-aporia :is(.h, .l) {
+    opacity: 0;
   }
   /* Huecos de las hojas que faltan: trazo de obra. */
   .home .art-aporia .s {
@@ -72,18 +120,20 @@
     stroke-width: 0.35;
     stroke-dasharray: 1 1.1;
   }
-  /* El tramo suelto, alzado en z: en pantalla, a la izquierda. */
+  /* El tramo suelto, alzado en z (en pantalla, a la izquierda) por lo que le falta para posarse. */
   .home .art-aporia .f {
-    transform: translate(calc(var(--d) * -1px), 0);
+    --z: calc(1 - var(--art-aporia-w));
+    transform: translate(calc(var(--d) * var(--z) * (var(--art-aporia-f) - 1) * 1px), 0)
+      rotate(calc(var(--z) * var(--art-aporia-f) * 3deg));
   }
   .home .art-host:is(:hover, :focus-within) .art-aporia .f {
-    transform: none;
+    --art-aporia-w: 1;
   }
   .home .art-host:is(:hover, :focus-within) .art-aporia .s {
     opacity: 0;
   }
-  .home .art-host:is(:hover, :focus-within) .art-aporia .fig {
-    filter: drop-shadow(0 0 1.6px color-mix(in oklab, var(--art-a) 70%, transparent));
+  .home .art-host:is(:hover, :focus-within) .art-aporia :is(.h, .l) {
+    opacity: 1;
   }
   .home .art-host:is(:hover, :focus-within) .art-aporia .g {
     opacity: 0.55;
@@ -93,42 +143,55 @@
     transition: none;
   }
 
-  /* Al soltar, el tramo se vuelve a alzar desde donde se posó (art-aporia-alza) y luego flota; al pasar, la transición
-     parte de donde iba la flotación. */
+  /* El giro es una transición, no una animación: al salir se deshace desde donde iba. La luz queda en pausa fuera del
+     estado activo (invisible), así que al volver sigue donde se quedó. */
   @media (prefers-reduced-motion: no-preference) {
     .home .art-aporia .f {
       transform-box: fill-box;
       transform-origin: center;
-      animation:
-        art-aporia-alza 1s var(--ease-out) calc(var(--i) * 60ms) backwards,
-        art-aporia-flota 6.5s var(--ez) calc(1.1s + var(--i) * 0.4s) infinite alternate;
-      transition: transform 0.7s var(--ease-out);
+      animation: art-aporia-flota 5s ease-out calc(var(--i) * 0.25s) infinite;
+      transition: --art-aporia-w 0.8s var(--ease-out);
     }
     .home .art-aporia .s {
       animation: art-aporia-obra 3s linear infinite;
       transition: opacity 0.5s;
     }
-    .home .art-aporia :is(.fig, .g) {
-      transition:
-        filter 0.6s,
-        opacity 0.6s;
+    .home .art-aporia :is(.h, .l, .g) {
+      transition: opacity 0.5s;
+    }
+    .home .art-aporia .fig {
+      transition: rotate 0.9s var(--ez);
+    }
+    .home .art-aporia .l {
+      animation: art-aporia-luz 3.2s linear infinite paused;
+    }
+    .home .art-aporia .w {
+      animation-delay: -0.16s;
     }
     .home .art-host:is(:hover, :focus-within) .art-aporia .f {
-      animation: none;
       transition-delay: calc(var(--i) * 80ms);
     }
+    .home .art-host:is(:hover, :focus-within) .art-aporia :is(.h, .l) {
+      transition-delay: 0.5s;
+    }
+    .home .art-host:is(:hover, :focus-within) .art-aporia .l {
+      animation-play-state: running;
+    }
     .home .art-host:is(:hover, :focus-within) .art-aporia .fig {
-      animation: art-aporia-giro 7.5s var(--ez) 0.8s infinite;
+      rotate: 120deg;
+      transition-duration: 1.1s;
+      transition-delay: 0.45s;
     }
   }
-  @keyframes art-aporia-alza {
-    from {
-      transform: none;
-    }
-  }
+  /* Va hacia su sitio, se queda a un palmo y vuelve atrás. */
   @keyframes art-aporia-flota {
-    to {
-      transform: translate(calc(var(--d) * -0.5px), 0) rotate(2.5deg);
+    40% {
+      --art-aporia-f: 0.7;
+      animation-timing-function: ease-in-out;
+    }
+    55% {
+      --art-aporia-f: 0.64;
+      animation-timing-function: ease-in-out;
     }
   }
   @keyframes art-aporia-obra {
@@ -136,22 +199,9 @@
       stroke-dashoffset: -4.2;
     }
   }
-  /* Cada vuelta de 120° deja la figura igual: tres giros y una pausa tras cada uno. */
-  @keyframes art-aporia-giro {
-    0% {
-      transform: none;
-    }
-    17%,
-    33% {
-      transform: rotate(120deg);
-    }
-    50%,
-    66% {
-      transform: rotate(240deg);
-    }
-    83%,
-    100% {
-      transform: rotate(360deg);
+  @keyframes art-aporia-luz {
+    to {
+      stroke-dashoffset: -1;
     }
   }
 }

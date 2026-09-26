@@ -1,18 +1,20 @@
 /* Téchne: escritorio Hyprland en miniatura (waybar + clawbar, Ultimate Terminal, Mission Center Web). Reposo: la gráfica
    de CPU se desliza, los núcleos respiran, la onda murmura y el cursor parpadea. Activo: se teclea el swapwindow, las
-   ventanas se intercambian (curva por defecto de Hyprland), la carga sube y clawbar habla. Los estados cambian variables
-   de la raíz; las transiciones solo viven en el estado activo para que la pausa global no deje ninguna corriendo. */
+   ventanas se intercambian (curva por defecto de Hyprland), la carga sube, clawbar habla y una luz recorre el borde
+   activo. Los estados cambian variables de la raíz y las transiciones van en la regla base: al salir, el comando se
+   borra y las ventanas vuelven por el mismo camino. La pausa global corta las que estén en curso. */
 @layer home {
   .home .art-stevendevbox {
-    --tl: #6fd3c4;
     --am: #e0a85e;
-    --c: var(--tl);
+    --c: #6fd3c4;
     --on: 0;
     --g: 0.6;
     --k: 0.9;
     --cd: 2.8s;
     --wd: 2.2s;
     --hy: cubic-bezier(0.05, 0.9, 0.1, 1.05);
+    /* Tecleo al entrar (0.7 s tras 0.1 s), borrado al salir (0.3 s). */
+    --ty: calc(0.3s + var(--on) * 0.4s) steps(29) calc(var(--on) * 0.1s);
   }
   .home .art-host:is(:hover, :focus-within) .art-stevendevbox {
     --c: var(--am);
@@ -22,15 +24,10 @@
     --cd: 0.45s;
     --wd: 0.34s;
   }
-  .home .art-host:is(:hover, :focus-within) .art-stevendevbox :is(.t, .m, .sc, .w, .ph, .pd, .ch) {
-    transition:
-      translate 0.8s var(--hy) 0.85s,
-      scale 0.9s var(--hy),
-      opacity 0.4s,
-      fill 0.4s,
-      stroke 0.4s;
+  html[data-motion='paused'] .home .art-stevendevbox * {
+    transition: none;
   }
-  .home .art-stevendevbox svg {
+  .home .art-stevendevbox > svg {
     display: block;
     width: 100%;
     height: 100%;
@@ -44,14 +41,12 @@
   .home .art-stevendevbox .t .fr {
     stroke: url(#art-stevendevbox-b);
     stroke-width: 0.75;
-    filter: drop-shadow(0 0 1.6px rgb(67 181 166 / 0.45));
   }
-  .home .art-stevendevbox .lg {
-    stroke: var(--tl);
-    stroke-width: 0.35;
-  }
-  .home .art-stevendevbox .lc {
-    fill: #8d7cc0;
+  /* Halo del borde activo sin filtro: un trazo ancho y tenue detrás del marco. */
+  .home .art-stevendevbox .gl {
+    stroke: #43b5a6;
+    stroke-width: 3.4;
+    stroke-opacity: 0.14;
   }
   .home .art-stevendevbox .ws {
     stroke: rgb(143 163 168 / 0.45);
@@ -59,10 +54,7 @@
     stroke-linecap: round;
   }
   .home .art-stevendevbox .on {
-    stroke: var(--tl);
-  }
-  .home .art-stevendevbox .o2 {
-    stroke: rgb(232 224 212 / 0.55);
+    stroke: #6fd3c4;
   }
   .home .art-stevendevbox .gr {
     stroke: rgb(232 224 212 / 0.1);
@@ -82,13 +74,11 @@
     font: 400 4px var(--f-code);
     fill: var(--text);
   }
-  .home .art-stevendevbox :is(.hd, .ph) {
-    font-size: 3px;
+  .home .art-stevendevbox :is(.hd, .ph, .wk, .o) {
+    font-size: 3.5px;
     fill: var(--muted);
-    letter-spacing: 0.12px;
   }
   .home .art-stevendevbox .ph {
-    font-size: 3.2px;
     text-anchor: end;
     opacity: calc(1 - var(--on));
   }
@@ -103,36 +93,30 @@
     fill: var(--c);
   }
   .home .art-stevendevbox :is(.p, .cr) {
-    fill: var(--tl);
-  }
-  .home .art-stevendevbox .o {
-    fill: var(--muted);
+    fill: #6fd3c4;
   }
   .home .art-stevendevbox .cm {
-    --ha: art-stevendevbox-y 0.7s steps(29) 0.1s both;
-    clip-path: inset(0 93.6% 0 0);
+    clip-path: inset(0 calc(93.6% - var(--on) * 93.6%) 0 0);
   }
   .home .art-stevendevbox .cr {
-    --ha: art-stevendevbox-x 0.7s steps(29) 0.1s both, art-stevendevbox-k 1.1s steps(1) 1s infinite;
+    translate: calc(var(--on) * 69.6px) 0;
   }
-  .home .art-stevendevbox :is(.gp, .gc, .go) {
-    stroke: var(--tl);
+  /* Workers de la flota: su punto de estado y, detrás, líneas de salida. */
+  .home .art-stevendevbox :is(.gp, .gc) {
+    stroke: #6fd3c4;
     stroke-width: 1.8;
     stroke-linecap: round;
-    opacity: 0.6;
+    opacity: 0.7;
   }
   .home .art-stevendevbox .gc {
     stroke: var(--text);
-    opacity: 0.28;
-  }
-  .home .art-stevendevbox .go {
-    stroke: var(--muted);
+    stroke-width: 1.4;
     opacity: 0.2;
   }
   .home .art-stevendevbox .sc {
     fill: url(#art-stevendevbox-b);
     fill-opacity: 0.3;
-    stroke: var(--tl);
+    stroke: #6fd3c4;
     stroke-width: 0.7;
     stroke-linejoin: round;
     transform-box: view-box;
@@ -141,7 +125,8 @@
   }
   .home .art-stevendevbox .tr {
     stroke: rgb(232 224 212 / 0.06);
-    stroke-width: 5;
+    stroke-width: 37;
+    stroke-dasharray: 5 2;
   }
   .home .art-stevendevbox .co {
     stroke: var(--am);
@@ -157,16 +142,24 @@
     stroke-width: 56;
     stroke-dasharray: 0.6 1.8;
   }
+  /* La luz que recorre el borde activo: cabeza clara y, detrás, una estela ancha y tenue. */
   .home .art-stevendevbox .ch {
     --ha: art-stevendevbox-o 2.4s linear infinite;
-    stroke: var(--text-strong);
+    stroke: #ffe2b0;
     stroke-width: 0.8;
-    stroke-dasharray: 0.08 0.92;
+    stroke-linecap: round;
+    stroke-dasharray: 0.04 0.96;
+  }
+  .home .art-stevendevbox .cq {
+    stroke: #6fd3c4;
+    stroke-width: 2;
+    stroke-opacity: 0.35;
+    stroke-dasharray: 0 0.9 0.1 0;
   }
 
   @media (prefers-reduced-motion: no-preference) {
     .home .art-stevendevbox :is(.t, .m) {
-      --ha: art-stevendevbox-d 0.8s 0.85s ease-in-out;
+      --ha: art-stevendevbox-d 0.6s 0.85s ease-in-out;
       transform-box: view-box;
       transform-origin: 47px 55px;
       translate: calc(var(--on) * 66px) 0;
@@ -175,7 +168,27 @@
       transform-origin: 125px 55px;
       translate: calc(var(--on) * -91px) 0;
     }
+    .home .art-stevendevbox :is(.t, .m, .sc, .w, .ph, .pd, .ch) {
+      transition:
+        translate 0.6s var(--hy) calc(var(--on) * 0.85s),
+        scale 0.9s var(--hy),
+        opacity 0.4s,
+        fill 0.4s,
+        stroke 0.4s;
+    }
+    /* idle y speaking se relevan sin solaparse: sale uno y luego entra el otro. */
+    .home .art-stevendevbox .ph {
+      transition-duration: 0.2s;
+      transition-delay: calc(var(--on) * 0.2s);
+    }
+    .home .art-stevendevbox .i {
+      transition-delay: calc(0.2s - var(--on) * 0.2s);
+    }
+    .home .art-stevendevbox .cm {
+      transition: clip-path var(--ty);
+    }
     .home .art-stevendevbox .cr {
+      transition: translate var(--ty);
       animation: art-stevendevbox-k 1.1s steps(1) infinite;
     }
     .home .art-stevendevbox .sc {
@@ -195,7 +208,7 @@
       animation-duration: calc(var(--wd) * 0.77);
       animation-delay: calc(var(--wd) * -0.6);
     }
-    .home .art-host:is(:hover, :focus-within) .art-stevendevbox :is(.t, .m, .cm, .cr, .pd, .ch) {
+    .home .art-host:is(:hover, :focus-within) .art-stevendevbox :is(.t, .m, .pd, .ch) {
       animation: var(--ha);
     }
   }
@@ -220,18 +233,8 @@
     }
   }
   @keyframes art-stevendevbox-d {
-    20% {
+    30% {
       scale: 0.93;
-    }
-  }
-  @keyframes art-stevendevbox-y {
-    to {
-      clip-path: inset(0);
-    }
-  }
-  @keyframes art-stevendevbox-x {
-    to {
-      translate: 69.6px 0;
     }
   }
   @keyframes art-stevendevbox-p {

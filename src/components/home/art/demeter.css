@@ -3,37 +3,45 @@
    recorre la ruta y cada parada salta a su paso; al llegar, la tirilla se reimprime renglón a renglón y cae el sello.
    La escena baja 5cqh (viewBox 0 -5) para asentarse en la caja. */
 @layer home {
+  /* --A: amplitud de lo activo (0 en reposo, 1 al activar), con transición: al salir todo se asienta, nada salta. */
+  @property --art-demeter-h {
+    syntax: '<number>';
+    inherits: true;
+    initial-value: 0;
+  }
   .home .art-demeter {
-    --z: none;
+    --A: var(--art-demeter-h);
+    transition: --art-demeter-h 0.4s;
     background:
       radial-gradient(22% 42% at 14% 43%, #f0c46a26, #0000),
       radial-gradient(60% 45% at 45% 100%, #16a34a2e, #0000),
       linear-gradient(#08130e, #030806);
   }
-  .home .art-demeter :is(svg, .pn, .ea, .ea i, .tl, .tl *, .st),
+  .home .art-demeter *,
   .home .art-demeter ::before,
   .home .art-demeter ::after {
     content: '';
     position: absolute;
   }
-  .home .art-demeter .gr {
+  /* Granos y camión en marcha van por el tallo; el camión (sin --d) sale del 73 %, donde está el estacionado. Al
+     activar se funden: el que marcha aparece (y sigue donde iba) y el estacionado se desvanece; al salir, al revés. */
+  .home .art-demeter :is(.gr, .td) {
     offset-path: path('M22 58v6q0 12 12 12c28 0 40-24 86-26');
-    offset-distance: calc(var(--d) * 14%);
+    offset-distance: calc(var(--d, 5.2) * 14%);
   }
-  /* El camión en marcha: sale de donde está el estacionado. */
   .home .art-demeter .td {
-    offset-path: path('M34 76c28 0 40-24 86-26');
-    offset-distance: 65%;
-    display: var(--dp, none);
-    opacity: var(--h, 0);
+    opacity: var(--A);
+  }
+  .home .art-demeter .tk {
+    opacity: calc(1 - var(--A));
   }
 
-  /* Paradas: chinchetas numeradas en el orden de entrega. */
+  /* Paradas: chinchetas numeradas en el orden de entrega (la punta, en su lugar de la ruta). */
   .home .art-demeter .pn {
     --a: art-demeter-pn;
+    z-index: 0;
     width: 7cqh;
     height: 7cqh;
-    translate: -50% -121%;
     font: 500 4.2cqh/7cqh var(--f-code);
     text-align: center;
     color: #fff;
@@ -81,7 +89,6 @@
   }
   .home .art-demeter .ea i::after {
     --a: art-demeter-sh;
-    --dl: calc(var(--i) * 0.1s);
     inset: -25%;
     background: radial-gradient(closest-side, #fff, #fff6 55%, #0000);
     opacity: 0;
@@ -89,7 +96,7 @@
 
   /* Tirilla: papel de bordes dentados, renglones (ítem · valor), total en verde y QR. */
   .home .art-demeter .tl {
-    --z: #0000, #000 1deg 89deg, #0000 90deg;
+    --m: #0000, #000 1deg 89deg, #0000 90deg;
     left: 122cqh;
     top: 11cqh;
     width: 28cqh;
@@ -97,12 +104,11 @@
     rotate: 3deg;
     background: linear-gradient(#eef1f4, #cdd5dc);
     mask:
-      conic-gradient(from 135deg at top, var(--z)) top / 2.8cqh 51% repeat-x,
-      conic-gradient(from -45deg at bottom, var(--z)) bottom / 2.8cqh 51% repeat-x;
+      conic-gradient(from 135deg at top, var(--m)) top / 2.8cqh 51% repeat-x,
+      conic-gradient(from -45deg at bottom, var(--m)) bottom / 2.8cqh 51% repeat-x;
   }
   .home .art-demeter .tl * {
     --a: art-demeter-rw;
-    --dl: calc(var(--i) * 0.1s);
     inset-inline: 14%;
     top: calc(11% + var(--i) * 7%);
     height: 1.4cqh;
@@ -122,9 +128,10 @@
     background: linear-gradient(90deg, #1f2630 0 34%, #0000 0 56%, #16a34a 0);
     opacity: 1;
   }
+  /* QR al pie, a la derecha: el sello cae encima de los renglones, no sobre él. */
   .home .art-demeter .tl b {
-    right: 14%;
-    bottom: 7%;
+    left: auto;
+    top: 79%;
     width: 11cqh;
     height: 11cqh;
     background: repeating-conic-gradient(#1f2630 0 25%, #0000 0 50%) 0 0 / 2.75cqh 2.75cqh;
@@ -176,29 +183,20 @@
     .home .art-demeter .gr {
       animation: art-demeter-fl 7s linear calc(var(--d) * -1s) infinite;
     }
-    /* Activa: cada pieza declara su animación (--a), curva (--e) y desfase (--dl) sobre el ciclo común de 4 s; --z
-       (none en reposo) la apaga. */
+    /* Activa: cada pieza declara su animación (--a) y su turno (--i, en décimas de segundo) sobre el ciclo común de
+       4 s. En reposo quedan en pausa (con --A en 0, en su pose de reposo); al volver siguen, a tiempo con el camión. */
     .home .art-demeter :is(.pn, .tl *, .st),
     .home .art-demeter .ea i::after {
-      animation: var(--z, var(--a)) 4s ease-out var(--dl, 0s) infinite;
-    }
-    .home .art-host:is(:hover, :focus-within) .art-demeter {
-      --z: initial;
-      --dp: inline;
-      --h: 1;
-    }
-    /* Los dos camiones se funden: el que marcha arranca desde cero (en el mismo sitio) al mostrarse y, al salir, se
-       desvanece sin frenar mientras reaparece el estacionado (display espera a la opacidad). */
-    .home .art-demeter :is(.tk, .td) {
-      transition: 0.3s allow-discrete;
-    }
-    .home .art-demeter .tk {
-      opacity: calc(1 - var(--h, 0));
+      animation: var(--a) 4s ease-out calc(var(--i, 0) * 0.1s) infinite var(--g, paused);
     }
     .home .art-demeter .td {
-      animation: art-demeter-tk 4s linear infinite;
+      animation: art-demeter-tk 4s linear infinite var(--g, paused);
     }
-    html[data-motion='paused'] .home .art-demeter * {
+    .home .art-host:is(:hover, :focus-within) .art-demeter {
+      --g: running;
+      --art-demeter-h: 1;
+    }
+    html[data-motion='paused'] .home .art-demeter {
       transition: none;
     }
   }
@@ -232,50 +230,48 @@
     }
     43%,
     50% {
-      opacity: 1;
+      opacity: var(--A);
     }
   }
-  /* Llega a la tirilla (37 %), se desvanece y reaparece pasado el codo del tallo (11 %), a paso parejo. */
+  /* Llega a la tirilla (37 %), se desvanece y reaparece pasado el codo del tallo (30 %), a paso parejo. */
   @keyframes art-demeter-tk {
     37% {
       offset-distance: 100%;
-      opacity: 1;
+      opacity: var(--A);
     }
     41% {
       offset-distance: 100%;
       opacity: 0;
     }
     42% {
-      offset-distance: 11%;
+      offset-distance: 30.5%;
       opacity: 0;
     }
     48% {
-      opacity: 1;
+      opacity: var(--A);
     }
   }
   /* La parada salta cuando llega la cabina y aterriza cuando pasa la cola. */
   @keyframes art-demeter-pn {
     4% {
-      translate: -50% -300%;
+      translate: 0 calc(var(--A) * -179%);
     }
     8%,
-    22% {
-      translate: -50% -265%;
+    29% {
+      translate: 0 calc(var(--A) * -144%);
     }
-    30% {
-      translate: -50% -121%;
+    37% {
+      translate: 0;
     }
   }
   @keyframes art-demeter-rw {
-    34% {
+    34%,
+    54% {
       scale: 1;
     }
     38%,
     44% {
-      scale: 0 1;
-    }
-    54% {
-      scale: 1;
+      scale: calc(1 - var(--A)) 1;
     }
   }
   @keyframes art-demeter-st {
@@ -285,8 +281,8 @@
     }
     38%,
     68% {
-      opacity: 0;
-      scale: 1.9;
+      opacity: calc(1 - var(--A));
+      scale: calc(1 + var(--A) * 0.9);
     }
     73% {
       opacity: 1;

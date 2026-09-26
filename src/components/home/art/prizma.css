@@ -50,11 +50,8 @@
   .home .art-prizma .h {
     --c: #ecfeff;
     --i: 0;
-    stroke-width: 1.1;
   }
   .home .art-prizma .h .w {
-    stroke-width: 3;
-    opacity: 0.2;
     filter: blur(0.35cqw);
   }
   .home .art-prizma .in {
@@ -104,6 +101,10 @@
   .home .art-prizma :is(.pz, .q) {
     transform-style: preserve-3d;
   }
+  /* El prisma gira sobre el eje de la salida del haz: el destello y el abanico no se despegan de su cara. */
+  .home .art-prizma .q {
+    transform-origin: 80% 67%;
+  }
   .home .art-prizma i:is(:first-child, :last-child) {
     clip-path: polygon(50% 0, 100% 100%, 0 100%);
     background: linear-gradient(165deg, #ecfeff40, #ecfeff0a 55%, #2dcbd124);
@@ -143,7 +144,7 @@
   .home .art-prizma i:nth-child(4) {
     --x: 6.875cqw;
     --r: 60deg;
-    background: linear-gradient(90deg, #ff5a2b, #e0a85e, #22a45a, #2dcbd1, #8b7cf6);
+    background: linear-gradient(90deg, #ff5a2b, #e0a85e, #22a45a, #2dcbd1, #2e90fa, #8b7cf6);
     opacity: 0.4;
   }
 
@@ -163,23 +164,40 @@
   }
 
   @media (prefers-reduced-motion: no-preference) {
-    /* Reposo: el prisma se mece, el haz zumba y los rayos titilan. */
+    /* Reposo: el prisma se mece, el haz zumba, los rayos titilan y cada tanto entra una chispa por el haz. */
     .home .art-prizma .pz {
       animation: art-prizma-sway 11s ease-in-out infinite alternate;
     }
     .home .art-prizma .h .w {
       animation: art-prizma-hum 1.6s ease-in-out infinite alternate;
     }
-    .home .art-prizma .r > line:not(.w) {
+    .home .art-prizma [mask] line:not(.w) {
       animation: art-prizma-shim 4.2s ease-in-out calc(var(--i) * -0.7s) infinite alternate;
     }
-    /* Activa: el prisma gira, un evento entra con el haz y Nous lo reparte: cada color viaja a su módulo, que se
-       enciende al recibirlo. */
-    .home .art-host:is(:hover, :focus-within) .art-prizma .q {
-      animation: art-prizma-turn 3.2s ease-in-out infinite alternate;
+    /* Otro nombre que el de la activa: al entrar, el evento del haz arranca de cero, a tiempo con el abanico. */
+    .home .art-prizma .h .p {
+      animation: art-prizma-ev 4.5s linear infinite;
     }
+    /* Entrar y salir se funden: halo, cara del espectro, baldosas y giro. */
+    .home .art-prizma::before,
+    .home .art-prizma :is(i, .n rect) {
+      transition: 0.4s;
+    }
+    .home .art-prizma .q {
+      transition: transform 1.2s ease-in-out;
+    }
+    html[data-motion='paused'] .home .art-prizma::before,
+    html[data-motion='paused'] .home .art-prizma * {
+      transition: none;
+    }
+    /* Activa: el prisma se vuelve hacia el abanico, un evento entra con el haz y Nous lo reparte: cada color viaja a
+       su módulo, que se enciende al recibirlo. */
+    .home .art-host:is(:hover, :focus-within) .art-prizma .q {
+      transform: rotateY(-16deg);
+    }
+    /* backwards: en su retraso, cada evento espera oculto en el prisma (no en la pose fija de la activa). */
     .home .art-host:is(:hover, :focus-within) .art-prizma .p {
-      animation: art-prizma-ev 2.4s linear calc(var(--i) * 0.1s) infinite;
+      animation: art-prizma-ev 2.4s linear calc(var(--i) * 0.1s) infinite backwards;
     }
     .home .art-host:is(:hover, :focus-within) .art-prizma .h .p {
       animation-name: art-prizma-in;
@@ -201,12 +219,7 @@
   }
   @keyframes art-prizma-shim {
     from {
-      opacity: 0.55;
-    }
-  }
-  @keyframes art-prizma-turn {
-    to {
-      transform: rotateY(-16deg) rotateZ(3deg);
+      opacity: 0.35;
     }
   }
   @keyframes art-prizma-in {
@@ -245,10 +258,11 @@
     76%,
     100% {
       scale: 1;
+      stroke-width: 0.45px;
     }
     84% {
       scale: 1.2;
-      fill: color-mix(in oklab, var(--c) 55%, #0b1417);
+      stroke-width: 1.2px;
     }
   }
 }

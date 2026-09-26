@@ -1,25 +1,34 @@
 @layer home {
   /* Daímon: un programa (atlas.ts) levanta el atlas en el lenguaje de su sitio: nodos de terminal redondeados, cables
-     punteados y pulsos. Reposo: el comando espera con el cursor y los pulsos van lentos. Activa: corre, la línea en
-     curso baja por el programa y nacen los 21 procesos con el color de su área. Todo mide en em de una letra en cqw:
-     la vista vertical solo cambia esa escala y la colocación. */
+     punteados y pulsos. Reposo: el comando espera con el cursor, los 21 procesos esperan huecos y los pulsos van
+     lentos. Activa: corre, la línea en curso baja por el programa, los cables fluyen, el latido se acelera y nacen los
+     21 procesos con el color de su área. Todo mide en em de una letra en cqw: la vista vertical solo cambia esa escala
+     y la colocación. */
+  /* Cuánto corre (0 a 1; la activa o el área de la leyenda). Registrada para que entrar y salir se fundan; cada nodo
+     la lee como --l. */
+  @property --art-stevenai-l {
+    syntax: '<number>';
+    inherits: true;
+    initial-value: 0;
+  }
   .home .art-stevenai {
     --mint: #8ee9d4;
     --card: #10272b;
     --mute: #acc4c2;
-    --dash: 0 0.35em, #0000 0 0.85em;
-    --n: 9;
+    --n: 10;
     --lh: 1.85;
     font: 1cqw var(--f-code);
     background:
       radial-gradient(50% 65% at 72% 48%, rgb(142 233 212 / 0.08), #0000 70%),
       conic-gradient(from 90deg at 1px 1px, #0000 25%, rgb(142 233 212 / 0.045) 0) 0 0 / 5cqw 5cqw;
   }
+  .home .art-stevenai * {
+    --l: var(--art-stevenai-l);
+  }
   .home .art-stevenai svg {
     fill: none;
     stroke-linecap: round;
     stroke-linejoin: round;
-    overflow: visible;
   }
   /* ── Editor ── */
   .home .art-stevenai .sa-code {
@@ -29,7 +38,7 @@
     width: 33.5cqw;
     translate: 0 -50%;
     overflow: hidden;
-    border: 1px solid rgb(142 233 212 / 0.3);
+    border: 1px solid #8ee9d44d;
     border-radius: 0.9em;
     background: linear-gradient(160deg, #10272bf5, #071519f7 65%);
     box-shadow:
@@ -48,7 +57,7 @@
     display: flex;
     align-items: center;
     gap: 0.4em;
-    border-bottom: 1px solid rgb(220 240 235 / 0.1);
+    border-bottom: 1px solid #dcf0eb1a;
     color: var(--mute);
     font-size: 0.85em;
   }
@@ -65,16 +74,12 @@
     position: relative;
     padding: 0.5em 0 0.3em;
     list-style: none;
-    counter-reset: sa;
-  }
-  .home .art-stevenai .sa-src li {
-    counter-increment: sa;
   }
   .home .art-stevenai .sa-src li::before {
-    content: counter(sa);
+    content: counter(list-item);
     display: inline-block;
-    width: 2.3em;
-    padding-right: 0.85em;
+    width: 2.5em;
+    padding-right: 0.8em;
     color: rgb(172 196 194 / 0.3);
     text-align: right;
   }
@@ -94,21 +99,21 @@
     color: var(--c);
     font-style: normal;
   }
-  /* La línea en curso. */
+  /* La línea en curso: una barra fina a la izquierda de los números, sin tocarlos. */
   .home .art-stevenai .sa-src::after {
     content: '';
     position: absolute;
     top: 0.5em;
     inset-inline: 0;
     height: calc(var(--lh) * 1em);
-    border-left: 0.2em solid var(--mint);
+    border-left: 0.15em solid var(--mint);
     background: linear-gradient(90deg, rgb(142 233 212 / 0.2), #0000);
-    opacity: var(--lit, 0);
-    transform: translateY(calc(var(--n) * 100% * var(--lit, 0)));
+    opacity: var(--l);
+    transform: translateY(calc(var(--n) * 100% - 100%));
   }
   .home .art-stevenai .sa-code .sa-run {
     padding-top: 0.35em;
-    border-top: 1px solid rgb(220 240 235 / 0.1);
+    border-top: 1px solid #dcf0eb1a;
     color: #f4f2e9;
   }
   .home .art-stevenai .sa-run b {
@@ -116,7 +121,7 @@
   }
   .home .art-stevenai .sa-run i {
     display: inline-block;
-    width: calc(0.55em - var(--lit, 0) * 0.55em);
+    width: calc(0.55em - var(--l) * 0.55em);
     height: 1.15em;
     margin-left: 0.35em;
     vertical-align: -0.2em;
@@ -124,36 +129,41 @@
   }
   .home .art-stevenai .sa-code .sa-out {
     padding-bottom: 0.55em;
-    letter-spacing: -0.04em;
   }
-  .home .art-stevenai .sa-out i {
+  /* Los procesos por lanzar: huecos y neutros; al correr, llenos con el color de su área. */
+  .home .art-stevenai .sa-out span {
     display: inline-block;
-    color: var(--c);
-    opacity: calc(0.3 + 0.7 * var(--lit, 0));
+    font-size: 0.8em;
+    letter-spacing: 0.1em;
+    color: color-mix(in oklab, var(--c) calc(var(--l) * 100%), #0000);
+    -webkit-text-stroke: calc(0.08em - var(--l) * 0.08em) var(--mute);
+    opacity: calc(0.55 + 0.45 * var(--l));
   }
   .home .art-stevenai .sa-out em {
+    --m: 15;
+    --j: 21;
     display: inline-block;
     color: var(--mint);
-    letter-spacing: 0;
-    opacity: var(--lit, 0);
+    opacity: var(--l);
   }
 
   /* ── Cable de entrada y núcleo (el «modelo» del esquema del sitio) ── */
   .home .art-stevenai .sa-in {
     position: absolute;
     top: 48.5cqh;
+    --d: 4.8s;
     left: 37cqw;
     width: 3cqw;
     height: 0.34em;
     translate: 0 -50%;
     transform-origin: 0 50%;
-    background: radial-gradient(closest-side, var(--mint) 70%, #0000) 0 0 / 0.75em 100%;
+    background: radial-gradient(closest-side, var(--mint) 70%, #0000) 0 0 / 0.85em 100%;
   }
   .home .art-stevenai :is(.sa-in, .sa-rows span)::after {
     content: '';
     position: absolute;
-    inset: -0.8em 0;
-    background: radial-gradient(closest-side, #fff 0 22%, var(--c, var(--mint)) 40%, #0000) 100% 50% / 1.9em 1.9em no-repeat;
+    inset: -1.1em 0;
+    background: radial-gradient(closest-side, #fff 0 24%, var(--c, var(--mint)) 42%, #0000) 100% 50% / 2.4em 2.4em no-repeat;
     opacity: 0;
   }
   .home .art-stevenai .sa-graph {
@@ -168,13 +178,13 @@
     width: 8.6em;
     aspect-ratio: 1;
     translate: 0 -50%;
-    border: 1px solid rgb(142 233 212 / 0.55);
+    border: 1px solid #8ee9d48c;
     border-radius: 1.5em;
     background: linear-gradient(var(--card), #0a1d21);
     box-shadow:
       inset 0 0 0 0.55em var(--card),
       inset 0 0 0 0.62em rgb(142 233 212 / 0.22),
-      0 0 calc(2em + var(--lit, 0) * 2.5em) -0.8em var(--mint);
+      0 0 calc(2em + var(--l) * 2.5em) -0.8em var(--mint);
   }
   .home .art-stevenai .sa-core svg {
     width: 74%;
@@ -184,11 +194,15 @@
   .home .art-stevenai .sa-core path {
     opacity: 0.4;
   }
+  /* Dos latidos, lento y rápido, siempre en marcha: la activa funde uno en otro sin saltos. */
   .home .art-stevenai .sa-core .sa-beat {
     stroke: #d9fff5;
     stroke-dasharray: 30 70;
     stroke-dashoffset: -26;
-    opacity: 1;
+    opacity: calc(1 - var(--l));
+  }
+  .home .art-stevenai .sa-core .sa-beat + .sa-beat {
+    opacity: var(--l);
   }
 
   /* ── Áreas: tronco, cubo con el motivo del sitio y sus procesos ── */
@@ -205,7 +219,7 @@
     top: 12.5%;
     bottom: 12.5%;
     width: 1px;
-    background: repeating-linear-gradient(rgb(142 233 212 / 0.5) var(--dash));
+    background: linear-gradient(#8ee9d480 0.35em, #0000 0) 0 0 / auto 0.85em;
   }
   .home .art-stevenai .sa-rows > li {
     position: relative;
@@ -223,7 +237,7 @@
     left: 0;
     width: 1.8em;
     height: 1px;
-    background: repeating-linear-gradient(90deg, color-mix(in oklab, var(--c, #8ee9d4) calc(50% + var(--lit, 0) * 40%), #0000) var(--dash));
+    background: linear-gradient(90deg, color-mix(in oklab, var(--c, #8ee9d4) calc(50% + var(--l) * 45%), #0000) 0.35em, #0000 0) 0 / 0.85em;
   }
   .home .art-stevenai .sa-graph .sa-core::before {
     left: 100%;
@@ -234,10 +248,10 @@
     width: 5.4em;
     height: 5.4em;
     padding: 1.05em;
-    border: 1px solid color-mix(in oklab, var(--c) calc(50% + var(--lit, 0) * 50%), #0000);
+    border: 1px solid color-mix(in oklab, var(--c) calc(50% + var(--l) * 50%), #0000);
     border-radius: 1.2em;
     background: var(--card);
-    box-shadow: 0 0 calc(2.6em + var(--lit, 0) * 2em) -1em var(--c);
+    box-shadow: 0 0 calc(2.6em + var(--l) * 2em) -1em var(--c);
     stroke: var(--c);
     stroke-width: 1.7;
   }
@@ -249,46 +263,43 @@
     position: relative;
     display: flex;
     gap: 0.85em;
-    margin-left: 1.4em;
+    padding-left: 1.4em;
   }
-  .home .art-stevenai .sa-rows span::before,
-  .home .art-stevenai .sa-rows span::after {
-    left: -1.4em;
-    width: auto;
-    right: 0;
+  .home .art-stevenai .sa-rows span::before {
+    width: 100%;
   }
-  /* Un proceso: una terminal mínima con su luz de estado. */
+  /* Un proceso: el nodo de terminal del sitio, con su luz de estado y su indicador >_. */
   .home .art-stevenai .sa-rows i {
     position: relative;
     z-index: 1;
     width: 3em;
     height: 3.9em;
-    border: 1px solid color-mix(in oklab, var(--c) calc(45% + var(--lit, 0) * 55%), #0000);
+    border: 1px solid color-mix(in oklab, var(--c) calc(45% + var(--l) * 55%), #0000);
     border-radius: 0.6em;
-    background: color-mix(in oklab, var(--c) calc(var(--lit, 0) * 18%), var(--card));
-    box-shadow: 0 0 calc(var(--lit, 0) * 1.6em) calc(var(--lit, 0) * -0.2em) var(--c);
-  }
-  .home .art-stevenai .sa-rows i::before,
-  .home .art-stevenai .sa-rows i::after {
-    content: '';
-    position: absolute;
-    left: 0.5em;
+    background: color-mix(in oklab, var(--c) calc(var(--l) * 18%), var(--card));
+    box-shadow: 0 0 calc(var(--l) * 1.6em) -0.2em var(--c);
   }
   .home .art-stevenai .sa-rows i::before {
+    content: '';
+    position: absolute;
     top: 0.5em;
+    left: 0.5em;
     width: 0.7em;
     aspect-ratio: 1;
     border-radius: 50%;
     background: var(--c);
-    box-shadow: 0 0 calc(var(--lit, 0) * 0.9em) var(--c);
-    opacity: calc(0.45 + 0.55 * var(--lit, 0));
+    box-shadow: 0 0 calc(var(--l) * 0.9em) var(--c);
+    opacity: calc(0.3 + 0.7 * var(--l));
   }
   .home .art-stevenai .sa-rows i::after {
-    right: 0.8em;
-    bottom: 0.6em;
-    height: 1.2em;
-    border-block: 1px solid var(--c);
-    opacity: calc(0.3 + 0.4 * var(--lit, 0));
+    content: '>_';
+    position: absolute;
+    bottom: 0.4em;
+    left: 0.5em;
+    color: var(--c);
+    font: 1.15em/1 var(--f-code);
+    letter-spacing: -0.06em;
+    opacity: calc(0.5 + 0.4 * var(--l));
   }
   /* El único privado del catálogo: sin fuente pública, contorno discontinuo y luz hueca. */
   .home .art-stevenai .sa-rows i[data-p] {
@@ -302,16 +313,17 @@
 
   /* ── Activa (y la leyenda enciende su área) ── */
   .home .art-host:is(:hover, :focus-within) .art-stevenai {
-    --lit: 1;
+    --art-stevenai-l: 1;
+    --ps: running;
   }
   .home .cat:has(.cat-kinds [data-k]:is(:hover, :focus-visible)) .art-stevenai [data-k] {
-    --lit: var(--hl);
+    --art-stevenai-l: var(--hl);
   }
 
-  /* ── Vertical: el editor arriba, el atlas debajo ── */
+  /* ── Vertical: el editor arriba; debajo, el núcleo (más pequeño) a la altura de la primera área, y el atlas ── */
   @container scene (aspect-ratio < 1) {
     .home .art-stevenai {
-      --n: 7;
+      --n: 8;
       --lh: 1.45;
       font-size: 1.8cqw;
     }
@@ -322,70 +334,73 @@
       translate: none;
       font-size: 1.75em;
     }
-    .home .art-stevenai :is(.sa-bar, .sa-x, .sa-core) {
+    .home .art-stevenai :is(.sa-bar, .sa-x) {
       display: none;
     }
     .home .art-stevenai .sa-in {
       top: 48cqh;
-      left: 6cqw;
-      width: 4cqw;
+      left: 10.6cqw;
+      width: 3.5cqw;
       rotate: 90deg;
     }
     .home .art-stevenai .sa-graph {
       inset: 51cqh 3cqw 19cqh 6cqw;
     }
-    .home .art-stevenai .sa-rows svg {
-      font-size: 0.82em;
+    .home .art-stevenai .sa-core {
+      top: 12.5%;
+      font-size: 0.6em;
     }
     .home .art-stevenai .sa-rows {
-      left: 0;
+      left: 6.6em;
     }
-    .home .art-stevenai .sa-rows::before {
-      top: 0;
+    .home .art-stevenai .sa-rows svg {
+      font-size: 0.82em;
     }
   }
 
   /* ── Movimiento ── */
   @media (prefers-reduced-motion: no-preference) {
-    .home .art-stevenai :is(.sa-rows > li, .sa-src li, .sa-out i) {
-      transition: opacity 0.35s;
+    .home :is(.art-stevenai, .art-stevenai [data-k]) {
+      transition:
+        opacity 0.35s,
+        --art-stevenai-l 0.45s;
     }
     .home .art-stevenai .sa-run i {
       animation: art-stevenai-blink 1.1s steps(1) infinite;
     }
-    /* Con --lit (activa, o el área de la leyenda) todo corre más rápido. */
-    .home .art-stevenai .sa-in::after {
-      animation: art-stevenai-idle calc(4.8s - var(--lit, 0) * 3.8s) linear infinite;
-    }
-    .home .art-stevenai .sa-rows span::after {
-      animation: art-stevenai-idle calc(9s - var(--lit, 0) * 7.8s) linear calc(var(--r) * -2.1s) infinite;
+    .home .art-stevenai :is(.sa-in, .sa-rows span)::after {
+      animation: art-stevenai-idle var(--d, 9s) linear calc(var(--r, 0) * -2.1s) infinite;
     }
     .home .art-stevenai .sa-beat {
-      animation: art-stevenai-beat calc(3.4s - var(--lit, 0) * 2.4s) linear infinite;
+      animation: art-stevenai-beat 3.4s linear infinite;
+    }
+    .home .art-stevenai .sa-beat + .sa-beat {
+      animation-duration: 1.1s;
+    }
+    /* Los cables fluyen solo en la activa: al salir se detienen donde van, sin saltar. */
+    .home .art-stevenai .sa-in,
+    .home .art-stevenai :is(.sa-rows > li, .sa-rows span, .sa-core)::before {
+      animation: art-stevenai-flow 0.5s linear infinite var(--ps, paused);
     }
     .home .art-stevenai .sa-rows i::before {
-      animation: art-stevenai-breathe 5s ease-in-out calc(var(--i) * 0.3s + var(--r) * 0.55s - 8s) infinite;
+      animation: art-stevenai-breathe 4s ease-in-out calc(var(--i) * 0.35s + var(--r) * 0.6s - 8s) infinite;
     }
-    /* Corre: la línea en curso baja por el programa y se queda en el bucle; procesos y puntos nacen en orden. */
+    /* Corre: la línea en curso baja por el programa (--n renglones) y se queda en el bucle; procesos y puntos nacen
+       en orden, y la salida se escribe. */
     .home .art-host:is(:hover, :focus-within) .art-stevenai .sa-src::after {
       animation:
-        art-stevenai-sweep 1s steps(10, jump-none) both,
+        art-stevenai-sweep 1s steps(var(--n), jump-none) both,
         art-stevenai-loop 0.6s steps(1) 1s infinite;
     }
-    @container scene (aspect-ratio < 1) {
-      .home .art-host:is(:hover, :focus-within) .art-stevenai .sa-src::after {
-        animation-timing-function: steps(8, jump-none), steps(1);
-      }
+    .home .art-host:is(:hover, :focus-within) .art-stevenai .sa-rows i {
+      animation: art-stevenai-spawn 0.4s var(--ease-out) calc(0.2s + var(--r) * 0.15s + var(--i) * 0.08s) both;
     }
-    .home .art-host:is(:hover, :focus-within) .art-stevenai :is(.sa-rows i, .sa-rows i::before, .sa-out i) {
-      animation: art-stevenai-spawn 0.4s var(--ease-out) calc(0.2s + var(--r, 0) * 0.15s + var(--i, 0) * 0.08s + var(--j, 0) * 0.05s) both;
-    }
-    .home .art-host:is(:hover, :focus-within) .art-stevenai .sa-out em {
-      animation: art-stevenai-show 0.4s var(--ease-out) 1.1s both;
+    .home .art-host:is(:hover, :focus-within) .art-stevenai .sa-out :is(span, em) {
+      animation: art-stevenai-type calc(var(--m) * 0.04s) steps(var(--m)) calc(0.2s + var(--j) * 0.04s) both;
     }
   }
   /* La pausa del grafo también corta los fundidos a medias. */
-  html[data-motion='paused'] .home .art-stevenai * {
+  html[data-motion='paused'] .home :is(.art-stevenai, .art-stevenai *) {
     transition: none;
   }
   @keyframes art-stevenai-blink {
@@ -421,6 +436,11 @@
       opacity: 1;
     }
   }
+  @keyframes art-stevenai-flow {
+    to {
+      background-position-x: 0.85em;
+    }
+  }
   @keyframes art-stevenai-spawn {
     from {
       opacity: 0;
@@ -431,10 +451,12 @@
       transform: scale(1.18);
     }
   }
-  @keyframes art-stevenai-show {
+  @keyframes art-stevenai-type {
     from {
-      opacity: 0;
-      transform: translateX(-0.7em);
+      clip-path: inset(0 100% 0 0);
+    }
+    to {
+      clip-path: inset(0);
     }
   }
   @keyframes art-stevenai-sweep {
@@ -444,10 +466,10 @@
   }
   @keyframes art-stevenai-loop {
     from {
-      transform: translateY(calc(var(--n) * 100% - 100%));
+      transform: translateY(calc(var(--n) * 100% - 200%));
     }
     50% {
-      transform: translateY(calc(var(--n) * 100%));
+      transform: translateY(calc(var(--n) * 100% - 100%));
     }
   }
 }

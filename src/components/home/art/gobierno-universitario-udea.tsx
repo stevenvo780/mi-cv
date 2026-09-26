@@ -52,7 +52,7 @@ const line = (i: number) => `M${P[T[i][0]]} ${P[T[i][1]]}`;
 const idx = (i: number) => (i ? css({ '--i': i }) : undefined);
 
 function Seat({ i }: { i: number }) {
-  return <i className={i === 5 ? 's r' : 's'} style={css({ '--x': P[i][0], '--y': P[i][1], '--c': SEATS[i][1] || undefined })} />;
+  return <i className={i === 5 ? 'r' : undefined} style={css({ '--x': P[i][0], '--y': P[i][1], '--c': SEATS[i][1] || undefined })} />;
 }
 
 /** Gobierno Universitario UdeA: el Consejo Superior como una mesa de actores cruzada por tensiones, 2010-2013. */

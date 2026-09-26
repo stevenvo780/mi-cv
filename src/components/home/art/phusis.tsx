@@ -19,7 +19,7 @@ while (CA.length < ROWS) CA.push(step(CA[CA.length - 1]));
 // Celdas vivas en tramos: «M x y h n» abre la primera fila, «m dx dy h n» salta a la siguiente y «m hueco 0 h n» sigue
 // en ella (todo relativo, sin ceros a la izquierda); el trazo punteado de la hoja parte cada tramo en cuadritos.
 const num = (n: number) => String(n).replace(/^(-?)0\./, '$1.');
-function runs(rows: number[][], x0: number): string {
+function runs(rows: number[][], x0: number, y0: number): string {
   let d = '';
   let x = 0;
   let y = 0;
@@ -28,7 +28,7 @@ function runs(rows: number[][], x0: number): string {
       if (!r[j] || r[j - 1]) continue;
       let k = j;
       while (r[k]) k++;
-      d += d ? `m${num(x0 + j - x)} ${num(i + 0.5 - y)}` : `M${num(x0 + j)} ${num(i + 0.5)}`;
+      d += d ? `m${num(x0 + j - x)} ${num(i + 0.5 - y)}` : `M${num(x0 + j)} ${num(y0 + i + 0.5)}`;
       d += `h${k - j}`;
       x = x0 + k;
       y = i + 0.5;
@@ -43,7 +43,7 @@ for (let i = 0, y = 0; i < ROWS; i++) {
   if (!CA[i][ROWS - 1] || CA[i - 1]?.[ROWS - 1]) continue;
   let k = i;
   while (CA[k]?.[ROWS - 1]) k++;
-  MID += `${MID ? 'm0 ' + (i - y) : 'M0 ' + i}v${k - i}`;
+  MID += `${MID ? 'm0 ' + (i - y) : 'M0 ' + (i + 5)}v${k - i}`;
   y = k;
 }
 
@@ -76,29 +76,28 @@ export default function Art() {
             <stop offset="1" className="s0" />
           </linearGradient>
           {/* Icono apagado de la tabla: solo el borde de sus cuatro celdas, como en los de Wolfram. */}
-          <pattern id="art-phusis-p" width="5" height="3" patternUnits="userSpaceOnUse">
+          <pattern id="art-phusis-p" x="3.5" y="1.2" width="5" height="3" patternUnits="userSpaceOnUse">
             <path d="M.15 .15h.7v.7h-.7zm1 0h.7v.7h-.7zm1 0h.7v.7h-.7zm-1 1h.7v.7h-.7z" />
           </pattern>
-          <path id="art-phusis-c" d={runs(CA, -ROWS + 0.5)} />
+          <path id="art-phusis-c" d={runs(CA, -ROWS + 0.5, 5)} />
           <clipPath id="art-phusis-k">
-            <rect className="k" x="-25" width="50" height={ROWS} />
+            <rect className="k" x="-25" y="5" width="50" height={ROWS} />
           </clipPath>
           <clipPath id="art-phusis-f">
-            <rect className="f" x="-25" width="50" height="1" />
+            <rect className="f" x="-25" y="5" width="50" height="1" />
           </clipPath>
         </defs>
         <text className="cd" x="-21.4" y="3.2">
           <tspan className="fn">wolframStep</tspan>(<tspan className="ar">row</tspan>, <tspan className="n">30</tspan>)
+          <tspan className="ct">|</tspan>
         </text>
-        <rect className="ct" x="-3" y="1.9" width=".14" height="1.7" />
-        <g className="rl" transform="translate(3.5 1.2)">
-          <rect className="r0" width="18" height="5" />
-          <path className="r1" d={runs(IN, 0)} />
-          <path className="r2" d={runs(OUT, 0)} />
-        </g>
-        <g transform="translate(0 5)">
-          <rect className="sc" x="-25" y="-3" width="50" height="4.6" />
-          <use href="#art-phusis-c" className="gh" />
+        <rect className="r0" x="3.5" y="1.2" width="18" height="5" />
+        <path className="r1" d={runs(IN, 3.5, 1.2)} />
+        <use href="#art-phusis-c" className="gh" />
+        {/* Lo que se funde al soltar: las salidas de la tabla, la banda, la cascada y su frente. */}
+        <g className="w">
+          <path className="r2" d={runs(OUT, 3.5, 1.2)} />
+          <rect className="sc" x="-25" y="2" width="50" height="4.6" />
           <g className="on">
             <use href="#art-phusis-c" />
             <path className="md" d={MID} />

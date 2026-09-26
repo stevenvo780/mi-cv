@@ -55,8 +55,8 @@ export default function Art() {
         {/* La ciudad se dibuja dos veces: la copia oscura y desplazada hace de muros bajo los techos. */}
         <use href="#art-graf-c" y="1.6" className="sd" />
         <g id="art-graf-c" transform="translate(80 52) scale(1 .56) rotate(28)">
-          <rect className="rf" x="-150" y="-150" width="300" height="300" />
-          <rect className="lt" x="-150" y="-150" width="300" height="300" />
+          <rect className="rf" />
+          <rect className="lt" />
           <path className="rv" d="M-150 54C-80 40-40 60 10 50S90 42 150 58" />
           <g className="av">
             <path id="art-graf-a" d="M-150-42H150M-150 42H150M-60-150V150M0-150V150M60-150V150" />
@@ -79,7 +79,7 @@ export default function Art() {
           <path className="hs" d="M0 0v-5" />
           <circle cy="-10.6" r="5.6" fill="url(#art-graf-g)" />
           <ellipse className="ob" cy="-10.6" rx="8.6" ry="2.4" />
-          <path className="bag" d="M-1.8-14.2h3.6l1.8 2.3v4.5h-7.2v-4.5zM-3.6-11.9h7.2M-1.4-10.4a1.4 1.4 0 0 0 2.8 0" />
+          <path className="bag" d="M-3.3-12.4h6.6l.5 5.2h-7.6zM-1.9-12.4q1.9-2.8 3.8 0M-1.2-10.4a1.2 1.2 0 0 0 2.4 0" />
         </g>
       </svg>
     </div>

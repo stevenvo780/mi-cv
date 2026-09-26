@@ -2,8 +2,9 @@ import type { CSSProperties } from 'react';
 
 /* Umbral: una puerta en un muro, y por ella llegan las escenas del atlas como planos que cruzan el umbral hacia quien
    mira. Cinco planos, uno por área: KS12 (Lorenz, física), KS03 (el campo del corredor, sistemas), KS04 (Vida,
-   autómatas), KS05 (curvas de complejidad, matemáticas) y KS23 (extrapolación, cómputo). Los colores salen de la
-   paleta del sitio por clase (umbral-atlas.css). */
+   autómatas), KS05 (curvas de complejidad, matemáticas) y KS23 (extrapolación, cómputo: la red se ajusta a la recta
+   dentro de la zona de entrenamiento y se aparta fuera). Los colores salen de la paleta del sitio por clase
+   (umbral-atlas.css). */
 const v = (i: number) => ({ '--i': i }) as CSSProperties;
 
 // Atractor de Lorenz (σ = 10, ρ = 28, β = 8/3), integrado con RK4 y proyectado en el plano x–z con la misma escala (2)
@@ -18,16 +19,13 @@ export default function Art() {
         <i className="vo" />
         <i className="fb" />
         <svg className="pl" viewBox="0 0 80 50" style={v(0)}>
-          <text x="4" y="8">KS12</text>
           <path className="g" d={LORENZ} strokeWidth="1.2" transform="scale(.5)" />
         </svg>
         <svg className="pl" viewBox="0 0 80 50" style={v(1)}>
-          <text x="4" y="8">KS03</text>
           <path className="f" d="M40 24 73 36 40 48 7 36z" />
           <path className="c" d="M22 37l2-15 2 15zM31 33l2-19 2 19zM41 38l2-24 2 24zM50 34l2-17 2 17zM36 43l2-14 2 14zM57 39l2-12 2 12z" fill="currentColor" />
         </svg>
         <svg className="pl" viewBox="0 0 80 50" style={v(2)}>
-          <text x="4" y="8">KS04</text>
           <path
             d="M20 14h3M24 18h3M16 22h3m1 0h3m1 0h3M48 26h3m1 0h3m1 0h3M60 38h3m1 0h3M60 42h3m1 0h3M32 34h3m1 0h3M28 38h3m9 0h3M32 42h3m1 0h3"
             strokeWidth="3"
@@ -35,7 +33,6 @@ export default function Art() {
           />
         </svg>
         <svg className="pl" viewBox="0 0 80 50" style={v(3)}>
-          <text x="4" y="8">KS05</text>
           <path className="m" d="M8 12v32h66" opacity=".5" />
           <path className="m" d="M8 44q12-8 66-10" />
           <path className="v" d="M8 44 74 28" />
@@ -45,11 +42,10 @@ export default function Art() {
           <path className="g" d="M8 44c30 0 38-6 42-32" />
         </svg>
         <svg className="pl" viewBox="0 0 80 50" style={v(4)}>
-          <text x="4" y="8">KS23</text>
           <path className="c" d="M8 12h32v32H8z" fill="currentColor" fillOpacity=".06" stroke="none" />
           <path className="m" d="M40 12v32" strokeDasharray="1.5 1.5" />
           <path className="g" d="M10 40 72 10" />
-          <path className="e" d="M10 40q30-18 62-16" />
+          <path className="e" d="M10 40 40 25.5q16-7.7 32-8" />
           <path className="c" d="M12 39h0m6-3h0m6-3h0m6-3h0m6-3h0" strokeWidth="2.4" />
         </svg>
         <i style={v(0)} />
@@ -63,7 +59,6 @@ export default function Art() {
         <i className="dr" />
         <i className="ff" />
       </i>
-      <i className="vg" />
     </div>
   );
 }

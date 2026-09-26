@@ -19,8 +19,8 @@ const MOD: [string, string][] = [
   ['#22a45a', 'M2 3h3l2.6 11.5h10.6L20.5 7H6M8.5 19.5a1.5 1.5 0 0 0 3 0 1.5 1.5 0 0 0-3 0M16 19.5a1.5 1.5 0 0 0 3 0 1.5 1.5 0 0 0-3 0'],
   // Iris: megáfono (difusión masiva)
   ['#2dcbd1', 'M3 9.5v5h3.5l7.5 4.5V5l-7.5 4.5zM6.5 14.5l1.5 5h2.5M17.5 9a4 4 0 0 1 0 6M20 6.5a7.5 7.5 0 0 1 0 11'],
-  // Talanton: tiquete del POS con factura DIAN
-  ['#67e2e6', 'M5 2h14v20l-2.3-1.5-2.4 1.5-2.3-1.5-2.3 1.5-2.4-1.5L5 22zM9 7h6M9 11h6M9 15h3.5'],
+  // Talanton: tiquete del POS con factura DIAN (el azul de información de la marca: el espectro sigue en orden)
+  ['#2e90fa', 'M5 2h14v20l-2.3-1.5-2.4 1.5-2.3-1.5-2.3 1.5-2.4-1.5L5 22zM9 7h6M9 11h6M9 15h3.5'],
   // CRM: cliente
   ['#8b7cf6', 'M8 7.5a4 4 0 0 0 8 0 4 4 0 0 0-8 0M4 21c0-4.5 3.6-7 8-7s8 2.5 8 7'],
 ];
@@ -43,7 +43,7 @@ export default function Art() {
       <svg viewBox="0 0 160 100">
         <defs>
           <radialGradient id="art-prizma-g" cx=".46" r=".42">
-            <stop offset="0" />
+            <stop />
             <stop offset=".7" stopColor="#fff" />
           </radialGradient>
           <mask id="art-prizma-m">
@@ -57,17 +57,19 @@ export default function Art() {
         </g>
         <path className="in" d={`M${E}L${X[0]} 48.4V51.6Z`} />
         <g mask="url(#art-prizma-m)">
-          {RAYS.map((r, i) => (
-            <g key={i} className="r" transform={`translate(${X}) rotate(${r.a})`} style={v({ '--c': r.c, '--l': r.l, '--i': i })}>
-              <line className="w" x2={r.l} />
-              <line x2={r.l} />
-              <circle className="p" />
-              <g className="n" transform={r.n}>
-                <rect />
-                <path d={r.d} />
+          <g transform={`translate(${X.join(' ')})`}>
+            {RAYS.map((r, i) => (
+              <g key={i} transform={`rotate(${r.a})`} style={v({ '--c': r.c, '--l': r.l, '--i': i })}>
+                <line className="w" x2={r.l} />
+                <line x2={r.l} />
+                <circle className="p" />
+                <g className="n" transform={r.n}>
+                  <rect />
+                  <path d={r.d} />
+                </g>
               </g>
-            </g>
-          ))}
+            ))}
+          </g>
         </g>
       </svg>
       {/* Prisma de cristal: tapa trasera, tres caras (base, izquierda, derecha) y tapa delantera. */}

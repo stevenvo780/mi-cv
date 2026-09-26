@@ -22,21 +22,8 @@ const LADO = Math.min(COLS, FILAS);
 // Alturas (en décimas de manzana): más altas al fondo, torres esbeltas, bloques bajos delante. El retiro de cada solar
 // sale de su altura (en la hoja).
 const ALTO = [8, 11, 6, 9, 5, 13, 7, 8, 4, 6, 3, 5];
-// Ventanas: sodio casi todas, algunas frías.
-const LUZ = [
-  '#ffc65c',
-  '#ffe3a3',
-  '#ffc65c',
-  '#9fe8df',
-  '#ffe3a3',
-  '#ffc65c',
-  '#ffc65c',
-  '#eef2fa',
-  '#ffe3a3',
-  '#ffc65c',
-  '#9fe8df',
-  '#ffc65c',
-];
+// Ventanas: sodio casi todas (el de la hoja, sin marcado: 0), algunas más claras o frías.
+const LUZ = [0, '#ffe3a3', 0, '#9fe8df', '#ffe3a3', 0, 0, '#eef2fa', '#ffe3a3', 0, '#9fe8df', 0];
 // Calles: índice del borde de celda; var(--R) y var(--C) son las avenidas del frente, que nada tapa.
 type Calle = number | 'var(--R)' | 'var(--C)';
 // Líneas del plano (sus colores en el sitio): Venta, Datos y reportes, Pedidos y despacho, Inventario,
@@ -49,17 +36,18 @@ const LINEAS: { v?: 1; r: Calle; c: string }[] = [
   { r: 'var(--R)', c: '#ff5fa8' },
   { v: 1, r: 'var(--C)', c: '#e9d8b0' },
 ];
-// Pedidos en ruta: calle, duración (s) y --s, la pose quieta (fracción del recorrido), que también fija el desfase.
-// Casi todos van por las dos avenidas del frente, donde se ven enteros.
-const PAQUETES: { v?: 1; r: Calle; d: number; s: number }[] = [
-  { r: 'var(--R)', d: 10, s: 0.2 },
-  { r: 'var(--R)', d: 10, s: 0.53 },
-  { r: 'var(--R)', d: 10, s: 0.87 },
-  { v: 1, r: 'var(--C)', d: 11, s: 0.1 },
-  { v: 1, r: 'var(--C)', d: 11, s: 0.43 },
-  { v: 1, r: 'var(--C)', d: 11, s: 0.76 },
-  { r: 2, d: 12, s: 0.3 },
-  { v: 1, r: 1, d: 12, s: 0.65 },
+// Pedidos en ruta: calle, duración (s) y --s, la pose quieta (fracción del recorrido, sin el cero), que también fija
+// el desfase. Casi todos van por las dos avenidas del frente, donde se ven enteros: esa calle y su duración (10 s la
+// del frente, 11 s la del este) las pone la hoja.
+const PAQUETES: { v?: 1; r?: Calle; d?: number; s: string }[] = [
+  { s: '.2' },
+  { s: '.53' },
+  { s: '.87' },
+  { v: 1, s: '.1' },
+  { v: 1, s: '.43' },
+  { v: 1, s: '.76' },
+  { r: 2, d: 12, s: '.3' },
+  { v: 1, r: 1, d: 12, s: '.65' },
 ];
 // Rutas de los agentes: una vuelta por las calles entre dos esquinas opuestas (x, y) → (X, Y), dentro de 0‥3 (vale en
 // 4×3 y en 3×4) y lejos del fondo, para que el vuelo no se salga por arriba.
@@ -70,7 +58,7 @@ const RUTAS = [
 ];
 const AGENTE = ['var(--art-a)', 'var(--art-b)', '#f2f5ff'];
 
-const css = (o: Record<string, string | number>) => o as CSSProperties;
+const css = (o: Record<string, string | number | undefined>) => o as CSSProperties;
 
 export default function Art({ locale }: ArtProps) {
   // El contador reposa en los productos y, al pasar, suma los servicios.
@@ -78,18 +66,25 @@ export default function Art({ locale }: ArtProps) {
   return (
     <div className="art art-humanizar" aria-hidden="true" style={css({ '--gc': COLS, '--gr': FILAS })}>
       <div className="pl">
+        {/* Sin clases donde basta la etiqueta: líneas <i>, pedidos <u>; en cada módulo, azotea <b>, fachada sur <i> y
+            fachada este <s>; en cada agente, anillo <i> y destello <b>. */}
         {LINEAS.map((l, i) => (
-          <i key={`l${i}`} className={l.v ? 'ln v' : 'ln'} style={css({ '--r': l.r, '--lc': l.c })} />
+          <i key={`l${i}`} className={l.v && 'v'} style={css({ '--r': l.r, '--lc': l.c })} />
         ))}
         {Array.from({ length: PRODUCTOS }, (_, i) => (
-          <div key={`b${i}`} className="b" data-k="producto" style={css({ '--i': i, '--h': ALTO[i % 12], '--w': LUZ[i % 12] })}>
-            <b className="t" />
-            <b className="s" />
-            <b className="e" />
+          <div
+            key={`b${i}`}
+            className="b"
+            data-k="producto"
+            style={css({ '--i': i, '--h': ALTO[i % 12], ...(LUZ[i % 12] && { '--w': LUZ[i % 12] }) })}
+          >
+            <b />
+            <i />
+            <s />
           </div>
         ))}
         {PAQUETES.map((p, i) => (
-          <i key={`p${i}`} className={p.v ? 'p v' : 'p'} style={css({ '--r': p.r, '--d': p.d, '--s': p.s })} />
+          <u key={`p${i}`} className={p.v && 'v'} style={css({ '--r': p.r, '--d': p.d, '--s': p.s })} />
         ))}
         {Array.from({ length: SERVICIOS }, (_, k) => {
           const [x, y, X, Y] = RUTAS[k % RUTAS.length].map((n) => Math.min(n, LADO));
@@ -100,8 +95,8 @@ export default function Art({ locale }: ArtProps) {
               data-k="servicio"
               style={css({ '--j': PRODUCTOS + k, '--k': k, '--ac': AGENTE[k % AGENTE.length], '--x': x, '--y': y, '--X': X, '--Y': Y })}
             >
-              <b className="rg" />
-              <b className="orb" />
+              <i />
+              <b />
             </div>
           );
         })}

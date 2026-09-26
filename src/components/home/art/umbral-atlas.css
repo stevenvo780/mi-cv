@@ -7,11 +7,6 @@
     --c: #0b1417;
     --g: #f0c887;
     --t: #6fd3c4;
-    --teal: #43b5a6;
-    --cream: #e8e0d4;
-    --violet: #8d7cc0;
-    --rust: #cf6a3c;
-    --field: #1b6b77;
     --w: #fff4dc;
     --l: #43b5a666 0 0.3cqw, transparent 0 6cqw;
     --grid: repeating-linear-gradient(90deg, var(--l)), repeating-linear-gradient(var(--l));
@@ -24,7 +19,7 @@
     inset: 0;
     perspective: 62cqw;
     perspective-origin: 50% 44%;
-    transform-origin: 50% 30%;
+    transform-origin: 50% 20%;
   }
 
   /* Suelo: retícula teal que entra por la puerta (detrás) y suelo firme con la luz que sale (delante). */
@@ -62,7 +57,9 @@
   }
 
   /* Las escenas: fichas del atlas en fila hacia el fondo, cada una a un lado de la espiral para no taparse; opacas,
-     para que la de delante se lea limpia. La primera ya asoma por delante del marco. */
+     para que la de delante se lea limpia. La primera ya asoma por delante del marco. El vaivén lateral es corto: al
+     cruzar el muro, la ficha entera cabe en la puerta. En movimiento, la de arriba baja un poco (--y), para que al
+     salir hacia quien mira (y más con la cámara adelantada) no se corte por el borde. */
   .home .art-umbral-atlas .pl {
     left: 37cqw;
     top: calc(44cqh - 8.125cqw);
@@ -74,50 +71,45 @@
     stroke-width: 0.6;
     stroke-linecap: round;
     stroke-linejoin: round;
-    background: #091012db;
+    background: #091012;
     border: 0.2cqw solid #e8e0d452;
     z-index: calc(25 - var(--i) * 6);
-    transform: translate(calc(sin(var(--i) * 72deg) * 7cqw), calc(cos(var(--i) * 72deg) * -14cqh))
+    transform: translate(calc(sin(var(--i) * 72deg) * 3.5cqw), max(cos(var(--i) * 72deg) * -14cqh, var(--y, -14cqh)))
       rotateY(calc(cos(var(--i) * 180deg) * 9deg));
     translate: 0 0 calc(10cqw - var(--i) * 28cqw);
     opacity: calc(1 - var(--i) * 0.2);
-  }
-  .home .art-umbral-atlas .pl text {
-    font: 600 4.6px var(--f-code);
-    fill: var(--t);
-    stroke: none;
   }
   .home .art-umbral-atlas .g {
     color: var(--g);
   }
   .home .art-umbral-atlas .e {
-    color: var(--teal);
+    color: #43b5a6;
   }
   .home .art-umbral-atlas .c {
-    color: var(--cream);
+    color: #e8e0d4;
   }
   .home .art-umbral-atlas .m {
     color: var(--muted);
   }
   .home .art-umbral-atlas .v {
-    color: var(--violet);
+    color: #8d7cc0;
   }
   .home .art-umbral-atlas .r {
-    color: var(--rust);
+    color: #cf6a3c;
   }
   .home .art-umbral-atlas .f {
-    fill: var(--field);
+    fill: #1b6b77;
   }
 
-  /* Rayos: solo al entrar. Estelas que salen del punto de fuga y se alargan hacia el marco, como lo que llega desde
-     el fondo; por encima de las fichas que aún no cruzan y detrás del muro, así que solo se ven por la puerta. */
+  /* Rayos: solo al entrar. Estelas de luz que salen del punto de fuga y se alargan hacia el marco, como lo que llega
+     desde el fondo; detrás de las fichas y del muro, así que solo se ven por la puerta. */
   .home .art-umbral-atlas i[style] {
-    z-index: 19;
+    z-index: 2;
     left: 50cqw;
     top: 44cqh;
     width: 30cqw;
     height: 0.4cqw;
-    background: linear-gradient(90deg, transparent 35%, var(--t) 85%, var(--w));
+    background: linear-gradient(90deg, transparent 30%, var(--t) 80%, transparent);
     opacity: 0;
     transform-origin: 0;
     rotate: calc(var(--i) * 45deg + 20deg);
@@ -156,7 +148,9 @@
       inset 0 0 6cqw rgb(111 211 196 / 0.45);
     opacity: 0;
   }
-  .home .art-umbral-atlas .vg {
+  .home .art-umbral-atlas::after {
+    content: '';
+    position: absolute;
     inset: 0;
     background: radial-gradient(transparent 50%, #05090bbf);
   }
@@ -173,13 +167,22 @@
     .home .art-umbral-atlas .st {
       transition: 1.2s var(--ease-out);
     }
+    /* El orden de pintado va en su propia animación, a saltos: así la deriva (translate y opacidad) corre en el
+       compositor. */
     .home .art-umbral-atlas .pl {
-      animation: art-umbral-atlas-drift 14s calc(var(--i) * 2.8s - 10.5s) linear infinite;
+      --y: -11cqh;
+      animation:
+        art-umbral-atlas-drift 14s linear infinite,
+        art-umbral-atlas-z 14s step-end infinite;
+      animation-delay: calc(var(--i) * 2.8s - 10.5s);
       transition: 1s var(--ease-out);
     }
     .home .art-umbral-atlas .vo {
       animation: art-umbral-atlas-breathe 7s ease-in-out infinite alternate;
       transition: 1.2s var(--ease-out);
+    }
+    .home .art-umbral-atlas .dr::after {
+      transition: opacity 0.5s;
     }
     /* Activa: se cruza el umbral. La cámara avanza y el campo se abre (más profundidad, los planos llegan más
        deprisa sin saltar de fase), cada plano gira sobre sí y los rayos atraviesan la puerta. */
@@ -188,45 +191,60 @@
       scale: 1.1;
     }
     .home .art-host:is(:hover, :focus-within) .art-umbral-atlas .pl {
-      rotate: y calc(cos(var(--i) * 180deg) * 34deg);
+      rotate: y calc(cos(var(--i) * 180deg) * 26deg);
       border-color: #f0c88799;
     }
     .home .art-host:is(:hover, :focus-within) .art-umbral-atlas i[style] {
       animation: art-umbral-atlas-ray 1.3s calc(var(--i) * -0.29s) ease-in infinite;
     }
   }
-  /* Con el grafo en pausa, tampoco corren las transiciones de la entrada (el marco no transita: se enciende). */
-  html[data-motion='paused'] .home .art-umbral-atlas * {
+  /* Con el grafo en pausa, tampoco corren las transiciones de la entrada. */
+  html[data-motion='paused'] .home .art-umbral-atlas *,
+  html[data-motion='paused'] .home .art-umbral-atlas .dr::after {
     transition: none;
   }
   /* Profundidad: la ficha llega tenue desde el fondo, se enciende justo antes del cruce del muro (z = 0, en el 78,6 %
-     del recorrido) y se apaga al salir hacia quien mira. */
+     del recorrido) y se apaga pronto al salir hacia quien mira, antes de que la siguiente llegue a su brillo. */
   @keyframes art-umbral-atlas-drift {
     0% {
       translate: 0 0 -110cqw;
       opacity: 0;
-      z-index: 1;
     }
     40% {
-      opacity: 0.3;
+      opacity: 0.25;
     }
-    70%,
+    76%,
     84% {
       opacity: 1;
     }
-    94% {
+    90% {
       opacity: 0;
-    }
-    78.5% {
-      z-index: 19;
-    }
-    78.6% {
-      z-index: 21;
     }
     100% {
       translate: 0 0 30cqw;
       opacity: 0;
-      z-index: 29;
+    }
+  }
+  /* Tramos del 20 % (el desfase entre fichas) alineados con el cruce: nunca dos fichas en el mismo, y la más cercana
+     siempre encima. */
+  @keyframes art-umbral-atlas-z {
+    0% {
+      z-index: 1;
+    }
+    18.6% {
+      z-index: 5;
+    }
+    38.6% {
+      z-index: 9;
+    }
+    58.6% {
+      z-index: 13;
+    }
+    78.6% {
+      z-index: 21;
+    }
+    98.6% {
+      z-index: 1;
     }
   }
   @keyframes art-umbral-atlas-breathe {

@@ -33,24 +33,22 @@ const v = (o: Record<string, number>) => o as CSSProperties;
 export default function Art() {
   return (
     <div className="art art-koinonia-udea" aria-hidden="true">
-      <svg viewBox="0 0 160 100">
-        <g transform="translate(80 50)">
-          <circle className="o" cx={-D} r={R} />
-          <circle className="o" cx={D} r={R} />
-          <path className="sp" d={HILOS} />
-          <g className="vs">
-            {VOCES.map(([a, r, z], i) => (
-              <circle key={i} r={z} style={v({ '--a': a, '--r': r })} />
-            ))}
-          </g>
-          <circle className="w" r="11.5" />
-          <g className="s">
-            <circle className="e" r="11.5" />
-            <circle className="c" r="8.8" />
-            {/* El ✓ en espera (tenue) y el que se traza al decidir. */}
-            <path d="M-4.2.2-1.3 3.1 4.4-3.2" />
-            <path className="v" pathLength={1} d="M-4.2.2-1.3 3.1 4.4-3.2" />
-          </g>
+      <svg viewBox="-80 -50 160 100">
+        <circle className="o" cx={-D} r={R} />
+        <circle className="o" cx={D} r={R} />
+        <path className="sp" d={HILOS} />
+        <g className="vs">
+          {VOCES.map(([a, r, z], i) => (
+            <circle key={i} r={z} style={v({ '--a': a, '--r': r })} />
+          ))}
+        </g>
+        <circle className="w" r="11.5" />
+        <g className="s">
+          <circle className="e" r="11.5" />
+          <circle className="c" r="8.8" />
+          {/* El ✓ en espera (tenue) y el que se traza al decidir. */}
+          <path d="M-4.2.2-1.3 3.1 4.4-3.2" />
+          <path className="v" pathLength={1} d="M-4.2.2-1.3 3.1 4.4-3.2" />
         </g>
       </svg>
     </div>

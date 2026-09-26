@@ -24,13 +24,17 @@ const CUT: [number, number, string][] = [
   [0, 0, 'h3v6h-3z'],
   [0, 3, 'h6v3h-6z'],
 ];
+// Tras «z» el lápiz vuelve al inicio del cuadrito: el siguiente se abre con un «m» relativo.
 const LAYERS = X.map((x, l) => {
   let q = '';
   let h = '';
+  let [px, py] = [0, 0];
   for (const y of col(l)) {
     const [cx, cy, cut] = CUT[Math.floor((rnd() + 1) * 3)];
-    q += `M${x - 3} ${y - 3}h6v6h-6z`;
-    h += `M${x - 3 + cx} ${y - 3 + cy}${cut}`;
+    const [sx, sy] = [x - 3 + cx, y - 3 + cy];
+    q += q ? 'm0 14h6v6h-6z' : `M${x - 3} ${y - 3}h6v6h-6z`;
+    h += tidy(h ? `m${sx - px} ${sy - py}${cut}` : `M${sx} ${sy}${cut}`);
+    [px, py] = [sx, sy];
   }
   return { q, h };
 });

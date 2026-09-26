@@ -14,7 +14,7 @@ interface Texto {
   // Subrayado de cada átomo o marcador, en orden de lectura: [x1, x2, renglón]. Medidos con Cormorant 500 a 8.
   u: [number, number, number][];
   fin: number;
-  // Veredicto: palabra, x y ancho de la placa, x de la marca ✓ (trazada: ninguna letra del arte la trae).
+  // Veredicto: palabra, x y ancho de la placa, x de la marca ✓ (trazada: el subconjunto de código no trae el glifo).
   ok: [string, number, number, number];
 }
 
@@ -64,7 +64,7 @@ const FORMULA: [string, number, number][] = [
   ['𝑝', 39.9, 1],
   ['→', 57, 0],
   ['𝑞', 73.5, 2],
-  [',', 79.9, -1],
+  [',', 78.4, -1],
   ['𝑝', 91.1, 3],
   ['⊢', 106.3, 4],
   ['𝑞', 120.8, 5],
@@ -76,16 +76,11 @@ export default function Art({ locale }: ArtProps) {
   return (
     <svg className="art art-nlp-to-logic" viewBox="0 0 160 100" aria-hidden="true">
       <defs>
-        <radialGradient id="art-nlp-to-logic-h">
-          <stop offset="0" stopColor="#43b5a6" stopOpacity=".2" />
-          <stop offset="1" stopColor="#43b5a6" stopOpacity="0" />
-        </radialGradient>
         <radialGradient id="art-nlp-to-logic-c">
           <stop offset="0" stopColor="#b69ae6" stopOpacity=".55" />
           <stop offset="1" stopColor="#b69ae6" stopOpacity="0" />
         </radialGradient>
       </defs>
-      <circle className="halo" cx="80" cy="64" r="36" />
       <g className="ins">
         <circle className="dial" cx="80" cy="64" r="26.5" />
         <circle className="rum" cx="80" cy="64" r="26.5" />

@@ -6,19 +6,22 @@
     --ot2: #6fd3c4;
     --og: #f0c887;
     --ok: #34d399;
+    --on: 0;
     width: 100%;
     height: 100%;
     fill: none;
+    /* El halo del instrumento, pintado en la caja: un nodo menos. */
+    background: radial-gradient(22.5% 36% at 50% 64%, #43b5a624, #0000);
   }
   .home .art-host:is(:hover, :focus-within) .art-nlp-to-logic {
     --on: 1;
     --nl: 0.62;
     --at: var(--ot2);
     --mk: var(--og);
-    --glow: drop-shadow(0 0 2.2px color-mix(in oklab, var(--ot) 70%, transparent));
-    --vb: color-mix(in oklab, var(--ok) 14%, var(--ink-0));
+    --glow: drop-shadow(0 0 1.8px var(--ot));
+    --vb: #0d2a22;
     --vs: var(--ok);
-    --vg: drop-shadow(0 0 2.5px color-mix(in oklab, var(--ok) 60%, transparent));
+    --vg: drop-shadow(0 0 2.2px #34d39999);
   }
 
   /* El instrumento: dial con marcas de compás y la roseta de cuatro círculos, en torno a la fórmula. */
@@ -29,29 +32,26 @@
   /* Roseta como luz de Venn (las zonas donde se cruzan se aclaran); bisel con 48 marcas y los cuatro rumbos. */
   .home .art-nlp-to-logic .ros circle {
     fill: var(--ot);
-    fill-opacity: calc(0.055 + var(--on, 0) * 0.04);
+    fill-opacity: calc(0.055 + var(--on) * 0.04);
     stroke: var(--ot);
     stroke-width: 0.4;
-    stroke-opacity: calc(0.36 + var(--on, 0) * 0.3);
+    stroke-opacity: calc(0.36 + var(--on) * 0.3);
   }
   .home .art-nlp-to-logic :is(.dial, .rum) {
     stroke: var(--ot);
     stroke-width: 1.5;
     stroke-dasharray: 0.24 3.229;
-    opacity: calc(0.45 + var(--on, 0) * 0.35);
+    opacity: calc(0.45 + var(--on) * 0.35);
   }
   .home .art-nlp-to-logic .rum {
     stroke-width: 3;
     stroke-dasharray: 0.55 41.08;
     stroke-dashoffset: 0.27;
   }
-  .home .art-nlp-to-logic .halo {
-    fill: url(#art-nlp-to-logic-h);
-    opacity: calc(0.7 + var(--on, 0) * 0.3);
-  }
+  /* El núcleo, tenue: cae en el hueco entre las premisas y no debe robarle el foco a ningún signo. */
   .home .art-nlp-to-logic .core {
     fill: url(#art-nlp-to-logic-c);
-    opacity: calc(0.6 + var(--on, 0) * 0.4);
+    opacity: calc(0.4 + var(--on) * 0.5);
   }
 
   /* Texto natural en Cormorant, como los títulos del sitio: marcadores en oro, átomos subrayados. */
@@ -78,20 +78,25 @@
   }
   .home .art-nlp-to-logic .car {
     fill: var(--ot2);
-    opacity: calc(1 - var(--on, 0));
+    opacity: calc(1 - var(--on));
   }
 
-  /* La fórmula en STIX: cada símbolo lleva el color de su procedencia (átomo o marcador). */
+  /* La fórmula en STIX: cada símbolo lleva el color de su procedencia (átomo o marcador) y un borde de tinta que corta
+     la roseta a su paso. El brillo solo en la activa: en reposo la relectura no obliga a repintar un filtro. */
   .home .art-nlp-to-logic .fm {
     --td: 0.9s;
-    filter: var(--glow, drop-shadow(0 0 1.2px color-mix(in oklab, var(--ot) 40%, transparent)));
+    filter: var(--glow);
   }
   .home .art-nlp-to-logic .g {
     font: 17px var(--f-math);
     text-anchor: middle;
     fill: var(--muted);
+    stroke: var(--ink-1);
+    stroke-width: 1.4px;
+    stroke-linejoin: round;
+    paint-order: stroke;
     --o: 0.88;
-    opacity: calc(var(--o) + var(--on, 0) * 0.12);
+    opacity: calc(var(--o) + var(--on) * 0.12);
   }
   .home .art-nlp-to-logic :is(.u, .g, .vp) {
     transform-box: fill-box;
@@ -104,13 +109,13 @@
     fill: var(--text);
   }
   .home .art-nlp-to-logic .g.mk {
-    fill: var(--mk, color-mix(in oklab, var(--og) 78%, var(--ink-1)));
+    fill: var(--mk, #c2a473);
   }
 
   /* Veredicto de ST: apagado en reposo, verde al ejecutar. */
   .home .art-nlp-to-logic .vd {
     --td: 1s;
-    filter: var(--vg, none);
+    filter: var(--vg);
   }
   .home .art-nlp-to-logic .vd * {
     fill: var(--vb, var(--ink-0));
@@ -127,7 +132,7 @@
     fill: var(--vs, var(--muted));
     stroke: none;
   }
-  .home .art-nlp-to-logic .vd .vp {
+  .home .art-nlp-to-logic .vp {
     fill: none;
     stroke: var(--ok);
     opacity: 0;
@@ -152,14 +157,22 @@
       animation: art-nlp-to-logic-blink 1.1s step-end infinite;
     }
 
-    /* Activa (la transición solo al entrar: al salir vuelve al reposo en seco, y el giro de un cuarto no se nota):
-       cada palabra se marca y vuela a su símbolo, la fórmula se enciende y el veredicto llega al final. */
-    .home .art-host:is(:hover, :focus-within) .art-nlp-to-logic :is(.nl text, .fm, .vd, .vd *, .dial, .rum, .ros circle, .core, .halo) {
-      transition: all 0.6s var(--td, 0s);
+    /* Entrar y salir se funden (al entrar, cada parte con su retardo --td) y el instrumento da un cuarto de vuelta. */
+    .home .art-nlp-to-logic * {
+      transition: 0.3s;
+      transition-property: opacity, fill, stroke, fill-opacity, stroke-opacity, filter;
+    }
+    .home .art-nlp-to-logic .ins {
+      transition: transform 1.2s var(--ease-out);
+    }
+    /* Activa: cada palabra se marca y vuela a su símbolo, la fórmula se enciende y el veredicto llega al final. */
+    .home .art-host:is(:hover, :focus-within) .art-nlp-to-logic * {
+      transition-duration: 0.6s;
+      transition-delay: var(--td, 0s);
     }
     .home .art-host:is(:hover, :focus-within) .art-nlp-to-logic .ins {
       transform: rotate(90deg);
-      transition: transform 1.6s var(--ease-out);
+      transition-duration: 1.6s;
     }
     .home .art-host:is(:hover, :focus-within) .art-nlp-to-logic .u {
       animation: art-nlp-to-logic-hit 0.5s calc(var(--i) * 0.09s) both;
@@ -169,9 +182,12 @@
         art-nlp-to-logic-fly 0.65s calc(0.08s + var(--i) * 0.09s) var(--ease-out) both,
         art-nlp-to-logic-arc 0.65s calc(0.08s + var(--i) * 0.09s) both;
     }
-    .home .art-host:is(:hover, :focus-within) .art-nlp-to-logic .vd .vp {
+    .home .art-host:is(:hover, :focus-within) .art-nlp-to-logic .vp {
       animation: art-nlp-to-logic-ping 0.9s 1.05s ease-out both;
     }
+  }
+  html[data-motion='paused'] .home .art-nlp-to-logic * {
+    transition: none;
   }
 
   @keyframes art-nlp-to-logic-spin {
@@ -209,14 +225,18 @@
       stroke-dasharray: none;
     }
   }
-  /* De la palabra al símbolo: translate lo lleva en línea recta y transform le añade el arco. */
+  /* De la palabra al símbolo: translate lo lleva en línea recta y transform le añade el arco. Aparece cuando ya dejó
+     atrás el segundo renglón, para no cruzarlo. */
   @keyframes art-nlp-to-logic-fly {
     from {
       translate: var(--dx) var(--dy);
       scale: 0.45;
       opacity: 0;
     }
-    30% {
+    12% {
+      opacity: 0;
+    }
+    35% {
       opacity: 1;
     }
   }
