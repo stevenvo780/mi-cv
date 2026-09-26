@@ -1,5 +1,4 @@
 import type { CSSProperties } from 'react';
-import type { ArtProps } from './types';
 
 // Deméter: la espiga suelta sus granos por el tallo, y el tallo se vuelve la ruta (paradas en orden de entrega, el
 // camión) que sube hasta la tirilla con el sello DIAN. Coordenadas en cqh: la caja 16:10 mide 160 × 100 (el viewBox).
@@ -15,7 +14,7 @@ const PARADAS = [
   [102, 52.1, 0.33],
 ];
 
-export default function Art(_: ArtProps) {
+export default function Art() {
   return (
     <div className="art art-demeter" aria-hidden="true">
       <svg viewBox="0 0 160 100" width="100%" height="100%">

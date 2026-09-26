@@ -1,5 +1,4 @@
 import type { CSSProperties } from 'react';
-import type { ArtProps } from './types';
 
 /* Nóesis: el perceptrón multicapa de su laboratorio «Espirales entrelazadas» (2 → 5 → 5 → 4 → 1), en la tinta y los
    colores del sitio. Cada neurona es un cuadrito rojo/azul (su respuesta sobre el plano, como en el laboratorio); los
@@ -69,7 +68,7 @@ const MARKS = tidy(
 
 const t = (v: number) => ({ '--t': v }) as CSSProperties;
 
-export default function Art(_: ArtProps) {
+export default function Art() {
   return (
     <div className="art art-noesis-lab" aria-hidden="true">
       <svg viewBox="0 0 160 100">

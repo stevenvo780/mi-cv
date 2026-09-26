@@ -1,5 +1,4 @@
 import type { CSSProperties } from 'react';
-import type { ArtProps } from './types';
 
 // Nómos: la balanza de la ley sostiene el índice. En sus platillos, las dos fuentes (CO y RD); al centro, la página de
 // un texto legislativo («Art. 1», «Art. 2») que un haz de búsqueda recorre marcando coincidencias en dorado, como el
@@ -47,7 +46,7 @@ function Platillo({ x, s, fuente }: { x: number; s: number; fuente: string }) {
   );
 }
 
-export default function Art(_: ArtProps) {
+export default function Art() {
   return (
     <svg className="art art-scrapekit" viewBox="0 0 160 100" aria-hidden="true">
       <defs>

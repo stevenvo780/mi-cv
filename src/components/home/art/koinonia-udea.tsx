@@ -1,5 +1,4 @@
 import type { CSSProperties } from 'react';
-import type { ArtProps } from './types';
 
 // Koinonía: el icono del sitio (dos anillos que se cruzan) hecho de gente. Cada punto es una voz en el arco exterior de
 // su anillo; en la lente donde los dos coinciden espera el sello de la decisión. Unidades del viewBox (160 × 100) con
@@ -31,7 +30,7 @@ const HILOS = VOCES.map(([a, r]) => {
 const v = (o: Record<string, number>) => o as CSSProperties;
 
 /** Koinonía UdeA: la deliberación de dos anillos de voces converge en una decisión sellada y verificable. */
-export default function Art(_: ArtProps) {
+export default function Art() {
   return (
     <div className="art art-koinonia-udea" aria-hidden="true">
       <svg viewBox="0 0 160 100">

@@ -1,5 +1,4 @@
 import type { CSSProperties } from 'react';
-import type { ArtProps } from './types';
 
 // Apothḗke: una estantería axonométrica (CSS 3D). Cada hueco guarda cajas y, en el canto de su balda, una barra de
 // nivel de stock; un haz de escáner la recorre. El hueco central de arriba está bajo mínimo (stock <= minStock, la
@@ -39,7 +38,7 @@ const NIVELES: [number, number, number][] = [
 ];
 const caja = (x: number, y: number, w: number, h: number) => v({ '--x': x, '--y': y - h, '--w': w, '--h': h });
 
-export default function Art(_: ArtProps) {
+export default function Art() {
   return (
     <div className="art art-warehouse" aria-hidden="true">
       <div className="qm">

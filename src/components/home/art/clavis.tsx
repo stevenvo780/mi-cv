@@ -1,6 +1,5 @@
 import type { CSSProperties } from 'react';
 import { type CatalogoKind, catalogoGrupos, catalogos } from '@/data/frentes';
-import type { ArtProps } from './types';
 
 /*
  * Paideía: una bóveda celeste griega. En el centro, una esfera armilar con el dodecaedro del Timeo (el sólido que el dios
@@ -86,7 +85,7 @@ const VERTICES: [string, number][] = [0, 72, 144, 216, 288].flatMap((y): [string
 // «Que no entre nadie que no sepa geometría»: la puerta de la Academia, que Paideía pone en su umbral.
 const LEMA = 'ΑΓΕΩΜΕΤΡΗΤΟΣ ΜΗΔΕΙΣ ΕΙΣΙΤΩ · ΠΑΙΔΕΙΑ · ';
 
-export default function Art(_: ArtProps) {
+export default function Art() {
   const cat = catalogos.find((x) => x.id === 'clavis');
   const grupos = (cat ? catalogoGrupos(cat) : []).flatMap(({ kind, items }) => {
     const f = FIGURA[kind];

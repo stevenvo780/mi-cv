@@ -1,5 +1,4 @@
 import type { CSSProperties } from 'react';
-import type { ArtProps } from './types';
 
 // Eikón: un isotipo que se genera con primitivas (anillo, órbitas, núcleo, triángulo) sobre su lienzo de construcción.
 // En reposo es el átomo de eikon.humanizar.cloud; activo, regenera en orden las marcas que Eikón fabrica para el
@@ -26,7 +25,7 @@ const v = (o: Record<string, number | string>) => o as CSSProperties;
 // Paso de 10,5 unidades entre casillas de la paleta.
 const casillas = (...f: number[]) => v(Object.fromEntries(f.map((n, i) => [`--${'abcd'[i]}`, `${n * 10.5}px`])));
 
-export default function Art(_: ArtProps) {
+export default function Art() {
   return (
     <div className="art art-eikon" aria-hidden="true">
       <svg viewBox="0 0 160 100">

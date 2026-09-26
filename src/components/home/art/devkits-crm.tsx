@@ -1,5 +1,4 @@
 import type { CSSProperties } from 'react';
-import type { ArtProps } from './types';
 
 /* Etapas abiertas del pipeline de negocios de Xenía, con la probabilidad y el color que les da la app
    (Prospección, Calificación, Propuesta, Negociación, Cierre). s: franja; e: borde tenue. n: tarjetas de la
@@ -15,7 +14,7 @@ const ETAPAS = [
 const css = (o: Record<string, string | number>) => o as CSSProperties;
 
 /** Xenía: el pipeline kanban lleva un negocio de columna en columna hasta la puerta abierta de la casa (ganado ✓). */
-export default function Art(_: ArtProps) {
+export default function Art() {
   return (
     <div className="art art-devkits-crm" aria-hidden="true">
       {ETAPAS.map((e, i) => (

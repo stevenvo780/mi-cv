@@ -1,5 +1,4 @@
 import type { CSSProperties } from 'react';
-import type { ArtProps } from './types';
 
 /* Umbral: una puerta en un muro, y por ella llegan las escenas del atlas como planos que cruzan el umbral hacia quien
    mira. Cinco planos, uno por área: KS12 (Lorenz, física), KS03 (el campo del corredor, sistemas), KS04 (Vida,
@@ -12,8 +11,7 @@ const v = (i: number) => ({ '--i': i }) as CSSProperties;
 const LORENZ =
   'M83 81l-4 3-5-1-5-6-5-9-6-14-4-15-1-11 2-5 3-1 4 3 14 15 9 13 7 17 4 3 3 0 3-3 7-12 5-16 0-7-1-3-1-1-2 0-6 5-7 9-5 10-2 8-1 8 2 6 4 2 3-1 4-4 8-14 6-20 0-8 0-5-3-1-5 3-14 16-6 13-5 21-3 3-2 1-4-1-4-5-9-15-6-22-1-9 1-5 2-3 4 2 13 13 10 15 8 20 1 2 3 1 3-1 3-4 7-12 5-18 1-7-1-4-1-1-3 0-6 6-9 11-5 10-2 10 0 10 2 7 1 2 3 0 4-1 4-5 5-7 4-10 4-12 3-12 1-9-1-6-3-1-4 2-13 13-11 15-8 18-3 2-3 0-3-3-6-11-5-16-1-6 1-4 2 0 2 0 5 5 7 8 5 9 2 8 0 8-2 5-3 2-3-1-4-3-7-12-6-19-1-7 1-5 1-2 2 0 4 2 8 9 7 10 6 14 3 25 1 3 3 1 5-2 5-6 6-9 4-10 5-15 3-14 1-12-1-6-1-1-3 0-9 7-18 21-11 17-3 3-2 0-3-2-4-7-4-11 1-7 2 0 3 3 7 10 2 10 0 4-2 1-3 0-2-2-5-8-4-12 1-7 2 0 4 3 5 6 3 6 2 10-1 4-2 2-2 0-3-2-6-10-4-13 0-5 1-3 3 0 4 4 5 6 4 8 2 6 0 5-1 5-2 2-3 0-3-3-6-10-4-15-1-6 1-4 3 0 5 4 6 8 5 8 2 8 0 6-1 6-3 2-3 0-4-3-7-13-5-18-1-7 1-4 2-1 2 1 7 6 7 10 5 10 3 9 0 10-2 6-3 3-4-1-5-5-4-6-5-10-6-22-1-10 1-6 2-1 4 1 13 14 10 15 8 18 3 3 4-1 3-2 7-12 5-18 0-7-1-3-3-1-5 4-6 8-5 8-5 13 0 12';
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export default function Art(_: ArtProps) {
+export default function Art() {
   return (
     <div className="art art-umbral-atlas" aria-hidden="true">
       <i className="st">

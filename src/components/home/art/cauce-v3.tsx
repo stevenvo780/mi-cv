@@ -1,5 +1,4 @@
 import type { CSSProperties } from 'react';
-import type { ArtProps } from './types';
 
 // Cauce V3: el director (el núcleo del bus, con su anillo de orquestación) despacha a la flota que fluye por el cauce.
 // Coordenadas en cqh: la caja es 16:10, así que mide 160 × 100 (lo mismo que el viewBox). Z = 14: los agentes del
@@ -35,7 +34,7 @@ const SALTOS: [number, number, number, number][] = [
 const css = (o: Record<string, number | string>) => o as CSSProperties;
 const ORBITA = { cx: 32, cy: 50, rx: 24, ry: 7.2 };
 
-export default function Art(_: ArtProps) {
+export default function Art() {
   return (
     <div className="art art-cauce-v3" aria-hidden="true">
       <svg viewBox="0 0 160 100">

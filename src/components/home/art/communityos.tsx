@@ -1,5 +1,4 @@
 import type { CSSProperties } from 'react';
-import type { ArtProps } from './types';
 
 const css = (o: Record<string, string | number>) => o as CSSProperties;
 
@@ -33,7 +32,7 @@ const TOP: [number, number][] = [
 ];
 
 /** Koinonía: islas de miembros con su anillo de XP, la voz en cada comunidad y el ranking que se reordena. */
-export default function Art(_: ArtProps) {
+export default function Art() {
   return (
     <div className="art art-communityos" aria-hidden="true">
       {ISLAS.map((s, k) => {

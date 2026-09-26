@@ -1,5 +1,4 @@
 import type { CSSProperties } from 'react';
-import type { ArtProps } from './types';
 
 // Áporía: un tribar de Penrose hecho de hojas de manuscrito sobre su retícula isométrica de construcción. En reposo, el
 // tramo que cierra el lazo flota despiezado junto a la esquina imposible y se acerca sin llegar a posarse (la obra en
@@ -90,7 +89,7 @@ const patron = (p: Plano) => {
   );
 };
 
-export default function Art(_: ArtProps) {
+export default function Art() {
   return (
     <div className="art art-aporia" aria-hidden="true">
       <svg viewBox="0 0 160 100">

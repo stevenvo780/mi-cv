@@ -1,5 +1,4 @@
 import type { CSSProperties } from 'react';
-import type { ArtProps } from './types';
 
 // Colores de sintaxis del editor del sitio: k clave, v átomo, o operador, b llave, u puntuación.
 const C = { k: '#c084fc', v: '#2dd4bf', o: '#22d3ee', b: '#fbbf24', u: '#64748b' } as const;
@@ -26,7 +25,7 @@ const tok = (l: readonly Tok[]) =>
 const at = (d: number, t0?: string) => ({ '--d': d, '--t0': t0 }) as CSSProperties;
 
 /** Ágora: un mini editor de ST (la lógica formal ejecutable de Elenxos) escribe un modus ponens y lo demuestra. */
-export default function Art(_: ArtProps) {
+export default function Art() {
   return (
     <div className="art art-agora" aria-hidden="true">
       <i className="bg" />

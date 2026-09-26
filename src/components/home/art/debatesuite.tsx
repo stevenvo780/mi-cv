@@ -1,5 +1,4 @@
 import type { CSSProperties } from 'react';
-import type { ArtProps } from './types';
 
 /* Los dos bandos, con los escudos de participante del sitio (degradado 135° de --o a --c; --h, su halo). Cada uno
    alza su bandera con un tanto del reglamento de Cafetería del Caos: +2 «falacia efectiva» y -3 «no responder». */
@@ -11,7 +10,7 @@ const BANDOS = [
 const css = (o: Record<string, string | number>) => o as CSSProperties;
 
 /** Agón: dos oradores en sus atriles y, en medio, el reloj del turno que se agota y cede la palabra. */
-export default function Art(_: ArtProps) {
+export default function Art() {
   return (
     <div className="art art-debatesuite" aria-hidden="true">
       {/* La arena (suelo y pie) y el reloj: 60 marcas y 12 mayores, la pista, el arco que se consume (uno por bando),

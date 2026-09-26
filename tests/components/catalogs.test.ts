@@ -180,7 +180,7 @@ describe('tarjetas: el emblema manda y el texto se revela', () => {
     for (const f of frenteOrder) {
       for (const p of tarjetasDeFrente(f)) {
         const card = page.match(new RegExp(`<li class="card art-host" data-node="producto:${p.id}"[\\s\\S]*?</li>`))?.[0] ?? '';
-        expect(card, p.id).toContain(`<div class="card-art"><div class="art art-${p.id}" aria-hidden="true"`);
+        expect(card, p.id).toMatch(new RegExp(`<div class="card-art"><(div|svg) class="art art-${p.id}"[^>]* aria-hidden="true"`));
         expect(card, p.id).toContain(`<div class="card-info" id="info-${p.id}" popover="auto">`);
         expect(card, p.id).toContain(`<p class="card-desc">${p.descripcion[locale].replace(/&/g, '&amp;').replace(/"/g, '&quot;')}</p>`);
         // React escribe popoverTarget tal cual; el parser HTML no distingue mayúsculas en los atributos.

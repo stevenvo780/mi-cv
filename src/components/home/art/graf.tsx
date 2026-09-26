@@ -1,5 +1,4 @@
 import type { CSSProperties } from 'react';
-import type { ArtProps } from './types';
 
 /* Graf: plano nocturno de una ciudad en vista inclinada. Del despacho salen rutas por las calles; aparece el pin del
    pedido en la puerta, el domiciliario recorre la última milla y cae un ✓ donde estaba el pin.
@@ -25,7 +24,7 @@ const ORDERS = [
   return { d: 'M' + pts.map((q) => q.join(' ')).join('L'), end: pts[pts.length - 1], style: v as CSSProperties };
 });
 
-export default function Art(_: ArtProps) {
+export default function Art() {
   const [hx, hy] = P(HUB[0], HUB[1]);
   return (
     <div className="art art-graf" aria-hidden="true">

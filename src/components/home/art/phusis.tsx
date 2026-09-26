@@ -1,4 +1,3 @@
-import type { ArtProps } from './types';
 
 /* Phúsis: la regla 30 de Wolfram crece fila a fila desde una sola celda, bajo la línea de código que la produce
    (wolframStep(row, 30), la función que se escribe en su lección «Reglas elementales 30 y 110») y junto a su tabla:
@@ -50,7 +49,7 @@ const ALL = table(FULL, MID);
 const IN = table((p) => [(p >> 2) & 1, (p >> 1) & 1, p & 1], NONE);
 const OUT = table(NONE, (p) => [0, (RULE >> p) & 1, 0]);
 
-export default function Art(_: ArtProps) {
+export default function Art() {
   return (
     <div className="art art-phusis" aria-hidden="true">
       <svg viewBox="-24 0 48 30">

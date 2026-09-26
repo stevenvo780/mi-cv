@@ -1,5 +1,4 @@
 import type { CSSProperties } from 'react';
-import type { ArtProps } from './types';
 
 const NA = '#e67e22';
 const PAPEL = '#f3ece2';
@@ -54,7 +53,7 @@ function Seat({ i }: { i: number }) {
 }
 
 /** Gobierno Universitario UdeA: el Consejo Superior como una mesa de actores cruzada por tensiones, 2010-2013. */
-export default function Art(_: ArtProps) {
+export default function Art() {
   // Del fondo al frente: los de atrás quedan tras el tablero; los de delante, sobre él.
   const order = SEATS.map((_, i) => i).sort((a, b) => P[a][1] - P[b][1]);
   const far = order.filter((i) => P[i][1] < 50);

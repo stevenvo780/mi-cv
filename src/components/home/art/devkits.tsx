@@ -1,5 +1,4 @@
 import type { CSSProperties } from 'react';
-import type { ArtProps } from './types';
 
 /* Los tres kits de Érgon con el glifo de su placa: CRM (contactos), Hours Tracker (reloj), VPN Manager (escudo con
    cerradura). */
@@ -19,7 +18,7 @@ const Caja = ({ c }: { c: string }) => (
 );
 
 /** Érgon: tres kits en isométrico, construidos al 80 %; la pieza a medida (el 20 %) espera encima y encaja al pasar. */
-export default function Art(_: ArtProps) {
+export default function Art() {
   return (
     <div className="art art-devkits" aria-hidden="true">
       <div className="ek">

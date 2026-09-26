@@ -1,5 +1,4 @@
 import type { CSSProperties } from 'react';
-import type { ArtProps } from './types';
 
 /* Prizma: el haz blanco (lo que entra al negocio: un pedido, un pago) cruza el prisma de cristal —Nous, el hub de
    eventos— y se abre en el espectro de la marca; cada rayo llega a un módulo. Orden físico del espectro: el rojo se
@@ -38,7 +37,7 @@ const BEAM = { a: r1(Math.atan2(E[1] - B[1], E[0] - B[0]) * deg), l: r1(Math.hyp
 
 const v = (o: Record<string, string | number>) => o as CSSProperties;
 
-export default function Art(_: ArtProps) {
+export default function Art() {
   return (
     <div className="art art-prizma" aria-hidden="true">
       <svg viewBox="0 0 160 100">

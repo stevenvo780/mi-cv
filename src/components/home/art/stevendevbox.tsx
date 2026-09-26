@@ -1,4 +1,3 @@
-import type { ArtProps } from './types';
 
 // Téchne: un escritorio Hyprland en miniatura hecho con la suite. Arriba, la waybar: el logo, los workspaces
 // independientes de dos monitores (topes 2 y 3 de Hyprland Multi-Monitor) y el módulo de clawbar con su onda y su fase.
@@ -17,7 +16,7 @@ const CPU = `M93 40${[...Y, ...Y, 42, 38].map((y, i, a) => `l5 ${y - (i ? a[i - 
 // Un anillo casi cerrado: las cuatro flores del logo de Téchne.
 const O = 'a1.65 1.65 0 1 0 .01 0';
 
-export default function Art(_: ArtProps) {
+export default function Art() {
   return (
     <div className="art art-stevendevbox" aria-hidden="true">
       <svg viewBox="0 0 160 100">

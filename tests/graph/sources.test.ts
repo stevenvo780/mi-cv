@@ -112,7 +112,14 @@ describe('buildGraphModel', () => {
     }
     const seen = new Set(['self']);
     const queue = ['self'];
-    while (queue.length) for (const next of adj.get(queue.shift()!) ?? []) if (!seen.has(next)) (seen.add(next), queue.push(next));
+    while (queue.length) {
+      for (const next of adj.get(queue.shift()!) ?? []) {
+        if (!seen.has(next)) {
+          seen.add(next);
+          queue.push(next);
+        }
+      }
+    }
     expect(seen.size).toBe(g.nodes.length);
   });
 
