@@ -2,7 +2,9 @@ import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 import { ART } from '@/components/home/art';
-import ArtBox, { artHtml } from '@/components/home/art/ArtBox';
+import ArtBox from '@/components/home/art/ArtBox';
+import ArtSlot from '@/components/home/art/ArtSlot';
+import { artHtml } from '@/components/home/art/html';
 import { ART_HTML } from '@/components/home/art/generated';
 import { LOCALES } from '@/lib/site';
 
@@ -16,13 +18,15 @@ describe('arte de la home: el HTML pintado en el prebuild', () => {
     }
   });
 
-  it('en producción, ArtBox da el mismo DOM que la pieza viva', () => {
-    const live = (id: string) => renderToStaticMarkup(ArtBox({ id, locale: 'es', className: 'card-art' }));
+  // En producción ArtBox delega en ArtSlot, cuyo HTML sale de html.ts (un require que resuelve webpack al compilar):
+  // que el DOM servido sea ese, una sola vez y conservado al hidratar, lo comprueba e2e/home.spec.ts.
+  it('en producción, ArtBox delega en ArtSlot con la misma caja', () => {
     const before = process.env.NODE_ENV;
-    const dev = Object.keys(ART).map(live);
     try {
       (process.env as Record<string, string>).NODE_ENV = 'production';
-      expect(Object.keys(ART).map(live)).toEqual(dev);
+      const el = ArtBox({ id: 'agora', locale: 'en', className: 'card-art' });
+      expect(el.type).toBe(ArtSlot);
+      expect(el.props).toEqual({ id: 'agora', locale: 'en', className: 'card-art' });
     } finally {
       (process.env as Record<string, string | undefined>).NODE_ENV = before;
     }

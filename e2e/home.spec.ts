@@ -129,6 +129,28 @@ for (const locale of ['es', 'en'] as const) {
       expect(errors).toEqual([]);
     });
 
+    // ArtSlot: el HTML de cada pieza viaja una sola vez, en el documento (ni la carga RSC ni el JS lo repiten, escapado
+    // o no), y al hidratar React se queda con cada caja sin vaciarla.
+    test('el arte llega una vez, en el documento, y sigue ahí tras hidratar', async ({ page, request }) => {
+      const errors = collectErrors(page);
+      const html = await (await request.get(`/${locale}`)).text();
+      const ids = [...html.matchAll(/<(?:div|svg) class="art art-([a-z0-9-]+)"/g)].map((m) => m[1]);
+      expect(ids.length).toBeGreaterThan(20);
+      for (const id of ids) expect(html.match(new RegExp(`art art-${id}(?![\\w-])`, 'g'))?.length, id).toBe(1);
+      await page.goto(`/${locale}`, { waitUntil: 'networkidle' });
+      await expect(page.locator('.card-art, .cat-art')).toHaveCount(ids.length);
+      await expect
+        .poll(() =>
+          page.evaluate(() =>
+            [...document.querySelectorAll('.card-art, .cat-art')].every(
+              (box) => Object.keys(box).some((k) => k.startsWith('__reactFiber')) && box.firstElementChild?.classList.contains('art'),
+            ),
+          ),
+        )
+        .toBe(true);
+      expect(errors).toEqual([]);
+    });
+
     // Spec §3.1: todo texto pequeño sobre el escenario lleva scrim. Sin él, sobre un núcleo de nodo casi blanco del
     // póster (que con movimiento reducido no se atenúa), --muted se queda en 2.2:1; con él, ≥ 5.5:1.
     test('ningún texto pequeño se pinta sobre el escenario sin scrim', async ({ page }) => {

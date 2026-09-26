@@ -3,7 +3,7 @@
 // 1. La hoja: une las hojas de src/components/home/art (primero las compartidas, «_*.css»), la minifica y la publica con
 //    su hash en el nombre, fuera de la ruta crítica: Fronts.tsx la enlaza en el cuerpo, justo antes del catálogo, así
 //    que no retrasa el hero (el LCP).
-// 2. El HTML: pinta cada pieza en cada idioma. En producción ArtBox lo inserta tal cual: React no recorre esos nodos al
+// 2. El HTML: pinta cada pieza en cada idioma. En producción ArtSlot lo inserta tal cual: React no recorre esos nodos al
 //    hidratar ni los repite uno a uno en la carga RSC del documento (tests/components/art.test.ts vigila que esté al día).
 import { createHash } from 'node:crypto';
 import { readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';

@@ -1,6 +1,7 @@
 import type { HomeCopy } from '@/content/home';
 import { catalogos, frenteLinks, frenteOrder, frentesMeta, tarjetasDeFrente } from '@/data/frentes';
 import { nodeId } from '@/graph/sources';
+import { preload } from 'react-dom';
 import type { Locale } from '@/lib/site';
 import { ART_CSS } from './art/generated';
 import CatalogTile from './CatalogTile';
@@ -10,12 +11,15 @@ import SectionHead from './SectionHead';
 
 export default function Fronts({ locale, t }: { locale: Locale; t: HomeCopy }) {
   const f = t.fronts;
+  // El arte (escenas y emblemas) va en su propia hoja, enlazada abajo y no en <head>: no bloquea el hero. Chrome detiene
+  // el análisis en un <link rel=stylesheet> del cuerpo hasta tenerla; precargada desde <head> con prioridad baja, llega
+  // antes, sin competir con lo del hero, y su petición no bloquea el render.
+  preload(ART_CSS, { as: 'style', fetchPriority: 'low' });
   return (
     <section id="frentes" className="sec sec-fronts" aria-labelledby="frentes-title" data-section="frentes">
       <div className="sec-inner">
         <SectionHead id="frentes" eyebrow={f.eyebrow} title={f.title} lead={f.lead} />
         <ProductSearch targetId="frentes-list" label={f.searchLabel} placeholder={f.searchPlaceholder} noResults={f.noResults} />
-        {/* El arte (escenas y emblemas) va en su propia hoja, enlazada aquí y no en <head>: no bloquea el hero. */}
         <link rel="stylesheet" href={ART_CSS} />
         <div id="frentes-list" className="fronts">
           {frenteOrder.map((fid) => {
