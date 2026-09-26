@@ -300,11 +300,12 @@ const PORTAL_FONTS: Record<string, string> = {
   'cormorant|normal': 'cormorant-garamond-latin',
   'cormorant|italic': 'cormorant-garamond-italic-latin',
 };
-// Lo que la fuente de origen no tiene y pinta una fuente del sistema: símbolos de las fichas y «ḗ» (Pinakothḗke) en
-// Cormorant, y «Ḗ»/«ḗ» en JetBrains Mono. ◇ sí está en Cormorant, pero diminuto al lado de los otros símbolos: se
-// queda en la del sistema a propósito. Lo demás que falte se añade en scripts/subset-fonts.sh.
+// Lo que la fuente de origen no tiene y pinta una fuente del sistema: símbolos de las fichas (entre ellos las letras
+// griegas ε, Π, Κ de Koinonía UdeA, φ de Phúsis y Ν de Nóesis: Cormorant Garamond no trae griego) y «ḗ»
+// (Pinakothḗke) en Cormorant, y «Ḗ»/«ḗ» en JetBrains Mono. ◇ sí está en Cormorant, pero diminuto al lado de los otros
+// símbolos: se queda en la del sistema a propósito. Lo demás que falte se añade en scripts/subset-fonts.sh.
 const PORTAL_SYSTEM_GLYPHS: Record<string, string> = {
-  'cormorant-garamond-latin': 'εΠ⚔◈⊢◉⚙◎▣⏱▦⬡◇ḗ',
+  'cormorant-garamond-latin': 'εΠΚφΝ⚔◈⊢◉⚙◎▣⏱▦⬡◇ḗ',
   'jetbrains-mono-latin': 'Ḗḗ',
 };
 for (const locale of ['es', 'en'] as const) {

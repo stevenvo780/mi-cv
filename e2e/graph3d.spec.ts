@@ -379,9 +379,11 @@ async function frameWith(page: Page, setup: Partial<Pick<GlProbe, 'hide' | 'edge
  * Los dos extremos de la escena: T3, con bloom y la capa decorativa entera (escritorio ancho), y T1, sin compositor
  * (halo en shader y tone mapping por fragmento, el nivel del móvil). T2 es T3 con la mitad de satélites.
  */
+// El nivel inicial depende también de los núcleos del host (initialTier: el 3 pide 8 o más). Se fijan para que el test
+// mida el nivel que nombra en cualquier máquina: en un host de 4 núcleos, «T3» arrancaba en el 2 y fallaba.
 const LEVELS = [
-  { tier: 3, viewport: { width: 1440, height: 900 } },
-  { tier: 1, viewport: { width: 390, height: 844 } },
+  { tier: 3, viewport: { width: 1440, height: 900 }, cores: 8 },
+  { tier: 1, viewport: { width: 390, height: 844 }, cores: 8 },
 ] as const;
 /** Píxeles que una capa sube al menos esto en algún canal: se ve (el fondo es casi negro). */
 const VISIBLE = 8;
@@ -422,9 +424,12 @@ const MIN_MARGIN = 0.03;
  */
 const MAX_BACKGROUND_DIFF = 4;
 
-for (const { tier, viewport } of LEVELS) {
+for (const { tier, viewport, cores } of LEVELS) {
   test.describe(`T${tier} a ${viewport.width}×${viewport.height}`, () => {
     test.use({ viewport });
+    test.beforeEach(async ({ page }) => {
+      await page.addInitScript((n) => Object.defineProperty(navigator, 'hardwareConcurrency', { get: () => n }), cores);
+    });
 
     test('hero: el fondo del canvas es la página detrás del póster (--ink-0 y el halo de .stage::before)', async ({ page }, info) => {
       const errors = await watchErrors(page);
