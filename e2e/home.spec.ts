@@ -61,6 +61,8 @@ function paintedText(page: Page, root: string) {
   return page.evaluate((root) => {
     const acc: Record<string, string> = {};
     const add = (el: Element, text: string, pseudo: string | null = null) => {
+      // Vacío o solo espacios (el content: '' de un adorno, por ejemplo) no pinta glifos de ninguna familia.
+      if (!text.trim()) return;
       const cs = getComputedStyle(el, pseudo);
       const key = `${cs.fontFamily.split(',')[0].trim().replace(/["']/g, '')}|${cs.fontStyle}`;
       acc[key] = (acc[key] ?? '') + (cs.textTransform === 'uppercase' ? text.toUpperCase() : text);
