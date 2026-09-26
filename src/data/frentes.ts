@@ -911,4 +911,10 @@ export const frenteLinks: Partial<Record<FrenteId, FrenteLink[]>> = {
       url: 'https://praxis.stevenvallejo.com',
     },
   ],
+  enterprise: [
+    {
+      label: { es: 'Humanizar Systems · sitio oficial', en: 'Humanizar Systems · official site' },
+      url: 'https://humanizar.tech/',
+    },
+  ],
 };
