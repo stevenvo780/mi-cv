@@ -509,6 +509,17 @@
     justify-self: start;
     white-space: nowrap;
   }
+  /* El nombre (elemento LCP) se pinta sólido en el primer pintado: ninguna regla le pone opacidad, transformación,
+     filtro ni animación, y esta lo deja fijado por si alguna llega a hacerlo. */
+  .home .hero-title,
+  .home .hero-first,
+  .home .hero-last {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    filter: none;
+    animation: none;
+  }
   .home .hero-meta {
     align-self: end;
     display: grid;
@@ -1460,10 +1471,12 @@
   }
 
   /* ── Movimiento como mejora progresiva (el estado por defecto siempre es visible) ── */
+  /* `forwards` y no `both`: con `both`, antes de entrar en pantalla cada bloque ya tenía opacity 0, en contra del
+     «visible por defecto»; con `forwards` solo se oculta al empezar su entrada, cuando aún está en el borde. */
   @supports (animation-timeline: view()) {
     @media (prefers-reduced-motion: no-preference) {
       .home .reveal {
-        animation: home-reveal linear both;
+        animation: home-reveal linear forwards;
         animation-timeline: view();
         animation-range: entry 0% entry 55%;
       }
