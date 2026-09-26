@@ -73,11 +73,11 @@ ALNUM='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 '
 # Arte de la home (src/components/home/art): repertorios cerrados por familia. El arte solo puede pintar estos caracteres
 # con cada familia (lo comprueban tests/content/fonts.test.ts y el e2e de glifos); si una pieza necesita otro, se añade aquí.
 # Griego (EB Garamond): básico con tonos y el politónico frecuente.
-ART_GREEK='ΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩαβγδεζηθικλμνξοπρςστυφχψωάέήίόύώΆΈΉΊΌΎΏϊϋΐΰἀἁἂἃἄἅἆἇἈἉἌἍἐἑἔἕἘἙἜἝἠἡἤἥἦἧἨἩἬἭἰἱἴἵἶἷἸἹἼἽὀὁὄὅὈὉὌὍὐὑὔὕὖὗὙὝὠὡὤὥὦὧὨὩὬὭὰὲὴὶὸὺὼᾶῆῖῦῶῥῬᾳῃῳ ·.,:;–—’0123456789'
+ART_GREEK=' ·.,:;ΑΓΔΕΗΙΜΟΠΡΣΤΩέήίαγδθικλμοςστό'
 # Ecuaciones (STIX Two Math): ASCII, griego, cursivas matemáticas (latinas y griegas) y operadores.
-ART_MATH=' !"#$%&'"'"'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~ΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩαβγδεζηθικλμνξοπρςστυφχψωάέήίόύώΆΈΉΊΌΎΏϊϋΐΰ𝐴𝐵𝐶𝐷𝐸𝐹𝐺𝐻𝐼𝐽𝐾𝐿𝑀𝑁𝑂𝑃𝑄𝑅𝑆𝑇𝑈𝑉𝑊𝑋𝑌𝑍𝑎𝑏𝑐𝑑𝑒𝑓𝑔𝑖𝑗𝑘𝑙𝑚𝑛𝑜𝑝𝑞𝑟𝑠𝑡𝑢𝑣𝑤𝑥𝑦𝑧ℎ𝛢𝛣𝛤𝛥𝛦𝛧𝛨𝛩𝛪𝛫𝛬𝛭𝛮𝛯𝛰𝛱𝛲𝛳𝛴𝛵𝛶𝛷𝛸𝛹𝛺𝛻𝛼𝛽𝛾𝛿𝜀𝜁𝜂𝜃𝜄𝜅𝜆𝜇𝜈𝜉𝜊𝜋𝜌𝜍𝜎𝜏𝜐𝜑𝜒𝜓𝜔𝜕𝜖𝜗𝜘𝜙𝜚𝜛∑∏∫∬∮∂∇√∛∞≈≠≡≤≥≪≫±∓×÷·∘−∝∈∉⊂⊆∪∩∧∨¬→←↔⇒⇔↦∀∃∅ℏℝℕℤℚℂ⟨⟩‖∥⊗⊕†′″⁰¹²³⁴⁵⁶⁷⁸⁹⁺⁻⁼⁽⁾ⁿ₀₁₂₃₄₅₆₇₈₉₊₋₌₍₎˙̇̈̂̄⃗⌈⌉⌊⌋∠°ℓ⋅⋯…⟶⊢⊨⊤⊥∴∵'
+ART_MATH=' ·.,:;()*+/01234=BDEIMRS[]abcdeghilmnorstx|²¹̄̇′⁶₀₁₂ℎ←→∂∇∈∑−√≥⊂⊢𝐵𝐶𝐷𝐸𝐹𝐺𝐻𝐼𝐿𝑁𝑂𝑃𝑄𝑆𝑇𝑈𝑉𝑊𝑎𝑏𝑑𝑒𝑖𝑘𝑚𝑛𝑝𝑞𝑟𝑠𝑡𝑢𝑣𝑤𝑥𝑦𝑧𝛽𝛾𝜀𝜂𝜆𝜌𝜎'
 # Código (JetBrains Mono con todo el ASCII): griego, lógica, dibujo de cajas, bloques, figuras y flechas.
-ART_CODE=' !"#$%&'"'"'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~¡¿ÁÉÍÓÚÜÑáéíóúüñ«»§–—‘’“”ΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩαβγδεζηθικλμνξοπρςστυφχψωάέήίόύώΆΈΉΊΌΎΏϊϋΐΰ─│┌┐└┘├┤┬┴┼═║╭╮╯╰╴╵╶╷▁▂▃▄▅▆▇█░▒▓▏▎▍▌▋▊▉●○◆◇■□▲△▼▽▶◀▸▹►◂◉◎★☆✓✗✔✘•…←↑→↓↔↗↘↙↖⇄¬∧∨∀∃≡≠≤≥±×÷·∘λƒ∅∞≈√∑∫∂∈⊂ℕ⟨⟩⁰¹²³⁴₀₁₂₃'
+ART_CODE=' ·.,:;#$%'"'"'()+-/0123456789<=>ACDEFHIJKLMNOPQRSTUVWXZ[]_acdefghijklmnoprstuvwxy{|}§Áβρσ→≤▲▶●'
 
 subset() { # <entrada> <salida> <texto> [features extra]
   $PY -m fontTools.subset "$1" --flavor=woff2 --text="$3" --layout-features="$ON${4:+,$4}" --name-IDs='*' \
