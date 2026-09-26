@@ -15,13 +15,6 @@ const DIAS = [
 const HOY = 3;
 const TOTAL: (number | '$' | '.')[] = ['$', 1, '.', 7, 8, 15, '.', 20, 20, 20];
 const RODILLO = '012345678901234567890';
-/* Estrellas del icono de la app: gris, violeta, oro y verde azulado. */
-const ASTROS = [
-  [5, 5, '#a3a39b'],
-  [94, 5.5, '#8d7cc0'],
-  [4, 57, '#e0a85e'],
-  [70, 58.5, '#43b5a6'],
-] as const;
 
 const css = (o: Record<string, string | number>) => o as CSSProperties;
 
@@ -29,19 +22,20 @@ const css = (o: Record<string, string | number>) => o as CSSProperties;
 export default function Art({ locale }: ArtProps) {
   return (
     <div className="art art-devkits-hours" aria-hidden="true">
-      {ASTROS.map(([x, y, c], i) => (
-        <i key={i} className="s" style={css({ '--x': x, '--y': y, '--c': c })} />
-      ))}
       <div className="dl">
-        <div className="tk" />
-        <svg className="qf" viewBox="0 0 100 100" fill="none" stroke="#43b5a6" strokeWidth="3.2">
-          <circle cx="49.2" cy="28" r="23.6" />
-          <circle cx="28.3" cy="50.4" r="23.6" />
-          <circle cx="71.7" cy="49.2" r="23.6" />
-          <circle cx="50.8" cy="71.7" r="23.6" />
+        {/* Esfera: doce marcas (las cuatro mayores en verde azulado), el isotipo de Chrónos y el horario a las 10:10. */}
+        <svg className="qf" viewBox="0 0 100 100" fill="none" strokeWidth="4.5">
+          <circle cx="50" cy="50" r="45" stroke="#e8e0d470" pathLength={240} strokeDasharray="1.2 18.8" strokeDashoffset=".6" />
+          <circle cx="50" cy="50" r="45" stroke="#6fd3c4" pathLength={240} strokeDasharray="2.4 57.6" strokeDashoffset="1.2" />
+          <g stroke="#43b5a699" strokeWidth="2.1">
+            <circle cx="49.5" cy="35.9" r="15.1" />
+            <circle cx="36.1" cy="50.3" r="15.1" />
+            <circle cx="63.9" cy="49.5" r="15.1" />
+            <circle cx="50.5" cy="63.9" r="15.1" />
+          </g>
+          <path d="M50 50 29.5 35.7" stroke="#e8e0d4" strokeWidth="3.4" strokeLinecap="round" />
         </svg>
         <div className="sw" />
-        <div className="hh" />
       </div>
       {[0, 1, 2].map((i) => (
         <i key={i} className="ch" style={css({ '--i': i })} />
@@ -49,7 +43,7 @@ export default function Art({ locale }: ArtProps) {
       <div className="bs">
         {DIAS.map((d, i) => (
           <span key={i} className={`b${i === HOY ? ' t' : ''}${i > 4 ? ' w' : ''}`} style={css({ '--i': i, '--h': d.h })}>
-            <i>{d[locale]}</i>
+            <span>{d[locale]}</span>
           </span>
         ))}
       </div>
@@ -71,9 +65,6 @@ export default function Art({ locale }: ArtProps) {
             )}
           </b>
         </div>
-        <svg className="sg" viewBox="0 0 60 16">
-          <path pathLength={1} d="M2 12C5 4 8 2 9 5s-3 9 0 8 4-8 7-8-1 7 2 7 3-5 5-5 0 4 2 4 4-3 6-3M35 13c7-2 15-3 23-2" />
-        </svg>
         <i className="st">
           <svg viewBox="0 0 24 24" width="100%" height="100%" fill="none" stroke="#10b981" strokeWidth="3.2" strokeLinecap="round">
             <path d="m6.5 12.5 3.8 3.8 7.2-8" />
