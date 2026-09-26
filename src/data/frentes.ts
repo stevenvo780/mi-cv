@@ -41,13 +41,18 @@ export interface Producto {
   /**
    * Product type override: 'ponencia' for academic talks/presentations; 'catalogo' for a site that gathers and
    * links a whole collection of other sites, courses or repos (Humanizar, Paideía, Kósmos, Daímon). A catálogo carries
-   * `incluye` and `unidad`, and the home shows it as a big tile of its own (Fronts.tsx).
+   * `incluye` and `unidad`, and the home shows it as a big tile that opens its front's grid (Fronts.tsx).
    */
   tipo?: 'ponencia' | 'catalogo';
   /** Solo catálogos: lo que reúne, ítem a ítem. Toda cifra que la home muestre de un catálogo se deriva de aquí. */
   incluye?: CatalogoItem[];
   /** Solo catálogos: cómo se llaman sus ítems, en plural («proyectos», «obras»). */
   unidad?: LocalizedText;
+  /**
+   * Otra forma de recorrer lo que reúne un catálogo, con sitio propio: Umbral muestra en escenas 3D los mismos
+   * repositorios que Kósmos. La tarjeta del catálogo la enlaza con `texto`.
+   */
+  vistaDe?: { catalogo: string; texto: LocalizedText };
   /**
    * Render this product as a full-width SHOWCASE BANNER (horizontal og_product
    * cover, big radius) at the TOP of its section — even when the section also
@@ -88,6 +93,11 @@ export interface CatalogoItem {
   /** Enlace directo: su sitio, su curso o su repositorio. Sin él, el ítem no es público (p. ej. un repo privado). */
   url?: string;
   kind: CatalogoKind;
+  /**
+   * Id del producto del portafolio que es este ítem cuando la URL no lo dice (Graf Commerce enlaza al panel de Graf).
+   * Si la URL coincide con la de un producto, `productoDeItem` lo deduce solo.
+   */
+  producto?: string;
 }
 
 /** Un producto con `tipo: 'catalogo'`: lleva siempre lo que reúne y el nombre de sus ítems. */
@@ -357,13 +367,14 @@ export const productos: Producto[] = [
     frente: 'ciencias',
     nombre: 'Umbral',
     subtitulo: {
-      es: 'Atlas interactivo de experimentos',
-      en: 'Interactive atlas of experiments',
+      es: 'Los experimentos de Kósmos, en 3D',
+      en: 'The Kósmos experiments, in 3D',
     },
     descripcion: {
-      es: 'Atlas interactivo de 23 experimentos de matemáticas, física, autómatas y sistemas complejos. Combina escenas 3D exploratorias con 230 resultados documentados y enlaces al código fuente; las escenas no recalculan los resultados originales.',
-      en: 'Interactive atlas of 23 experiments in mathematics, physics, automata and complex systems. It pairs exploratory 3D scenes with 230 documented results and source links; the scenes do not recompute the original results.',
+      es: 'Los mismos 23 repositorios que reúne Kósmos, convertidos en un atlas que se recorre: matemáticas, física, autómatas y sistemas complejos en escenas 3D, con 230 resultados documentados y el enlace a cada código fuente. Las escenas ilustran; no recalculan los resultados originales.',
+      en: 'The same 23 repositories Kósmos gathers, turned into an atlas you walk through: mathematics, physics, automata and complex systems as 3D scenes, with 230 documented results and a link to each source. The scenes illustrate; they do not recompute the original results.',
     },
+    vistaDe: { catalogo: 'complexlab', texto: { es: 'Sus experimentos, en escenas 3D:', en: 'Its experiments, as 3D scenes:' } },
     url: 'https://umbral-atlas.stevenvallejo.com',
     status: 'live',
     badge: { es: 'Exploración científica', en: 'Scientific exploration' },
@@ -508,8 +519,8 @@ export const productos: Producto[] = [
     frente: 'informatica',
     nombre: 'Koinonía',
     subtitulo: {
-      es: 'Plataforma de comunidades',
-      en: 'Community platform',
+      es: 'Plataforma para comunidades de Discord',
+      en: 'Platform for Discord communities',
     },
     descripcion: {
       es: 'Plataforma multi-tenant para comunidades Discord: portal web (eventos, biblioteca, ranking, tienda y roles), API NestJS 10 sobre Neon Postgres y bot discord.js con XP y recompensas por voz. Un solo codebase y una sola BD para múltiples comunidades aisladas por tenantId.',
@@ -626,8 +637,8 @@ export const productos: Producto[] = [
       en: 'Orchestrating director of the agent fleet',
     },
     descripcion: {
-      es: 'Mi proyecto estrella en ingeniería: orquestador de la flota agéntica que opera Cauce V3 (este mismo portafolio y todo el ecosistema Humanizar). Despliegues, monitoreo, contratos de entrega entre agentes y un CRM multi-tenant en producción. Es la mano derecha que mantiene viva la flota.',
-      en: 'My flagship engineering project: the orchestrating director of the agent fleet that operates Cauce V3 (this very portfolio and the entire Humanizar ecosystem). Deployments, monitoring, delivery contracts between agents, and a multi-tenant CRM in production. The right hand that keeps the fleet alive.',
+      es: 'Mi proyecto estrella en ingeniería: dirige la flota de agentes de IA que opera este mismo portafolio y todo el ecosistema Humanizar. Despliegues, monitoreo, contratos de entrega entre agentes y un CRM multi-tenant, en producción. Es la mano derecha que mantiene viva la flota.',
+      en: 'My flagship engineering project: it directs the fleet of AI agents that runs this very portfolio and the whole Humanizar ecosystem. Deployments, monitoring, delivery contracts between agents and a multi-tenant CRM, in production. The right hand that keeps the fleet alive.',
     },
     url: 'https://cauce.humanizar.tech',
     status: 'live',
@@ -673,7 +684,7 @@ export const productos: Producto[] = [
     incluye: [
       { nombre: 'POS Saldantia', kind: 'producto', url: 'https://pos.saldantia.cloud' },
       { nombre: 'Deméter', kind: 'producto', url: 'https://demeter.humanizar.cloud' },
-      { nombre: 'Graf Commerce', kind: 'producto', url: 'https://admin.graf.com.co' },
+      { nombre: 'Graf Commerce', kind: 'producto', url: 'https://admin.graf.com.co', producto: 'graf' },
       { nombre: 'Xenía (Devkits CRM)', kind: 'producto', url: 'https://xenia.stevenvallejo.com' },
       { nombre: 'Cauce V3', kind: 'producto', url: 'https://cauce.humanizar.tech' },
       { nombre: 'Agora (Elenxos)', kind: 'producto', url: 'https://agora.elenxos.com' },
@@ -779,6 +790,45 @@ export const productTags: Record<string, string[]> = {
 /* ---------------------------------------------------------------- */
 /* Helpers                                                           */
 /* ---------------------------------------------------------------- */
+/**
+ * Orden de las tarjetas de cada frente en la home, detrás de su catálogo. Primero lo que está en producción o es la
+ * pieza central del frente; después las familias de producto, juntas; lo que aún no está en línea, al final.
+ * - Ingeniería: Cauce V3 (dirige la flota), Órganon y Eikón; la familia PYME, con Érgon delante de sus kits (Chrónos,
+ *   Xenía), Apothḗke y Nómos; comunidad y código abierto (Koinonía, Téchne); Áporía, que aún no está en línea.
+ * - Filosofía: las plataformas en uso (Ágora, Agón) y el par de gobierno universitario de la UdeA.
+ * - Ciencias: Umbral, junto a Kósmos porque recorre sus mismos repositorios; la tesis; las plataformas para aprender.
+ * - Empresarial: por tracción, de Graf (el de más clientes) a Prizma.
+ */
+export const ordenHome: Record<FrenteId, string[]> = {
+  informatica: ['cauce-v3', 'nlp-to-logic', 'eikon', 'devkits', 'devkits-hours', 'devkits-crm', 'warehouse', 'scrapekit', 'communityos', 'stevendevbox', 'aporia'],
+  filosofia: ['agora', 'debatesuite', 'koinonia-udea', 'gobierno-universitario-udea'],
+  ciencias: ['umbral-atlas', 'estructuras-preontologicas', 'noesis-lab', 'phusis'],
+  enterprise: ['graf', 'demeter', 'prizma'],
+};
+
+/** Las tarjetas de un frente en la home, en el orden de `ordenHome` (sin su catálogo). */
+export function tarjetasDeFrente(frente: FrenteId): Producto[] {
+  return ordenHome[frente].map((id) => {
+    const p = productos.find((x) => x.id === id);
+    if (!p || p.frente !== frente || esCatalogo(p)) throw new Error(`ordenHome.${frente}: ${id} no es una tarjeta de ese frente`);
+    return p;
+  });
+}
+
+const bareUrl = (url?: string) => url?.replace(/\/+$/, '').toLowerCase();
+
+/** El producto del portafolio que es un ítem de catálogo: por `producto`, o porque comparten sitio o repositorio. */
+export function productoDeItem(i: CatalogoItem): Producto | undefined {
+  if (i.producto) return productos.find((p) => p.id === i.producto);
+  const url = bareUrl(i.url);
+  return url ? productos.find((p) => !esCatalogo(p) && (bareUrl(p.url) === url || bareUrl(p.repo) === url)) : undefined;
+}
+
+/** Los catálogos que reúnen un producto (Estructuras Preontológicas está en Paideía y en Kósmos). */
+export function catalogosDe(p: Producto): Catalogo[] {
+  return catalogos.filter((c) => c.id !== p.id && c.incluye.some((i) => productoDeItem(i)?.id === p.id));
+}
+
 export function productosPorFrente(frente: FrenteId): Producto[] {
   return productos.filter((p) => p.frente === frente);
 }
@@ -806,7 +856,10 @@ export function esCatalogo(p: Producto): p is Catalogo {
   return p.tipo === 'catalogo' && Array.isArray(p.incluye) && p.unidad !== undefined;
 }
 
-/** Humanizar abre la banda; los demás conservan el orden de sus frentes y de `productos`. */
+/**
+ * Humanizar va primero (así los lista /compartir); los demás conservan el orden de sus frentes y de `productos`. En la
+ * home cada catálogo abre la rejilla de su frente (Fronts.tsx), así que este orden no se ve allí.
+ */
 export const catalogos: Catalogo[] = frenteOrder
   .flatMap((f) => productos.filter((p) => p.frente === f).filter(esCatalogo))
   .sort((a, b) => Number(b.id === 'humanizar') - Number(a.id === 'humanizar'));

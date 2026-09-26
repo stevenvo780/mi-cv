@@ -1,0 +1,366 @@
+/* Kósmos: esfera de ecuaciones en órbita sobre el fantasma del atractor de Lorenz de su portada.
+   Profundidad: perspectiva + tres velos de niebla a distintas z (lo lejano se apaga sin animar cada ecuación) y una
+   placa oscura de borde difuso tras cada ecuación, para que la de delante tape entera a la de atrás.
+   Activa: la nube se acerca, gira más rápido (una segunda órbita que solo corre al pasar) y se enciende; la niebla no
+   se abre sino que se espesa, para que lo lejano siga mucho más apagado que lo cercano.
+   Las ecuaciones siempre miran al frente: cada una deshace el giro de las dos órbitas. --o es la pose de partida. */
+@layer home {
+  .home .art-complexlab {
+    --lime: #d9f46c;
+    --navy: #080d15;
+    --R: 44.9cqw;
+    --V: 42.3cqh;
+    --fs: 4.49cqmin;
+    --o: -17deg;
+    background:
+      radial-gradient(50% 58% at 50% 45%, rgb(217 244 108 / 0.08), transparent 72%),
+      radial-gradient(130% 100% at 50% 40%, #0e1928, var(--navy) 55%, #04070c);
+  }
+  /* Rejilla tenue, como la portada. */
+  .home .art-complexlab::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(rgb(185 205 217 / 0.07) 1px, transparent 1px) 50% 50% / 7cqmin 7cqmin,
+      linear-gradient(90deg, rgb(185 205 217 / 0.07) 1px, transparent 1px) 50% 50% / 7cqmin 7cqmin;
+    mask-image: radial-gradient(72% 72% at 50% 50%, #000 15%, transparent 78%);
+  }
+
+  /* Fantasma de Lorenz: halo, trazo y dos cometas que recorren la trayectoria (la segunda capa, svg + svg). */
+  .home .art-complexlab svg {
+    position: absolute;
+    left: 50%;
+    top: 47%;
+    height: 92cqh;
+    aspect-ratio: 324 / 340;
+    translate: -50% -50%;
+    overflow: visible;
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .home .art-complexlab path + use {
+    stroke: var(--lime);
+    stroke-width: 6;
+    opacity: 0.1;
+  }
+  .home .art-complexlab path + use + use {
+    stroke: color-mix(in oklab, var(--lime) 70%, #8ee6c4);
+    stroke-width: 1;
+    opacity: 0.7;
+  }
+  .home .art-complexlab svg + svg {
+    stroke: #effcb4;
+    stroke-width: 2.6;
+    stroke-dasharray: 3 97;
+    stroke-dashoffset: 62;
+  }
+  .home .art-complexlab svg + svg use + use {
+    stroke: var(--art-b);
+    stroke-dasharray: 6 94;
+    stroke-dashoffset: 12;
+    opacity: 0;
+  }
+
+  /* Polvo de estrellas: dos capas de sombras. */
+  .home .art-complexlab > i,
+  .home .art-complexlab > i::after {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 0.5cqmin;
+    height: 0.5cqmin;
+    border-radius: 50%;
+    color: rgb(214 224 255 / 0.7);
+    box-shadow:
+      8cqw 14cqh, 21cqw 71cqh, 33cqw 9cqh, 46cqw 88cqh, 58cqw 22cqh, 71cqw 64cqh, 83cqw 12cqh, 93cqw 47cqh,
+      14cqw 44cqh, 38cqw 58cqh, 64cqw 91cqh, 77cqw 34cqh, 5cqw 83cqh, 89cqw 79cqh;
+  }
+  .home .art-complexlab > i::after {
+    content: '';
+    color: rgb(217 244 108 / 0.55);
+    box-shadow:
+      12cqw 29cqh, 27cqw 16cqh, 41cqw 77cqh, 52cqw 6cqh, 67cqw 44cqh, 79cqw 93cqh, 96cqw 24cqh, 3cqw 60cqh,
+      31cqw 94cqh, 87cqw 58cqh;
+  }
+
+  /* Escenario 3D: inclinación › niebla + órbita › giro activo › ecuaciones. */
+  .home .art-complexlab .cl-st {
+    position: absolute;
+    inset: 0;
+    perspective: 140cqw;
+    perspective-origin: 50% 42%;
+  }
+  .home .art-complexlab :is(.cl-tl, .cl-o, .cl-s, .cl-s > *) {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 0;
+    height: 0;
+    transform-style: preserve-3d;
+  }
+  /* La nube va empujada −R hacia el fondo (y todo medido en proporción, ×P/(P − R)): lo más cercano queda a escala 1
+     y el texto no se rasteriza pequeño para luego ampliarse. */
+  .home .art-complexlab .cl-tl {
+    left: 50%;
+    top: 42%;
+    transform: translateZ(calc(var(--R) * -1)) rotateX(0deg) rotateZ(-4deg);
+  }
+  .home .art-complexlab .cl-o {
+    rotate: y var(--o);
+  }
+  /* Niebla: tres velos de la mitad delantera (donde se cruzan las que se leen) al fondo; en reposo, al 65 %. */
+  .home .art-complexlab .cl-tl > i {
+    position: absolute;
+    left: -75cqw;
+    top: -75cqh;
+    width: 150cqw;
+    height: 150cqh;
+    background: radial-gradient(closest-side, rgb(8 13 21 / 0.4) 72%, transparent);
+    transform: translateZ(calc(var(--R) * 0.5));
+    opacity: 0.65;
+  }
+  .home .art-complexlab .cl-tl > i:nth-child(2) {
+    background: radial-gradient(closest-side, rgb(8 13 21 / 0.45) 72%, transparent);
+    transform: translateZ(calc(var(--R) * 0.1));
+  }
+  .home .art-complexlab .cl-tl > i:nth-child(3) {
+    background: radial-gradient(closest-side, rgb(8 13 21 / 0.5) 72%, transparent);
+    transform: translateZ(calc(var(--R) * -0.35));
+  }
+  /* Esfera de Fibonacci achatada: altura pareja, ángulo áureo desde Lorenz y radio menor hacia los polos. */
+  .home .art-complexlab .cl-s > b {
+    --a: calc((var(--j) - var(--h)) * 137.508deg);
+    --s: calc(1 - (2 * var(--j) + 1) / var(--n));
+    --r: sqrt(1 - 0.6 * var(--s) * var(--s));
+    transform: translateY(calc(var(--s) * var(--V))) rotateY(var(--a)) translateZ(calc(var(--r) * var(--R)))
+      rotateY(calc(-1 * var(--a) - var(--o)));
+  }
+
+  /* Una ecuación por repositorio; el color dice su colección. */
+  .home .art-complexlab [data-k] {
+    --c: var(--art-b);
+  }
+  .home .art-complexlab [data-k='fisica'] {
+    --c: var(--art-a);
+  }
+  .home .art-complexlab [data-k='sistemas-complejos'] {
+    --c: #7fe3c3;
+  }
+  .home .art-complexlab [data-k='emergencia'] {
+    --c: #f3ee9a;
+  }
+  .home .art-complexlab [data-k='computo-cientifico'] {
+    --c: #cfe3f0;
+  }
+  /* Centrada en su punto de la esfera. La letra se compone al doble y se reduce a la mitad (antes del giro, que no
+     la deforma): la capa se rasteriza con el doble de detalle y no sale pixelada en pantallas densas. La placa cubre
+     toda la caja de la letra, extremos incluidos, y se funde en su borde. */
+  .home .art-complexlab .cl-s i {
+    position: absolute;
+    translate: -50% -50%;
+    scale: 0.5;
+    padding: 0.2em 0.8em;
+    font: 400 calc(var(--fs) * 2) / 1.2 var(--f-math);
+    white-space: nowrap;
+    color: color-mix(in oklab, var(--c) 62%, #e8ecf2);
+    text-shadow: 0 0 0.4em color-mix(in oklab, var(--c) 45%, transparent);
+    background: rgb(8 13 21 / 0.9);
+    box-shadow: 0 0 0.6em 0.4em rgb(8 13 21 / 0.9);
+    border-radius: 0.5em;
+    opacity: calc(0.12 + 0.88 * var(--hl, 1));
+  }
+  .home .art-complexlab .cl-s :is(sub, sup) {
+    font-size: 0.62em;
+    line-height: 0;
+  }
+  .home .art-complexlab .cl-s .cl-lz {
+    padding: 0.35em 1.1em 0.35em 0.6em;
+    border-left: 0.1em solid var(--lime);
+    font-size: calc(var(--fs) * 2.24);
+    line-height: 1.28;
+    color: #f0fac8;
+    text-shadow: 0 0 0.45em rgb(217 244 108 / 0.6);
+    border-radius: 0 0.5em 0.5em 0;
+  }
+  /* Rótulo con su velo, por encima de la nube. */
+  .home .art-complexlab > p {
+    position: absolute;
+    left: 2cqmin;
+    top: 2cqmin;
+    display: flex;
+    align-items: center;
+    gap: 1.4cqmin;
+    padding: 2cqmin 3cqmin;
+    font: 500 2.3cqmin / 1 var(--f-code);
+    letter-spacing: 0.12em;
+    color: rgb(217 244 108 / 0.9);
+    background: radial-gradient(farthest-side, rgb(8 13 21 / 0.9) 60%, transparent);
+  }
+  .home .art-complexlab > p::before {
+    content: '';
+    width: 1.1cqmin;
+    height: 1.1cqmin;
+    border-radius: 50%;
+    background: var(--lime);
+    box-shadow: 0 0 1.6cqmin var(--lime);
+  }
+
+  /* Activa: la nube se acerca, baja un poco (el polo de arriba no roza el rótulo) y se endereza; la niebla se espesa y
+     todo se enciende. Se inclina apenas: más inclinada, junta en pantalla ecuaciones de casi la misma profundidad. */
+  .home .art-host:is(:hover, :focus-within) .art-complexlab .cl-tl {
+    transform: translate3d(0, 2cqh, calc(4cqw - var(--R))) rotateX(-2deg) rotateZ(0deg);
+  }
+  .home .art-host:is(:hover, :focus-within) .art-complexlab .cl-tl > i {
+    opacity: 1;
+  }
+  .home .art-host:is(:hover, :focus-within) .art-complexlab .cl-s i {
+    color: color-mix(in oklab, var(--c) 72%, #fff);
+    text-shadow: 0 0 0.5em color-mix(in oklab, var(--c) 80%, transparent);
+  }
+  .home .art-host:is(:hover, :focus-within) .art-complexlab path + use {
+    stroke-width: 9;
+    opacity: 0.26;
+  }
+  .home .art-host:is(:hover, :focus-within) .art-complexlab path + use + use {
+    stroke: color-mix(in oklab, var(--lime) 45%, #8ee6c4);
+    stroke-width: 1.6;
+  }
+  .home .art-host:is(:hover, :focus-within) .art-complexlab :is(path + use + use, svg + svg use + use) {
+    opacity: 1;
+  }
+
+  /* Leyenda: la colección señalada crece y brilla; las demás se apagan (--hl). */
+  .home .cat:has(.cat-kinds [data-k]:is(:hover, :focus-visible)) .art-complexlab .cl-s i {
+    scale: calc(0.5 + 0.06 * var(--hl, 1));
+    color: color-mix(in oklab, var(--c) 80%, #fff);
+    text-shadow: 0 0 0.55em var(--c);
+  }
+
+  /* Retrato 4:5: esfera más estrecha y alta, vista un poco desde arriba, otra pose de partida. */
+  @container scene (aspect-ratio < 1) {
+    .home .art-complexlab {
+      --R: 23.1cqw;
+      --V: 41.5cqh;
+      --fs: 3.46cqmin;
+      --o: -57deg;
+    }
+    .home .art-complexlab .cl-st {
+      perspective: 150cqw;
+      perspective-origin: 50% 43%;
+    }
+    .home .art-complexlab .cl-tl {
+      top: 43%;
+      transform: translateZ(calc(var(--R) * -1)) rotateX(-5deg) rotateZ(-4deg);
+    }
+    .home .art-complexlab svg {
+      top: 44%;
+      height: auto;
+      width: 96cqw;
+    }
+    .home .art-complexlab > p {
+      display: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .home .art-complexlab .cl-o {
+      animation: art-complexlab-orbit 44s linear infinite;
+    }
+    .home .art-complexlab .cl-s > b {
+      animation: art-complexlab-bill 44s linear infinite;
+    }
+    /* Segunda órbita (y su giro inverso): en pausa hasta que se pasa por la escena. Sin prisa: más rápida, las
+       ecuaciones se cruzan más a menudo. */
+    .home .art-complexlab .cl-s {
+      animation: art-complexlab-orbit 15s linear infinite paused;
+    }
+    .home .art-complexlab .cl-s i {
+      animation: art-complexlab-counter 15s linear infinite paused;
+      transition:
+        opacity 0.4s,
+        scale 0.5s var(--ease-out),
+        color 0.6s,
+        text-shadow 0.6s;
+    }
+    .home .art-host:is(:hover, :focus-within) .art-complexlab :is(.cl-s, .cl-s i, svg + svg use + use) {
+      animation-play-state: running;
+    }
+    /* Un solo vaivén para toda la nube. */
+    .home .art-complexlab .cl-tl {
+      animation: art-complexlab-bob 7s ease-in-out infinite alternate;
+      transition: transform 1.6s var(--ease-out);
+    }
+    .home .art-complexlab :is(.cl-tl > i, use) {
+      transition: 0.9s;
+    }
+    .home .art-complexlab svg {
+      animation: art-complexlab-sway 14s ease-in-out infinite alternate;
+    }
+    .home .art-complexlab svg + svg use {
+      animation: art-complexlab-run 12s linear infinite;
+    }
+    .home .art-complexlab svg + svg use + use {
+      animation: art-complexlab-run 5s linear infinite paused;
+    }
+    .home .art-complexlab > i {
+      animation: art-complexlab-tw 5s ease-in-out infinite alternate;
+    }
+    .home .art-complexlab > i::after {
+      animation: art-complexlab-tw 7s ease-in-out -3s infinite alternate;
+    }
+  }
+  /* Con el movimiento en pausa, tampoco transiciones: quitarlas cancela las que estén en curso. */
+  html[data-motion='paused'] .home .art-complexlab * {
+    transition: none;
+  }
+  @keyframes art-complexlab-orbit {
+    to {
+      transform: rotateY(360deg);
+    }
+  }
+  @keyframes art-complexlab-counter {
+    to {
+      rotate: y -360deg;
+    }
+  }
+  @keyframes art-complexlab-bill {
+    to {
+      transform: translateY(calc(var(--s) * var(--V))) rotateY(var(--a))
+        translateZ(calc(var(--r) * var(--R))) rotateY(calc(-1 * var(--a) - var(--o) - 360deg));
+    }
+  }
+  @keyframes art-complexlab-bob {
+    from {
+      translate: 0 -0.8cqh;
+    }
+    to {
+      translate: 0 0.8cqh;
+    }
+  }
+  @keyframes art-complexlab-sway {
+    from {
+      transform: perspective(120cqw) rotateY(-14deg) rotateX(5deg);
+    }
+    to {
+      transform: perspective(120cqw) rotateY(14deg) rotateX(-5deg);
+    }
+  }
+  @keyframes art-complexlab-run {
+    from {
+      stroke-dashoffset: 100;
+    }
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+  @keyframes art-complexlab-tw {
+    from {
+      opacity: 0.3;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+}

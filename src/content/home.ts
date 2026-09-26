@@ -43,9 +43,28 @@ export interface HomeCopy {
     figcaption: (nodes: number, edges: number) => string;
     listLink: string;
   };
-  fronts: { eyebrow: string; title: string; lead: string; searchLabel: string; searchPlaceholder: string; noResults: string; openFront: string; visit: string; code: string; soon: string };
-  /** Banda de los catálogos, al principio del catálogo. Las cifras llegan de los datos (`incluye` de cada catálogo). */
+  fronts: {
+    eyebrow: string;
+    title: string;
+    lead: string;
+    searchLabel: string;
+    searchPlaceholder: string;
+    noResults: string;
+    openFront: string;
+    visit: string;
+    code: string;
+    soon: string;
+    /** Separa el catálogo del frente de las tarjetas que siguen: «11 proyectos con sitio propio». */
+    ownSites: (n: number) => string;
+    /** Tarjeta de un producto que además está en un catálogo: «También en Humanizar». */
+    alsoIn: (catalogs: string[]) => string;
+    /** En táctil, abre la hoja con lo que es el proyecto (con puntero, se revela al pasar); y la cierra. */
+    more: string;
+    close: string;
+  };
+  /** Tarjeta de cada catálogo, al frente de su rejilla. Las cifras llegan de los datos (`incluye` de cada catálogo). */
   catalogs: {
+    /** Nombre del tipo, en plural: el buscador encuentra todos los catálogos con él. */
     eyebrow: string;
     /** Rótulo de cada catálogo: «Catálogo · 23 proyectos». */
     label: (items: number, unit: string) => string;
@@ -110,7 +129,7 @@ export const HOME: Record<Locale, HomeCopy> = {
     fronts: {
       eyebrow: `${countWord('es', frenteOrder.length)} frentes · ${productos.length} trabajos`,
       title: 'Catálogo · todos mis trabajos',
-      lead: 'Cada uno es un sitio o un proyecto propio: entra directo a su versión actual.',
+      lead: 'Cada frente abre con su catálogo, un sitio que reúne muchos proyectos, y sigue con los que tienen sitio propio. Todo enlaza a su versión actual.',
       searchLabel: 'Buscar en el catálogo',
       searchPlaceholder: 'Producto, tecnología o tema…',
       noResults: 'Sin resultados. Prueba con otro término.',
@@ -118,6 +137,10 @@ export const HOME: Record<Locale, HomeCopy> = {
       visit: 'Visitar',
       code: 'Código',
       soon: 'Próximamente',
+      ownSites: (n) => `${n} ${n === 1 ? 'proyecto' : 'proyectos'} con sitio propio`,
+      alsoIn: (catalogs) => `También en ${catalogs.join(' y ')}`,
+      more: '¿Qué es?',
+      close: 'Cerrar',
     },
     catalogs: {
       eyebrow: 'Catálogos',
@@ -181,7 +204,7 @@ export const HOME: Record<Locale, HomeCopy> = {
     fronts: {
       eyebrow: `${countWord('en', frenteOrder.length)} fronts · ${productos.length} works`,
       title: 'Catalog · all my work',
-      lead: 'Each one is a site or a project of its own: go straight to its current version.',
+      lead: 'Each front opens with its catalog, a site that gathers many projects, and goes on with the ones that have a site of their own. Everything links to its current version.',
       searchLabel: 'Search the catalog',
       searchPlaceholder: 'Product, technology or topic…',
       noResults: 'No results. Try another term.',
@@ -189,6 +212,10 @@ export const HOME: Record<Locale, HomeCopy> = {
       visit: 'Visit',
       code: 'Code',
       soon: 'Coming soon',
+      ownSites: (n) => `${n} ${n === 1 ? 'project' : 'projects'} with a site of their own`,
+      alsoIn: (catalogs) => `Also in ${catalogs.join(' and ')}`,
+      more: 'What is it?',
+      close: 'Close',
     },
     catalogs: {
       eyebrow: 'Catalogs',

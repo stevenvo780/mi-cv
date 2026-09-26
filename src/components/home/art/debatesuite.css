@@ -1,0 +1,266 @@
+/* Agón (moderador de debates de Cafetería del Caos): el agón como escena. Dos oradores en sus atriles, con los
+   escudos cobre y violeta de los participantes del sitio, y entre ellos el reloj del turno, que al agotarse pasa del
+   color del bando al dorado y al rojo (como la tarjeta del orador en el sitio). B es el espejo de A.
+   Reposo: el moderador tiene el reloj en pausa; habla A y su voz sale en ondas. Activa: el reloj corre (4 s por turno,
+   de 0:03 a 0:00), la flecha cede la palabra y cada bando alza su bandera con su tanto. Una sola línea de tiempo, en
+   pausa (--ps) fuera del hover: al entrar sigue donde quedó y al salir se detiene, sin saltos.
+   Medidas en cqw sobre la caja 100 × 62,5 (inset: arriba derecha abajo izquierda). */
+@layer home {
+  .home .art-debatesuite {
+    --ps: paused;
+    background: radial-gradient(70cqw 44cqw at 50% 34%, #262220, #0c0b0b);
+  }
+  .home .art-host:is(:hover, :focus-within) .art-debatesuite {
+    --ps: running;
+  }
+  .home .art-debatesuite * {
+    position: absolute;
+  }
+  .home .art-debatesuite :is(.sd, .sp) {
+    inset: 0;
+  }
+  .home .art-debatesuite :is(.sb, .sb b) {
+    scale: -1 1;
+  }
+  /* Cada bando: --c su color, --o el fondo del escudo, --f la bandera y --p el tanto. */
+  .home .art-debatesuite .sa {
+    --c: #cd853f;
+    --o: #7a3a14;
+    --f: #daa520;
+    --p: #a3c94c;
+  }
+  .home .art-debatesuite .sb {
+    --c: #8c6ad5;
+    --o: #3b3448;
+    --f: #c8321f;
+    --p: #ff6a55;
+  }
+  /* Quien tiene la palabra: halo de su color y ondas de voz hacia el centro. */
+  .home .art-debatesuite .sp {
+    background: radial-gradient(18cqw 18cqw at 19cqw 24cqw, color-mix(in srgb, var(--c) 42%, #0000), #0000);
+  }
+  .home .art-debatesuite i {
+    inset: 15cqw 75.5cqw 36.5cqw 13.5cqw;
+    border-right: 0.6cqw solid var(--c);
+    border-radius: 50%;
+    scale: calc(0.95 + var(--i, 0) * 0.4);
+    opacity: calc(0.9 - var(--i, 0) * 0.3);
+  }
+  /* El orador: silueta inclinada hacia el rival, con luz de borde de ese lado. */
+  .home .art-debatesuite :is(.hd, .bd) {
+    border-radius: 50%;
+    background: #0e0d0d;
+    box-shadow: inset -0.5cqw 0.3cqw 0.5cqw -0.1cqw var(--c);
+  }
+  .home .art-debatesuite .hd {
+    inset: 17.2cqw 76.8cqw 38.7cqw 16.6cqw;
+  }
+  .home .art-debatesuite .bd {
+    inset: 24.6cqw 73.5cqw 27.9cqw 11.5cqw;
+    border-radius: 7.5cqw 7.5cqw 0 0;
+    rotate: 5deg;
+  }
+  .home .art-debatesuite :is(.bd, .fx, .pt) {
+    transform-origin: 50% 100%;
+  }
+  /* Atril con su tapa encendida y el escudo del bando. */
+  .home .art-debatesuite .lc {
+    inset: 34.5cqw 72.5cqw 8.5cqw 10.5cqw;
+    clip-path: polygon(0 0, 100% 0, 88% 100%, 12% 100%);
+    background: linear-gradient(90deg, #171616, #2a2826 70%, #3a3531);
+  }
+  .home .art-debatesuite .lt {
+    inset: 33cqw 71.5cqw 27.5cqw 9.5cqw;
+    border-radius: 0.6cqw;
+    background: #34302d;
+    box-shadow: inset 0 0.3cqw var(--c);
+  }
+  .home .art-debatesuite .cr {
+    inset: 38.6cqw 77.2cqw auto 15.2cqw;
+    border-radius: 2.2cqw;
+    background: linear-gradient(135deg, var(--o), var(--c));
+    box-shadow:
+      inset 0 0 0 0.25cqw #fff3,
+      0 0 3cqw -0.6cqw var(--c);
+    font: 700 4.4cqw/7.6cqw var(--f-sans);
+    text-align: center;
+    color: #fff4e4;
+  }
+  /* La bandera del juez y el tanto que suma o resta: suben juntos desde su base. */
+  .home .art-debatesuite .fx {
+    inset: 12.6cqw 91.2cqw 27.9cqw 8.2cqw;
+    border-radius: 0.3cqw;
+    background: linear-gradient(#f0e6d6, #6d665d);
+  }
+  .home .art-debatesuite .fx div {
+    inset: 0.2cqw -6.8cqw 16.6cqw 0.6cqw;
+    clip-path: polygon(0 0, 100% 40%, 0 100%);
+    background: var(--f);
+  }
+  .home .art-debatesuite .pt {
+    inset: 7.4cqw 75.8cqw auto 13.8cqw;
+    border: 0.25cqw solid;
+    border-radius: 1.2cqw;
+    background: #141312e6;
+    box-shadow: 0 0 3cqw -0.5cqw;
+    font: 700 3.9cqw/4.9cqw var(--f-sans);
+    text-align: center;
+    color: var(--p);
+  }
+  /* El reloj. Pose fija (sin movimiento): le quedan tres segundos a A. */
+  .home .art-debatesuite .rg {
+    inset: 5.5cqw 32cqw auto;
+    overflow: visible;
+  }
+  .home .art-debatesuite .a1 {
+    stroke: var(--c);
+    stroke-dashoffset: -20;
+  }
+  .home .art-debatesuite .sk {
+    rotate: 0.2turn;
+  }
+  /* Segundero: la caja muestra una línea; la tira de cifras sube tras "0:0". */
+  .home .art-debatesuite .dg {
+    inset: 20.3cqw 0 auto;
+    height: 1em;
+    padding-right: 1ch;
+    overflow: hidden;
+    font: 700 6.4cqw/1 var(--f-sans);
+    text-align: center;
+    color: #f6efe6;
+  }
+  .home .art-debatesuite em {
+    width: 1ch;
+    font-style: normal;
+    word-break: break-all;
+  }
+  .home .art-debatesuite :is(.a2, .sb .sp, .sb .fx, .sb .pt) {
+    opacity: 0;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .home .art-debatesuite .a1 {
+      animation:
+        art-debatesuite-dr 4s linear infinite var(--ps),
+        art-debatesuite-tn 8s infinite var(--ps);
+    }
+    .home .art-debatesuite .sk {
+      animation: art-debatesuite-sk 4s linear infinite var(--ps);
+    }
+    .home .art-debatesuite em {
+      animation: art-debatesuite-tk 4s steps(4, jump-none) infinite var(--ps);
+    }
+    .home .art-debatesuite i {
+      animation: art-debatesuite-wv 1.2s calc(var(--i, 0) * -0.4s) ease-out infinite;
+    }
+    .home .art-debatesuite .sp {
+      animation: art-debatesuite-tn 8s infinite var(--ps);
+    }
+    .home .art-debatesuite .pn {
+      animation: art-debatesuite-pn 8s cubic-bezier(0.5, 0, 0.2, 1.3) infinite var(--ps);
+    }
+    .home .art-debatesuite :is(.fx, .pt) {
+      animation: art-debatesuite-fx 8s infinite var(--ps);
+    }
+    /* B va media vuelta detrás: su turno es el reverso del de A, y su bandera sale 4 s después. */
+    .home .art-debatesuite .a2 {
+      animation-direction: normal, reverse;
+    }
+    .home .art-debatesuite .sb .sp {
+      animation-direction: reverse;
+    }
+    .home .art-debatesuite .sb :is(.fx, .pt) {
+      animation-delay: -4s;
+    }
+  }
+
+  @keyframes art-debatesuite-dr {
+    0% {
+      stroke-dashoffset: 0;
+    }
+    0%,
+    55% {
+      stroke: var(--c);
+    }
+    80% {
+      stroke: #daa520;
+    }
+    to {
+      stroke-dashoffset: -100;
+      stroke: #e0452f;
+    }
+  }
+  @keyframes art-debatesuite-sk {
+    0% {
+      rotate: 0turn;
+    }
+    to {
+      rotate: 1turn;
+    }
+  }
+  @keyframes art-debatesuite-tk {
+    0% {
+      translate: 0;
+    }
+    to {
+      translate: 0 -3em;
+    }
+  }
+  @keyframes art-debatesuite-wv {
+    0% {
+      scale: 0.6;
+      opacity: 0;
+    }
+    30% {
+      opacity: 1;
+    }
+    to {
+      scale: 2;
+      opacity: 0;
+    }
+  }
+  @keyframes art-debatesuite-tn {
+    0%,
+    50% {
+      opacity: 1;
+    }
+    53%,
+    to {
+      opacity: 0;
+    }
+  }
+  @keyframes art-debatesuite-pn {
+    0%,
+    50% {
+      rotate: 0turn;
+    }
+    54%,
+    96% {
+      rotate: 0.5turn;
+    }
+    to {
+      rotate: 1turn;
+    }
+  }
+  @keyframes art-debatesuite-fx {
+    0%,
+    10% {
+      transform: scale(0);
+      opacity: 0;
+    }
+    14% {
+      transform: scale(1.12);
+      opacity: 1;
+    }
+    17%,
+    40% {
+      transform: none;
+      opacity: 1;
+    }
+    46%,
+    to {
+      transform: scale(0);
+      opacity: 0;
+    }
+  }
+}

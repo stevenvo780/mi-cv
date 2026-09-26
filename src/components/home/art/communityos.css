@@ -1,0 +1,253 @@
+/* Koinonía (comunidades de Discord, multi-tenant): tres islas, una por comunidad y aisladas por tenantId, cada una un
+   anillo de miembros dentro de su anillo de XP; bajo Koinonía y dentro de su muro, su propio podio con el oro, la plata
+   y el bronce del top de usuarios del sitio.
+   Reposo: la presencia recorre los anillos y la voz suena en cada isla. Activa: la XP se llena y sube de nivel con
+   un abanico de estrellas, los servidores se vuelven squircle como en Discord, llegan miembros a la comunidad nueva, el
+   podio se enciende y el tercero sube a primero. Al salir, todo vuelve por transición: nada salta. */
+@layer home {
+  /* Cuánto queda del reposo (1 en reposo, 0 activa), con transición; --r lo lleva a los hijos. La XP, las estrellas y
+     el «+XP» corren siempre y sus fotogramas mezclan con --r su valor de reposo: en reposo no se mueven, y al entrar o
+     salir se funden. */
+  @property --art-communityos-r {
+    syntax: '<number>';
+    inherits: false;
+    initial-value: 1;
+  }
+  .home .art-communityos {
+    --bg: var(--ink-1);
+    --g: #10b981;
+    --h: 0;
+    --r: var(--art-communityos-r);
+  }
+  .home .art-communityos * {
+    position: absolute;
+  }
+  /* Muros entre tenants, de arriba abajo: el podio queda dentro de Koinonía. */
+  .home .art-communityos::before {
+    content: '';
+    position: absolute;
+    inset: 11.5cqw 34cqw 2cqw;
+    border-inline: 1px dashed var(--line-strong);
+  }
+  .home .art-communityos svg {
+    inset: -16cqw;
+    width: 32cqw;
+    overflow: visible;
+    fill: none;
+    stroke: var(--c);
+    stroke-width: 0.45;
+    color: var(--c);
+  }
+  /* Icono del servidor (squircle al activarse); el «+» de añadir servidor, en el verde de Discord. */
+  .home .art-communityos .t b {
+    inset: -4.6cqw;
+    border: 0.3cqw solid;
+    border-radius: calc(32% + var(--r)*18%);
+    background: var(--bg);
+    box-shadow: 0 0 9cqw 1cqw rgb(from var(--c) r g b/0.4);
+    font: 300 8cqw/8.6cqw var(--f-sans);
+    text-align: center;
+    color: var(--k,var(--c));
+  }
+  /* Anillo de XP: pathLength 100, así que el trazo visible es la XP en % (--f). */
+  .home .art-communityos .k {
+    stroke-width: 1;
+    stroke-dasharray: 100;
+    stroke-dashoffset: calc(100 - var(--f));
+    stroke-linecap: round;
+    rotate: -90deg;
+  }
+  /* Miembros, en anillo; uno habla en voz (el aro verde de Discord) y su onda. */
+  .home .art-communityos .t :is(i, u) {
+    --a: calc(var(--i)*360deg/var(--n));
+    left: calc(sin(var(--a)) * 10.5cqw - 2.7cqw);
+    top: calc(cos(var(--a)) * -10.5cqw - 2.7cqw);
+    width: 5.4cqw;
+    height: 5.4cqw;
+    border-radius: 50%;
+  }
+  .home .art-communityos i {
+    --m: calc(30% + mod(var(--i),3)*22%);
+    --b: radial-gradient(circle 1.15cqw at 50% 38%,var(--text) 94%,#0000),radial-gradient(2.4cqw 1.8cqw at 50% 106%,var(--text) 94%,#0000),color-mix(in oklab,var(--c) var(--m),var(--bg));
+    background: var(--b);
+    box-shadow: 0 0 0 0.3cqw var(--bg);
+  }
+  .home .art-communityos .v {
+    box-shadow:
+      0 0 0 0.3cqw var(--bg),
+      0 0 0 0.65cqw var(--g),
+      0 0 2cqw var(--g);
+  }
+  /* Puesto libre: el recién llegado crece encima y lo tapa (con la transición de su puesto, que hereda). */
+  .home .art-communityos .e {
+    background: none;
+    border: 0.35cqw dashed var(--c);
+  }
+  .home .art-communityos .e::before {
+    content: '';
+    position: absolute;
+    inset: -0.35cqw;
+    border-radius: 50%;
+    background: var(--b);
+    scale: var(--h);
+    transition: inherit;
+  }
+  .home .art-communityos u {
+    border: 0.35cqw solid var(--g);
+    outline: 0.15cqw solid var(--g);
+    outline-offset: 0.9cqw;
+    opacity: 0.4;
+    scale: 1.5;
+  }
+  .home .art-communityos kbd {
+    inset: -21.5cqw -2.4cqw;
+    font: 500 2.7cqw/1 var(--f-code);
+    color: var(--gold-2);
+  }
+  /* Estrellas de experiencia (la del sitio), en abanico desde donde se cierra el anillo de XP. */
+  .home .art-communityos em {
+    inset: -16.8cqw -1.8cqw 13.2cqw;
+    rotate: var(--a);
+    background: radial-gradient(#fff6c8, #ffd700 60%);
+    clip-path: polygon(50% 0, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+    opacity: 0;
+  }
+  /* Podio 2·1·3: el puesto p va en la columna mod(1 − p, 3); con --h, cada miembro se mueve (x, y) de su puesto al
+     nuevo (columnas y escalones). */
+  .home .art-communityos .lb {
+    --c: var(--teal);
+    inset: auto 34cqw 2cqw 35.9cqw;
+  }
+  .home .art-communityos .lb :is(b, i) {
+    left: calc(mod(1 - var(--p), 3) * 9.6cqw);
+  }
+  .home .art-communityos .lb b {
+    bottom: 0;
+    width: 9cqw;
+    height: calc(6.4cqw - var(--p)*1.6cqw);
+    border-radius: 1cqw 1cqw 0 0;
+    background: var(--pc);
+    font: 700 2.6cqw/3.3cqw var(--f-code);
+    text-align: center;
+    color: var(--bg);
+    opacity: calc(1 - var(--r)*0.2);
+  }
+  .home .art-communityos .lb i {
+    --m: calc(36% + var(--p)*22%);
+    margin: 2cqw;
+    bottom: calc(5cqw - var(--p)*1.6cqw);
+    padding: 2.5cqw;
+    border-radius: 50%;
+    translate: calc(var(--x)*var(--h)*9.6cqw) calc(var(--y)*var(--h)*1.6cqw);
+  }
+  /* Activa: --r baja a 0 (los iconos se vuelven squircle y el podio se enciende); --h = 1 trae a los nuevos y reordena
+     el podio, cada uno con su transición. */
+  .home .art-host:is(:hover, :focus-within) .art-communityos {
+    --h: 1;
+    --art-communityos-r: 0;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .home .art-communityos {
+      transition: --art-communityos-r 0.5s;
+    }
+    .home .art-communityos .t i {
+      animation: art-communityos-pulse 7.5s calc(var(--i)*0.3s) infinite;
+    }
+    .home .art-communityos u {
+      animation: art-communityos-voice 7.5s var(--d) ease-out infinite;
+    }
+    .home .art-communityos kbd {
+      animation: art-communityos-plus 7.5s 3.4s ease-out infinite backwards;
+    }
+    .home .art-communityos .k {
+      animation: art-communityos-xp calc(3s + var(--d)/4) ease-in-out infinite;
+    }
+    .home .art-communityos em {
+      animation: art-communityos-star 3s ease-out infinite;
+    }
+    /* Los nuevos llegan uno tras otro. */
+    .home .art-communityos .e {
+      transition: scale 0.5s calc(var(--h)*(var(--i)*0.2s + 0.3s));
+    }
+    /* Uno tras otro por puesto (al salir, al revés): el que cruza dos columnas, por detrás y más despacio, se cruza con
+       cada uno por separado y nunca queda entre los dos. */
+    .home .art-communityos .lb i {
+      transition: translate calc(0.6s + var(--x)*var(--x)*0.1s) calc(0.6s - var(--p)*0.3s + var(--h)*(0.2s + var(--p)*0.6s));
+    }
+  }
+
+  /* Tras las transiciones: la pausa del grafo las corta (misma especificidad que .lb i). */
+  html[data-motion='paused'] .home :is(.art-communityos, .art-communityos *) {
+    transition: none;
+  }
+  @keyframes art-communityos-pulse {
+    7% {
+      scale: 1.14;
+    }
+    14% {
+      scale: 1;
+    }
+  }
+  @keyframes art-communityos-voice {
+    0% {
+      scale: 1;
+      opacity: 0.9;
+    }
+    26%,
+    100% {
+      scale: 2.3;
+      opacity: 0;
+    }
+  }
+  /* Activa, lo callan las estrellas (que suben al compás de la XP). */
+  @keyframes art-communityos-plus {
+    0% {
+      opacity: 0;
+      translate: 0 2cqw;
+    }
+    30%,
+    100% {
+      opacity: 0;
+      translate: 0 -1.5cqw;
+    }
+    8%,
+    22% {
+      opacity: var(--r);
+      translate: 0;
+    }
+  }
+  /* Los calc() en px: Chromium no interpola uno sin unidad en los trazos y saltaría de fotograma en fotograma. */
+  @keyframes art-communityos-xp {
+    36%,
+    46% {
+      stroke-dashoffset: calc((100 - var(--f))*var(--r)*1px);
+      stroke-width: calc((1.8 - var(--r)*0.8)*1px);
+      stroke-opacity: 1;
+    }
+    47% {
+      stroke-dashoffset: calc((100 - var(--f)*var(--r))*1px);
+      stroke-width: 1;
+      stroke-opacity: var(--r);
+    }
+    55% {
+      stroke-opacity: 1;
+    }
+  }
+  @keyframes art-communityos-star {
+    0%,
+    34% {
+      transform: translateY(-1cqw) scale(0.2);
+      opacity: 0;
+    }
+    58% {
+      transform: translateY(-9cqw) scale(1.15) rotate(36deg);
+      opacity: calc(1 - var(--r));
+    }
+    72%,
+    100% {
+      transform: translateY(-11cqw) scale(0.2);
+      opacity: 0;
+    }
+  }
+}

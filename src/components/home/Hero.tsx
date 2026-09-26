@@ -8,6 +8,7 @@ export default function Hero({ t }: { t: HomeCopy }) {
   return (
     <section className="hero" aria-labelledby="hero-title" data-section="hero">
       <p className="hero-kicker">{h.kicker}</p>
+      {/* El nombre es el elemento LCP: se pinta sólido desde el HTML del servidor, sin animación de entrada. */}
       <h1 id="hero-title" className="hero-title">
         <span className="hero-first">{h.first}</span> <span className="hero-last">{h.last}</span>
       </h1>

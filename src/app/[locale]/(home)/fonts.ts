@@ -4,9 +4,10 @@ import localFont from 'next/font/local';
 // el portal, con solo los pesos y los caracteres que pinta la home. Se regeneran con `bash scripts/subset-fonts.sh`
 // (dentro está cada comando de pyftsubset y el origen fijado de cada TTF).
 //
-// Solo se precarga el nombre del h1 (el elemento LCP): 2 KB con 19 glifos. El resto se pide al aplicar los
-// estilos, sin precarga. Ninguna pila de home.css nombra las familias de Google del layout raíz: si lo hiciera,
-// el navegador las descargaría como respaldo mientras cargan estas.
+// Se precargan el nombre del h1 (el elemento LCP, 2 KB con 19 glifos) y Geist (13 KB), la letra del panel del hero:
+// con su respaldo ajustado, el lead y los botones de /en partían línea en otro sitio y el panel saltaba 87 px al
+// llegar la fuente (CLS 0.089 en móvil). El resto se pide al aplicar los estilos. Ninguna pila de home.css nombra las
+// familias de Google del layout raíz: si lo hiciera, el navegador las descargaría como respaldo mientras cargan estas.
 
 /** "Steven Vallejo Ortiz" en Cormorant Garamond 500. Si cambia el nombre, cambia el subconjunto. */
 export const cormorantHero = localFont({
@@ -32,13 +33,13 @@ export const cormorantHome = localFont({
   adjustFontFallback: 'Times New Roman',
 });
 
-/** Geist 400–600 (texto). */
+/** Geist 400–600 (texto). Precargada: ver arriba. */
 export const geistHome = localFont({
   src: '../../fonts/geist-home.woff2',
   weight: '400 600',
   variable: '--font-home-sans',
   display: 'swap',
-  preload: false,
+  preload: true,
   adjustFontFallback: 'Arial',
 });
 
@@ -52,4 +53,38 @@ export const jetbrainsHome = localFont({
   adjustFontFallback: 'Arial',
 });
 
-export const HOME_FONT_VARIABLES = [cormorantHero, cormorantHome, geistHome, jetbrainsHome].map((f) => f.variable).join(' ');
+/**
+ * Las tres del arte (escenas de los catálogos y emblemas de las tarjetas, src/components/home/art): griego, ecuaciones
+ * y código. Sin precarga: el arte está debajo del hero y no se pinta hasta acercarse (content-visibility), así que el
+ * navegador no las pide antes. Sin respaldo ajustado: el arte no mueve texto de la página al llegar la fuente.
+ */
+export const greekHome = localFont({
+  src: '../../fonts/greek-home.woff2',
+  weight: '400 500',
+  variable: '--font-home-greek',
+  display: 'swap',
+  preload: false,
+  adjustFontFallback: false,
+});
+
+export const mathHome = localFont({
+  src: '../../fonts/math-home.woff2',
+  weight: '400',
+  variable: '--font-home-math',
+  display: 'swap',
+  preload: false,
+  adjustFontFallback: false,
+});
+
+export const codeHome = localFont({
+  src: '../../fonts/code-home.woff2',
+  weight: '400 500',
+  variable: '--font-home-code',
+  display: 'swap',
+  preload: false,
+  adjustFontFallback: false,
+});
+
+export const HOME_FONT_VARIABLES = [cormorantHero, cormorantHome, geistHome, jetbrainsHome, greekHome, mathHome, codeHome]
+  .map((f) => f.variable)
+  .join(' ');

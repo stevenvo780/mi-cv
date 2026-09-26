@@ -26,7 +26,7 @@ describe('subconjunto de fuente del h1', () => {
     expect(missing, `faltan en cormorant-hero.woff2: ${REGENERATE}`).toEqual([]);
   });
 
-  it('es mínimo: es el único archivo que se precarga y compite con el LCP', () => {
+  it('es mínimo: se precarga y compite con el LCP', () => {
     expect(statSync(HERO).size).toBeLessThanOrEqual(6 * 1024);
   });
 });
@@ -47,7 +47,13 @@ const decode = (s: string) =>
 /** Texto que pinta la home: nodos de texto del HTML del servidor, placeholders y el `content` de home.css. */
 async function homeText(locale: Locale): Promise<string> {
   const html = renderToStaticMarkup(await HomePage({ params: Promise.resolve({ locale }) }));
-  const body = html.replace(/<script\b[\s\S]*?<\/script>/g, '').replace(/<style\b[\s\S]*?<\/style>/g, '');
+  // Sin el arte (emblemas y escenas, src/components/home/art): pinta griego, ecuaciones y código con sus propias familias,
+  // y su cobertura la comprueban scripts/art-harness.mts y el e2e de glifos, que miran la familia de cada texto.
+  const body = html
+    .replace(/<script\b[\s\S]*?<\/script>/g, '')
+    .replace(/<style\b[\s\S]*?<\/style>/g, '')
+    .replace(/<div class="card-art">[\s\S]*?<\/div><p class="card-kicker">/g, '<p class="card-kicker">')
+    .replace(/(<a class="cat-scene art-host"[^>]*>)[\s\S]*?<span class="cat-enter">/g, '$1<span class="cat-enter">');
   const text = body.replace(/<[^>]*>/g, ' ');
   const placeholders = [...body.matchAll(/\bplaceholder="([^"]*)"/g)].map((m) => m[1]);
   const css = readFileSync(fileURLToPath(new URL('../../src/styles/home.css', import.meta.url)), 'utf8');

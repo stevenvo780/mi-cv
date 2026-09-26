@@ -1,0 +1,292 @@
+/* Deméter: espiga → tallo que se vuelve ruta → tirilla con sello DIAN. Verde de la marca (#16a34a) y oro del trigo.
+   Reposo: los granos bajan por el tallo y suben por la ruta; la espiga se mece. Activa (ciclo común de 4 s): el camión
+   recorre la ruta y cada parada salta a su paso; al llegar, la tirilla se reimprime renglón a renglón y cae el sello.
+   La escena baja 5cqh (viewBox 0 -5) para asentarse en la caja. */
+@layer home {
+  /* --A: amplitud de lo activo (0 en reposo, 1 al activar), con transición: al salir todo se asienta, nada salta. */
+  @property --art-demeter-h {
+    syntax: '<number>';
+    inherits: true;
+    initial-value: 0;
+  }
+  .home .art-demeter {
+    --A: var(--art-demeter-h);
+    transition: --art-demeter-h 0.4s;
+    background:
+      radial-gradient(22% 42% at 14% 43%, #f0c46a26, #0000),
+      radial-gradient(60% 45% at 45% 100%, #16a34a2e, #0000),
+      linear-gradient(#08130e, #030806);
+  }
+  .home .art-demeter *,
+  .home .art-demeter ::before,
+  .home .art-demeter ::after {
+    content: '';
+    position: absolute;
+  }
+  /* Granos y camión en marcha van por el tallo; el camión (sin --d) sale del 73 %, donde está el estacionado. Al
+     activar se funden: el que marcha aparece (y sigue donde iba) y el estacionado se desvanece; al salir, al revés. */
+  .home .art-demeter :is(.gr, .td) {
+    offset-path: path('M22 58v6q0 12 12 12c28 0 40-24 86-26');
+    offset-distance: calc(var(--d, 5.2) * 14%);
+  }
+  .home .art-demeter .td {
+    opacity: var(--A);
+  }
+  .home .art-demeter .tk {
+    opacity: calc(1 - var(--A));
+  }
+
+  /* Paradas: chinchetas numeradas en el orden de entrega (la punta, en su lugar de la ruta). */
+  .home .art-demeter .pn {
+    --a: art-demeter-pn;
+    z-index: 0;
+    width: 7cqh;
+    height: 7cqh;
+    font: 500 4.2cqh/7cqh var(--f-code);
+    text-align: center;
+    color: #fff;
+  }
+  .home .art-demeter .pn::before {
+    inset: 0;
+    z-index: -1;
+    border-radius: 50% 50% 50% 0;
+    rotate: -45deg;
+    background: #16a34a;
+    box-shadow: 0 0 2cqh #22c55e70;
+  }
+
+  /* Espiga: raquis, dos hileras de granos alternos que se afinan, y aristas. */
+  .home .art-demeter .ea {
+    left: 22cqh;
+    top: 63cqh;
+  }
+  .home .art-demeter .ea::before {
+    left: -0.25cqh;
+    bottom: 0;
+    width: 0.5cqh;
+    height: 46cqh;
+    background: linear-gradient(#0000, #f0c46a 25%);
+  }
+  /* --s: hilera (−1 izquierda, 1 derecha, 0 la punta). */
+  .home .art-demeter .ea i {
+    left: -2.3cqh;
+    bottom: calc(var(--i) * 3.9cqh);
+    width: 4.6cqh;
+    height: 7.8cqh;
+    border-radius: 50% / 60% 60% 40% 40%;
+    transform-origin: 50% 100%;
+    translate: calc(var(--s) * 1.9cqh);
+    rotate: calc(var(--s) * 22deg);
+    scale: calc(1 - var(--i) * 0.035);
+    background: radial-gradient(80% 60% at 38% 30%, #fff3cf, #f0c46a 45%, #a86d1f);
+  }
+  .home .art-demeter .ea i::before {
+    left: 47%;
+    bottom: 85%;
+    width: 0.24cqh;
+    height: 12cqh;
+    background: linear-gradient(#0000, #f0c46acc);
+  }
+  .home .art-demeter .ea i::after {
+    --a: art-demeter-sh;
+    inset: -25%;
+    background: radial-gradient(closest-side, #fff, #fff6 55%, #0000);
+    opacity: 0;
+  }
+
+  /* Tirilla: papel de bordes dentados, renglones (ítem · valor), total en verde y QR. */
+  .home .art-demeter .tl {
+    --m: #0000, #000 1deg 89deg, #0000 90deg;
+    left: 122cqh;
+    top: 11cqh;
+    width: 28cqh;
+    height: 78cqh;
+    rotate: 3deg;
+    background: linear-gradient(#eef1f4, #cdd5dc);
+    mask:
+      conic-gradient(from 135deg at top, var(--m)) top / 2.8cqh 51% repeat-x,
+      conic-gradient(from -45deg at bottom, var(--m)) bottom / 2.8cqh 51% repeat-x;
+  }
+  .home .art-demeter .tl * {
+    --a: art-demeter-rw;
+    inset-inline: 14%;
+    top: calc(11% + var(--i) * 7%);
+    height: 1.4cqh;
+    transform-origin: 0;
+    background: linear-gradient(90deg, #1f2630 0 50%, #0000 0 72%, #1f2630 0);
+    opacity: 0.5;
+  }
+  .home .art-demeter .tl :first-child {
+    inset-inline: 28%;
+    height: 2.2cqh;
+    background: #1f2630;
+    opacity: 0.85;
+  }
+  .home .art-demeter .tl i:last-of-type {
+    top: 43%;
+    height: 2cqh;
+    background: linear-gradient(90deg, #1f2630 0 34%, #0000 0 56%, #16a34a 0);
+    opacity: 1;
+  }
+  /* QR al pie, a la derecha: el sello cae encima de los renglones, no sobre él. */
+  .home .art-demeter .tl b {
+    left: auto;
+    top: 79%;
+    width: 11cqh;
+    height: 11cqh;
+    background: repeating-conic-gradient(#1f2630 0 25%, #0000 0 50%) 0 0 / 2.75cqh 2.75cqh;
+    opacity: 0.8;
+  }
+  /* Dos marcas de posición del QR (la representación gráfica de la factura electrónica lo lleva). */
+  .home .art-demeter .tl b::before,
+  .home .art-demeter .tl b::after {
+    width: 4cqh;
+    height: 4cqh;
+    background: #1f2630;
+    outline: 0.6cqh solid #e3e8ec;
+    outline-offset: -1.2cqh;
+  }
+  .home .art-demeter .tl b::after {
+    right: 0;
+  }
+
+  /* Sello DIAN. */
+  .home .art-demeter .st {
+    --a: art-demeter-st;
+    left: 122cqh;
+    top: 49cqh;
+    width: 20cqh;
+    height: 20cqh;
+    display: grid;
+    place-items: center;
+    border: 0.6cqh solid;
+    border-radius: 50%;
+    outline: 0.3cqh solid;
+    outline-offset: -2.2cqh;
+    rotate: -16deg;
+    font: 500 4.6cqh/1 var(--f-code);
+    color: #16a34a;
+  }
+  /* La marca de validada (la letra del arte no trae ✓): dos bordes de una caja girada. */
+  .home .art-demeter .st::before {
+    top: 22%;
+    width: 3.2cqh;
+    height: 1.5cqh;
+    box-shadow: inset 0.55cqh -0.55cqh;
+    rotate: -45deg;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .home .art-demeter .ea {
+      animation: art-demeter-sw 7s ease-in-out infinite alternate;
+    }
+    .home .art-demeter .gr {
+      animation: art-demeter-fl 7s linear calc(var(--d) * -1s) infinite;
+    }
+    /* Activa: cada pieza declara su animación (--a) y su turno (--i, en décimas de segundo) sobre el ciclo común de
+       4 s. En reposo quedan en pausa (con --A en 0, en su pose de reposo); al volver siguen, a tiempo con el camión. */
+    .home .art-demeter :is(.pn, .tl *, .st),
+    .home .art-demeter .ea i::after {
+      animation: var(--a) 4s ease-out calc(var(--i, 0) * 0.1s) infinite var(--g, paused);
+    }
+    .home .art-demeter .td {
+      animation: art-demeter-tk 4s linear infinite var(--g, paused);
+    }
+    .home .art-host:is(:hover, :focus-within) .art-demeter {
+      --g: running;
+      --art-demeter-h: 1;
+    }
+    html[data-motion='paused'] .home .art-demeter {
+      transition: none;
+    }
+  }
+  @keyframes art-demeter-sw {
+    from {
+      rotate: -1.5deg;
+    }
+    to {
+      rotate: 2deg;
+    }
+  }
+  @keyframes art-demeter-fl {
+    from {
+      offset-distance: 0;
+      opacity: 0;
+    }
+    8%,
+    90% {
+      opacity: 1;
+    }
+    to {
+      offset-distance: 100%;
+      opacity: 0;
+    }
+  }
+  /* La espiga se enciende de abajo arriba cuando el camión vuelve a salir: nueva cosecha. */
+  @keyframes art-demeter-sh {
+    38%,
+    60% {
+      opacity: 0;
+    }
+    43%,
+    50% {
+      opacity: var(--A);
+    }
+  }
+  /* Llega a la tirilla (37 %), se desvanece y reaparece pasado el codo del tallo (30 %), a paso parejo. */
+  @keyframes art-demeter-tk {
+    37% {
+      offset-distance: 100%;
+      opacity: var(--A);
+    }
+    41% {
+      offset-distance: 100%;
+      opacity: 0;
+    }
+    42% {
+      offset-distance: 30.5%;
+      opacity: 0;
+    }
+    48% {
+      opacity: var(--A);
+    }
+  }
+  /* La parada salta cuando llega la cabina y aterriza cuando pasa la cola. */
+  @keyframes art-demeter-pn {
+    4% {
+      translate: 0 calc(var(--A) * -179%);
+    }
+    8%,
+    29% {
+      translate: 0 calc(var(--A) * -144%);
+    }
+    37% {
+      translate: 0;
+    }
+  }
+  @keyframes art-demeter-rw {
+    34%,
+    54% {
+      scale: 1;
+    }
+    38%,
+    44% {
+      scale: calc(1 - var(--A)) 1;
+    }
+  }
+  @keyframes art-demeter-st {
+    34% {
+      opacity: 1;
+      scale: 1;
+    }
+    38%,
+    68% {
+      opacity: calc(1 - var(--A));
+      scale: calc(1 + var(--A) * 0.9);
+    }
+    73% {
+      opacity: 1;
+      scale: 0.94;
+    }
+  }
+}

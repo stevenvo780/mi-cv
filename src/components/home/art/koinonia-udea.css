@@ -1,0 +1,203 @@
+/* Koinonía: el icono del sitio (dos anillos que se cruzan, verde UdeA sobre papel) hecho de voces. En reposo la gente
+   murmura por turnos y los argumentos corren por sus hilos hacia la lente donde los anillos coinciden: allí espera el
+   sello, con el ✓ aún tenue. Al activarse los dos anillos se funden en uno, cada voz baja por su hilo hasta rodear el
+   sello, la luz se recoge dentro del anillo y el sello se estampa: sube, cae, el ✓ se traza y deja una onda. */
+@layer home {
+  .home .art-koinonia-udea {
+    --kg: #026937;
+    --kl: #3fcf88;
+    --kp: #faf8f4;
+  }
+  /* El halo de la lente y el brillo del sello: degradados ya difusos, sin filtros que recalcular. */
+  .home .art-koinonia-udea::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(circle 11cqw, #3fcf8870 60%, #0000),
+      radial-gradient(34cqw 46cqh, #02693766, #0000 72%);
+    opacity: 0.75;
+  }
+  .home .art-koinonia-udea svg {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+  .home .art-koinonia-udea .o {
+    --s: 1;
+    fill: var(--kl);
+    fill-opacity: 0.06;
+    stroke: var(--kp);
+    stroke-opacity: 0.42;
+    stroke-width: 0.5;
+  }
+  .home .art-koinonia-udea .o + .o {
+    --s: -1;
+  }
+  .home .art-koinonia-udea .sp {
+    fill: none;
+    stroke: var(--kl);
+    stroke-width: 0.4;
+    stroke-linecap: round;
+    stroke-dasharray: 1.4 5.2;
+    opacity: 0.3;
+  }
+  .home .art-koinonia-udea .vs circle {
+    fill: var(--kp);
+    opacity: 0.8;
+    transform: rotate(calc(var(--a) * 1deg)) translateX(calc(var(--r) * 1px));
+  }
+  .home .art-koinonia-udea .vs circle:nth-child(3n) {
+    fill: var(--kl);
+  }
+  .home .art-koinonia-udea .e {
+    fill: none;
+    stroke: var(--kl);
+    stroke-width: 1.4;
+    /* 60 dientes en el canto (2π · 11,5 / 60 = 1,204). */
+    stroke-dasharray: 0.506 0.698;
+    opacity: 0.8;
+  }
+  .home .art-koinonia-udea .c {
+    fill: var(--kg);
+    stroke: var(--kl);
+    stroke-width: 0.5;
+  }
+  .home .art-koinonia-udea .s path {
+    fill: none;
+    stroke: var(--kp);
+    stroke-width: 1.9;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    opacity: 0.3;
+  }
+  .home .art-koinonia-udea .s .v {
+    opacity: 1;
+    stroke-dasharray: 1;
+  }
+  .home .art-koinonia-udea .w {
+    fill: none;
+    stroke: var(--kl);
+    stroke-width: 0.5;
+    opacity: 0;
+  }
+
+  /* Activa sin movimiento: sólo se enciende; el sello toma el oro del frente. */
+  .home .art-host:is(:hover, :focus-within) .art-koinonia-udea::before,
+  .home .art-host:is(:hover, :focus-within) .art-koinonia-udea :is(.vs circle, .e) {
+    opacity: 1;
+  }
+  .home .art-host:is(:hover, :focus-within) .art-koinonia-udea .o {
+    stroke-opacity: 0.75;
+  }
+  .home .art-host:is(:hover, :focus-within) .art-koinonia-udea .sp {
+    opacity: 0.85;
+  }
+  .home .art-host:is(:hover, :focus-within) .art-koinonia-udea .e {
+    stroke: var(--art-a);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .home .art-koinonia-udea :is(.o, .vs circle, .sp, .e),
+    .home .art-koinonia-udea::before {
+      transition:
+        transform 1.2s var(--ease-out),
+        opacity 0.6s,
+        stroke-opacity 0.6s,
+        stroke 0.5s;
+    }
+    .home .art-koinonia-udea .v {
+      stroke-dashoffset: 1;
+      transition: stroke-dashoffset 0.3s;
+    }
+    /* La pausa global no detiene transiciones: se cancelan. */
+    html[data-motion='paused'] .home .art-koinonia-udea *,
+    html[data-motion='paused'] .home .art-koinonia-udea::before {
+      transition: none;
+    }
+    .home .art-koinonia-udea .o {
+      animation: art-koinonia-udea-b 7s ease-in-out infinite alternate;
+    }
+    .home .art-koinonia-udea .vs circle {
+      animation: art-koinonia-udea-m 6s ease-in-out calc(var(--r) * -1.9s) infinite;
+    }
+    .home .art-koinonia-udea .sp {
+      animation: art-koinonia-udea-f 3s linear infinite;
+    }
+    .home .art-koinonia-udea .e {
+      animation: art-koinonia-udea-r 14s linear infinite;
+    }
+
+    /* Los anillos se funden, las voces bajan por su hilo, los hilos se recogen y el sello se estampa. */
+    .home .art-host:is(:hover, :focus-within) .art-koinonia-udea .o {
+      transform: translateX(calc(var(--s) * 22px));
+      animation: none;
+    }
+    .home .art-host:is(:hover, :focus-within) .art-koinonia-udea .vs circle {
+      transform: rotate(calc(var(--a) * 1deg)) translateX(calc(var(--r) * 0.13px + 14px));
+    }
+    .home .art-host:is(:hover, :focus-within) .art-koinonia-udea .sp {
+      transform: scale(0.55);
+      animation-duration: 0.9s;
+    }
+    .home .art-host:is(:hover, :focus-within) .art-koinonia-udea .e {
+      animation-duration: 4s;
+      transition-delay: 0s, 0s, 0s, 0.95s;
+    }
+    .home .art-host:is(:hover, :focus-within) .art-koinonia-udea .s {
+      animation: art-koinonia-udea-st 0.8s ease-in-out 0.35s;
+    }
+    .home .art-host:is(:hover, :focus-within) .art-koinonia-udea .v {
+      stroke-dashoffset: 0;
+      transition: stroke-dashoffset 0.45s ease-out 1s;
+    }
+    .home .art-host:is(:hover, :focus-within) .art-koinonia-udea .w {
+      animation: art-koinonia-udea-w 1.3s ease-out 0.95s both;
+    }
+
+    @keyframes art-koinonia-udea-b {
+      to {
+        translate: calc(var(--s) * 1.6px) 0;
+      }
+    }
+    /* Cada voz, a su turno, se inclina hacia la lente. */
+    @keyframes art-koinonia-udea-m {
+      12% {
+        scale: 0.92;
+      }
+      30% {
+        scale: 1;
+      }
+    }
+    @keyframes art-koinonia-udea-f {
+      to {
+        stroke-dashoffset: -6.6;
+      }
+    }
+    @keyframes art-koinonia-udea-r {
+      to {
+        rotate: 1turn;
+      }
+    }
+    /* El sello sube y cae sobre el papel. */
+    @keyframes art-koinonia-udea-st {
+      40% {
+        scale: 1.2;
+        animation-timing-function: cubic-bezier(0.6, 0, 1, 1);
+      }
+      70% {
+        scale: 0.94;
+      }
+    }
+    @keyframes art-koinonia-udea-w {
+      from {
+        opacity: 0.9;
+      }
+      to {
+        opacity: 0;
+        transform: scale(2.8);
+      }
+    }
+  }
+}

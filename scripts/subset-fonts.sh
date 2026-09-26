@@ -42,12 +42,17 @@ curl -sSfL -o "$TMP/cg.ttf" "$GF/cormorantgaramond/CormorantGaramond%5Bwght%5D.t
 curl -sSfL -o "$TMP/cgi.ttf" "$GF/cormorantgaramond/CormorantGaramond-Italic%5Bwght%5D.ttf"
 curl -sSfL -o "$TMP/jb.ttf" "$GF/jetbrainsmono/JetBrainsMono%5Bwght%5D.ttf"
 curl -sSfL -o "$TMP/inter.ttf" "$GF/inter/Inter%5Bopsz,wght%5D.ttf"
+# Arte de la home (src/components/home/art): griego (EB Garamond) y ecuaciones (STIX Two Math).
+curl -sSfL -o "$TMP/ebg.ttf" "$GF/ebgaramond/EBGaramond%5Bwght%5D.ttf"
+curl -sSfL -o "$TMP/stixm.ttf" "$GF/stixtwomath/STIXTwoMath-Regular.ttf"
 cp node_modules/geist/dist/fonts/geist-sans/Geist-Variable.ttf "$TMP/geist.ttf"
 
 # El texto de la licencia de cada familia va junto a sus archivos (OFL 1.1, condición 2), del mismo origen fijado.
 curl -sSfL -o "$OUT/OFL-cormorant-garamond.txt" "$GF/cormorantgaramond/OFL.txt"
 curl -sSfL -o "$OUT/OFL-jetbrains-mono.txt" "$GF/jetbrainsmono/OFL.txt"
 curl -sSfL -o "$OUT/OFL-inter.txt" "$GF/inter/OFL.txt"
+curl -sSfL -o "$OUT/OFL-eb-garamond.txt" "$GF/ebgaramond/OFL.txt"
+curl -sSfL -o "$OUT/OFL-stix-two-math.txt" "$GF/stixtwomath/OFL.txt"
 cp node_modules/geist/LICENSE.txt "$OUT/OFL-geist.txt"
 
 # ── 1. Home ──
@@ -57,6 +62,7 @@ $PY -m fontTools.varLib.instancer "$TMP/cg.ttf" wght=500 -q -o "$TMP/cg-500.ttf"
 $PY -m fontTools.varLib.instancer "$TMP/cg.ttf" wght=400:500 -q -o "$TMP/cg-400-500.ttf"
 $PY -m fontTools.varLib.instancer "$TMP/jb.ttf" wght=400:500 -q -o "$TMP/jb-400-500.ttf"
 $PY -m fontTools.varLib.instancer "$TMP/geist.ttf" wght=400:600 -q -o "$TMP/geist-400-600.ttf"
+$PY -m fontTools.varLib.instancer "$TMP/ebg.ttf" wght=400:500 -q -o "$TMP/ebg-400-500.ttf"
 
 # Solo las features que el navegador aplica por defecto (más lnum y tnum, que pide .figure dd): las demás
 # (versalitas, fracciones, alternativas) arrastraban cientos de glifos que la home nunca pinta.
@@ -64,6 +70,14 @@ ON=ccmp,locl,mark,mkmk,kern,liga,calt,clig,rlig,rvrn,rclt,curs
 ES='¡¿ÁÉÍÓÚÜÑáéíóúüñ'
 ASCII=$(printf '%s' ' !"#$%&'"'"'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~')
 ALNUM='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 '
+# Arte de la home (src/components/home/art): repertorios cerrados por familia. El arte solo puede pintar estos caracteres
+# con cada familia (lo comprueban tests/content/fonts.test.ts y el e2e de glifos); si una pieza necesita otro, se añade aquí.
+# Griego (EB Garamond): básico con tonos y el politónico frecuente.
+ART_GREEK=' ·.,:;ΑΓΔΕΗΙΜΟΠΡΣΤΩέήίαγδθικλμοςστό'
+# Ecuaciones (STIX Two Math): ASCII, griego, cursivas matemáticas (latinas y griegas) y operadores.
+ART_MATH=' ·.,:;()*+/01234=BDEIMRS[]abcdeghilmnorstx|²¹̄̇′⁶₀₁₂ℎ←→∂∇∈∑−√≥⊂⊢𝐵𝐶𝐷𝐸𝐹𝐺𝐻𝐼𝐿𝑁𝑂𝑃𝑄𝑆𝑇𝑈𝑉𝑊𝑎𝑏𝑑𝑒𝑖𝑘𝑚𝑛𝑝𝑞𝑟𝑠𝑡𝑢𝑣𝑤𝑥𝑦𝑧𝛽𝛾𝜀𝜂𝜆𝜌𝜎'
+# Código (JetBrains Mono con todo el ASCII): griego, lógica, dibujo de cajas, bloques, figuras y flechas.
+ART_CODE=' ·.,:;#$%'"'"'()+-/0123456789<=>ACDEFHIJKLMNOPQRSTUVWXZ[]_acdefghijklmnoprstuvwxy{|}§Áβρσ→≤▲▶●'
 
 subset() { # <entrada> <salida> <texto> [features extra]
   $PY -m fontTools.subset "$1" --flavor=woff2 --text="$3" --layout-features="$ON${4:+,$4}" --name-IDs='*' \
@@ -82,6 +96,15 @@ subset "$TMP/cg-400-500.ttf" cormorant-home.woff2 "$ASCII$ES·îÎ–—‘’�
 # el subconjunto latin de Google no lo trae, así que la home siempre lo pintó con la mono del sistema. «▶» es el del
 # botón de pausa del grafo cuando está pausado; su «❚❚» no está en ninguna de las fuentes de origen (la del sistema).
 subset "$TMP/jb-400-500.ttf" jetbrains-home.woff2 "$ALNUM$ES#&()+,-./:~_'§·—Î▶"
+
+# ── Arte de la home: escenas de los catálogos y emblemas de las tarjetas (src/components/home/art) ──
+# Solo las pide el arte, que está debajo del hero y no se pinta hasta acercarse (content-visibility): no compiten con
+# el LCP. Sin precarga.
+subset "$TMP/ebg-400-500.ttf" greek-home.woff2 "$ART_GREEK"
+# Sin la tabla MATH: solo la usa la maquetación de MathML, y aquí las ecuaciones son texto.
+$PY -m fontTools.subset "$TMP/stixm.ttf" --drop-tables+=MATH --output-file="$TMP/stixm-text.ttf" --glyphs='*' 2>/dev/null
+subset "$TMP/stixm-text.ttf" math-home.woff2 "$ART_MATH"
+subset "$TMP/jb-400-500.ttf" code-home.woff2 "$ART_CODE"
 
 # ── 2. Layout raíz (portal y 404 de [locale]) ──
 

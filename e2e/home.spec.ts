@@ -9,7 +9,9 @@ const SITE = 'https://www.stevenvallejo.com';
 const SHOTS = '/workspace/.scratch-steven-redesign/shots';
 
 // Subconjuntos de fuente de la home ([locale]/(home)/fonts.ts, spec §3.2 y §5.2), generados por scripts/subset-fonts.sh.
-const HOME_FONTS = ['cormorant-hero', 'cormorant-home', 'geist-home', 'jetbrains-home'] as const;
+const HOME_FONTS = ['cormorant-hero', 'cormorant-home', 'geist-home', 'jetbrains-home', 'greek-home', 'math-home', 'code-home'] as const;
+/** Las del arte (griego, ecuaciones, código): solo se piden al acercarse al arte (content-visibility). */
+const ART_FONTS = ['greek-home', 'math-home', 'code-home'] as const;
 type HomeFont = (typeof HOME_FONTS)[number];
 const fontBytes = (name: string) => readFileSync(`src/app/fonts/${name}.woff2`);
 const sha1 = (b: Buffer) => createHash('sha1').update(b).digest('hex');
@@ -59,6 +61,8 @@ function paintedText(page: Page, root: string) {
   return page.evaluate((root) => {
     const acc: Record<string, string> = {};
     const add = (el: Element, text: string, pseudo: string | null = null) => {
+      // Vacío o solo espacios (el content: '' de un adorno, por ejemplo) no pinta glifos de ninguna familia.
+      if (!text.trim()) return;
       const cs = getComputedStyle(el, pseudo);
       const key = `${cs.fontFamily.split(',')[0].trim().replace(/["']/g, '')}|${cs.fontStyle}`;
       acc[key] = (acc[key] ?? '') + (cs.textTransform === 'uppercase' ? text.toUpperCase() : text);
@@ -124,6 +128,28 @@ for (const locale of ['es', 'en'] as const) {
       // fuera del viewport sale en su fotograma inicial (opacidad 0). Con movimiento reducido se ve el estado final.
       await page.emulateMedia({ reducedMotion: 'reduce' });
       await page.screenshot({ path: `${SHOTS}/${info.project.name}-${locale}.png`, fullPage: true });
+      expect(errors).toEqual([]);
+    });
+
+    // ArtSlot: el HTML de cada pieza viaja una sola vez, en el documento (ni la carga RSC ni el JS lo repiten, escapado
+    // o no), y al hidratar React se queda con cada caja sin vaciarla.
+    test('el arte llega una vez, en el documento, y sigue ahí tras hidratar', async ({ page, request }) => {
+      const errors = collectErrors(page);
+      const html = await (await request.get(`/${locale}`)).text();
+      const ids = [...html.matchAll(/<(?:div|svg) class="art art-([a-z0-9-]+)"/g)].map((m) => m[1]);
+      expect(ids.length).toBeGreaterThan(20);
+      for (const id of ids) expect(html.match(new RegExp(`art art-${id}(?![\\w-])`, 'g'))?.length, id).toBe(1);
+      await page.goto(`/${locale}`, { waitUntil: 'networkidle' });
+      await expect(page.locator('.card-art, .cat-art')).toHaveCount(ids.length);
+      await expect
+        .poll(() =>
+          page.evaluate(() =>
+            [...document.querySelectorAll('.card-art, .cat-art')].every(
+              (box) => Object.keys(box).some((k) => k.startsWith('__reactFiber')) && box.firstElementChild?.classList.contains('art'),
+            ),
+          ),
+        )
+        .toBe(true);
       expect(errors).toEqual([]);
     });
 
@@ -215,8 +241,8 @@ for (const locale of ['es', 'en'] as const) {
 
 for (const locale of ['es', 'en'] as const) {
   // Solo los cuatro subconjuntos propios, una vez cada uno: ninguna fuente de Google del layout raíz (son del portal)
-  // ni copias duplicadas. Solo se precarga el del h1, el elemento LCP (spec §5.2).
-  test(`/${locale} descarga solo sus subconjuntos de fuente y precarga solo el del h1`, async ({ page }) => {
+  // ni copias duplicadas. Se precargan el del h1 (el elemento LCP) y Geist, la letra del panel del hero (spec §3.2).
+  test(`/${locale} descarga solo sus subconjuntos de fuente y precarga solo el del h1 y Geist`, async ({ page }) => {
     const fonts: Promise<{ url: string; hash: string }>[] = [];
     page.on('response', (r) => {
       if (r.request().resourceType() === 'font') fonts.push(r.body().then((b) => ({ url: r.url(), hash: sha1(b) })));
@@ -225,10 +251,13 @@ for (const locale of ['es', 'en'] as const) {
     await page.evaluate(() => document.fonts.ready);
     const list = await Promise.all(fonts);
     const byHash = new Map<string, string>(HOME_FONTS.map((name) => [sha1(fontBytes(name)), name]));
-    expect(list.map((f) => byHash.get(f.hash) ?? f.url).sort()).toEqual([...HOME_FONTS].sort());
+    // Las del hero y el texto, siempre; las del arte, solo si el arte ya se pintó. Nada fuera de la lista ni repetido.
+    const got = list.map((f) => byHash.get(f.hash) ?? f.url);
+    expect(new Set(got).size, 'sin descargas repetidas').toBe(got.length);
+    expect(got.filter((f) => !(ART_FONTS as readonly string[]).includes(f)).sort()).toEqual(HOME_FONTS.filter((f) => !(ART_FONTS as readonly string[]).includes(f)).sort());
+    expect(got.every((f) => (HOME_FONTS as readonly string[]).includes(f)), got.join(', ')).toBe(true);
     const preloads = await page.$$eval('link[rel="preload"][as="font"]', (ls) => ls.map((l) => (l as HTMLLinkElement).href));
-    expect(preloads).toHaveLength(1);
-    expect(list.find((f) => f.url === preloads[0])?.hash).toBe(sha1(fontBytes('cormorant-hero')));
+    expect(preloads.map((url) => byHash.get(list.find((f) => f.url === url)?.hash ?? '')).sort()).toEqual(['cormorant-hero', 'geist-home']);
   });
 
   // Cada carácter que pinta la home tiene glifo en el subconjunto de su familia; si el contenido trae uno nuevo, se
@@ -240,6 +269,9 @@ for (const locale of ['es', 'en'] as const) {
       'cormorantHome|normal': 'cormorant-home',
       'geistHome|normal': 'geist-home',
       'jetbrainsHome|normal': 'jetbrains-home',
+      'greekHome|normal': 'greek-home',
+      'mathHome|normal': 'math-home',
+      'codeHome|normal': 'code-home',
     };
     // «❚» (pausa del grafo) no está en JetBrains Mono: lo pinta la mono del sistema. Su «▶» sí va en el subconjunto.
     const SYSTEM_GLYPHS: Partial<Record<HomeFont, string>> = { 'cormorant-home': 'ḗ', 'geist-home': 'ḗ', 'jetbrains-home': '→❚' };
@@ -301,11 +333,12 @@ const PORTAL_FONTS: Record<string, string> = {
   'cormorant|normal': 'cormorant-garamond-latin',
   'cormorant|italic': 'cormorant-garamond-italic-latin',
 };
-// Lo que la fuente de origen no tiene y pinta una fuente del sistema: símbolos de las fichas y «ḗ» (Pinakothḗke) en
-// Cormorant, y «Ḗ»/«ḗ» en JetBrains Mono. ◇ sí está en Cormorant, pero diminuto al lado de los otros símbolos: se
-// queda en la del sistema a propósito. Lo demás que falte se añade en scripts/subset-fonts.sh.
+// Lo que la fuente de origen no tiene y pinta una fuente del sistema: símbolos de las fichas (entre ellos las letras
+// griegas ε, Π, Κ de Koinonía UdeA, φ de Phúsis y Ν de Nóesis: Cormorant Garamond no trae griego) y «ḗ»
+// (Pinakothḗke) en Cormorant, y «Ḗ»/«ḗ» en JetBrains Mono. ◇ sí está en Cormorant, pero diminuto al lado de los otros
+// símbolos: se queda en la del sistema a propósito. Lo demás que falte se añade en scripts/subset-fonts.sh.
 const PORTAL_SYSTEM_GLYPHS: Record<string, string> = {
-  'cormorant-garamond-latin': 'εΠ⚔◈⊢◉⚙◎▣⏱▦⬡◇ḗ',
+  'cormorant-garamond-latin': 'εΠΚφΝ⚔◈⊢◉⚙◎▣⏱▦⬡◇ḗ',
   'jetbrains-mono-latin': 'Ḗḗ',
 };
 for (const locale of ['es', 'en'] as const) {

@@ -1,0 +1,253 @@
+/* Xenía (CRM PYME): la hospitalidad hecha pipeline. Cinco columnas kanban en embudo (probabilidad real de cada
+   etapa) y, al final, la puerta abierta de la casa: el negocio que llega se vuelve cliente (ganado ✓).
+   Reposo: las tarjetas respiran y una flota, arrastrada hacia el hueco. Activa: baja la escalera del embudo, cruza el
+   umbral y se sella ✓. */
+@layer home {
+  .home .art-devkits-crm {
+    --xb: #16252b;
+    --xt: #43b5a6;
+    --xg: #e0a85e;
+    --xg2: #f0c887;
+    background: radial-gradient(44cqw 8cqw at 82cqw 58cqw, #e0a85e5c, #0000 70%);
+  }
+  .home .art-devkits-crm :not(i),
+  .home .art-devkits-crm ::after {
+    position: absolute;
+  }
+  /* Columna: las tarjetas se apilan solas (rejilla); el borde tenue sale del color de la etapa. */
+  .home .art-devkits-crm .xc {
+    --e: color-mix(in srgb, var(--s) 45%, #0000);
+    left: calc(5cqw + var(--i) * 13.4cqw);
+    top: 13cqw;
+    width: 12.2cqw;
+    height: 44cqw;
+    display: grid;
+    align-content: start;
+    gap: 1.6cqw;
+    padding: 1.4cqw 0.9cqw;
+    border: 1px solid #43b5a61f;
+    border-radius: 1.2cqw;
+    background: linear-gradient(#16252bd9, #16252b1a);
+  }
+  /* Luz de paso: la columna se enciende cuando la cruza el negocio. */
+  .home .art-devkits-crm .xc::after {
+    content: '';
+    inset: -1px;
+    border: 1px solid var(--s);
+    border-radius: inherit;
+    background: linear-gradient(var(--e), #0000 70%);
+    opacity: 0;
+  }
+  /* Probabilidad de la etapa, con su barra como en el tablero del sitio. */
+  .home .art-devkits-crm b {
+    inset: -5.8cqw 0 auto;
+    height: 3.7cqw;
+    font: 500 2.5cqw/1 var(--f-code);
+    color: var(--muted);
+    background: linear-gradient(90deg, var(--s) calc(var(--p) * 1%), #e8e0d414 0) 0 100% / 100% 0.6cqw no-repeat;
+  }
+  .home .art-devkits-crm :where(i, .xd, .xp) {
+    width: 10.4cqw;
+    height: 6.4cqw;
+    border: 1px solid var(--e);
+    border-radius: 0.8cqw;
+    box-shadow: inset 0.6cqw 0 var(--s);
+    background:
+      linear-gradient(#e8e0d499 0 0) 2cqw 1.6cqw / 4.4cqw 0.75cqw no-repeat,
+      linear-gradient(#9db0b559 0 0) 2cqw 3.8cqw / 3cqw 0.7cqw no-repeat,
+      var(--xb);
+  }
+  /* Hueco donde caerá («Suelta aquí»). */
+  .home .art-devkits-crm .xp {
+    left: 46.1cqw;
+    top: 30.4cqw;
+    border: 1px dashed #f0c88780;
+    background: #e0a85e0f;
+  }
+  /* El negocio viajero: el huésped (su avatar) que se vuelve cliente. Reposa sobre el hueco vacío de la columna del 50 %,
+     camino del hueco del 70 %. Viaja con translate; se inclina con rotate. */
+  .home .art-devkits-crm .xd {
+    --e: var(--xg2);
+    box-shadow:
+      inset 0.6cqw 0 var(--xg),
+      0 1.6cqw 2.6cqw -0.8cqw #000,
+      0 0 2.6cqw #f0c88766;
+    translate: 39.9cqw 30.4cqw;
+    rotate: -5deg;
+    scale: 1.06;
+  }
+  .home .art-devkits-crm .xd::after {
+    content: '';
+    inset: 1.5cqw 0.8cqw 1.9cqw 6.6cqw;
+    border-radius: 50%;
+    background:
+      radial-gradient(circle at 50% 36%, var(--xg2) 0.7cqw, #0000 0),
+      radial-gradient(circle at 50% 118%, var(--xg2) 1.3cqw, #e0a85e38 0);
+  }
+  /* La puerta: arco con la luz cálida de la casa y la hoja abierta hacia dentro. */
+  .home .art-devkits-crm .xr {
+    inset: 9cqw 5.5cqw 5.5cqw 75.5cqw;
+    border-radius: 9.5cqw 9.5cqw 0.6cqw 0.6cqw;
+    background: radial-gradient(130% 78% at 50% 100%, #fde9c4, var(--xg) 30%, #8a5a22 62%, #2b1e12);
+    box-shadow:
+      0 0 0 0.7cqw var(--xb),
+      0 0 0 0.9cqw #e0a85e73,
+      0 0 7cqw #e0a85e4d;
+  }
+  .home .art-devkits-crm span {
+    inset: 0;
+    border: 1px solid #e0a85e8c;
+    border-radius: inherit;
+    background: linear-gradient(90deg, #0b1417, #1d3036);
+    transform-origin: 0;
+    transform: perspective(40cqw) rotateY(var(--r, 60deg));
+  }
+  .home .art-devkits-crm .xr::after {
+    content: '';
+    inset: -8cqw -8cqw -4cqw;
+    background: radial-gradient(closest-side, #f0c88766, #0000);
+    scale: var(--w, 1);
+    transition: inherit;
+  }
+  .home .art-devkits-crm .xs {
+    inset: 3cqw 11cqw 51.5cqw 81cqw;
+    padding: 1.2cqw;
+    border: 1px solid #43b5a659;
+    border-radius: 2cqw;
+    background: #0b1417;
+  }
+  /* Ganado: la diana ✓ donde aterriza el negocio; al llegar, el sello teal la llena. */
+  .home .art-devkits-crm .xo {
+    inset: 46.1cqw 7.8cqw 12.4cqw 88.2cqw;
+    border-radius: 50%;
+    background: #0b1417;
+    box-shadow:
+      0 0 0 0.35cqw var(--xt),
+      0 0 2.4cqw #6fd3c499;
+  }
+  .home .art-devkits-crm .xo::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: var(--xt);
+    opacity: 0;
+  }
+  .home .art-devkits-crm .xo svg {
+    inset: 0;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .home .art-host:is(:hover, :focus-within) .art-devkits-crm {
+      --L: art-devkits-crm-lit 6s ease-out infinite;
+      --G: art-devkits-crm-glide 6s ease-in-out infinite,;
+      --K: art-devkits-crm-ok 6s ease-out infinite;
+      --r: 78deg;
+      --w: 1.4;
+    }
+    .home .art-devkits-crm i,
+    .home .art-devkits-crm .xr::after {
+      animation: art-devkits-crm-breathe 5s ease-in-out calc(var(--i, 0) * -2.1s) infinite;
+    }
+    .home .art-devkits-crm .xc::after {
+      animation: var(--L);
+      animation-delay: calc((var(--t) - 1.05) * 6s);
+    }
+    /* El vaivén sigue al entrar y al salir; al salir, el negocio reaparece en su sitio en vez de saltar. */
+    .home .art-devkits-crm .xd {
+      animation: var(--G, art-devkits-crm-in 0.6s ease-out,) art-devkits-crm-drift 5.5s ease-in-out infinite;
+    }
+    .home .art-devkits-crm .xo::before {
+      animation: var(--K);
+    }
+    .home .art-devkits-crm span,
+    .home .art-devkits-crm .xr {
+      transition: 1.5s var(--ease-out);
+    }
+  }
+  /* La pausa global no detiene transiciones: se cancelan (el halo de la puerta hereda la suya). */
+  html[data-motion='paused'] .home .art-devkits-crm * {
+    transition: none;
+  }
+
+  @keyframes art-devkits-crm-breathe {
+    50% {
+      opacity: 0.6;
+      transform: translateY(0.35cqw);
+    }
+  }
+  @keyframes art-devkits-crm-drift {
+    50% {
+      transform: translateY(-0.9cqw);
+    }
+  }
+  @keyframes art-devkits-crm-in {
+    from {
+      opacity: 0;
+      scale: 0.8;
+    }
+  }
+  @keyframes art-devkits-crm-lit {
+    5% {
+      opacity: 1;
+    }
+    18% {
+      opacity: 0;
+    }
+  }
+  /* Escalera del embudo: cada columna, una fila más arriba; 0 % y 100 % son la pose de reposo, entre el 50 % y el 70 %. */
+  @keyframes art-devkits-crm-glide {
+    6% {
+      translate: 46.1cqw 30.4cqw;
+    }
+    13% {
+      translate: 59.5cqw 22.4cqw;
+    }
+    20% {
+      translate: 79.8cqw 44.4cqw;
+      rotate: 3deg;
+      scale: 1.1;
+    }
+    24%,
+    50% {
+      translate: 79.8cqw 48.1cqw;
+      rotate: 0deg;
+      scale: 1;
+      opacity: 1;
+    }
+    58% {
+      translate: 79.8cqw 42.4cqw;
+      scale: 0.6;
+      opacity: 0;
+    }
+    59% {
+      translate: 5.9cqw 46.4cqw;
+      scale: 1.06;
+      opacity: 0;
+    }
+    63% {
+      translate: 5.9cqw 46.4cqw;
+      opacity: 1;
+    }
+    76% {
+      translate: 19.3cqw 38.4cqw;
+    }
+    88% {
+      translate: 32.7cqw 30.4cqw;
+    }
+  }
+  @keyframes art-devkits-crm-ok {
+    22% {
+      opacity: 0;
+      transform: scale(2);
+    }
+    27%,
+    52% {
+      opacity: 1;
+      transform: none;
+    }
+    60% {
+      opacity: 0;
+    }
+  }
+}

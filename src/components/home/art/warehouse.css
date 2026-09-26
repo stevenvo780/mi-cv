@@ -1,0 +1,244 @@
+@layer home {
+  /* Apothḗke: estantería axonométrica en CSS 3D. Cada <i> se coloca con --x --y --z --w --h (1 = 1cqw).
+     --a vale 1 en la tarjeta activa: sale un pedido, entra la reposición y el aviso de stock bajo se resuelve. */
+  .home .art-warehouse {
+    --t: #43b5a6;
+    --a: 0;
+    --n: calc(1 - var(--a));
+    --dl: 0.7s;
+  }
+  .home .art-host:is(:hover, :focus-within) .art-warehouse {
+    --a: 1;
+    --c: #43b5a6;
+  }
+  .home .art-warehouse .qm {
+    position: absolute;
+    left: 50%;
+    top: 57%;
+    transform-style: preserve-3d;
+    scale: 0.92;
+    transform: rotateX(-20deg) rotateY(25deg);
+  }
+  .home .art-warehouse i {
+    position: absolute;
+    width: calc(var(--w) * 1cqw);
+    height: calc(var(--h) * 1cqw);
+    translate: calc(var(--x) * 1cqw) calc(var(--y) * 1cqw) calc(var(--z) * 1cqw);
+    transform-style: preserve-3d;
+  }
+  .home .art-warehouse i::before,
+  .home .art-warehouse :is(i, .qa)::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+  /* Planos horizontales (suelo, baldas, tapas) y laterales (bastidor, costados, haz). Con rotate, no transform: el
+     transform queda libre para el movimiento. */
+  .home .art-warehouse :is(.qg, .qf, .qr),
+  .home .art-warehouse .qc::before {
+    transform-origin: top;
+    rotate: x -90deg;
+  }
+  .home .art-warehouse :is(.qs, .qz),
+  .home .art-warehouse :is(.qp, .qc)::after {
+    transform-origin: left;
+    rotate: y 90deg;
+  }
+  .home .art-warehouse .qg {
+    background:
+      linear-gradient(90deg, #43b5a62b 0.15cqw, #0000 0),
+      linear-gradient(#43b5a62b 0.15cqw, #0000 0);
+    background-size: 11cqw 11cqw;
+    mask-image: radial-gradient(closest-side at 50% 46%, #000 30%, #0000);
+  }
+  /* Fondo opaco, rayas incluidas: detrás espera la reposición. */
+  .home .art-warehouse .qb {
+    background: repeating-linear-gradient(90deg, #0d1d1f 0 0.1cqw, #0a1416 0 2cqw);
+  }
+  /* El hueco bajo mínimo: un charco de luz roja donde falta la mercancía. Late en ::before; el plano se apaga al
+     reponer. */
+  .home .art-warehouse .qr::before {
+    background: radial-gradient(34% 50% at 71% 50%, #ff6b5e, #ef444466 50%, #0000);
+  }
+  .home .art-warehouse .qs {
+    border-right: 1.4cqw solid #173634;
+    background: linear-gradient(to top right, #0000 48.5%, #43b5a666 0 51.5%, #0000 0) 0 0 / 100% 25%;
+  }
+  .home .art-warehouse .qf {
+    --w: 68;
+    --h: 16;
+    --x: -34;
+    --z: 8;
+    background: #142629;
+    box-shadow: inset 0 0 0 0.15cqw #43b5a64d;
+  }
+  .home .art-warehouse .qf::before {
+    height: 1.6cqw;
+    transform-origin: top;
+    rotate: x 90deg;
+    background: #112123;
+    box-shadow: inset 0 0.2cqw #6fd3c48c;
+  }
+  /* Montantes perforados. */
+  .home .art-warehouse .qp {
+    --w: 1.4;
+    --h: 38.5;
+    --y: -19.5;
+    --z: 8.3;
+    background: repeating-linear-gradient(#22514d 0 1.1cqw, #0c1c1c 0 1.6cqw);
+    box-shadow: inset 0.22cqw 0 #a3e4d78c;
+  }
+  .home .art-warehouse .qp::after {
+    width: 1.4cqw;
+    background: #132d2c;
+  }
+  /* Cajas (9 × 8.5 salvo aviso), apoyadas en su balda --b: frente (el elemento), tapa (::before) y costado (::after),
+     con la cinta del embalaje. */
+  .home .art-warehouse .qc {
+    --w: 9;
+    --h: 8.5;
+    --y: calc(var(--b) - var(--h));
+    --z: 5.5;
+    background:
+      linear-gradient(90deg, #0000 43%, #5c462a66 0 57%, #0000 0) top / 100% 36% no-repeat,
+      linear-gradient(#bb9d6f, #917650);
+    box-shadow: inset 0 0 0 0.13cqw #3426168c;
+  }
+  .home .art-warehouse .qc::before {
+    height: 11cqw;
+    background: linear-gradient(90deg, #0000 43%, #c5ab80 0 57%, #0000 0), #dec8a0;
+    box-shadow: inherit;
+  }
+  .home .art-warehouse .qc::after {
+    width: 11cqw;
+    background: #77603f;
+  }
+  /* La reposición entra en su hueco desde detrás del fondo (nada de opacidad: aplanaría la caja 3D); el pedido sale
+     entero hacia el espectador y se pierde por el borde. */
+  .home .art-warehouse :is(.qn, .qo) {
+    --dl: 0s;
+    transform: translateZ(calc(var(--a) * 80cqw));
+  }
+  .home .art-warehouse .qn {
+    transform: translate3d(0, calc(var(--n) * 3cqw), calc(var(--n) * -14cqw));
+  }
+  /* El aviso rojo se va deprisa: el cruce de los dos textos no llega a leerse. */
+  .home .art-warehouse :is(.qx, .qr) {
+    --td: 0.4s;
+    --q: #ff8f86;
+    opacity: var(--n);
+  }
+  /* Barras de nivel de stock. La del hueco bajo mínimo es más gruesa: roja y latiendo en ::before (su color se
+     apaga al reponer) y, debajo, la barra teal que crece con la reposición. */
+  .home .art-warehouse .qv {
+    --w: 18;
+    --h: 0.75;
+    --y: calc(var(--b) + 0.45);
+    --z: 8.05;
+    transform-origin: left;
+    scale: var(--s) 1;
+    background: var(--t);
+    box-shadow: 0 0 0.9cqw var(--t);
+  }
+  .home .art-warehouse .ql {
+    --h: 1.1;
+    --t: var(--c, #0000);
+    scale: calc(0.18 + 0.6 * var(--a)) 1;
+    color: rgb(239 68 68 / var(--n));
+  }
+  .home .art-warehouse .ql::before {
+    background: currentColor;
+    box-shadow: 0 0 0.9cqw;
+  }
+  /* Haz del escáner: una lámina de luz que recorre la estantería. */
+  .home .art-warehouse .qz {
+    transform: translateZ(19cqw);
+    background: linear-gradient(90deg, #e6fffa 0.4cqw, #a3e4d780 0, #43b5a624 30%, #0000 85%);
+  }
+  /* Aviso: la condición con la que la app dispara low_stock, con su guía punteada hasta el charco rojo. */
+  .home .art-warehouse .qa {
+    position: absolute;
+    left: 53%;
+    top: 3cqw;
+    translate: -50%;
+    display: grid;
+    padding: 0.9cqw 1.5cqw;
+    border: 0.15cqw solid;
+    border-radius: 9cqw;
+    background: #0b1417;
+    box-shadow: 0 0 2.4cqw -0.4cqw var(--c);
+    font: 3cqw/1 var(--f-code);
+    color: var(--c, #ff8f86);
+  }
+  .home .art-warehouse .qa::after {
+    left: 50%;
+    top: 100%;
+    width: 0;
+    height: 20.5cqw;
+    border-left: 0.3cqw dotted;
+  }
+  /* «stock > minStock» espera debajo; el aviso rojo, encima, se desvanece al reponer. Cada texto con su color: solo
+     el marco, la guía y el halo siguen a --c. */
+  .home .art-warehouse .qa span {
+    grid-area: 1 / 1;
+    background: #0b1417;
+    color: var(--q, #6fd3c4);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .home .art-host:is(:hover, :focus-within) .art-warehouse {
+      --k: 8ms;
+      --U: art-warehouse-upd 0.8s var(--ease-out) both;
+    }
+    /* En la base, no solo al activar: al salir, todo vuelve con la misma calma. El aviso cambia cuando llega la
+       reposición (--dl). */
+    .home .art-warehouse :is(.qn, .qo, .qx, .qr, .ql, .qa) {
+      transition: var(--td, 1.1s) ease-in-out var(--dl);
+    }
+    .home .art-warehouse .qz {
+      animation: art-warehouse-scan 7s linear infinite;
+    }
+    .home .art-warehouse .qv:not(.ql) {
+      animation: var(--U, art-warehouse-lvl 5s ease-in-out infinite alternate);
+      animation-delay: calc((var(--x) + 31) * var(--k, 0.13s));
+    }
+    .home .art-warehouse :is(.qr, .ql)::before {
+      animation: art-warehouse-o 1.3s ease-in-out infinite alternate;
+    }
+  }
+  /* La pausa global no detiene transiciones: se cancelan. Ni el rellenado, que se crearía ya en pausa: fuera. */
+  html[data-motion='paused'] .home .art-warehouse * {
+    transition: none;
+    --U: none;
+  }
+  @keyframes art-warehouse-scan {
+    0% {
+      transform: translateZ(-38cqw);
+      opacity: 0;
+    }
+    8%,
+    52% {
+      opacity: 1;
+    }
+    60%,
+    100% {
+      transform: translateZ(38cqw);
+      opacity: 0;
+    }
+  }
+  @keyframes art-warehouse-lvl {
+    to {
+      scale: calc(var(--s) * 0.88) 1;
+    }
+  }
+  @keyframes art-warehouse-upd {
+    from {
+      scale: 0 1;
+    }
+  }
+  @keyframes art-warehouse-o {
+    to {
+      opacity: 0.3;
+    }
+  }
+}

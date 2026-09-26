@@ -1,0 +1,250 @@
+/* Téchne: escritorio Hyprland en miniatura (waybar + clawbar, Ultimate Terminal, Mission Center Web). Reposo: la gráfica
+   de CPU se desliza, los núcleos respiran, la onda murmura y el cursor parpadea. Activo: se teclea el swapwindow, las
+   ventanas se intercambian (curva por defecto de Hyprland), la carga sube, clawbar habla y una luz recorre el borde
+   activo. Los estados cambian variables de la raíz y las transiciones van en la regla base: al salir, el comando se
+   borra y las ventanas vuelven por el mismo camino. La pausa global corta las que estén en curso. */
+@layer home {
+  .home .art-stevendevbox {
+    --am: #e0a85e;
+    --c: #6fd3c4;
+    --on: 0;
+    --g: 0.6;
+    --k: 0.9;
+    --cd: 2.8s;
+    --wd: 2.2s;
+    --hy: cubic-bezier(0.05, 0.9, 0.1, 1.05);
+    /* Tecleo al entrar (0.7 s tras 0.1 s), borrado al salir (0.3 s). */
+    --ty: calc(0.3s + var(--on) * 0.4s) steps(29) calc(var(--on) * 0.1s);
+  }
+  .home .art-host:is(:hover, :focus-within) .art-stevendevbox {
+    --c: var(--am);
+    --on: 1;
+    --g: 1;
+    --k: 1.12;
+    --cd: 0.45s;
+    --wd: 0.34s;
+  }
+  html[data-motion='paused'] .home .art-stevendevbox * {
+    transition: none;
+  }
+  .home .art-stevendevbox > svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+    fill: none;
+  }
+  .home .art-stevendevbox :is(.fr, .br) {
+    fill: #0f1c20;
+    stroke: rgb(232 224 212 / 0.13);
+    stroke-width: 0.5;
+  }
+  .home .art-stevendevbox .t .fr {
+    stroke: url(#art-stevendevbox-b);
+    stroke-width: 0.75;
+  }
+  /* Halo del borde activo sin filtro: un trazo ancho y tenue detrás del marco. */
+  .home .art-stevendevbox .gl {
+    stroke: #43b5a6;
+    stroke-width: 3.4;
+    stroke-opacity: 0.14;
+  }
+  .home .art-stevendevbox .ws {
+    stroke: rgb(143 163 168 / 0.45);
+    stroke-width: 2.2;
+    stroke-linecap: round;
+  }
+  .home .art-stevendevbox .on {
+    stroke: #6fd3c4;
+  }
+  .home .art-stevendevbox .gr {
+    stroke: rgb(232 224 212 / 0.1);
+    stroke-width: 0.3;
+  }
+  .home .art-stevendevbox :is(.w, .co, .pd) {
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+  .home .art-stevendevbox .w {
+    stroke: var(--c);
+    stroke-width: 1.1;
+    stroke-linecap: round;
+    scale: 1 var(--g);
+  }
+  .home .art-stevendevbox text {
+    font: 400 4px var(--f-code);
+    fill: var(--text);
+  }
+  .home .art-stevendevbox :is(.hd, .ph, .wk, .o) {
+    font-size: 3.5px;
+    fill: var(--muted);
+  }
+  .home .art-stevendevbox .ph {
+    text-anchor: end;
+    opacity: calc(1 - var(--on));
+  }
+  .home .art-stevendevbox :is(.s, .ch) {
+    opacity: var(--on);
+  }
+  .home .art-stevendevbox :is(.s, .u) {
+    fill: var(--am);
+  }
+  .home .art-stevendevbox .pd {
+    --ha: art-stevendevbox-p 0.9s ease-in-out infinite alternate;
+    fill: var(--c);
+  }
+  .home .art-stevendevbox :is(.p, .cr) {
+    fill: #6fd3c4;
+  }
+  .home .art-stevendevbox .cm {
+    clip-path: inset(0 calc(93.6% - var(--on) * 93.6%) 0 0);
+  }
+  .home .art-stevendevbox .cr {
+    translate: calc(var(--on) * 69.6px) 0;
+  }
+  /* Workers de la flota: su punto de estado y, detrás, líneas de salida. */
+  .home .art-stevendevbox :is(.gp, .gc) {
+    stroke: #6fd3c4;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    opacity: 0.7;
+  }
+  .home .art-stevendevbox .gc {
+    stroke: var(--text);
+    stroke-width: 1.4;
+    opacity: 0.2;
+  }
+  .home .art-stevendevbox .sc {
+    fill: url(#art-stevendevbox-b);
+    fill-opacity: 0.3;
+    stroke: #6fd3c4;
+    stroke-width: 0.7;
+    stroke-linejoin: round;
+    transform-box: view-box;
+    transform-origin: 0 50px;
+    scale: 1 calc(1 + var(--on) * 0.3);
+  }
+  .home .art-stevendevbox .tr {
+    stroke: rgb(232 224 212 / 0.06);
+    stroke-width: 37;
+    stroke-dasharray: 5 2;
+  }
+  .home .art-stevendevbox .co {
+    stroke: var(--am);
+    stroke-width: 5;
+    transform-origin: 50% 100%;
+    scale: 1 var(--k);
+  }
+  .home .art-stevendevbox .c2 {
+    stroke: #43b5a6;
+  }
+  .home .art-stevendevbox .led {
+    stroke: #0f1c20;
+    stroke-width: 56;
+    stroke-dasharray: 0.6 1.8;
+  }
+  /* La luz que recorre el borde activo: cabeza clara y, detrás, una estela ancha y tenue. */
+  .home .art-stevendevbox .ch {
+    --ha: art-stevendevbox-o 2.4s linear infinite;
+    stroke: #ffe2b0;
+    stroke-width: 0.8;
+    stroke-linecap: round;
+    stroke-dasharray: 0.04 0.96;
+  }
+  .home .art-stevendevbox .cq {
+    stroke: #6fd3c4;
+    stroke-width: 2;
+    stroke-opacity: 0.35;
+    stroke-dasharray: 0 0.9 0.1 0;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .home .art-stevendevbox :is(.t, .m) {
+      --ha: art-stevendevbox-d 0.6s 0.85s ease-in-out;
+      transform-box: view-box;
+      transform-origin: 47px 55px;
+      translate: calc(var(--on) * 66px) 0;
+    }
+    .home .art-stevendevbox .m {
+      transform-origin: 125px 55px;
+      translate: calc(var(--on) * -91px) 0;
+    }
+    .home .art-stevendevbox :is(.t, .m, .sc, .w, .ph, .pd, .ch) {
+      transition:
+        translate 0.6s var(--hy) calc(var(--on) * 0.85s),
+        scale 0.9s var(--hy),
+        opacity 0.4s,
+        fill 0.4s,
+        stroke 0.4s;
+    }
+    /* idle y speaking se relevan sin solaparse: sale uno y luego entra el otro. */
+    .home .art-stevendevbox .ph {
+      transition-duration: 0.2s;
+      transition-delay: calc(var(--on) * 0.2s);
+    }
+    .home .art-stevendevbox .i {
+      transition-delay: calc(0.2s - var(--on) * 0.2s);
+    }
+    .home .art-stevendevbox .cm {
+      transition: clip-path var(--ty);
+    }
+    .home .art-stevendevbox .cr {
+      transition: translate var(--ty);
+      animation: art-stevendevbox-k 1.1s steps(1) infinite;
+    }
+    .home .art-stevendevbox .sc {
+      animation: art-stevendevbox-s 9s linear infinite;
+    }
+    .home .art-stevendevbox .co {
+      animation: art-stevendevbox-c var(--cd) ease-in-out infinite alternate;
+    }
+    .home .art-stevendevbox .w {
+      animation: art-stevendevbox-w var(--wd) ease-in-out infinite alternate;
+    }
+    .home .art-stevendevbox .c2 {
+      animation-duration: calc(var(--cd) * 1.3);
+      animation-delay: calc(var(--cd) * -0.6);
+    }
+    .home .art-stevendevbox .w2 {
+      animation-duration: calc(var(--wd) * 0.77);
+      animation-delay: calc(var(--wd) * -0.6);
+    }
+    .home .art-host:is(:hover, :focus-within) .art-stevendevbox :is(.t, .m, .pd, .ch) {
+      animation: var(--ha);
+    }
+  }
+  @keyframes art-stevendevbox-k {
+    50% {
+      opacity: 0;
+    }
+  }
+  @keyframes art-stevendevbox-s {
+    to {
+      translate: -55px 0;
+    }
+  }
+  @keyframes art-stevendevbox-c {
+    from {
+      scale: 1 0.45;
+    }
+  }
+  @keyframes art-stevendevbox-w {
+    from {
+      scale: 1 calc(var(--g) * 0.25);
+    }
+  }
+  @keyframes art-stevendevbox-d {
+    30% {
+      scale: 0.93;
+    }
+  }
+  @keyframes art-stevendevbox-p {
+    to {
+      scale: 1.6;
+    }
+  }
+  @keyframes art-stevendevbox-o {
+    to {
+      stroke-dashoffset: -1;
+    }
+  }
+}

@@ -84,6 +84,8 @@ const nextConfig = {
     return [
       { source: '/:path*', headers: securityHeaders },
       { source: '/graph/:path*', headers: [{ key: 'Cache-Control', value: 'public, max-age=31536000, immutable' }] },
+      // La hoja del arte de la home lleva su hash en el nombre (scripts/build-art.mts).
+      { source: '/art/:path*', headers: [{ key: 'Cache-Control', value: 'public, max-age=31536000, immutable' }] },
     ];
   },
 };

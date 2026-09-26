@@ -132,18 +132,20 @@ test('hover sobre un nodo muestra su ficha', async ({ page }) => {
   await page.screenshot({ path: `${SHOTS}/3d-hover.png` });
 });
 
-// Las tarjetas de los catálogos y la cabecera de su banda son contenido (CONTENT en GraphStage): el puntero sobre ellas
-// no abre la ficha de un nodo, y un clic en su fondo no abre su sitio. Se busca un nodo en el hero y se pone encima,
-// con un estilo de prueba, la tarjeta de Kósmos (y luego la cabecera): la ficha se cierra; sin ella, vuelve (control).
+// Las tarjetas de los catálogos son contenido (CONTENT en GraphStage): el puntero sobre ellas no abre la ficha de un
+// nodo, y un clic en su fondo no abre su sitio. Se busca un nodo en el hero y se pone encima, con un estilo de prueba,
+// la tarjeta de Kósmos: la ficha se cierra; sin ella, vuelve (control).
 test('el puntero sobre la tarjeta de un catálogo es contenido, no grafo', async ({ page }) => {
   await openLive(page);
   const node = await findNode(page);
   expect(node).not.toBeNull();
   const tip = page.locator('.graph-tip');
-  for (const selector of ['.cat[data-cat="complexlab"]', '.cats-head']) {
+  for (const selector of ['.cat[data-cat="complexlab"]']) {
     const cover = await page.addStyleTag({
       // Sin sus hijos (visibility: hidden no recibe el puntero), el puntero cae en el fondo de la tarjeta, no en un enlace.
-      content: `.home ${selector} { position: fixed !important; inset: 0 !important; z-index: 20 !important; animation: none !important; } .home ${selector} > * { visibility: hidden !important; }`,
+      // La tarjeta vive en su frente (.front.reveal): la animación de entrada del frente (transform) sería el bloque
+      // contenedor del position: fixed y la tarjeta no cubriría la pantalla, así que también se apaga.
+      content: `.home .reveal:has(${selector}) { animation: none !important; } .home ${selector} { position: fixed !important; inset: 0 !important; z-index: 20 !important; animation: none !important; } .home ${selector} > * { visibility: hidden !important; }`,
     });
     await page.mouse.move(node!.x + 1, node!.y + 1);
     await expect(tip, `${selector} delante del nodo`).toBeHidden({ timeout: waitCap(20_000) });
@@ -377,9 +379,11 @@ async function frameWith(page: Page, setup: Partial<Pick<GlProbe, 'hide' | 'edge
  * Los dos extremos de la escena: T3, con bloom y la capa decorativa entera (escritorio ancho), y T1, sin compositor
  * (halo en shader y tone mapping por fragmento, el nivel del móvil). T2 es T3 con la mitad de satélites.
  */
+// El nivel inicial depende también de los núcleos del host (initialTier: el 3 pide 8 o más). Se fijan para que el test
+// mida el nivel que nombra en cualquier máquina: en un host de 4 núcleos, «T3» arrancaba en el 2 y fallaba.
 const LEVELS = [
-  { tier: 3, viewport: { width: 1440, height: 900 } },
-  { tier: 1, viewport: { width: 390, height: 844 } },
+  { tier: 3, viewport: { width: 1440, height: 900 }, cores: 8 },
+  { tier: 1, viewport: { width: 390, height: 844 }, cores: 8 },
 ] as const;
 /** Píxeles que una capa sube al menos esto en algún canal: se ve (el fondo es casi negro). */
 const VISIBLE = 8;
@@ -420,9 +424,12 @@ const MIN_MARGIN = 0.03;
  */
 const MAX_BACKGROUND_DIFF = 4;
 
-for (const { tier, viewport } of LEVELS) {
+for (const { tier, viewport, cores } of LEVELS) {
   test.describe(`T${tier} a ${viewport.width}×${viewport.height}`, () => {
     test.use({ viewport });
+    test.beforeEach(async ({ page }) => {
+      await page.addInitScript((n) => Object.defineProperty(navigator, 'hardwareConcurrency', { get: () => n }), cores);
+    });
 
     test('hero: el fondo del canvas es la página detrás del póster (--ink-0 y el halo de .stage::before)', async ({ page }, info) => {
       const errors = await watchErrors(page);

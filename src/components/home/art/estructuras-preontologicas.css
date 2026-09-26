@@ -1,0 +1,229 @@
+@layer home {
+  /* Estructuras Pre-Ontológicas: un sustrato de puntos que se ordena antes de que haya objetos. Reposo: los puntos se
+     agitan y cada 8 s se juntan un momento por bloques de 2×2; los bloques gruesos (más firmes cerca del centro) y el
+     objeto latente (el marco naranja con la chispa de la marca del sitio) quedan quietos. Activo (6 s): la agitación
+     se apaga, la red se comprime en dos escalas y el bloque central se llena y se vuelve objeto; luego se expande y
+     vuelve. Sin movimiento: la estructura anidada con su objeto. Paleta del sitio: tinta #0e1219, naranja #e4760a,
+     gris de línea #dde1e9. */
+
+  /* Activación: 0 en reposo, 1 activa, con transición en los dos sentidos. El ciclo activo nunca se quita (en reposo
+     queda en pausa) y su amplitud es --h: al entrar y al salir todo se funde, no salta. */
+  @property --art-estructuras-preontologicas-h {
+    syntax: '<number>';
+    inherits: true;
+    initial-value: 0;
+  }
+  .home .art-estructuras-preontologicas {
+    --h: var(--art-estructuras-preontologicas-h);
+    --J: calc(1 - var(--h));
+    background:
+      radial-gradient(circle, #e4760a4d, #0000 20cqmin),
+      linear-gradient(#121823, #080b12);
+  }
+  .home .art-estructuras-preontologicas :is(svg, b) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: var(--lo);
+  }
+  /* Viñeta suave. */
+  .home .art-estructuras-preontologicas::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(75% 85%, #0000 40%, #070a10cc);
+  }
+  /* Subredes del sustrato: un punto por celda de 24, llevado a su sitio (a, b) de la red fina (paso 6). --P/--Q: la
+     agitación, sin orden (de un seno); --e/--f: hacia el centro de su bloque de 2×2 (en reposo, un tirón a medias). */
+  .home .art-estructuras-preontologicas i {
+    --e: calc(clamp(-1,var(--a),1)*2 - var(--a));
+    --f: calc(clamp(-1,var(--b),1)*2 - var(--b));
+    --x: calc(var(--a)*3cqmin);
+    --y: calc(var(--b)*3cqmin);
+    --r: 0.62cqmin;
+    --P: calc(sin(var(--a)*2.3 + var(--b)*2.1)*var(--J)*1.7cqmin);
+    --Q: calc(cos(var(--a)*2.3 - var(--b)*3.9)*var(--J)*1.7cqmin);
+    position: absolute;
+    inset: -12cqmin;
+    background: radial-gradient(circle, #e2e6eee6 0 var(--r), #0000 calc(var(--r) + 0.3cqmin)) 50% / 24cqmin 24cqmin;
+    translate: var(--x) var(--y);
+  }
+  .home .art-estructuras-preontologicas i:nth-child(3n) {
+    opacity: 0.75;
+  }
+  .home .art-estructuras-preontologicas i:nth-child(5n + 1) {
+    --r: 0.85cqmin;
+  }
+  .home .art-estructuras-preontologicas pattern rect {
+    fill: none;
+    stroke: var(--s,#f7a04b);
+    stroke-width: var(--w,.3);
+  }
+  /* --lo: opacidad en reposo; --dp: valle del ciclo activo común (por defecto 0). */
+  .home .art-estructuras-preontologicas .ep-m {
+    --lo: 0.35;
+    --an: art-estructuras-preontologicas-m;
+  }
+  /* Los bloques gruesos se afirman hacia el centro: el orden se condensa alrededor del objeto. */
+  .home .art-estructuras-preontologicas .ep-c {
+    --s: #e4760a;
+    --w: 0.5;
+    --lo: 0.6;
+    --dp: 0.6;
+    mask: radial-gradient(#000 20%, #0006 65%);
+  }
+  /* Nodos de escala media y gruesa: donde caen los puntos al comprimirse. */
+  .home .art-estructuras-preontologicas .ep-nm {
+    --lo: 0;
+    --an: art-estructuras-preontologicas-nm;
+    background: radial-gradient(circle, #fff 0 0.8cqmin, #f7a04b80 1.1cqmin, #0000 2.8cqmin) calc(50% + 6cqmin) calc(50% + 6cqmin) / 12cqmin 12cqmin;
+  }
+  .home .art-estructuras-preontologicas .ep-nc {
+    --lo: 0.45;
+    background: radial-gradient(circle, #fff 0 1.2cqmin, #f7a04b 1.6cqmin, #e4760a4d 3.4cqmin, #0000 7.5cqmin) 50% / 24cqmin 24cqmin;
+  }
+  /* El objeto: el relleno que se estabiliza y el marco del bloque central (latente) con la chispa de la marca. */
+  .home .art-estructuras-preontologicas :is(.ep-f, .ep-obj) {
+    --lo: 1;
+    margin: auto;
+    width: 22.8cqmin;
+    height: 22.8cqmin;
+    border-radius: 3.4cqmin;
+  }
+  .home .art-estructuras-preontologicas .ep-f {
+    background: linear-gradient(140deg, #f59a3c, #c9560a);
+    box-shadow: 0 0 7cqmin #e4760a8c;
+  }
+  .home .art-estructuras-preontologicas .ep-obj {
+    --an: art-estructuras-preontologicas-o;
+    box-shadow:
+      inset 0 0 0 0.5cqmin #f7a04be6,
+      0 0 3cqmin #e4760a66;
+  }
+  .home .art-estructuras-preontologicas .ep-obj::after {
+    content: '';
+    position: absolute;
+    inset: 22%;
+    background: #fff;
+    clip-path: polygon(50% 0, 58% 42%, 100% 50%, 58% 58%, 50% 100%, 42% 58%, 0 50%, 42% 42%);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .home .art-estructuras-preontologicas {
+      transition: --art-estructuras-preontologicas-h 0.6s;
+    }
+    html[data-motion='paused'] .home .art-estructuras-preontologicas {
+      transition: none;
+    }
+    .home .art-host:is(:hover, :focus-within) .art-estructuras-preontologicas {
+      --art-estructuras-preontologicas-h: 1;
+      --ps: running;
+    }
+    /* En movimiento, el objeto espera casi vacío: al activarse se llena. */
+    .home .art-estructuras-preontologicas .ep-f {
+      --lo: 0.3;
+    }
+    .home .art-estructuras-preontologicas i {
+      animation:
+        art-estructuras-preontologicas-j 8s ease-in-out infinite,
+        art-estructuras-preontologicas-k 6s cubic-bezier(0.65, 0, 0.25, 1) infinite var(--ps,paused);
+    }
+    .home .art-estructuras-preontologicas :is(svg, b) {
+      animation: var(--an,art-estructuras-preontologicas-a) 6s infinite var(--ps,paused);
+    }
+  }
+
+  /* Reposo: agitación, tirón hacia los bloques de 2×2 (24–34 %) y vuelta al desorden. */
+  @keyframes art-estructuras-preontologicas-j {
+    0%,
+    100% {
+      transform: translate(var(--P), var(--Q));
+    }
+    10% {
+      transform: translate(calc(var(--Q)*-1), var(--P));
+    }
+    24%,
+    34% {
+      transform: translate(calc(var(--e)*var(--J)*1.35cqmin), calc(var(--f)*var(--J)*1.35cqmin));
+    }
+    62% {
+      transform: translate(var(--Q), calc(var(--P)*-1));
+    }
+  }
+  /* Activo: red fina → bloques de 2×2 (15 %) → bloque grueso (33 %) → objeto → expansión; todo por --h. */
+  @keyframes art-estructuras-preontologicas-k {
+    5%,
+    96% {
+      translate: var(--x) var(--y);
+    }
+    15%,
+    22% {
+      translate: calc(var(--x) + var(--e)*var(--h)*3cqmin) calc(var(--y) + var(--f)*var(--h)*3cqmin);
+    }
+    33%,
+    80% {
+      translate: calc(var(--x)*var(--J)) calc(var(--y)*var(--J));
+    }
+  }
+  /* El patrón medio se apaga, nace en el centro y llega justo antes de que los puntos se junten. */
+  @keyframes art-estructuras-preontologicas-m {
+    0% {
+      clip-path: circle(75%);
+    }
+    4% {
+      opacity: calc(0.35*var(--J));
+      clip-path: circle(calc(75%*var(--J)));
+    }
+    6%,
+    22% {
+      opacity: calc(0.35 + 0.4*var(--h));
+    }
+    14%,
+    30% {
+      clip-path: circle(75%);
+    }
+    30% {
+      opacity: calc(0.35*var(--J));
+    }
+  }
+  @keyframes art-estructuras-preontologicas-nm {
+    12%,
+    28% {
+      opacity: 0;
+    }
+    15%,
+    22% {
+      opacity: var(--h);
+    }
+  }
+  /* Común (bloques y nodos gruesos, relleno del objeto): valle mientras se ordena la escala media, luz plena cuando
+     todo cae en el bloque grueso. */
+  @keyframes art-estructuras-preontologicas-a {
+    8%,
+    28% {
+      opacity: calc(var(--lo) + (var(--dp,0) - var(--lo))*var(--h));
+    }
+    36%,
+    82% {
+      opacity: calc(var(--lo) + (1 - var(--lo))*var(--h));
+    }
+  }
+  /* El marco no se va: cede un poco mientras el sustrato se ordena, se afirma con la escala gruesa y al final se
+     expande y vuelve. */
+  @keyframes art-estructuras-preontologicas-o {
+    8%,
+    28% {
+      opacity: calc(1 - 0.25*var(--h));
+    }
+    36%,
+    82% {
+      opacity: 1;
+      scale: 1;
+    }
+    92% {
+      opacity: var(--J);
+      scale: calc(1 + 0.2*var(--h));
+    }
+  }
+}
