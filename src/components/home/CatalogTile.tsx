@@ -3,7 +3,7 @@ import { type Catalogo, catalogoGrupos, catalogoKinds, frentesMeta, nombreItem, 
 import { nodeId } from '@/graph/sources';
 import type { Locale } from '@/lib/site';
 import { normalizeSearch } from '@/lib/text';
-import { ART } from './art';
+import ArtBox from './art/ArtBox';
 
 export const catalogAnchor = (id: string) => `catalogo-${id}`;
 
@@ -18,7 +18,6 @@ export default function CatalogTile({ c, locale, t }: { c: Catalogo; locale: Loc
   const meta = frentesMeta[c.frente];
   const grupos = catalogoGrupos(c);
   const count = c.incluye.length;
-  const Art = ART[c.id];
   const vista = productos.find((p) => p.vistaDe?.catalogo === c.id);
   return (
     <div
@@ -54,7 +53,7 @@ export default function CatalogTile({ c, locale, t }: { c: Catalogo; locale: Loc
         </div>
         {c.url ? (
           <a className="cat-scene art-host" href={c.url} rel="noopener" target="_blank">
-            {Art ? <Art locale={locale} /> : null}
+            <ArtBox id={c.id} locale={locale} className="cat-art" />
             <span className="cat-enter">
               {t.catalogs.enter}
               <span className="sr-only"> {c.nombre}</span> ↗

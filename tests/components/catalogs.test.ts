@@ -99,9 +99,9 @@ describe('catálogos en la home', () => {
     const page = await html(locale);
     expect(page.match(/class="cat"/g)).toHaveLength(catalogos.length);
     for (const c of catalogos) {
-      const tile = page.match(new RegExp(`<div id="catalogo-${c.id}"[\\s\\S]*?</p></div></div>`))?.[0] ?? '';
+      const tile = page.match(new RegExp(`<div id="catalogo-${c.id}"[\\s\\S]*?<p class="cat-actions">[\\s\\S]*?</p></div></div>`))?.[0] ?? '';
       expect(page.match(new RegExp(`data-node="producto:${c.id}"`, 'g')), c.nombre).toHaveLength(1);
-      expect(tile, c.nombre).toContain(`<a class="cat-scene art-host" href="${c.url}" rel="noopener" target="_blank"><div class="art art-${c.id}" aria-hidden="true"`);
+      expect(tile, c.nombre).toContain(`<a class="cat-scene art-host" href="${c.url}" rel="noopener" target="_blank"><div class="cat-art"><div class="art art-${c.id}" aria-hidden="true"`);
       expect(tile, c.nombre).toContain(`<span class="cat-enter">${HOME[locale].catalogs.enter}<span class="sr-only"> ${c.nombre}</span> ↗</span>`);
       expect(tile.match(new RegExp(`href="${c.url}"`, 'g')), c.nombre).toHaveLength(1);
       for (const g of catalogoGrupos(c)) {
@@ -116,7 +116,7 @@ describe('catálogos en la home', () => {
   it.each(['es', 'en'] as const)('/%s: la tarjeta de un catálogo no enlaza ninguno de sus ítems', async (locale) => {
     const page = await html(locale);
     for (const c of catalogos) {
-      const tile = page.match(new RegExp(`<div id="catalogo-${c.id}"[\\s\\S]*?</p></div></div>`))?.[0] ?? '';
+      const tile = page.match(new RegExp(`<div id="catalogo-${c.id}"[\\s\\S]*?<p class="cat-actions">[\\s\\S]*?</p></div></div>`))?.[0] ?? '';
       for (const i of c.incluye) {
         if (i.url && i.url !== c.url) expect(tile, `${c.nombre}: ${nombreItem(i, locale)}`).not.toContain(`href="${i.url.replace(/&/g, '&amp;')}"`);
       }
@@ -161,7 +161,7 @@ describe('qué está dentro de qué', () => {
     expect(umbral.vistaDe?.catalogo).toBe('complexlab');
     for (const locale of ['es', 'en'] as const) {
       const page = await html(locale);
-      const kosmos = page.match(/<div id="catalogo-complexlab"[\s\S]*?<\/p><\/div><\/div>/)?.[0] ?? '';
+      const kosmos = page.match(/<div id="catalogo-complexlab"[\s\S]*?<p class="cat-actions">[\s\S]*?<\/p><\/div><\/div>/)?.[0] ?? '';
       expect(kosmos).toContain(`<span class="cat-view">${umbral.vistaDe!.texto[locale]} <a href="${umbral.url}"`);
       expect(umbral.subtitulo![locale]).toContain('Kósmos');
     }

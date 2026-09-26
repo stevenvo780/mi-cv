@@ -3,7 +3,7 @@ import { type Producto, catalogosDe, frentesMeta, productTags } from '@/data/fre
 import { nodeId } from '@/graph/sources';
 import type { Locale } from '@/lib/site';
 import { normalizeSearch } from '@/lib/text';
-import { ART } from './art';
+import ArtBox from './art/ArtBox';
 
 /**
  * Tarjeta de un proyecto con sitio propio: su emblema animado (art/<id>) manda, y el texto se reduce al antetítulo, el
@@ -15,7 +15,6 @@ export default function ProductCard({ p, locale, t }: { p: Producto; locale: Loc
   const f = t.fronts;
   const meta = frentesMeta[p.frente];
   const en = catalogosDe(p).map((c) => c.nombre);
-  const Art = ART[p.id];
   const info = `info-${p.id}`;
   return (
     <li
@@ -25,7 +24,7 @@ export default function ProductCard({ p, locale, t }: { p: Producto; locale: Loc
         [p.nombre, p.subtitulo?.[locale] ?? '', p.descripcion[locale], p.badge?.[locale] ?? '', meta.nombre[locale], ...en, ...(productTags[p.id] ?? [])].join(' '),
       )}
     >
-      <div className="card-art">{Art ? <Art locale={locale} /> : null}</div>
+      <ArtBox id={p.id} locale={locale} className="card-art" />
       <p className="card-kicker">{p.subtitulo?.[locale] ?? meta.nombre[locale]}</p>
       <h4>{p.nombre}</h4>
       {en.length ? <p className="card-in">{f.alsoIn(en)}</p> : null}

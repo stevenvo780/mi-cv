@@ -1329,6 +1329,10 @@
       border-color 0.4s,
       box-shadow 0.5s;
   }
+  /* La caja del HTML de la escena (ArtBox) no dibuja nada: la pieza se mide contra .cat-scene. */
+  .home .cat-art {
+    display: contents;
+  }
   .home .cat-scene:is(:hover, :focus-visible) {
     border-color: color-mix(in oklab, var(--cat) 70%, transparent);
     box-shadow: 0 0 60px -20px color-mix(in oklab, var(--cat) 70%, transparent);

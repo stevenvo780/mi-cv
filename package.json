@@ -12,7 +12,7 @@
     "e2e": "playwright test",
     "lighthouse": "node scripts/lighthouse.mjs",
     "graph:build": "tsx scripts/build-graph.mts",
-    "art:build": "tsx scripts/build-art-css.mts",
+    "art:build": "tsx scripts/build-art.mts",
     "prebuild": "npm run graph:build && npm run art:build"
   },
   "dependencies": {
