@@ -16,6 +16,7 @@ import {
   tarjetasDeFrente,
   trabajosEnCatalogos,
 } from '@/data/frentes';
+import { ART } from '@/components/home/art';
 import { normalizeSearch } from '@/lib/text';
 
 const html = async (locale: 'es' | 'en') => renderToStaticMarkup(await HomePage({ params: Promise.resolve({ locale }) }));
@@ -76,49 +77,48 @@ describe('datos de los catálogos', () => {
 });
 
 describe('catálogos en la home', () => {
-  // Una banda de catálogos encima de los frentes, cada tarjeta rotulada con el § y el nombre de su frente, se leía como el
-  // resumen de cada frente y el frente como su detalle, cuando lo que reúne un catálogo no está en las tarjetas de su
-  // frente. El catálogo es un trabajo más del frente: lo abre con su mapa, sin banda ni rótulo del frente, y un separador
-  // («N proyectos con sitio propio») lo corta de las tarjetas que siguen (spec §4.10).
+  // El catálogo es un trabajo más de su frente: lo abre con su escena (art/<id>), que es el enlace al catálogo, y un
+  // separador («N proyectos con sitio propio») lo corta de las tarjetas que siguen (spec §4.10).
   it.each(['es', 'en'] as const)('/%s: cada catálogo abre su frente, y un separador lo corta de las tarjetas', async (locale) => {
     const page = await html(locale);
     expect(page).not.toContain('data-front="catalogos"');
     expect(page).not.toContain('class="cats');
-    expect(page).not.toContain('class="cat-front"');
     for (const c of catalogos) {
       const front = page.match(new RegExp(`<article[^>]*data-front="${c.frente}"[\\s\\S]*?</article>`))?.[0] ?? '';
       expect(front.match(/<div class="front-body"><div[^>]*>/)?.[0], c.nombre).toContain(`data-node="producto:${c.id}"`);
       expect(front, c.nombre).toContain(HOME[locale].catalogs.label(c.incluye.length, c.unidad[locale]));
       const divider = `<p class="cards-divider" id="sitios-${c.frente}">${HOME[locale].fronts.ownSites(ordenHome[c.frente].length)}</p>`;
-      expect(front.indexOf(divider), c.nombre).toBeGreaterThan(front.indexOf('class="cg"'));
-      expect(front.indexOf(divider), c.nombre).toBeLessThan(front.indexOf('class="card"'));
+      expect(front.indexOf(divider), c.nombre).toBeGreaterThan(front.indexOf('class="cat-scene'));
+      expect(front.indexOf(divider), c.nombre).toBeLessThan(front.indexOf('class="card art-host"'));
     }
-    expect(HOME.en.catalogs.label(23, 'projects')).toBe('Catalog · 23 projects');
   });
 
-  it.each(['es', 'en'] as const)('/%s: cada catálogo sale una sola vez, en su tarjeta grande, con cada ítem enlazado', async (locale) => {
+  // La escena dice cuánto reúne y de qué colecciones, no el nombre de cada obra: la invitación es entrar. Un solo enlace
+  // al catálogo (la escena, con su rótulo), y la leyenda de colecciones con su cifra.
+  it.each(['es', 'en'] as const)('/%s: la escena es el enlace al catálogo, con su arte y la leyenda de colecciones', async (locale) => {
     const page = await html(locale);
     expect(page.match(/class="cat"/g)).toHaveLength(catalogos.length);
-    expect(page).not.toContain('class="front-cat"');
     for (const c of catalogos) {
-      // Una sola tarjeta por producto: el catálogo ya no se repite en la rejilla de su frente.
+      const tile = page.match(new RegExp(`<div id="catalogo-${c.id}"[\\s\\S]*?</p></div></div>`))?.[0] ?? '';
       expect(page.match(new RegExp(`data-node="producto:${c.id}"`, 'g')), c.nombre).toHaveLength(1);
-      expect(page, c.nombre).toContain(`id="catalogo-${c.id}"`);
-      expect(page, c.nombre).not.toContain(`href="#catalogo-${c.id}"`);
-      for (const i of c.incluye) if (i.url) expect(page, nombreItem(i, locale)).toContain(`href="${i.url.replace(/&/g, '&amp;')}"`);
+      expect(tile, c.nombre).toContain(`<a class="cat-scene art-host" href="${c.url}" rel="noopener" target="_blank"><div class="art art-${c.id}" aria-hidden="true"`);
+      expect(tile, c.nombre).toContain(`<span class="cat-enter">${HOME[locale].catalogs.enter}<span class="sr-only"> ${c.nombre}</span> ↗</span>`);
+      expect(tile.match(new RegExp(`href="${c.url}"`, 'g')), c.nombre).toHaveLength(1);
+      for (const g of catalogoGrupos(c)) {
+        expect(tile, `${c.nombre}: ${g.kind}`).toContain(
+          `<li data-k="${g.kind}"><span>${catalogoKinds[g.kind][locale].replace(/&/g, '&amp;')}</span> <span class="cat-kind-n">${g.items.length}</span></li>`,
+        );
+      }
     }
   });
 
-  it.each(['es', 'en'] as const)('/%s: cada ítem sale con su nombre en el idioma de la página', async (locale) => {
+  // La tarjeta del catálogo no enlaza sus ítems: la escena lleva al catálogo, y cada ítem se descubre allí.
+  it.each(['es', 'en'] as const)('/%s: la tarjeta de un catálogo no enlaza ninguno de sus ítems', async (locale) => {
     const page = await html(locale);
-    const other = locale === 'es' ? 'en' : 'es';
     for (const c of catalogos) {
+      const tile = page.match(new RegExp(`<div id="catalogo-${c.id}"[\\s\\S]*?</p></div></div>`))?.[0] ?? '';
       for (const i of c.incluye) {
-        const shown = nombreItem(i, locale);
-        const hidden = nombreItem(i, other);
-        const text = (name: string) => (i.url ? `rel="noopener" target="_blank">${name}</a>` : `<span>${name} <span class="cat-private">`);
-        expect(page, `${c.nombre}: ${shown}`).toContain(text(shown));
-        if (hidden !== shown) expect(page, `${c.nombre}: ${hidden}`).not.toContain(text(hidden));
+        if (i.url && i.url !== c.url) expect(tile, `${c.nombre}: ${nombreItem(i, locale)}`).not.toContain(`href="${i.url.replace(/&/g, '&amp;')}"`);
       }
     }
   });
@@ -138,24 +138,10 @@ describe('catálogos en la home', () => {
 
 });
 
-describe('mapa de cada catálogo', () => {
-  it.each(['es', 'en'] as const)('/%s: un nodo por ítem, en su colección y su lado, y una arista por colección', async (locale) => {
-    const page = await html(locale);
-    for (const c of catalogos) {
-      const tile = page.match(new RegExp(`<div id="catalogo-${c.id}"[\\s\\S]*?</ul></div>`))?.[0] ?? '';
-      const grupos = catalogoGrupos(c);
-      expect(tile.match(/class="cg-g" data-side="[lr]"/g), c.nombre).toHaveLength(grupos.length);
-      expect(tile.match(/<li (class="cg-own" )?style="--y:[\d.]+"/g), c.nombre).toHaveLength(c.incluye.length);
-      expect(tile.match(/<path d="M50 50C/g), c.nombre).toHaveLength(2 * grupos.length);
-      // Los dos lados llevan colección: el mapa nunca es un abanico de un solo lado.
-      expect(tile, c.nombre).toContain('data-side="l"');
-      expect(tile, c.nombre).toContain('data-side="r"');
-    }
-  });
-
-  // Nodo hueco = el ítem es además una tarjeta de la página, y esa tarjeta dice «También en …». Estructuras
-  // Preontológicas está en Paideía (la tesis) y en Kósmos (su repositorio); Graf, por su `producto` (otro dominio).
-  it('marca los ítems que son una tarjeta de la página, y la tarjeta nombra sus catálogos', async () => {
+describe('qué está dentro de qué', () => {
+  // Un ítem de catálogo que es además un producto del portafolio: por su sitio, su repositorio o su `producto`. Su
+  // tarjeta dice «También en …». Estructuras Preontológicas está en Paideía (la tesis) y en Kósmos (su repositorio).
+  it('productoDeItem reconoce los ítems que tienen tarjeta, y la tarjeta nombra sus catálogos', async () => {
     const own = Object.fromEntries(catalogos.map((c) => [c.id, c.incluye.flatMap((i) => productoDeItem(i)?.id ?? [])]));
     expect(own).toEqual({
       humanizar: ['demeter', 'graf', 'devkits-crm', 'cauce-v3', 'agora', 'warehouse', 'communityos', 'devkits-hours', 'prizma', 'devkits'],
@@ -166,12 +152,8 @@ describe('mapa de cada catálogo', () => {
     const estructuras = productos.find((p) => p.id === 'estructuras-preontologicas')!;
     expect(catalogosDe(estructuras).map((c) => c.nombre)).toEqual(['Paideía', 'Kósmos']);
     const page = await html('es');
-    expect(page.match(/class="cg-own"/g)).toHaveLength(Object.values(own).flat().length);
     expect(page).toContain('<p class="card-in">También en Paideía y Kósmos</p>');
     expect(page.match(/<p class="card-in">También en Humanizar<\/p>/g)).toHaveLength(own.humanizar.length);
-    // Sin ítems que sean tarjeta, sin leyenda.
-    const daimon = page.match(/<div id="catalogo-stevenai"[\s\S]*?<\/ul><\/div>(<p class="cg-legend">)?/)?.[0] ?? '';
-    expect(daimon).not.toContain('cg-legend');
   });
 
   it('Umbral recorre los repositorios de Kósmos: la tarjeta de Kósmos la enlaza y la de Umbral lo dice', async () => {
@@ -179,9 +161,31 @@ describe('mapa de cada catálogo', () => {
     expect(umbral.vistaDe?.catalogo).toBe('complexlab');
     for (const locale of ['es', 'en'] as const) {
       const page = await html(locale);
-      const kosmos = page.match(/<div id="catalogo-complexlab"[\s\S]*?class="cg"/)?.[0] ?? '';
-      expect(kosmos).toContain(`<p class="cat-view">${umbral.vistaDe!.texto[locale]} <a href="${umbral.url}"`);
+      const kosmos = page.match(/<div id="catalogo-complexlab"[\s\S]*?<\/p><\/div><\/div>/)?.[0] ?? '';
+      expect(kosmos).toContain(`<span class="cat-view">${umbral.vistaDe!.texto[locale]} <a href="${umbral.url}"`);
       expect(umbral.subtitulo![locale]).toContain('Kósmos');
+    }
+  });
+});
+
+describe('tarjetas: el emblema manda y el texto se revela', () => {
+  it('cada producto tiene su pieza de arte registrada', () => {
+    expect(Object.keys(ART).sort()).toEqual(productos.map((p) => p.id).sort());
+  });
+
+  // El texto de cada proyecto sigue en el HTML (buscadores, lectores de pantalla): en .card-info, que con puntero se
+  // revela al pasar y en táctil abre «¿Qué es?» (popover nativo).
+  it.each(['es', 'en'] as const)('/%s: cada tarjeta lleva emblema, su texto en el HTML y el botón que lo abre en táctil', async (locale) => {
+    const page = await html(locale);
+    for (const f of frenteOrder) {
+      for (const p of tarjetasDeFrente(f)) {
+        const card = page.match(new RegExp(`<li class="card art-host" data-node="producto:${p.id}"[\\s\\S]*?</li>`))?.[0] ?? '';
+        expect(card, p.id).toContain(`<div class="card-art"><div class="art art-${p.id}" aria-hidden="true"`);
+        expect(card, p.id).toContain(`<div class="card-info" id="info-${p.id}" popover="auto">`);
+        expect(card, p.id).toContain(`<p class="card-desc">${p.descripcion[locale].replace(/&/g, '&amp;').replace(/"/g, '&quot;')}</p>`);
+        // React escribe popoverTarget tal cual; el parser HTML no distingue mayúsculas en los atributos.
+        expect(card, p.id).toContain(`<button type="button" class="card-more" popoverTarget="info-${p.id}">${HOME[locale].fronts.more}`);
+      }
     }
   });
 });
@@ -194,7 +198,7 @@ describe('orden de las tarjetas en la home', () => {
       expect(tarjetasDeFrente(f).map((p) => p.id), f).toEqual(ordenHome[f]);
     }
     const page = await html('es');
-    const pintadas = [...page.matchAll(/class="card" data-node="producto:([^"]+)"/g)].map((m) => m[1]);
+    const pintadas = [...page.matchAll(/class="card art-host" data-node="producto:([^"]+)"/g)].map((m) => m[1]);
     expect(pintadas).toEqual(frenteOrder.flatMap((f) => ordenHome[f]));
   });
 });

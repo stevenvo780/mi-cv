@@ -9,7 +9,9 @@ const SITE = 'https://www.stevenvallejo.com';
 const SHOTS = '/workspace/.scratch-steven-redesign/shots';
 
 // Subconjuntos de fuente de la home ([locale]/(home)/fonts.ts, spec §3.2 y §5.2), generados por scripts/subset-fonts.sh.
-const HOME_FONTS = ['cormorant-hero', 'cormorant-home', 'geist-home', 'jetbrains-home'] as const;
+const HOME_FONTS = ['cormorant-hero', 'cormorant-home', 'geist-home', 'jetbrains-home', 'greek-home', 'math-home', 'code-home'] as const;
+/** Las del arte (griego, ecuaciones, código): solo se piden al acercarse al arte (content-visibility). */
+const ART_FONTS = ['greek-home', 'math-home', 'code-home'] as const;
 type HomeFont = (typeof HOME_FONTS)[number];
 const fontBytes = (name: string) => readFileSync(`src/app/fonts/${name}.woff2`);
 const sha1 = (b: Buffer) => createHash('sha1').update(b).digest('hex');
@@ -225,7 +227,11 @@ for (const locale of ['es', 'en'] as const) {
     await page.evaluate(() => document.fonts.ready);
     const list = await Promise.all(fonts);
     const byHash = new Map<string, string>(HOME_FONTS.map((name) => [sha1(fontBytes(name)), name]));
-    expect(list.map((f) => byHash.get(f.hash) ?? f.url).sort()).toEqual([...HOME_FONTS].sort());
+    // Las del hero y el texto, siempre; las del arte, solo si el arte ya se pintó. Nada fuera de la lista ni repetido.
+    const got = list.map((f) => byHash.get(f.hash) ?? f.url);
+    expect(new Set(got).size, 'sin descargas repetidas').toBe(got.length);
+    expect(got.filter((f) => !(ART_FONTS as readonly string[]).includes(f)).sort()).toEqual(HOME_FONTS.filter((f) => !(ART_FONTS as readonly string[]).includes(f)).sort());
+    expect(got.every((f) => (HOME_FONTS as readonly string[]).includes(f)), got.join(', ')).toBe(true);
     const preloads = await page.$$eval('link[rel="preload"][as="font"]', (ls) => ls.map((l) => (l as HTMLLinkElement).href));
     expect(preloads.map((url) => byHash.get(list.find((f) => f.url === url)?.hash ?? '')).sort()).toEqual(['cormorant-hero', 'geist-home']);
   });
@@ -239,6 +245,9 @@ for (const locale of ['es', 'en'] as const) {
       'cormorantHome|normal': 'cormorant-home',
       'geistHome|normal': 'geist-home',
       'jetbrainsHome|normal': 'jetbrains-home',
+      'greekHome|normal': 'greek-home',
+      'mathHome|normal': 'math-home',
+      'codeHome|normal': 'code-home',
     };
     // «❚» (pausa del grafo) no está en JetBrains Mono: lo pinta la mono del sistema. Su «▶» sí va en el subconjunto.
     const SYSTEM_GLYPHS: Partial<Record<HomeFont, string>> = { 'cormorant-home': 'ḗ', 'geist-home': 'ḗ', 'jetbrains-home': '→❚' };

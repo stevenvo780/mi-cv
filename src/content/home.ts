@@ -58,6 +58,9 @@ export interface HomeCopy {
     ownSites: (n: number) => string;
     /** Tarjeta de un producto que además está en un catálogo: «También en Humanizar». */
     alsoIn: (catalogs: string[]) => string;
+    /** En táctil, abre la hoja con lo que es el proyecto (con puntero, se revela al pasar); y la cierra. */
+    more: string;
+    close: string;
   };
   /** Tarjeta de cada catálogo, al frente de su rejilla. Las cifras llegan de los datos (`incluye` de cada catálogo). */
   catalogs: {
@@ -68,8 +71,6 @@ export interface HomeCopy {
     enter: string;
     /** Ítem sin enlace público (un repositorio privado). */
     private: string;
-    /** Leyenda del mapa: los ítems marcados son además una tarjeta de la página. */
-    ownCard: string;
   };
   contact: { eyebrow: string; title: string; lead: string; email: string; whatsapp: string; story: string; social: string; ecosystem: string; foot: string };
   graph: { pause: string; explore: string; openHint: string; present: string; kinds: Record<NodeKind, string> };
@@ -138,13 +139,14 @@ export const HOME: Record<Locale, HomeCopy> = {
       soon: 'Próximamente',
       ownSites: (n) => `${n} ${n === 1 ? 'proyecto' : 'proyectos'} con sitio propio`,
       alsoIn: (catalogs) => `También en ${catalogs.join(' y ')}`,
+      more: '¿Qué es?',
+      close: 'Cerrar',
     },
     catalogs: {
       eyebrow: 'Catálogos',
       label: (items, unit) => `Catálogo · ${items} ${unit}`,
       enter: 'Entrar al catálogo',
       private: 'privado',
-      ownCard: 'Tiene además su tarjeta en esta página',
     },
     contact: {
       eyebrow: 'Contacto',
@@ -212,13 +214,14 @@ export const HOME: Record<Locale, HomeCopy> = {
       soon: 'Coming soon',
       ownSites: (n) => `${n} ${n === 1 ? 'project' : 'projects'} with a site of their own`,
       alsoIn: (catalogs) => `Also in ${catalogs.join(' and ')}`,
+      more: 'What is it?',
+      close: 'Close',
     },
     catalogs: {
       eyebrow: 'Catalogs',
       label: (items, unit) => `Catalog · ${items} ${unit}`,
       enter: 'Enter the catalog',
       private: 'private',
-      ownCard: 'Also has its own card on this page',
     },
     contact: {
       eyebrow: 'Contact',

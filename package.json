@@ -12,7 +12,8 @@
     "e2e": "playwright test",
     "lighthouse": "node scripts/lighthouse.mjs",
     "graph:build": "tsx scripts/build-graph.mts",
-    "prebuild": "npm run graph:build"
+    "art:build": "tsx scripts/build-art-css.mts",
+    "prebuild": "npm run graph:build && npm run art:build"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "0.128.0",

@@ -1,0 +1,63 @@
+/* ── Arte de la home: contrato común de las escenas (catálogos) y los emblemas (tarjetas) ──
+   Cada pieza es <id>.tsx + <id>.css en esta carpeta (id del producto en data/frentes.ts). scripts/build-art-css.mts
+   une las hojas en public/art/art.<hash>.css, que Fronts.tsx enlaza en el cuerpo: fuera de la ruta crítica.
+
+   Caja. La raíz de cada pieza es <div class="art art-<id>" aria-hidden="true"> (o un <svg> con esas clases) y llena su
+   caja: .card-art en las tarjetas (16:10, contenedor «art») y .cat-scene en los catálogos (16:9 en la tarjeta ancha,
+   4:5 en la estrecha; contenedor «scene»). Las dos son contenedores de tamaño: mide todo en cqw, cqh o cqmin y la
+   pieza escala sola. Las cajas llevan content-visibility: auto, así que fuera de pantalla no se pintan ni animan.
+
+   Estados. Reposo: quieta o con un movimiento lento. Activa: .home .art-host:is(:hover, :focus-within) .art-<id> …
+   (la tarjeta entera o la escena del catálogo es .art-host). Catálogos: cada elemento de una colección lleva
+   data-k="<kind>" (CatalogoKind); al pasar por su nombre en la leyenda, esos elementos reciben --hl: 1 y los demás
+   --hl: 0 (sin leyenda activa, --hl no existe: usa var(--hl, 1)).
+
+   Movimiento. Toda animación va dentro de @media (prefers-reduced-motion: no-preference); sin ella, la pieza queda en
+   una pose fija que se entiende. La pausa del grafo (html[data-motion='paused']) la detiene aquí abajo para todas.
+   Anima transform y opacity (filter o clip-path solo si hace falta, y en pocos elementos).
+
+   Color y letra. --art-a y --art-b son los dos colores de la caja (el acento del frente, o los dos de la marca del
+   catálogo); también valen --text-strong, --text, --muted, --line, --ink-0, --ink-1 y --face. Letras: --f-code (código
+   y símbolos), --f-math (ecuaciones), --f-greek (griego), --f-display (Cormorant) y --f-sans (Geist), cada una solo con
+   los caracteres de su subconjunto (scripts/subset-fonts.sh: ART_CODE, ART_MATH, ART_GREEK).
+
+   Reglas. Todo en @layer home; cada selector empieza por .home y nombra .art-<id>; los @keyframes se llaman
+   art-<id>-…; los id de SVG empiezan por art-<id>-. Sin JS, sin <style>, sin imágenes ni URL externas, sin nada que
+   reciba el foco: el texto de la tarjeta ya lo dice todo. */
+@layer home {
+  .home .art {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    user-select: none;
+  }
+  html[data-motion='paused'] .home .art,
+  html[data-motion='paused'] .home .art *,
+  html[data-motion='paused'] .home .art *::before,
+  html[data-motion='paused'] .home .art *::after {
+    animation-play-state: paused !important;
+  }
+
+  /* Leyenda de colecciones → escena: una regla por colección conocida. */
+  .home .cat:has(.cat-kinds [data-k]:is(:hover, :focus-visible)) .cat-scene [data-k] {
+    --hl: 0;
+  }
+  .home .cat:has(.cat-kinds [data-k='curso']:is(:hover, :focus-visible)) .cat-scene [data-k='curso'],
+  .home .cat:has(.cat-kinds [data-k='ponencia']:is(:hover, :focus-visible)) .cat-scene [data-k='ponencia'],
+  .home .cat:has(.cat-kinds [data-k='tesis']:is(:hover, :focus-visible)) .cat-scene [data-k='tesis'],
+  .home .cat:has(.cat-kinds [data-k='ensayo']:is(:hover, :focus-visible)) .cat-scene [data-k='ensayo'],
+  .home .cat:has(.cat-kinds [data-k='matematicas']:is(:hover, :focus-visible)) .cat-scene [data-k='matematicas'],
+  .home .cat:has(.cat-kinds [data-k='fisica']:is(:hover, :focus-visible)) .cat-scene [data-k='fisica'],
+  .home .cat:has(.cat-kinds [data-k='sistemas-complejos']:is(:hover, :focus-visible)) .cat-scene [data-k='sistemas-complejos'],
+  .home .cat:has(.cat-kinds [data-k='emergencia']:is(:hover, :focus-visible)) .cat-scene [data-k='emergencia'],
+  .home .cat:has(.cat-kinds [data-k='computo-cientifico']:is(:hover, :focus-visible)) .cat-scene [data-k='computo-cientifico'],
+  .home .cat:has(.cat-kinds [data-k='infraestructura']:is(:hover, :focus-visible)) .cat-scene [data-k='infraestructura'],
+  .home .cat:has(.cat-kinds [data-k='asistentes']:is(:hover, :focus-visible)) .cat-scene [data-k='asistentes'],
+  .home .cat:has(.cat-kinds [data-k='herramientas']:is(:hover, :focus-visible)) .cat-scene [data-k='herramientas'],
+  .home .cat:has(.cat-kinds [data-k='inferencia']:is(:hover, :focus-visible)) .cat-scene [data-k='inferencia'],
+  .home .cat:has(.cat-kinds [data-k='producto']:is(:hover, :focus-visible)) .cat-scene [data-k='producto'],
+  .home .cat:has(.cat-kinds [data-k='servicio']:is(:hover, :focus-visible)) .cat-scene [data-k='servicio'] {
+    --hl: 1;
+  }
+}

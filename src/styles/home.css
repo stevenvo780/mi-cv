@@ -39,6 +39,10 @@
     --f-display: var(--font-home-display), Georgia, serif;
     --f-sans: var(--font-home-sans), system-ui, -apple-system, 'Segoe UI', sans-serif;
     --f-mono: var(--font-home-mono), ui-monospace, 'SFMono-Regular', monospace;
+    /* Solo del arte (src/components/home/art): griego, ecuaciones y código. */
+    --f-greek: var(--font-home-greek), var(--f-display);
+    --f-math: var(--font-home-math), 'STIX Two Math', 'Cambria Math', serif;
+    --f-code: var(--font-home-code), var(--f-mono);
     --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
     --gutter: clamp(1rem, 4vw, 3rem);
     --measure: 40rem;
@@ -753,53 +757,256 @@
     grid-template-columns: repeat(auto-fill, minmax(min(100%, 19rem), 1fr));
     gap: 1rem;
   }
+  /* Tarjeta: el emblema animado (art/<id>) manda; el texto se reduce al antetítulo, el nombre y los enlaces. Lo que es
+     el proyecto (.card-info) está en el HTML: con puntero sube sobre el emblema; en táctil lo abre «¿Qué es?». */
   .home .card {
+    position: relative;
     display: grid;
-    /* Antetítulo, nombre, descripción (se estira), «También en…» si lo hay y el pie. */
-    grid-template-rows: auto auto 1fr auto auto;
-    gap: 0.55rem;
-    padding: 1.3rem 1.35rem;
+    /* Emblema, antetítulo, nombre, «También en…» si lo hay (se estira) y el pie. */
+    grid-template-rows: auto auto auto 1fr auto;
+    align-content: start;
+    gap: 0.4rem;
+    padding-bottom: 1.05rem;
+    overflow: hidden;
     background: var(--scrim);
     border: 1px solid var(--line);
     border-radius: var(--radius);
     backdrop-filter: var(--blur);
     transition:
       border-color 0.35s,
-      transform 0.5s var(--ease-out);
+      transform 0.5s var(--ease-out),
+      box-shadow 0.5s;
   }
-  .home .card:hover {
+  .home .card > :not(.card-art, .card-info) {
+    margin-inline: 1.25rem;
+  }
+  .home .card:is(:hover, :focus-within) {
     border-color: color-mix(in oklab, var(--accent) 55%, transparent);
-    transform: translateY(-3px);
+    box-shadow: 0 24px 60px -34px color-mix(in oklab, var(--accent) 70%, transparent);
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .home .card:is(:hover, :focus-within) {
+      transform: translateY(-3px);
+    }
+  }
+  /* La caja del emblema: 16:10 a sangre, contenedor de tamaño (el arte mide en cq*) y sin pintar fuera de pantalla. */
+  .home .card-art {
+    --art-a: var(--accent);
+    --art-b: var(--gold-2);
+    position: relative;
+    aspect-ratio: 16 / 10;
+    margin-bottom: 0.55rem;
+    container: art / size;
+    content-visibility: auto;
+    contain-intrinsic-size: auto 16rem;
+    overflow: hidden;
+    border-bottom: 1px solid var(--line);
+    background:
+      radial-gradient(120% 90% at 50% 110%, color-mix(in oklab, var(--accent) 18%, transparent), transparent 60%),
+      linear-gradient(180deg, var(--ink-1), var(--ink-0));
   }
   .home .card-kicker {
     font-family: var(--f-mono);
-    font-size: 0.7rem;
+    font-size: 0.68rem;
     letter-spacing: 0.12em;
+    line-height: 1.4;
     text-transform: uppercase;
     color: var(--accent);
   }
   .home .card h4 {
     font-family: var(--f-display);
-    font-size: 1.75rem;
+    font-size: 1.7rem;
     line-height: 1.05;
     color: var(--text-strong);
   }
   .home .card-desc {
-    font-size: 0.92rem;
+    font-size: 0.9rem;
     line-height: 1.55;
-    color: var(--text-soft);
+    color: var(--text);
+    text-wrap: pretty;
   }
   .home .card-foot {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 0.6rem;
-    margin-top: 0.4rem;
+    gap: 0.4rem 1rem;
+    margin-top: 0.35rem;
   }
   .home .card-link {
     padding-block: 0.35rem;
     font-size: 0.88rem;
     color: var(--text-strong);
+  }
+  .home .card-badge {
+    margin-top: 0.7rem;
+  }
+  /* «¿Qué es?» y «Cerrar»: solo en táctil (con puntero, el texto se revela al pasar). */
+  .home .card-more,
+  .home .card-close {
+    display: none;
+    padding: 0.4rem 0.85rem;
+    border: 1px solid color-mix(in oklab, var(--accent) 55%, transparent);
+    border-radius: 999px;
+    background: color-mix(in oklab, var(--accent) 12%, transparent);
+    font: inherit;
+    font-size: 0.82rem;
+    color: var(--text-strong);
+    cursor: pointer;
+  }
+  .home .card-info-name {
+    display: none;
+  }
+
+  /* Con puntero: el texto se abre sobre toda la tarjeta como un portal que nace del centro del emblema, en cristal
+     (el arte sigue detrás, desenfocado); el nombre y el texto aparecen de arriba abajo tras una máscara que se desliza y
+     un desenfoque que se aclara, y la insignia llega al final. Los enlaces del pie quedan encima. Se abre también al
+     enfocar un enlace de la tarjeta (teclado). */
+  @media (hover: hover) and (pointer: fine) {
+    .home .card-info {
+      display: flex;
+      flex-direction: column;
+      gap: 0.55rem;
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      width: auto;
+      height: auto;
+      margin: 0;
+      padding: 1.25rem 1.25rem 3.6rem;
+      overflow: hidden;
+      border: 0;
+      background:
+        radial-gradient(120% 70% at 50% 0%, color-mix(in oklab, var(--accent) 16%, transparent), transparent 70%),
+        rgb(5 9 11 / 0.84);
+      backdrop-filter: blur(7px) saturate(0.8);
+      color: var(--text);
+      pointer-events: none;
+      clip-path: circle(0% at 50% 31%);
+      transition: clip-path 0.7s var(--ease-out);
+    }
+    .home .card-foot {
+      position: relative;
+      z-index: 3;
+    }
+    .home .card-info .card-info-name {
+      display: block;
+      font-family: var(--f-display);
+      font-size: 1.5rem;
+      line-height: 1;
+      color: var(--text-strong);
+    }
+    .home .card-info > :is(.card-info-name, .card-desc, .card-badge) {
+      opacity: 0;
+      filter: blur(5px);
+      transform: translateY(0.7rem);
+      mask-image: linear-gradient(180deg, #000 40%, transparent 60%);
+      mask-size: 100% 250%;
+      mask-position: 0 100%;
+      transition:
+        opacity 0.35s,
+        filter 0.6s,
+        transform 0.7s var(--ease-out),
+        mask-position 1s var(--ease-out);
+    }
+    .home .card-info .card-desc {
+      font-size: 0.88rem;
+      line-height: 1.5;
+      transition-delay: 0.1s;
+    }
+    .home .card-info .card-badge {
+      margin-top: auto;
+      transition-delay: 0.3s;
+    }
+    .home .card:is(:hover, :focus-within) .card-info {
+      clip-path: circle(150% at 50% 31%);
+    }
+    .home .card:is(:hover, :focus-within) .card-info > * {
+      opacity: 1;
+      filter: none;
+      transform: none;
+      mask-position: 0 0;
+    }
+  }
+  @media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: reduce) {
+    .home .card-info {
+      clip-path: none;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    .home .card:is(:hover, :focus-within) .card-info {
+      clip-path: none;
+      opacity: 1;
+    }
+    .home .card-info > :is(.card-info-name, .card-desc, .card-badge) {
+      filter: none;
+      transform: none;
+      mask-image: none;
+      transition: opacity 0.2s;
+    }
+  }
+
+  /* Táctil: «¿Qué es?» abre el texto como una hoja que sube del borde inferior (popover nativo, sin JS). */
+  @media not ((hover: hover) and (pointer: fine)) {
+    .home .card-more,
+    .home .card-close {
+      display: inline-flex;
+    }
+    .home .card-info:popover-open {
+      position: fixed;
+      inset: auto 0 0;
+      width: 100%;
+      max-width: none;
+      max-height: 78vh;
+      margin: 0;
+      padding: 1.6rem var(--gutter) calc(1.4rem + env(safe-area-inset-bottom));
+      overflow: auto;
+      border: 0;
+      border-top: 1px solid color-mix(in oklab, var(--accent) 60%, transparent);
+      border-radius: 24px 24px 0 0;
+      background:
+        radial-gradient(120% 60% at 50% 0%, color-mix(in oklab, var(--accent) 16%, transparent), transparent 70%),
+        var(--ink-1);
+      color: var(--text);
+      box-shadow: 0 -30px 60px -20px rgb(0 0 0 / 0.8);
+      transition:
+        transform 0.5s var(--ease-out),
+        opacity 0.3s,
+        overlay 0.5s allow-discrete,
+        display 0.5s allow-discrete;
+    }
+    @starting-style {
+      .home .card-info:popover-open {
+        transform: translateY(100%);
+        opacity: 0;
+      }
+    }
+    .home .card-info::backdrop {
+      background: rgb(3 6 8 / 0.6);
+    }
+    .home .card-info .card-info-name {
+      display: block;
+      margin-bottom: 0.6rem;
+      font-family: var(--f-display);
+      font-size: 2rem;
+      line-height: 1;
+      color: var(--text-strong);
+    }
+    .home .card-info .card-desc {
+      font-size: 1rem;
+    }
+    .home .card-info .card-close {
+      margin-top: 1.1rem;
+    }
+  }
+  /* Sin popover (navegadores antiguos): el texto queda en la tarjeta, sin botones. */
+  @supports not selector(:popover-open) {
+    .home .card-info {
+      display: block;
+    }
+    .home .card-more,
+    .home .card-close {
+      display: none !important;
+    }
   }
   .home .chip {
     display: inline-flex;
@@ -1030,6 +1237,10 @@
     background: var(--cat);
     box-shadow: 0 0 10px var(--cat);
   }
+  .home .cat-head {
+    display: grid;
+    gap: 0.6rem;
+  }
   .home .cat-title {
     display: flex;
     align-items: baseline;
@@ -1038,19 +1249,15 @@
   }
   .home .cat h4 {
     font-family: var(--f-display);
-    font-size: clamp(3rem, 6vw, 5.2rem);
+    font-size: clamp(2.8rem, 5.5vw, 4.6rem);
     line-height: 0.95;
     letter-spacing: -0.025em;
     color: var(--text-strong);
   }
-  /* Humanizar tiene un nombre más largo: conserva la escala del sistema sin tocar la cifra. */
-  .home .cat[data-cat='humanizar'] h4 {
-    font-size: clamp(3rem, 5vw, 4.3rem);
-  }
-  /* La cifra, enorme y en contorno: se ve de lejos que dentro hay muchos. El rótulo la dice en texto. */
+  /* La cifra en contorno: se ve de lejos que dentro hay muchos. El rótulo la dice en texto. */
   .home .cat-count {
     font-family: var(--f-display);
-    font-size: clamp(3.6rem, 7.5vw, 6.6rem);
+    font-size: clamp(3rem, 6vw, 5rem);
     font-variant-numeric: lining-nums;
     line-height: 0.8;
     color: transparent;
@@ -1058,25 +1265,67 @@
   }
   .home .cat-tagline {
     font-family: var(--f-display);
-    font-size: clamp(1.25rem, 1.8vw, 1.5rem);
+    font-size: clamp(1.2rem, 1.8vw, 1.45rem);
     line-height: 1.2;
     color: var(--cat);
   }
+  /* Dos líneas: la escena cuenta el resto. Entero en el HTML; al pasar por la cabecera, completo. */
   .home .cat-desc {
     max-width: var(--measure);
-    font-size: 0.95rem;
-    line-height: 1.6;
+    font-size: 0.92rem;
+    line-height: 1.55;
     color: var(--text-soft);
-    text-wrap: pretty;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    overflow: hidden;
   }
-  .home .cat-actions {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 0.75rem 1.25rem;
-    margin-top: 0.35rem;
+  .home .cat-head:hover .cat-desc {
+    -webkit-line-clamp: unset;
+    line-clamp: none;
   }
+  /* La escena (art/<id>): el enlace al catálogo. 16:9 en la tarjeta ancha, 4:5 en la estrecha; contenedor de tamaño. */
+  .home .cat-scene {
+    --art-a: var(--cat);
+    --art-b: var(--cat-2);
+    position: relative;
+    display: block;
+    aspect-ratio: 16 / 9;
+    container: scene / size;
+    content-visibility: auto;
+    contain-intrinsic-size: auto 28rem;
+    overflow: hidden;
+    border: 1px solid color-mix(in oklab, var(--cat) 28%, transparent);
+    border-radius: 16px;
+    background:
+      radial-gradient(90% 80% at 50% 50%, color-mix(in oklab, var(--cat) 10%, transparent), transparent 70%),
+      color-mix(in oklab, var(--cat) 3%, var(--ink-0));
+    color: var(--text);
+    text-decoration: none;
+    transition:
+      border-color 0.4s,
+      box-shadow 0.5s;
+  }
+  .home .cat-scene:is(:hover, :focus-visible) {
+    border-color: color-mix(in oklab, var(--cat) 70%, transparent);
+    box-shadow: 0 0 60px -20px color-mix(in oklab, var(--cat) 70%, transparent);
+  }
+  .home .cat-scene:focus-visible {
+    outline: 2px solid var(--cat);
+    outline-offset: 3px;
+  }
+  @container cat (max-width: 40rem) {
+    .home .cat-scene {
+      aspect-ratio: 4 / 5;
+    }
+  }
+  /* «Entrar al catálogo ↗»: el rótulo del enlace, sobre la escena. */
   .home .cat-enter {
+    position: absolute;
+    right: 1rem;
+    bottom: 1rem;
+    z-index: 2;
     display: inline-flex;
     align-items: center;
     gap: 0.45em;
@@ -1086,24 +1335,52 @@
     background: var(--cat);
     color: var(--ink-0);
     font-weight: 600;
-    text-decoration: none;
+    box-shadow: 0 10px 30px -10px rgb(0 0 0 / 0.8);
     transition:
       transform 0.4s var(--ease-out),
       box-shadow 0.4s;
   }
-  .home .cat-enter:hover {
-    transform: translateY(-1px);
+  .home .cat-scene:is(:hover, :focus-visible) .cat-enter {
+    transform: translateY(-2px);
     box-shadow: 0 0 26px -4px var(--cat);
   }
-  .home .cat-private {
-    margin-left: 0.3rem;
+  /* Leyenda: las colecciones con su cifra; al pasar por una, la escena la enciende (art/_shared.css, --hl). */
+  .home .cat-kinds {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+  }
+  .home .cat-kinds li {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.35rem 0.75rem;
+    border: 1px solid color-mix(in oklab, var(--cat) 30%, transparent);
+    border-radius: 999px;
+    background: color-mix(in oklab, var(--cat) 7%, transparent);
     font-family: var(--f-mono);
-    font-size: 0.62rem;
+    font-size: 0.66rem;
     letter-spacing: 0.12em;
     text-transform: uppercase;
+    color: var(--cat);
+    cursor: default;
+    transition:
+      background-color 0.3s,
+      border-color 0.3s;
+  }
+  .home .cat-kinds li:hover {
+    border-color: var(--cat);
+    background: color-mix(in oklab, var(--cat) 18%, transparent);
+  }
+  .home .cat-kind-n {
     color: var(--muted);
   }
-  /* Otra forma de recorrer el catálogo, con sitio propio (Umbral para Kósmos). */
+  .home .cat-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem 1.25rem;
+  }
   .home .cat-view {
     font-size: 0.9rem;
     color: var(--text-soft);
@@ -1112,416 +1389,12 @@
     color: var(--cat);
     font-weight: 600;
   }
-
-  /* ── Lo que reúne el catálogo: un grafo (lib/catalogMap.ts) ──
-     Por defecto (tarjeta estrecha) es un árbol por colección: el nombre de la colección con su nodo, una espina y cada
-     ítem colgando de ella. Con 51.5rem de tarjeta o más (ventanas desde 1 280 px) es el mapa: el catálogo en el centro y las aristas saliendo de él. */
-  .home .cg {
-    /* Elemento de la rejilla de la cara: sin min-width 0, el carrusel del móvil (su hijo) la ensancharía entera. */
-    min-width: 0;
-    margin-top: 0.75rem;
-  }
-  .home .cg-edges {
-    display: none;
-  }
-  .home .cg-groups {
-    columns: 14rem;
-    column-gap: 1rem;
-  }
-  .home .cg-g {
-    break-inside: avoid;
-    margin-bottom: 1rem;
-    padding: 0.85rem 1rem 0.55rem;
-    border: 1px solid color-mix(in oklab, var(--cat) 18%, transparent);
-    border-radius: 14px;
-    background: rgb(232 224 212 / 0.03);
-    transition:
-      border-color 0.4s,
-      background-color 0.4s,
-      opacity 0.35s;
-  }
-  .home .cat:is(:hover, :focus-within) .cg-g {
-    border-color: color-mix(in oklab, var(--cat) 40%, transparent);
-    background: color-mix(in oklab, var(--cat) 6%, transparent);
-  }
-  .home .cg-head {
-    display: flex;
-    justify-content: space-between;
-    gap: 0.75rem;
-    font-family: var(--f-mono);
-    font-size: 0.66rem;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--cat);
-  }
-  .home .cg-n {
-    color: var(--muted);
-  }
-  /* El nodo de la colección: un rombo con la luz de la marca. */
-  .home .cg-head::before {
-    content: '';
-    flex: none;
-    order: -1;
-    align-self: center;
-    width: 0.5rem;
-    height: 0.5rem;
-    margin-right: -0.35rem;
-    transform: rotate(45deg);
-    border: 1.5px solid var(--cat);
-    background: var(--face);
-    box-shadow: 0 0 10px color-mix(in oklab, var(--cat) 70%, transparent);
-  }
-  .home .cg-head span:first-child {
-    flex: 1;
-  }
-  /* La espina de la colección y un nodo por ítem. */
-  .home .cg-g ul {
-    margin: 0.45rem 0 0 0.24rem;
-    padding-left: 0.95rem;
-    border-left: 1px solid color-mix(in oklab, var(--cat) 35%, transparent);
-  }
-  .home .cg-g li {
-    position: relative;
-  }
-  .home .cg-g li::before {
-    content: '';
-    position: absolute;
-    left: -0.95rem;
-    top: 1.05em;
-    width: 0.4rem;
-    height: 0.4rem;
-    border-radius: 50%;
-    background: var(--cat);
-    transform: translate(-50%, -50%);
-    box-shadow: 0 0 8px color-mix(in oklab, var(--cat) 80%, transparent);
-    transition: transform 0.3s var(--ease-out);
-  }
-  /* Nodo hueco: el ítem tiene además su tarjeta en la página. */
-  .home .cg-g li.cg-own::before {
-    width: 0.5rem;
-    height: 0.5rem;
-    background: var(--face);
-    border: 1.5px solid var(--cat);
-  }
-  .home .cg-g li > a,
-  .home .cg-g li > span {
-    display: block;
-    padding: 0.32rem 0;
-    font-size: 0.86rem;
-    line-height: 1.35;
-    color: var(--text);
-    text-decoration: none;
-    transition: color 0.25s;
-  }
-  .home .cg-g li > a:hover,
-  .home .cg-g li > a:focus-visible {
-    color: var(--cat);
-  }
-  .home .cg-g li:has(> a:is(:hover, :focus-visible))::before {
-    transform: translate(-50%, -50%) scale(1.6);
-  }
-  .home .cg-legend {
-    display: flex;
-    align-items: center;
-    gap: 0.55rem;
-    font-family: var(--f-mono);
-    font-size: 0.66rem;
-    letter-spacing: 0.08em;
-    color: var(--muted);
-  }
-  .home .cg-legend::before {
-    content: '';
-    flex: none;
-    width: 0.5rem;
-    height: 0.5rem;
-    border-radius: 50%;
-    border: 1.5px solid var(--cat);
-  }
-
-  /* El mapa. El nombre del catálogo es el centro (misma celda de la rejilla que el mapa) y las colecciones se reparten
-     a los dos lados; x e y de cada nodo llegan como variables (--xi, --xg, --hy, --y), en % del mapa. */
-  @container cat (min-width: 51.5rem) {
-    .home .cat-face {
-      /* Menos relleno lateral: el ancho es del mapa (lib/catalogMap.ts cuenta con 1.6rem). */
-      padding-inline: 1.6rem;
-      grid-template-columns: minmax(0, 1fr) auto;
-      grid-template-areas:
-        'label actions'
-        'tagline actions'
-        'desc desc'
-        'view view'
-        'map map'
-        'legend legend';
-      row-gap: 0;
-      column-gap: 1.5rem;
-    }
-    .home .cat-label {
-      grid-area: label;
-    }
-    .home .cat-actions {
-      grid-area: actions;
-      align-self: start;
-      justify-content: flex-end;
-      margin: 0;
-    }
-    .home .cat-tagline {
-      grid-area: tagline;
-      margin-top: 0.7rem;
-    }
-    .home .cat-desc {
-      grid-area: desc;
-      margin-top: 0.6rem;
-    }
-    .home .cat-view {
-      grid-area: view;
-      margin-top: 0.6rem;
-    }
-    .home .cg-legend {
-      grid-area: legend;
-      justify-content: center;
-      margin-top: 0.5rem;
-    }
-    .home .cg {
-      grid-area: map;
-      position: relative;
-      height: calc(var(--rows) * 1.3rem);
-      margin-top: 1.25rem;
-    }
-    /* El centro: el nombre delante de la cifra en contorno, con un halo que tapa el nacimiento de las aristas. */
-    .home .cat-title {
-      grid-area: map;
-      place-self: center;
-      display: grid;
-      place-items: center;
-      position: relative;
-      z-index: 1;
-      margin-top: 1.25rem;
-      /* El hueco entre los nodos de colección (MAP.groupX: 41 % a 59 %). */
-      width: 18%;
-      pointer-events: none;
-    }
-    /* Halo del centro: tapa el nacimiento de las aristas y se desvanece antes de los nodos de colección. */
-    .home .cat-title::before {
-      content: '';
-      position: absolute;
-      inset: -60% 0;
-      z-index: -2;
-      background: radial-gradient(closest-side, var(--face) 45%, color-mix(in oklab, var(--face) 0%, transparent));
-    }
-    .home .cat-title > * {
-      grid-area: 1 / 1;
-    }
-    .home .cat h4 {
-      font-size: clamp(1.7rem, 4cqi, 2.4rem);
-      text-align: center;
-    }
-    /* El nombre más largo cabe entre los dos nodos de colección más cercanos. */
-    .home .cat[data-cat='humanizar'] h4 {
-      font-size: clamp(1.5rem, 3.4cqi, 2rem);
-    }
-    .home .cat-count {
-      z-index: -1;
-      font-size: clamp(6rem, 15cqi, 9.5rem);
-      -webkit-text-stroke-color: color-mix(in oklab, var(--cat) 38%, transparent);
-    }
-    .home .cg-edges {
-      display: block;
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      overflow: visible;
-    }
-    .home .cg-edges path {
-      fill: none;
-      vector-effect: non-scaling-stroke;
-      transition:
-        stroke 0.3s,
-        stroke-width 0.3s,
-        opacity 0.3s;
-    }
-    .home .cg-base path {
-      stroke: color-mix(in oklab, var(--cat) 42%, transparent);
-      stroke-width: 1.1;
-    }
-    .home .cg-flow path {
-      stroke: var(--cat);
-      stroke-width: 1.8;
-      stroke-linecap: round;
-      stroke-dasharray: 0.004 0.06;
-      opacity: 0;
-    }
-    .home .cg-groups {
-      columns: auto;
-    }
-    .home .cg-g,
-    .home .cat:is(:hover, :focus-within) .cg-g {
-      margin: 0;
-      padding: 0;
-      border: 0;
-      background: none;
-    }
-    .home .cg-g ul {
-      margin: 0;
-      padding: 0;
-      border: 0;
-    }
-    /* Cada ítem es una línea de altura cero a su y; la etiqueta se centra en ella, a un lado de su nodo. */
-    .home .cg-g li {
-      position: absolute;
-      left: 0;
-      top: calc(var(--y) * 1%);
-      width: 100%;
-      height: 0;
-    }
-    .home .cg-g li::before {
-      left: calc(var(--xi) * 1%);
-      top: 0;
-    }
-    .home .cg-g[data-side='r'] li::before {
-      left: calc(100% - var(--xi) * 1%);
-    }
-    .home .cg-g li > a,
-    .home .cg-g li > span {
-      position: absolute;
-      top: 0;
-      right: calc(100% - (var(--xi) - 1.5) * 1%);
-      width: calc((var(--xi) - 1.5) * 1%);
-      padding: 0;
-      transform: translateY(-50%);
-      font-size: 0.8rem;
-      line-height: 1.25;
-      text-align: right;
-      text-wrap: balance;
-    }
-    .home .cg-g[data-side='r'] li > a,
-    .home .cg-g[data-side='r'] li > span {
-      right: auto;
-      left: calc(100% - (var(--xi) - 1.5) * 1%);
-      text-align: left;
-    }
-    /* El nombre de la colección va en la columna de etiquetas, en su fila; su nodo, más cerca del centro. */
-    .home .cg-head {
-      position: absolute;
-      top: calc(var(--hy) * 1%);
-      right: calc(100% - (var(--xi) - 1.5) * 1%);
-      width: calc((var(--xi) - 1.5) * 1%);
-      justify-content: flex-end;
-      gap: 0.45rem;
-      font-size: 0.62rem;
-      letter-spacing: 0.1em;
-      line-height: 1.2;
-      text-align: right;
-      transform: translateY(-50%);
-    }
-    .home .cg-head span:first-child {
-      flex: 0 1 auto;
-    }
-    .home .cg-head::before {
-      position: absolute;
-      left: calc(100% + (var(--xg) - var(--xi) + 1.5) / (var(--xi) - 1.5) * 100%);
-      top: 50%;
-      width: 0.62rem;
-      height: 0.62rem;
-      margin: 0;
-      transform: translate(-50%, -50%) rotate(45deg);
-    }
-    .home .cg-g[data-side='r'] .cg-head {
-      right: auto;
-      left: calc(100% - (var(--xi) - 1.5) * 1%);
-      justify-content: flex-start;
-      text-align: left;
-    }
-    .home .cg-g[data-side='r'] .cg-head::before {
-      left: calc(-1 * (var(--xg) - var(--xi) + 1.5) / (var(--xi) - 1.5) * 100%);
-    }
-    /* Pasar por una colección la enciende: sus aristas, su nodo y sus ítems; las demás se apagan. */
-    .home .cg:has(.cg-g:is(:hover, :focus-within)) .cg-g:not(:hover, :focus-within) {
-      opacity: 0.38;
-    }
-    .home .cg:has(.cg-g:is(:hover, :focus-within)) .cg-base path {
-      opacity: 0.35;
-    }
-    .home .cg:has(.cg-g:nth-child(1):is(:hover, :focus-within)) .cg-base path:nth-child(1),
-    .home .cg:has(.cg-g:nth-child(2):is(:hover, :focus-within)) .cg-base path:nth-child(2),
-    .home .cg:has(.cg-g:nth-child(3):is(:hover, :focus-within)) .cg-base path:nth-child(3),
-    .home .cg:has(.cg-g:nth-child(4):is(:hover, :focus-within)) .cg-base path:nth-child(4),
-    .home .cg:has(.cg-g:nth-child(5):is(:hover, :focus-within)) .cg-base path:nth-child(5),
-    .home .cg:has(.cg-g:nth-child(6):is(:hover, :focus-within)) .cg-base path:nth-child(6) {
-      opacity: 1;
-      stroke: var(--cat);
-      stroke-width: 1.7;
-    }
-  }
-  /* Con movimiento: las aristas se trazan desde el centro al entrar la tarjeta y luego las recorren pulsos, como en el
-     grafo del hero. Sin movimiento o en pausa, quedan trazadas y quietas. */
-  @media (prefers-reduced-motion: no-preference) {
-    @container cat (min-width: 51.5rem) {
-      .home .cg-flow path {
-        opacity: 0.85;
-        animation: home-cg-flow 5s linear infinite;
-      }
-    }
-  }
-  @supports (animation-timeline: view()) {
-    @media (prefers-reduced-motion: no-preference) {
-      @container cat (min-width: 51.5rem) {
-        /* Las aristas se abren desde el centro mientras el mapa entra, con una sola línea de tiempo para todo el mapa:
-           al terminar de entrar están enteras. Un recorte y no stroke-dasharray, que con non-scaling-stroke no mide bien. */
-        .home .cg {
-          view-timeline: --cg block;
-        }
-        .home .cg-edges {
-          animation: home-cg-draw linear both;
-          animation-timeline: --cg;
-          animation-range: entry 0% entry 100%;
-        }
-      }
-    }
-  }
-  html[data-motion='paused'] .home .cg-flow path,
-  html[data-motion='paused'] .home .cg-edges {
-    animation: none;
-  }
-  @keyframes home-cg-flow {
-    to {
-      stroke-dashoffset: -0.128;
-    }
-  }
-  @keyframes home-cg-draw {
-    from {
-      clip-path: inset(0 50%);
-    }
-    to {
-      clip-path: inset(0 0);
-    }
-  }
   @media (max-width: 600px) {
     .home .cat::before {
       inset: 0 0.9rem;
     }
     .home .cat::after {
       inset: 0 1.8rem;
-    }
-    .home .cg-groups {
-      display: grid;
-      grid-auto-flow: column;
-      grid-auto-columns: minmax(14rem, 80%);
-      gap: 0.75rem;
-      columns: auto;
-      /* A sangre hasta el borde de la cara: el carrusel se desliza bajo el relleno. */
-      margin-inline: calc(-1 * clamp(1.35rem, 3vw, 2.4rem));
-      padding: 0 clamp(1.35rem, 3vw, 2.4rem) 0.5rem;
-      scroll-padding-inline: clamp(1.35rem, 3vw, 2.4rem);
-      overflow-x: auto;
-      overscroll-behavior-x: contain;
-      scroll-snap-type: x mandatory;
-      scrollbar-width: thin;
-      scrollbar-color: color-mix(in oklab, var(--cat) 45%, transparent) transparent;
-    }
-    .home .cg-g {
-      margin: 0;
-      scroll-snap-align: start;
     }
   }
 
@@ -1575,7 +1448,7 @@
   .home .front-body:not(:has(.card:not([hidden]))) .cards-divider {
     display: none;
   }
-  /* «También en Humanizar»: la tarjeta es además un ítem de ese catálogo (su nodo hueco en el mapa). */
+  /* «También en Humanizar»: la tarjeta es además un ítem de ese catálogo. */
   .home .card-in {
     display: flex;
     align-items: center;

@@ -53,4 +53,38 @@ export const jetbrainsHome = localFont({
   adjustFontFallback: 'Arial',
 });
 
-export const HOME_FONT_VARIABLES = [cormorantHero, cormorantHome, geistHome, jetbrainsHome].map((f) => f.variable).join(' ');
+/**
+ * Las tres del arte (escenas de los catálogos y emblemas de las tarjetas, src/components/home/art): griego, ecuaciones
+ * y código. Sin precarga: el arte está debajo del hero y no se pinta hasta acercarse (content-visibility), así que el
+ * navegador no las pide antes. Sin respaldo ajustado: el arte no mueve texto de la página al llegar la fuente.
+ */
+export const greekHome = localFont({
+  src: '../../fonts/greek-home.woff2',
+  weight: '400 500',
+  variable: '--font-home-greek',
+  display: 'swap',
+  preload: false,
+  adjustFontFallback: false,
+});
+
+export const mathHome = localFont({
+  src: '../../fonts/math-home.woff2',
+  weight: '400',
+  variable: '--font-home-math',
+  display: 'swap',
+  preload: false,
+  adjustFontFallback: false,
+});
+
+export const codeHome = localFont({
+  src: '../../fonts/code-home.woff2',
+  weight: '400 500',
+  variable: '--font-home-code',
+  display: 'swap',
+  preload: false,
+  adjustFontFallback: false,
+});
+
+export const HOME_FONT_VARIABLES = [cormorantHero, cormorantHome, geistHome, jetbrainsHome, greekHome, mathHome, codeHome]
+  .map((f) => f.variable)
+  .join(' ');
