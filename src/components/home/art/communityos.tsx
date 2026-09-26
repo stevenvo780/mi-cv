@@ -8,24 +8,25 @@ interface Isla {
   n: number;
   f: number;
   v: number;
+  d: number;
   pos: string;
   e?: number;
 }
 
 /* Tres comunidades en la misma instancia, aisladas por tenantId: Cafetería del Caos (la comunidad sembrada del demo,
    con su taza), Koinonía al centro con su isotipo y una por crear (el «+» con el que Discord añade un servidor).
-   c: color; n: miembros del anillo; f: XP del nivel en curso (%); v: quien habla en voz; e: desde aquí, puestos libres;
-   pos: centro (x, y) y escala de la isla. */
+   c: color; n: miembros del anillo; f: XP del nivel en curso (%); v: quien habla en voz; d: desfase (s) de la voz y del
+   ritmo de la XP (Koinonía en 0, al compás de sus estrellas); e: desde aquí, puestos libres; pos: centro (x, y) y escala. */
 const ISLAS: Isla[] = [
-  { c: 'var(--violet)', n: 6, f: 62, v: 4, pos: '18.5 33 .7' },
-  { c: 'var(--teal)', n: 8, f: 44, v: 1, pos: '50 28 1' },
-  { c: 'var(--bl)', n: 6, f: 22, v: 0, pos: '81.5 33 .7', e: 3 },
+  { c: 'var(--violet)', n: 6, f: 62, v: 4, d: 5, pos: '18.5 33 .7' },
+  { c: 'var(--teal)', n: 8, f: 44, v: 1, d: 0, pos: '50 28 1' },
+  { c: 'var(--bl)', n: 6, f: 22, v: 0, d: 2.5, pos: '81.5 33 .7', e: 3 },
 ];
 
 /* Top de usuarios de Koinonía, dentro de su propio muro: podio con el oro, la plata y el bronce del sitio.
    p: puesto en reposo; q: tras la subida de nivel (el tercero pasa a primero). */
 const PODIO = ['au', 'ag', 'cu'];
-const TOP = [
+const TOP: [number, number][] = [
   [0, 1],
   [1, 2],
   [2, 0],
@@ -38,11 +39,13 @@ export default function Art(_: ArtProps) {
       {ISLAS.map((s, k) => {
         const [x, y, z] = s.pos.split(' ');
         return (
-          <div key={s.c} className="t" style={css({ ...(k === 2 ? { '--k': 'var(--g)' } : {}), '--c': s.c, '--n': s.n, '--f': s.f, '--d': `${k * 2.5}s`, left: `${x}cqw`, top: `${y}cqw`, scale: z })}>
+          <div key={s.c} className="t" style={css({ ...(k === 2 ? { '--k': 'var(--g)' } : {}), '--c': s.c, '--n': s.n, '--d': `${s.d}s`, left: `${x}cqw`, top: `${y}cqw`, scale: z })}>
+            {/* El «+» de añadir servidor, en el verde de Discord (--k). */}
             <b>{k === 2 ? '+' : null}</b>
             <svg viewBox="-16 -16 32 32">
               <circle r="15" strokeWidth=".8" opacity=".18" />
-              <circle className="k" r="15" pathLength={100} transform="rotate(-90)" strokeWidth="1" strokeDasharray="100" />
+              {/* Anillo de XP: pathLength 100, así que el trazo visible es la XP en %. */}
+              <circle className="k" r="15" pathLength={100} transform="rotate(-90)" strokeWidth="1" strokeDasharray="100" strokeDashoffset={100 - s.f} />
               {/* Taza de la Cafetería del Caos; isotipo de Koinonía: cuatro anillos en comunión y su núcleo. */}
               {k === 0 ? (
                 <>
