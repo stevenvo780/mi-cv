@@ -164,8 +164,8 @@ export const frentesMeta: Record<FrenteId, FrenteMeta> = {
       en: 'Production business software, with real clients.',
     },
     descripcion: {
-      es: 'El frente empresarial: software en producción con clientes reales — Prizma (suite modular para PYME), Graf (pedidos y logística de domicilios) y Deméter (gestión operativa para distribuidoras de alimentos).',
-      en: 'The business front: production software with real clients — Prizma (modular SMB suite), Graf (orders & last-mile delivery) and Deméter (operations platform for food distributors).',
+      es: 'El frente empresarial: Prizma (suite modular para PYME), Graf (pedidos y logística de domicilios), Deméter (gestión operativa para distribuidoras de alimentos) y Gravitatoria (red social de comercios de Colombia).',
+      en: 'The business front: Prizma (modular SMB suite), Graf (orders & last-mile delivery), Deméter (operations platform for food distributors) and Gravitatoria (a social network for Colombian businesses).',
     },
   },
 };
@@ -664,6 +664,22 @@ export const productos: Producto[] = [
 
   /* ===================== ENTERPRISE ===================== */
   {
+    id: 'gravitatoria',
+    frente: 'enterprise',
+    nombre: 'Gravitatoria',
+    subtitulo: {
+      es: 'Red social de comercios de Colombia',
+      en: 'Social network for Colombian businesses',
+    },
+    descripcion: {
+      es: 'Red social donde los comercios publican lo que ofrecen y lo que necesitan, se siguen y se contactan en nombre de su negocio. Permite buscar productos, servicios y comercios por municipio, explorar su cobertura en el mapa y conectar necesidades con ofertas.',
+      en: 'A social network where businesses publish what they offer and need, follow each other and connect on behalf of their business. Search products, services and businesses by municipality, explore their coverage on the map and connect needs with offers.',
+    },
+    url: 'https://gravitatoria.humanizar.tech/',
+    status: 'live',
+    badge: { es: 'Red de comercios', en: 'Business network' },
+  },
+  {
     id: 'humanizar',
     frente: 'enterprise',
     nombre: 'Humanizar',
@@ -785,6 +801,7 @@ export const productTags: Record<string, string[]> = {
   prizma: ['suite empresarial', 'POS', 'facturación DIAN', 'crédito', 'WhatsApp', 'marketing', 'e-commerce', 'logística', 'CRM', 'microservicios', 'Cloud Run', 'talanton', 'pistis', 'iris', 'hermes', 'talaria'],
   graf: ['pedidos', 'domicilios', 'logística', 'última milla', 'delivery', 'clientes', 'comercio', 'plataforma', 'producción'],
   demeter: ['distribución', 'alimentos', 'pedidos', 'rutas', 'facturación DIAN', 'cartera', 'inventario', 'HORECA', 'logística', 'multi-empresa', 'despacho'],
+  gravitatoria: ['comercios', 'negocios', 'red social', 'productos', 'servicios', 'ofertas', 'necesidades', 'municipios', 'mapa', 'Colombia', 'Humanizar', 'businesses', 'social network', 'products', 'services', 'offers', 'needs', 'municipalities', 'map'],
 };
 
 /* ---------------------------------------------------------------- */
@@ -797,13 +814,13 @@ export const productTags: Record<string, string[]> = {
  *   Xenía), Apothḗke y Nómos; comunidad y código abierto (Koinonía, Téchne); Áporía, que aún no está en línea.
  * - Filosofía: las plataformas en uso (Ágora, Agón) y el par de gobierno universitario de la UdeA.
  * - Ciencias: Umbral, junto a Kósmos porque recorre sus mismos repositorios; la tesis; las plataformas para aprender.
- * - Empresarial: por tracción, de Graf (el de más clientes) a Prizma.
+ * - Empresarial: Graf, Deméter, Prizma y la red de comercios Gravitatoria.
  */
 export const ordenHome: Record<FrenteId, string[]> = {
   informatica: ['cauce-v3', 'nlp-to-logic', 'eikon', 'devkits', 'devkits-hours', 'devkits-crm', 'warehouse', 'scrapekit', 'communityos', 'stevendevbox', 'aporia'],
   filosofia: ['agora', 'debatesuite', 'koinonia-udea', 'gobierno-universitario-udea'],
   ciencias: ['umbral-atlas', 'estructuras-preontologicas', 'noesis-lab', 'phusis'],
-  enterprise: ['graf', 'demeter', 'prizma'],
+  enterprise: ['graf', 'demeter', 'prizma', 'gravitatoria'],
 };
 
 /** Las tarjetas de un frente en la home, en el orden de `ordenHome` (sin su catálogo). */

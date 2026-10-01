@@ -144,7 +144,7 @@ describe('qué está dentro de qué', () => {
   it('productoDeItem reconoce los ítems que tienen tarjeta, y la tarjeta nombra sus catálogos', async () => {
     const own = Object.fromEntries(catalogos.map((c) => [c.id, c.incluye.flatMap((i) => productoDeItem(i)?.id ?? [])]));
     expect(own).toEqual({
-      humanizar: ['demeter', 'graf', 'devkits-crm', 'cauce-v3', 'agora', 'warehouse', 'communityos', 'devkits-hours', 'prizma', 'devkits'],
+      humanizar: ['demeter', 'graf', 'devkits-crm', 'cauce-v3', 'agora', 'warehouse', 'communityos', 'devkits-hours', 'gravitatoria', 'prizma', 'devkits'],
       stevenai: [],
       clavis: ['estructuras-preontologicas'],
       complexlab: ['estructuras-preontologicas'],
