@@ -1,0 +1,146 @@
+@layer home {
+  .home .art-gravitatoria {
+    --blue: #0b62ad;
+    --shop: #0b62ad;
+    --light: #78d5ff;
+    --speed: 10s;
+    width: 100%;
+    height: 100%;
+    fill: none;
+    background: radial-gradient(ellipse at 54% 35%, #147fc4, #0b4b89 48%, #082c57);
+  }
+  .home .art-gravitatoria svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+  .home .art-gravitatoria .orbit {
+    stroke: #63c2f5;
+    stroke-width: .6;
+    stroke-dasharray: 2 7;
+    opacity: .22;
+    transform: rotate(-8deg);
+    transform-origin: 160px 130px;
+  }
+  .home .art-gravitatoria .stars {
+    stroke: #a6e6ff;
+    stroke-width: 2;
+    stroke-linecap: round;
+    opacity: .55;
+  }
+  .home .art-gravitatoria .depth {
+    fill: #06305c;
+    stroke: #277bb9;
+    stroke-width: 1;
+  }
+  .home .art-gravitatoria .map {
+    fill: url(#art-gravitatoria-g);
+    stroke: #72c5f7;
+    stroke-width: .8;
+    filter: drop-shadow(0 8px 8px #031d4166);
+  }
+  .home .art-gravitatoria .district {
+    stroke: #a9dcff;
+    stroke-width: .6;
+    stroke-dasharray: 2 2;
+    opacity: .3;
+  }
+  .home .art-gravitatoria .coverage {
+    stroke: #4de0d4;
+    stroke-width: .7;
+    opacity: .3;
+    transform-origin: 153px 137px;
+  }
+  .home .art-gravitatoria .link {
+    stroke: #9ae9ff;
+    stroke-width: 1.2;
+    stroke-linecap: round;
+    opacity: .75;
+    filter: drop-shadow(0 0 2px #78d5ff88);
+  }
+  .home .art-gravitatoria .fine {
+    stroke-width: .7;
+    stroke-dasharray: 1.4 2.8;
+    opacity: .5;
+  }
+  .home .art-gravitatoria .s {
+    --shop: #0b62ad;
+    transform-origin: 0 0;
+  }
+  .home .art-gravitatoria .teal {
+    --shop: #087f88;
+  }
+  .home .art-gravitatoria .gold {
+    --shop: #b7893b;
+  }
+  .home .art-gravitatoria .back {
+    scale: .78;
+  }
+  .home .art-gravitatoria .main {
+    scale: 1.24;
+  }
+  .home .art-gravitatoria .exchange {
+    offset-rotate: 0deg;
+    offset-distance: 49%;
+    opacity: 1;
+    filter: drop-shadow(0 0 3px #ffc76d77);
+  }
+  .home .art-gravitatoria .e1 {
+    offset-path: path('M82 106Q101 55 153 144');
+  }
+  .home .art-gravitatoria .e2 {
+    offset-path: path('M153 144Q202 57 238 101');
+    animation-delay: -3.5s;
+  }
+  .home .art-gravitatoria .e3 {
+    offset-path: path('M153 144Q216 112 255 161');
+    animation-delay: -6.5s;
+  }
+  .home .art-gravitatoria .spark {
+    stroke: #f9d78b;
+    stroke-width: 1;
+    stroke-linecap: round;
+    opacity: .7;
+  }
+  .home .art-host:is(:hover, :focus-within) .art-gravitatoria {
+    --speed: 5.5s;
+  }
+  .home .art-host:is(:hover, :focus-within) .art-gravitatoria .link {
+    opacity: 1;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .home .art-gravitatoria .coverage {
+      animation: art-gravitatoria-coverage 7s ease-in-out infinite;
+    }
+    .home .art-gravitatoria .exchange {
+      animation-name: art-gravitatoria-exchange;
+      animation-duration: var(--speed);
+      animation-timing-function: linear;
+      animation-iteration-count: infinite;
+    }
+    .home .art-gravitatoria .spark {
+      animation: art-gravitatoria-spark 5s ease-in-out infinite;
+    }
+    .home .art-gravitatoria .main {
+      animation: art-gravitatoria-float 6s ease-in-out infinite;
+    }
+  }
+  @keyframes art-gravitatoria-exchange {
+    0% { offset-distance: 2%; opacity: 0; }
+    12%, 83% { opacity: 1; }
+    100% { offset-distance: 98%; opacity: 0; }
+  }
+  @keyframes art-gravitatoria-coverage {
+    0%, 100% { scale: .97; opacity: .24; }
+    50% { scale: 1.04; opacity: .48; }
+  }
+  @keyframes art-gravitatoria-spark {
+    0%, 100% { opacity: .3; }
+    50% { opacity: 1; }
+  }
+  @keyframes art-gravitatoria-float {
+    0%, 100% { translate: 0 0; }
+    50% { translate: 0 -2px; }
+  }
+}
