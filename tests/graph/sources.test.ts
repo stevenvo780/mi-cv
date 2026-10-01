@@ -71,6 +71,7 @@ describe('buildGraphModel', () => {
       'producto:humanizar → producto:devkits-crm',
       'producto:humanizar → producto:devkits-hours',
       'producto:humanizar → producto:graf',
+      'producto:humanizar → producto:gravitatoria',
       'producto:humanizar → producto:prizma',
       'producto:humanizar → producto:warehouse',
     ]);

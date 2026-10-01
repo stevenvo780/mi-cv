@@ -27,6 +27,7 @@ import humanizar from './humanizar';
 import prizma from './prizma';
 import graf from './graf';
 import demeter from './demeter';
+import gravitatoria from './gravitatoria';
 import type { ArtProps } from './types';
 
 export type { ArtProps };
@@ -58,4 +59,5 @@ export const ART: Record<string, ComponentType<ArtProps>> = {
   'prizma': prizma,
   'graf': graf,
   'demeter': demeter,
+  'gravitatoria': gravitatoria,
 };

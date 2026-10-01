@@ -32,7 +32,7 @@ export const EXTRA_PROJECTS: { id: string; label: Bilingual; frente: FrenteId }[
 
 /** Empresa → proyectos construidos allí (evidencia: achievements.json y frentes.ts). */
 export const EMPRESA_PROYECTOS: Partial<Record<EmpresaKey, string[]>> = {
-  humanizar: ['cauce-v3', 'eikon', 'graf', 'demeter', 'sinergia-pos', 'fiar'],
+  humanizar: ['cauce-v3', 'eikon', 'graf', 'demeter', 'gravitatoria', 'sinergia-pos', 'fiar'],
   critertec: ['soy-digital'],
 };
 

@@ -8,6 +8,7 @@ import { test as base, expect, type BrowserContext, type Page, type Request } fr
  * - Las peticiones a hosts de medición (GA4, señales de Google, Ads) se responden aquí con 204 y no salen.
  * - gtag.js se sirve con un stub vacío (200, application/javascript), sin red. El test de GA pide el real con
  *   `test.use({ realGtag: true })`.
+ * - Web Analytics de Vercel también se sustituye: next start no sirve /_vercel/insights/script.js y devolvería 404.
  * - Un listener de requests comprueba al final que ninguna petición a un host de medición salió sin pasar por la
  *   ruta. Si alguna sale, el test falla y la lista.
  * - Antes de cerrar, silencia a Google en cada página. Al descargarse (pagehide), gtag manda balizas keepalive que no
@@ -42,6 +43,7 @@ const MEASUREMENT_HOSTS = [
 export function isMeasurement(url: string | URL): boolean {
   const { protocol, hostname, pathname } = typeof url === 'string' ? new URL(url) : url;
   if (protocol !== 'https:' && protocol !== 'http:') return false;
+  if (pathname.startsWith('/_vercel/insights/')) return pathname !== '/_vercel/insights/script.js';
   if (/(^|\.)googletagmanager\.com$/.test(hostname)) return pathname !== '/gtag/js';
   return MEASUREMENT_HOSTS.some((host) => host.test(hostname));
 }
@@ -71,6 +73,10 @@ export async function guardMeasurement(context: BrowserContext, { realGtag = fal
   if (!realGtag) {
     await context.route(isGtag, (route) => route.fulfill({ status: 200, contentType: 'application/javascript', body: '' }));
   }
+  await context.route(
+    (url) => url.pathname === '/_vercel/insights/script.js',
+    (route) => route.fulfill({ status: 200, contentType: 'application/javascript', body: '' }),
+  );
   await context.addInitScript(silenceGoogleOnTeardown);
   return {
     intercepted: () => ({ ...intercepted }),
