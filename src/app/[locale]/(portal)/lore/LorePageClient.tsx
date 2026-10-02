@@ -1,268 +1,103 @@
-'use client';
-
-import React from 'react';
 import BrandLogo from '@/app/components/BrandLogo';
-import { useReveal } from '@/app/components/Frentes/useReveal';
 import { PORTRAIT, type Locale } from '@/app/components/Portrait/portraitData';
+import StoryScene from '@/components/history/StoryScene';
+import styles from './LorePage.module.css';
 
-interface LorePageClientProps {
-  locale: Locale;
+const marks = [
+  'M30 75L100 20L170 75L100 130Z M55 75L100 40L145 75L100 110Z M30 75H170M100 20V130',
+  'M25 25H175V118H25Z M39 39H161V96H39Z M70 132H130M100 118V132 M44 87L72 56L99 76L135 46L156 63',
+  'M20 115V55L100 18L180 55V115Z M45 115V71L100 42L155 71V115 M70 115V86L100 69L130 86V115',
+  'M28 75C55 12 145 12 172 75C145 138 55 138 28 75Z M50 75C76 26 124 26 150 75C124 124 76 124 50 75Z M28 75H172',
+  'M100 18L180 126H20Z M100 52L154 126M100 52L46 126M60 72H140M40 99H160 M100 18V126',
+  'M100 12V138M37 75H163 M100 24L152 75L100 126L48 75Z M100 48L127 75L100 102L73 75Z',
+  'M100 20L153 42L175 95L122 132L63 118L25 65L100 20Z M100 75L100 20M100 75L153 42M100 75L175 95M100 75L122 132M100 75L63 118M100 75L25 65',
+];
+
+function ChapterMark({ index }: { index: number }) {
+  return (
+    <svg className={styles.mark} viewBox="0 0 200 150" fill="none" aria-hidden="true" focusable="false">
+      <circle cx="100" cy="75" r="64" stroke="#43b5a6" strokeOpacity=".2" strokeDasharray="2 7" />
+      <path d={marks[index]} stroke={index % 2 ? '#e0a85e' : '#43b5a6'} strokeWidth="1" strokeOpacity=".7" />
+      <circle cx="100" cy="75" r="3" fill="#e8e0d4" />
+    </svg>
+  );
 }
 
-export default function LorePageClient({ locale }: LorePageClientProps) {
-  const t = PORTRAIT[locale];
-  useReveal();
-
-  // La home es otro grupo de rutas: sus enlaces son <a>, no next/link (ver src/app/[locale]/(home)/page.tsx).
-  const homeHref = `/${locale}`;
-
+/** Relato completo en el HTML inicial: sin reveal que esconda párrafos ni una dependencia de scroll. */
+export default function LorePageClient({ locale }: { locale: Locale }) {
+  const story = PORTRAIT[locale];
+  const es = locale === 'es';
+  const home = `/${locale}`;
   return (
-    <main>
-      {/* ─── STYLES ─────────────────────────────────────────────── */}
-      <style dangerouslySetInnerHTML={{ __html: `
-        /* Wrap */
-        .lore-wrap {
-          max-width: 820px;
-          margin: 0 auto;
-          padding: 0 1.25rem;
-        }
-
-        /* ── HERO ── */
-        .lore-hero {
-          padding: 5rem 0 3.5rem;
-          border-bottom: 1px solid var(--line);
-        }
-        .lore-back {
-          font-family: var(--font-mono);
-          font-size: 0.74rem;
-          letter-spacing: 0.12em;
-          text-decoration: none !important;
-          color: var(--teal-dim) !important;
-          display: inline-flex;
-          align-items: center;
-          gap: 0.35rem;
-          margin-bottom: 2.4rem;
-          transition: color 0.2s ease;
-        }
-        .lore-back:hover {
-          color: var(--teal) !important;
-        }
-        .lore-logo {
-          margin-bottom: 1.5rem;
-          display: inline-block;
-        }
-        .lore-hero-kicker {
-          font-family: var(--font-mono);
-          font-size: 0.74rem;
-          text-transform: uppercase;
-          letter-spacing: 0.22em;
-          color: var(--gold);
-          font-weight: 600;
-          margin-bottom: 0.9rem;
-        }
-        .lore-hero-title {
-          font-size: clamp(2rem, 6vw, 3.8rem);
-          font-weight: 800;
-          letter-spacing: -0.03em;
-          line-height: 1.04;
-          margin: 0 0 1rem;
-          color: var(--text);
-        }
-        .lore-hero-title em {
-          font-style: normal;
-          background: var(--grad-sig);
-          -webkit-background-clip: text;
-          background-clip: text;
-          -webkit-text-fill-color: transparent;
-          color: var(--gold);
-        }
-        .lore-hero-lead {
-          font-size: clamp(1.05rem, 2.4vw, 1.22rem);
-          color: var(--text-soft);
-          line-height: 1.76;
-          max-width: 66ch;
-          margin: 0 0 1.6rem;
-        }
-        .lore-body-of-work {
-          font-family: var(--font-mono);
-          font-size: 0.9rem;
-          letter-spacing: 0.02em;
-          color: var(--teal-light);
-          line-height: 1.6;
-          max-width: 62ch;
-          margin: 0 0 1.8rem;
-        }
-        .lore-epigraph {
-          font-family: var(--font-serif);
-          font-size: clamp(1.1rem, 2.6vw, 1.5rem);
-          font-style: italic;
-          color: var(--text-soft);
-          line-height: 1.5;
-          padding-left: 1.4rem;
-          border-left: 3px solid var(--teal);
-          max-width: 60ch;
-          margin: 0;
-        }
-
-        /* ── SECTIONS ── */
-        .lore-section {
-          padding: 3.4rem 0;
-          border-bottom: 1px solid var(--line);
-        }
-        .lore-section-grid {
-          display: grid;
-          grid-template-columns: 1fr;
-          gap: 1rem 2.5rem;
-        }
-        @media (min-width: 760px) {
-          .lore-section-grid {
-            grid-template-columns: 160px 1fr;
-          }
-        }
-        .lore-kicker {
-          font-family: var(--font-mono);
-          font-size: 0.72rem;
-          text-transform: uppercase;
-          letter-spacing: 0.18em;
-          color: var(--teal);
-          font-weight: 700;
-          padding-top: 0.4rem;
-        }
-        .lore-section-title {
-          font-family: var(--font-serif);
-          font-size: clamp(1.5rem, 3.4vw, 2.2rem);
-          font-weight: 600;
-          letter-spacing: -0.01em;
-          color: var(--text);
-          margin: 0 0 1.2rem;
-          line-height: 1.12;
-        }
-        .lore-para {
-          font-size: 1.04rem;
-          color: var(--text-soft);
-          line-height: 1.82;
-          margin: 0 0 1.1rem;
-        }
-        .lore-question {
-          font-family: var(--font-serif);
-          font-size: 1.1rem;
-          font-style: italic;
-          color: var(--gold);
-          line-height: 1.6;
-          margin: 1.6rem 0 0;
-          padding-left: 1rem;
-          border-left: 2px solid rgba(224,168,94,0.45);
-        }
-
-        /* ── CLOSING FOOTER ── */
-        .lore-foot {
-          padding: 3.5rem 0 6rem;
-          display: flex;
-          flex-direction: column;
-          gap: 1.2rem;
-        }
-        .lore-foot-note {
-          font-size: 0.92rem;
-          font-style: italic;
-          color: var(--muted);
-          margin: 0;
-        }
-        .lore-foot-brand {
-          font-family: var(--font-mono);
-          font-size: 0.72rem;
-          letter-spacing: 0.10em;
-          color: var(--teal-light);
-          margin: 0;
-        }
-        .lore-home-link {
-          display: inline-flex;
-          align-items: center;
-          gap: 0.4rem;
-          font-family: var(--font-mono);
-          font-size: 0.78rem;
-          font-weight: 600;
-          letter-spacing: 0.06em;
-          text-decoration: none !important;
-          color: var(--bg) !important;
-          background: var(--teal);
-          padding: 0.6rem 1.3rem;
-          border-radius: var(--r-sm);
-          transition: background 0.2s ease, transform 0.15s ease;
-          width: fit-content;
-        }
-        .lore-home-link:hover {
-          background: var(--teal-light);
-          transform: translateY(-1px);
-        }
-        .lore-share-link {
-          width: fit-content;
-          font-family: var(--font-mono);
-          font-size: 0.72rem;
-          letter-spacing: 0.08em;
-          color: var(--teal-light) !important;
-          text-decoration: none !important;
-        }
-        .lore-share-link:hover {
-          color: var(--gold) !important;
-        }
-
-        /* ── REDUCED MOTION ── */
-        @media (prefers-reduced-motion: reduce) {
-          .lore-back,
-          .lore-home-link { transition: none !important; }
-        }
-      ` }} />
-
-      <div className="lore-wrap">
-        {/* ── HERO ── */}
-        <div className="lore-hero reveal">
-          <a href={homeHref} className="lore-back">
-            ← {locale === 'es' ? 'Volver al inicio' : 'Back to home'}
-          </a>
-          <div className="lore-logo">
-            <BrandLogo size={40} title="Steven Vallejo" />
-          </div>
-          <p className="lore-hero-kicker">
-            {locale === 'es' ? 'Mi historia · Abstracción' : 'My story · Abstraction'}
-          </p>
-          <h1 className="lore-hero-title">
-            <em>{t.heroTitle}</em>
-          </h1>
-          <p className="lore-hero-lead">{t.heroLead}</p>
-          <p className="lore-body-of-work">{t.bodyOfWork}</p>
-          <blockquote className="lore-epigraph">{t.epigraph}</blockquote>
+    <main className={styles.lore}>
+      <header className={styles.hero}>
+        <div className={styles.toolbar}>
+          <a href={home} className={styles.back}>← {es ? 'Volver al inicio' : 'Back to home'}</a>
+          <label className={styles.motion}>
+            <input type="checkbox" />
+            <span>{es ? 'Pausar animación' : 'Pause animation'}</span>
+          </label>
         </div>
-
-        {/* ── NARRATIVE SECTIONS ── */}
-        {t.sections.map((s) => (
-          <section className="lore-section reveal" key={s.title}>
-            <div className="lore-section-grid">
-              <div className="lore-kicker">{s.kicker}</div>
-              <div>
-                <h2 className="lore-section-title">{s.title}</h2>
-                {s.body.map((p, i) => (
-                  <p className="lore-para" key={i}>{p}</p>
-                ))}
-                <p className="lore-question">{s.question}</p>
-              </div>
-            </div>
-          </section>
-        ))}
-
-        {/* ── CLOSING FOOTER ── */}
-        <footer className="lore-foot reveal">
-          <a href={homeHref} className="lore-home-link">
-            ← {locale === 'es' ? 'Volver al inicio' : 'Back to home'}
+        <div className={styles.scene}><StoryScene id="lore" /></div>
+        <div className={styles.heroContent}>
+          <p className={styles.eyebrow}>{es ? 'Mi historia' : 'My story'} / {story.heroKicker}</p>
+          <h1 className={styles.title}>{story.heroTitle}</h1>
+          <p className={styles.lead}>{story.heroLead}</p>
+          <a href="#capitulos" className={styles.start}>
+            {es ? 'Recorrer los capítulos' : 'Explore the chapters'} <span aria-hidden="true">↓</span>
           </a>
-          <a href={`/${locale}/compartir`} className="lore-share-link" title={locale === 'es' ? 'QR para mis sitios, CV, servicios, blog y catálogos' : 'QR codes for my sites, résumés, services, blog and catalogs'}>
-            {locale === 'es' ? 'Compartir con QR ↗' : 'Share with QR ↗'}
-          </a>
-          <p className="lore-foot-note">{t.footNote}</p>
-          <p className="lore-foot-brand">
-            {locale === 'es' ? 'Mouseîon · por Steven Vallejo' : 'Mouseîon · by Steven Vallejo'}
-          </p>
-        </footer>
+        </div>
+        <div className={styles.axis} aria-hidden="true">
+          <span>{es ? 'Ingeniería' : 'Engineering'}</span><span>{es ? 'Filosofía' : 'Philosophy'}</span>
+        </div>
+      </header>
+
+      <div className={styles.prologue}>
+        <div className={styles.signature}><BrandLogo size={36} /><p>{story.bodyOfWork}</p></div>
+        <blockquote>{story.epigraph}</blockquote>
       </div>
+
+      <div id="capitulos" className={styles.reading}>
+        <nav className={styles.index} aria-label={es ? 'Capítulos de mi historia' : 'Chapters of my story'}>
+          <p className={styles.indexLabel}>{es ? 'El recorrido' : 'The journey'}</p>
+          <ol>
+            {story.sections.map((chapter, index) => (
+              <li key={chapter.title}>
+                <a href={`#capitulo-${index + 1}`}>
+                  <span aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
+                  <span>{chapter.title}</span>
+                </a>
+              </li>
+            ))}
+          </ol>
+          <a href={`${home}#frentes`} className={styles.catalog}>{es ? 'Ver mis trabajos' : 'See my work'} ↗</a>
+        </nav>
+
+        <div className={styles.chapters}>
+          {story.sections.map((chapter, index) => (
+            <section id={`capitulo-${index + 1}`} aria-labelledby={`chapter-title-${index + 1}`} className={styles.chapter} key={chapter.title}>
+              <header className={styles.chapterHeading}>
+                <span className={styles.chapterNumber} aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
+                <div><p className={styles.kicker}>{chapter.kicker}</p><h2 id={`chapter-title-${index + 1}`}>{chapter.title}</h2></div>
+                <ChapterMark index={index} />
+              </header>
+              <div className={styles.paragraphs}>{chapter.body.map((paragraph, paragraphIndex) => <p key={paragraphIndex}>{paragraph}</p>)}</div>
+              <blockquote className={styles.question}>{chapter.question}</blockquote>
+            </section>
+          ))}
+        </div>
+      </div>
+
+      <footer className={styles.foot}>
+        <BrandLogo size={44} />
+        <p className={styles.footNote}>{story.footNote}</p>
+        <div className={styles.footLinks}>
+          <a href={home}>← {es ? 'Volver al inicio' : 'Back to home'}</a>
+          <a href={`${home}#frentes`}>{es ? 'Explorar mis trabajos' : 'Explore my work'} ↗</a>
+          <a href={`${home}/compartir`}>{es ? 'Compartir con QR' : 'Share with QR'} ↗</a>
+        </div>
+        <p className={styles.credit}>{es ? 'Mouseîon · por Steven Vallejo' : 'Mouseîon · by Steven Vallejo'}</p>
+      </footer>
     </main>
   );
 }

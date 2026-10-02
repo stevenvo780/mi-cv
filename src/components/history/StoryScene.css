@@ -1,0 +1,92 @@
+.story-scene {
+  position: relative;
+  width: 100%;
+  min-width: 0;
+  aspect-ratio: 18 / 13;
+  isolation: isolate;
+  pointer-events: none;
+  user-select: none;
+}
+
+.story-scene svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.story-compact {
+  aspect-ratio: 16 / 10;
+}
+
+.story-compact svg {
+  position: absolute;
+  inset: -5% 0;
+  height: 110%;
+}
+
+.story-engineering,
+.story-philosophy,
+.story-sculpture {
+  transform-box: view-box;
+  transform-origin: 50% 50%;
+}
+
+.story-floor {
+  opacity: .65;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .story-sculpture {
+    animation: story-sculpture-breathe 19s ease-in-out infinite;
+  }
+
+  .story-engineering {
+    animation: story-engineering-drift 26s ease-in-out infinite;
+  }
+
+  .story-philosophy {
+    animation: story-philosophy-drift 31s ease-in-out infinite;
+  }
+
+  .story-current {
+    animation: story-current-flow 24s linear infinite;
+  }
+
+  .story-countercurrent {
+    animation: story-current-flow 31s linear infinite reverse;
+  }
+
+  .story-sparks {
+    animation: story-sparks-breathe 9s ease-in-out infinite;
+  }
+}
+
+html[data-motion='paused'] .story-scene,
+html[data-motion='paused'] .story-scene * {
+  animation: none !important;
+}
+
+@keyframes story-sculpture-breathe {
+  0%, 100% { transform: translateY(0) rotate(0); }
+  50% { transform: translateY(-8px) rotate(-1.2deg); }
+}
+
+@keyframes story-engineering-drift {
+  0%, 100% { transform: translateY(0); opacity: .8; }
+  50% { transform: translateY(6px); opacity: 1; }
+}
+
+@keyframes story-philosophy-drift {
+  0%, 100% { transform: rotate(0); opacity: .9; }
+  50% { transform: rotate(3deg); opacity: .7; }
+}
+
+@keyframes story-current-flow {
+  to { stroke-dashoffset: -570; }
+}
+
+@keyframes story-sparks-breathe {
+  0%, 100% { opacity: .6; }
+  50% { opacity: 1; }
+}

@@ -91,7 +91,7 @@ subset "$TMP/cg-500.ttf" cormorant-hero.woff2 'Steven Vallejo Ortiz'
 # Texto corrido (descripciones, datos): ASCII imprimible + español + la tipografía de la home.
 subset "$TMP/geist-400-600.ttf" geist-home.woff2 "$ASCII$ES«»·§–—‘’“”…→↗"
 # Titulares, nombres de producto y cifras. (Cormorant no tiene «ḗ»: la pinta la serif del sistema, como siempre.)
-subset "$TMP/cg-400-500.ttf" cormorant-home.woff2 "$ASCII$ES·îÎ–—‘’“”…" lnum,tnum
+subset "$TMP/cg-400-500.ttf" cormorant-home.woff2 "$ASCII$ES«»·îÎ–—‘’“”…" lnum,tnum
 # Etiquetas, fechas y chips del stack: sin la puntuación ASCII que no usan (sus ligaduras de código pesan). Sin «→»:
 # el subconjunto latin de Google no lo trae, así que la home siempre lo pintó con la mono del sistema. «▶» es el del
 # botón de pausa del grafo cuando está pausado; su «❚❚» no está en ninguna de las fuentes de origen (la del sistema).
