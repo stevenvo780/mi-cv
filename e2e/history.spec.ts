@@ -12,6 +12,7 @@ for (const locale of ['es', 'en'] as const) {
     await history.scrollIntoViewIfNeeded();
     await expect(history.getByRole('heading', { level: 2 })).toHaveText(PORTRAIT[locale].heroTitle);
     await expect(history.locator('[data-story-scene] svg')).toBeVisible();
+    await expect(history.locator('.history-fields')).toHaveCount(0);
     for (const url of Object.values(SITES)) {
       await expect(history.locator(`a[href="${url}"]`)).toBeVisible();
       await expect(page.locator(`.hero a[href="${url}"]`)).toHaveCount(0);
@@ -30,6 +31,26 @@ for (const locale of ['es', 'en'] as const) {
     await expect(page).toHaveURL(new RegExp(`/${locale}$`));
     await expect(page.locator('.home')).toBeVisible();
     expect(errors).toEqual([]);
+  });
+}
+
+for (const locale of ['es', 'en'] as const) {
+  test(`/${locale}: las áreas se recorren por scroll y recuperan los proyectos filtrados`, async ({ page }) => {
+    let documents = 0;
+    page.on('request', (request) => { if (request.resourceType() === 'document') documents++; });
+    await page.goto(`/${locale}`);
+    const search = page.getByRole('searchbox');
+    await search.fill('zzzz-inexistente');
+    await expect(page.locator('[data-front]:visible')).toHaveCount(0);
+    for (const front of ['informatica', 'filosofia', 'ciencias', 'enterprise']) {
+      await page.locator(`footer a[href="#area-${front}"]`).click();
+      await expect(page).toHaveURL(new RegExp(`/${locale}#area-${front}$`));
+      await expect(search).toHaveValue('');
+      const area = page.locator(`#area-${front}`);
+      await expect(area.getByRole('heading', { level: 3 })).toBeInViewport();
+      await expect(area.locator('.cat-art').first()).toBeVisible();
+    }
+    expect(documents).toBe(1);
   });
 }
 

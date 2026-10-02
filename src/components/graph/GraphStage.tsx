@@ -182,18 +182,20 @@ export default function GraphStage({ locale, t }: { locale: Locale; t: HomeCopy[
         window.open(node.url, '_blank', 'noopener');
         return;
       }
-      if (node.kind === 'frente' && node.frente) {
-        // eslint-disable-next-line @next/next/no-location-assign-relative-destination -- los frentes son del grupo (portal): documento propio, sin navegación en cliente (ver la nota de (home)/page.tsx)
-        window.location.assign(`/${locale}/${node.frente}`);
-        return;
+      if (node.kind === 'frente') {
+        const search = document.getElementById('buscar-productos') as HTMLInputElement | null;
+        if (search?.value) {
+          search.value = '';
+          search.dispatchEvent(new Event('input', { bubbles: true }));
+        }
       }
       // Un nodo sin tarjeta propia (yo, empresa, herramienta, concepto) lleva al hero o al catálogo.
       const target =
         document.querySelector(`[data-node="${CSS.escape(node.id)}"]`) ?? document.getElementById(node.kind === 'self' ? 'hero-title' : 'frentes');
       const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      target?.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'center' });
+      target?.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: node.kind === 'frente' ? 'start' : 'center' });
     },
-    [locale],
+    [],
   );
 
   // Puente de eventos mientras el 3D está vivo.

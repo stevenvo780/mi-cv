@@ -70,7 +70,7 @@ export function getShareDestinations(locale: Locale): ShareDestination[] {
       id: `front-${id}`, group: 'fronts',
       label: frentesMeta[id].nombre[locale], category: category.front,
       description: frentesMeta[id].tagline[locale],
-      url: localeUrl(locale, `/${id}`),
+      url: localeUrl(locale, `#area-${id}`),
       tone: (['teal', 'violet', 'gold', 'teal'] as const)[index],
     })),
     ...catalogos.filter((catalogo) => catalogo.url).map((catalogo, index): ShareDestination => ({

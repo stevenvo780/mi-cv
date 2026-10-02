@@ -44,7 +44,7 @@ describe('destinos de la tarjeta QR', () => {
     expect(urls.cv).toBe(origin);
     expect(urls.lore).toBe(`${origin}/lore`);
     for (const front of ['informatica', 'filosofia', 'ciencias', 'enterprise']) {
-      expect(urls[`front-${front}`]).toBe(`${origin}/${front}`);
+      expect(urls[`front-${front}`]).toBe(`${origin}#area-${front}`);
     }
     for (const [id, url] of Object.entries(externalUrls)) expect(urls[id], id).toBe(url);
   });

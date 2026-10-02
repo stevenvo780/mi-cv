@@ -35,7 +35,8 @@ describe('coreografía', () => {
     expect([...html.matchAll(/data-section="([^"]+)"/g)].map((m) => m[1])).toEqual([...SECTIONS]);
     expect(html).not.toMatch(/id="(metodo|trayectoria|prueba)"/);
     const nav = [...html.matchAll(/<a href="#([^"]+)"/g)].map((m) => m[1]);
-    expect(new Set(nav)).toEqual(new Set(['historia', 'frentes', 'contacto']));
+    expect(new Set(nav)).toEqual(new Set(['historia', 'frentes', 'contacto', 'redes', 'area-informatica', 'area-filosofia', 'area-ciencias', 'area-enterprise']));
+    for (const anchor of nav) expect(html).toContain(`id="${anchor}"`);
   });
 
   it('la mezcla hacia la siguiente forma empieza pasado el 55 % de la sección', () => {

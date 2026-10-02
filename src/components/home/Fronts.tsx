@@ -24,15 +24,11 @@ export default function Fronts({ locale, t }: { locale: Locale; t: HomeCopy }) {
             const meta = frentesMeta[fid];
             const tarjetas = tarjetasDeFrente(fid);
             return (
-              <article key={fid} className="front reveal" data-front={fid} data-node={nodeId.frente(fid)} aria-labelledby={`front-${fid}`}>
+              <article key={fid} id={`area-${fid}`} className="front reveal" data-front={fid} data-node={nodeId.frente(fid)} aria-labelledby={`front-${fid}`}>
                 <header className="front-head">
                   <p className="eyebrow">§ {meta.secNo}</p>
                   <h3 id={`front-${fid}`}>{meta.nombre[locale]}</h3>
                   <p className="front-tagline">{meta.tagline[locale]}</p>
-                  {/* <a> y no next/link: los frentes son del grupo (portal); ver la nota de page.tsx. */}
-                  <a className="front-link" href={`/${locale}/${fid}`}>
-                    {f.openFront} →
-                  </a>
                   {/* Sitios del frente que no son productos (CV, blog, servicios): también forman parte del catálogo. */}
                   {frenteLinks[fid] ? (
                     <ul className="front-sites">

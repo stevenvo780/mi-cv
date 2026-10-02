@@ -21,10 +21,10 @@ export default function HomeFooter({ locale, t }: { locale: Locale; t: HomeCopy 
       <nav aria-label={c.ecosystem}>
         <ul>
           <li><a href={`/${locale}/lore`}>{c.story}</a></li>
+          <li><a href="#redes">{c.social}</a></li>
           {frenteOrder.map((fid) => (
             <li key={fid}>
-              {/* <a> y no next/link: los frentes son del grupo (portal); ver la nota de page.tsx. */}
-              <a href={`/${locale}/${fid}`}>{frentesMeta[fid].nombre[locale]}</a>
+              <a href={`#area-${fid}`}>{frentesMeta[fid].nombre[locale]}</a>
             </li>
           ))}
           <li>

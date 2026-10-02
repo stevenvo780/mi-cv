@@ -71,7 +71,7 @@ describe('enlaces entre los grupos de rutas (home) y (portal)', () => {
 
     const toPortal = links.filter((a) => group(a.href) === 'portal');
     const targets = new Set(toPortal.map((a) => a.href.split('#')[0]));
-    expect(targets).toEqual(new Set([`/${locale}/lore`, ...frenteOrder.map((fid) => `/${locale}/${fid}`)]));
+    expect(targets).toEqual(new Set([`/${locale}/lore`]));
     expect(toPortal.filter((a) => a.client)).toEqual([]);
   });
 
