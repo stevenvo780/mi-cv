@@ -3,6 +3,7 @@ import AssistantGate from '@/components/assistant/AssistantGate';
 import Contact from '@/components/home/Contact';
 import Fronts from '@/components/home/Fronts';
 import Hero from '@/components/home/Hero';
+import History from '@/components/home/History';
 import HomeFooter from '@/components/home/HomeFooter';
 import HomeHeader from '@/components/home/HomeHeader';
 import Stage from '@/components/home/Stage';
@@ -57,6 +58,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
       <main id="contenido">
         <Stage locale={locale} t={t} />
         <Hero t={t} />
+        <History locale={locale} t={t} />
         <Fronts locale={locale} t={t} />
         <Contact locale={locale} t={t} />
       </main>

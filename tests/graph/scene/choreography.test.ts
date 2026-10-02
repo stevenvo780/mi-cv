@@ -22,7 +22,7 @@ describe('coreografía', () => {
   it('al inicio: forma red, sin mezcla y la pose del hero (= cámara del póster)', () => {
     const f = frameAt(0, ctx);
     expect(f.from).toBe('red');
-    expect(f.to).toBe('clusters');
+    expect(f.to).toBe('hemisferios');
     expect(f.mix).toBe(0);
     expect(f.pose.distance).toBeCloseTo(SECTION_POSE.hero.distance);
     expect(f.pose.yaw).toBeCloseTo(SECTION_POSE.hero.yaw);
@@ -35,7 +35,7 @@ describe('coreografía', () => {
     expect([...html.matchAll(/data-section="([^"]+)"/g)].map((m) => m[1])).toEqual([...SECTIONS]);
     expect(html).not.toMatch(/id="(metodo|trayectoria|prueba)"/);
     const nav = [...html.matchAll(/<a href="#([^"]+)"/g)].map((m) => m[1]);
-    expect(new Set(nav)).toEqual(new Set(['frentes', 'contacto']));
+    expect(new Set(nav)).toEqual(new Set(['historia', 'frentes', 'contacto']));
   });
 
   it('la mezcla hacia la siguiente forma empieza pasado el 55 % de la sección', () => {
@@ -56,9 +56,9 @@ describe('coreografía', () => {
     }
   });
 
-  it('una forma por sección de la home: el grafo en el hero, los clusters en el catálogo y la lemniscata en contacto', () => {
-    expect(SECTIONS).toEqual(['hero', 'frentes', 'contacto']);
-    expect(SECTIONS.map((s) => SECTION_LAYOUT[s])).toEqual(['red', 'clusters', 'lemniscata']);
+  it('una forma por sección: red, hemisferios, clusters y lemniscata', () => {
+    expect(SECTIONS).toEqual(['hero', 'historia', 'frentes', 'contacto']);
+    expect(SECTIONS.map((s) => SECTION_LAYOUT[s])).toEqual(['red', 'hemisferios', 'clusters', 'lemniscata']);
     // En el centro de cada sección, la forma de esa sección, sin mezcla con la siguiente.
     for (const [k, section] of SECTIONS.entries()) {
       const f = frameAt(k + 0.3, ctx);

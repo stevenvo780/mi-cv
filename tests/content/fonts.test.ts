@@ -5,6 +5,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 import HomePage from '@/app/[locale]/(home)/page';
 import { HOME } from '@/content/home';
+import { PORTRAIT } from '@/app/components/Portrait/portraitData';
 import { frenteOrder, frentesMeta, productos } from '@/data/frentes';
 import { LOCALES, type Locale } from '@/lib/site';
 
@@ -93,7 +94,7 @@ describe('cobertura de glifos del contenido de la home', () => {
   it.each(LOCALES)('los nombres y titulares de /%s están en el subconjunto de Cormorant', (locale) => {
     const t = HOME[locale];
     const texts = [
-      t.fronts.title, t.contact.title,
+      t.fronts.title, t.contact.title, PORTRAIT[locale].heroTitle, PORTRAIT[locale].epigraph,
       ...productos.map((p) => p.nombre),
       ...frenteOrder.map((f) => frentesMeta[f].nombre[locale]),
     ];

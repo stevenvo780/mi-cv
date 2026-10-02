@@ -55,6 +55,7 @@ export default function HomeHeader({ locale, t }: { locale: Locale; t: HomeCopy 
     [SITES.blog, keepGreek(hero.blog)],
   ];
   const sections: Item[] = [
+    ['#historia', nav.story],
     ['#frentes', nav.catalog],
     ['#contacto', nav.contact],
   ];

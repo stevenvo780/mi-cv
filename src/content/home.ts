@@ -20,6 +20,7 @@ export interface HomeCopy {
     skip: string;
     menu: string;
     catalog: string;
+    story: string;
     contact: string;
     language: string;
     services: string;
@@ -62,6 +63,7 @@ export interface HomeCopy {
     more: string;
     close: string;
   };
+  history: { eyebrow: string; engineering: string; philosophy: string; read: string; chapters: string; pause: string };
   /** Tarjeta de cada catálogo, al frente de su rejilla. Las cifras llegan de los datos (`incluye` de cada catálogo). */
   catalogs: {
     /** Nombre del tipo, en plural: el buscador encuentra todos los catálogos con él. */
@@ -105,6 +107,7 @@ export const HOME: Record<Locale, HomeCopy> = {
       skip: 'Saltar al contenido',
       menu: 'Menú',
       catalog: 'Catálogo',
+      story: 'Mi historia',
       contact: 'Contacto',
       language: 'English',
       services: 'Servicios',
@@ -125,6 +128,14 @@ export const HOME: Record<Locale, HomeCopy> = {
       blog: 'Blog · Scholḗ',
       figcaption: (nodes, edges) => `Este grafo es el mapa de mis trabajos: ${nodes} nodos, ${edges} relaciones reales`,
       listLink: 'Verlo como catálogo',
+    },
+    history: {
+      eyebrow: 'El origen del criterio',
+      engineering: 'Ingeniería',
+      philosophy: 'Filosofía',
+      read: 'Leer mi historia completa',
+      chapters: 'Entrar a un capítulo de mi historia',
+      pause: 'Pausar animación',
     },
     fronts: {
       eyebrow: `${countWord('es', frenteOrder.length)} frentes · ${productos.length} trabajos`,
@@ -180,6 +191,7 @@ export const HOME: Record<Locale, HomeCopy> = {
       skip: 'Skip to content',
       menu: 'Menu',
       catalog: 'Catalog',
+      story: 'My story',
       contact: 'Contact',
       language: 'Español',
       services: 'Services',
@@ -200,6 +212,14 @@ export const HOME: Record<Locale, HomeCopy> = {
       blog: 'Blog · Scholḗ',
       figcaption: (nodes, edges) => `This graph maps my work: ${nodes} nodes, ${edges} real relations`,
       listLink: 'See it as a catalog',
+    },
+    history: {
+      eyebrow: 'Where judgment begins',
+      engineering: 'Engineering',
+      philosophy: 'Philosophy',
+      read: 'Read my full story',
+      chapters: 'Open a chapter of my story',
+      pause: 'Pause animation',
     },
     fronts: {
       eyebrow: `${countWord('en', frenteOrder.length)} fronts · ${productos.length} works`,

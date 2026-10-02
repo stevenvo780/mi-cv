@@ -1,8 +1,7 @@
 import type { Metadata, Viewport } from 'next';
-import { Analytics as VercelAnalytics } from '@vercel/analytics/next';
 import { notFound } from 'next/navigation';
 import localFont from 'next/font/local';
-import GoogleAnalytics from '@/components/Analytics';
+import AnalyticsLazy from '@/components/AnalyticsLazy';
 import { LOCALES, SITE, isLocale } from '@/lib/site';
 
 // Fuentes del layout raíz: las usan el portal (brand.css: --font-inter, --font-jetbrains, --font-cormorant) y el
@@ -106,8 +105,7 @@ export default async function LocaleLayout({
     >
       <body>
         {children}
-        <GoogleAnalytics />
-        <VercelAnalytics />
+        <AnalyticsLazy />
       </body>
     </html>
   );

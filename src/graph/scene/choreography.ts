@@ -1,12 +1,13 @@
 import type { LayoutName } from '../layout-names';
 import { CAMERA0 } from '../camera0';
 
-/** Orden de las secciones en el DOM (atributo data-section): hero, catálogo y contacto. */
-export const SECTIONS = ['hero', 'frentes', 'contacto'] as const;
+/** Orden de las secciones en el DOM (atributo data-section): hero, historia, catálogo y contacto. */
+export const SECTIONS = ['hero', 'historia', 'frentes', 'contacto'] as const;
 export type SectionId = (typeof SECTIONS)[number];
 
 export const SECTION_LAYOUT: Record<SectionId, LayoutName> = {
   hero: 'red',
+  historia: 'hemisferios',
   frentes: 'clusters',
   contacto: 'lemniscata',
 };
@@ -25,6 +26,7 @@ export interface Pose {
 
 export const SECTION_POSE: Record<SectionId, Pose> = {
   hero: { distance: CAMERA0.distance, yaw: CAMERA0.yaw, pitch: CAMERA0.pitch, target: [0, 0, 0], shiftX: 0, dim: 1 },
+  historia: { distance: 3.1, yaw: 0.12, pitch: -0.08, target: [0, 0, 0], shiftX: 0, dim: 0.65 },
   frentes: { distance: 2.7, yaw: 0.35, pitch: -0.2, target: [0, 0, 0], shiftX: 0.6, dim: 0.9 },
   contacto: { distance: 3.4, yaw: 0, pitch: 0, target: [0, 0, 0], shiftX: 0, dim: 1 },
 };
