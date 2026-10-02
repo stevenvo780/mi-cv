@@ -8,7 +8,20 @@ export const PROFILES = {
   github: 'https://github.com/stevenvo780',
   linkedin: 'https://www.linkedin.com/in/steven-vallejo/',
   instagram: 'https://www.instagram.com/stev_vallejo/',
+  facebook: 'https://www.facebook.com/profile.php?id=61595014769467',
+  tiktok: 'https://www.tiktok.com/@stevenvo780',
+  x: 'https://x.com/stev_vallejo',
 } as const;
+
+/** Canales públicos confirmados por Steven, compartidos por el índice y Contacto. */
+export const SOCIAL_LINKS = [
+  { id: 'instagram', label: 'Instagram', url: PROFILES.instagram },
+  { id: 'facebook', label: 'Facebook', url: PROFILES.facebook },
+  { id: 'tiktok', label: 'TikTok', url: PROFILES.tiktok },
+  { id: 'x', label: 'X', url: PROFILES.x },
+  { id: 'github', label: 'GitHub', url: PROFILES.github },
+  { id: 'linkedin', label: 'LinkedIn', url: PROFILES.linkedin },
+] as const;
 
 export function isLocale(value: string | undefined): value is Locale {
   return value === 'es' || value === 'en';

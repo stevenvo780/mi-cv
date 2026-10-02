@@ -15,78 +15,71 @@
   overflow: visible;
 }
 
-.story-compact {
-  aspect-ratio: 16 / 10;
-}
+.story-scene.story-compact { aspect-ratio: 16 / 10; }
+.story-compact svg { position: absolute; inset: -5% 0; height: 110%; }
 
-.story-compact svg {
-  position: absolute;
-  inset: -5% 0;
-  height: 110%;
-}
-
+.story-sculpture,
+.story-field,
 .story-engineering,
 .story-philosophy,
-.story-sculpture {
+.story-orbit-one,
+.story-orbit-two,
+.story-particles {
   transform-box: view-box;
-  transform-origin: 50% 50%;
+  transform-origin: 450px 321px;
 }
 
-.story-floor {
-  opacity: .65;
-}
+.story-engineering { transform-origin: 218px 308px; }
+.story-philosophy,
+.story-orbit-one,
+.story-orbit-two { transform-origin: 688px 308px; }
 
 @media (prefers-reduced-motion: no-preference) {
-  .story-sculpture {
-    animation: story-sculpture-breathe 19s ease-in-out infinite;
-  }
-
-  .story-engineering {
-    animation: story-engineering-drift 26s ease-in-out infinite;
-  }
-
-  .story-philosophy {
-    animation: story-philosophy-drift 31s ease-in-out infinite;
-  }
-
-  .story-current {
-    animation: story-current-flow 24s linear infinite;
-  }
-
-  .story-countercurrent {
-    animation: story-current-flow 31s linear infinite reverse;
-  }
-
-  .story-sparks {
-    animation: story-sparks-breathe 9s ease-in-out infinite;
-  }
+  .story-scene .story-sculpture { animation: story-turn 13s ease-in-out infinite; }
+  .story-scene .story-engineering { animation: story-lattice-turn 20s linear infinite; }
+  .story-scene .story-orbit-one { animation: story-orbit 16s linear infinite; }
+  .story-scene .story-orbit-two { animation: story-orbit 23s linear infinite reverse; }
+  .story-scene .story-current { animation: story-flow 6s linear infinite; }
+  .story-scene .story-current-back { animation-duration: 8s; animation-direction: reverse; }
+  .story-scene .story-field { animation: story-field-turn 18s ease-in-out infinite; }
+  .story-scene .story-shadow { animation: story-shadow-turn 13s ease-in-out infinite; transform-origin: 450px 553px; }
+  .story-scene .story-particles { animation: story-particle-drift 11s ease-in-out infinite; }
+  .story-scene .story-inner-current { animation: story-inner-light 7s ease-in-out infinite; }
 }
 
 html[data-motion='paused'] .story-scene,
-html[data-motion='paused'] .story-scene * {
-  animation: none !important;
+html[data-motion='paused'] .story-scene * { animation: none !important; }
+
+@keyframes story-turn {
+  0%, 100% { transform: perspective(1100px) rotateX(10deg) rotateY(-17deg) rotateZ(-5deg) translateY(10px); }
+  50% { transform: perspective(1100px) rotateX(-12deg) rotateY(19deg) rotateZ(5deg) translateY(-18px); }
 }
 
-@keyframes story-sculpture-breathe {
-  0%, 100% { transform: translateY(0) rotate(0); }
-  50% { transform: translateY(-8px) rotate(-1.2deg); }
+@keyframes story-lattice-turn {
+  0% { transform: rotate(0deg) scaleX(.92); }
+  50% { transform: rotate(180deg) scaleX(1.08); }
+  100% { transform: rotate(360deg) scaleX(.92); }
 }
 
-@keyframes story-engineering-drift {
-  0%, 100% { transform: translateY(0); opacity: .8; }
-  50% { transform: translateY(6px); opacity: 1; }
+@keyframes story-orbit { to { transform: rotate(360deg); } }
+@keyframes story-flow { to { stroke-dashoffset: -449; } }
+
+@keyframes story-field-turn {
+  0%, 100% { transform: rotate(-5deg) scaleY(.88); opacity: .7; }
+  50% { transform: rotate(7deg) scaleY(1.08); opacity: 1; }
 }
 
-@keyframes story-philosophy-drift {
-  0%, 100% { transform: rotate(0); opacity: .9; }
-  50% { transform: rotate(3deg); opacity: .7; }
+@keyframes story-shadow-turn {
+  0%, 100% { transform: scaleX(.94); opacity: .65; }
+  50% { transform: scaleX(1.1); opacity: .95; }
 }
 
-@keyframes story-current-flow {
-  to { stroke-dashoffset: -570; }
+@keyframes story-particle-drift {
+  0%, 100% { transform: rotate(-7deg) translateY(12px); opacity: .4; }
+  50% { transform: rotate(9deg) translateY(-18px); opacity: 1; }
 }
 
-@keyframes story-sparks-breathe {
-  0%, 100% { opacity: .6; }
-  50% { opacity: 1; }
+@keyframes story-inner-light {
+  0%, 100% { opacity: .35; }
+  50% { opacity: .9; }
 }

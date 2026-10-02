@@ -1,0 +1,190 @@
+@layer home {
+  .home .art-specorganon {
+    --speed: 9s;
+    background:
+      radial-gradient(ellipse at 54% 40%, #2b5a42 0, #122e23 48%, #081d17 100%);
+  }
+  .home .art-specorganon svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    fill: none;
+    stroke-linejoin: round;
+    stroke-linecap: round;
+  }
+  .home .art-specorganon .draft {
+    stroke: #95bd8e;
+    stroke-width: .35;
+    opacity: .13;
+  }
+  .home .art-specorganon .frame {
+    stroke: #99b79a;
+    stroke-width: .7;
+    opacity: .3;
+  }
+  .home .art-specorganon .shadow { fill: #03120d; opacity: .42; }
+  .home .art-specorganon .plinth-edge {
+    fill: #102a21;
+    stroke: #658467;
+    stroke-width: .6;
+  }
+  .home .art-specorganon .plinth {
+    stroke: #96ac85;
+    stroke-width: .65;
+  }
+  .home .art-specorganon .inlay {
+    stroke: #cbb581;
+    stroke-width: .5;
+    opacity: .55;
+  }
+  .home .art-specorganon .trace-back {
+    stroke: #05271c;
+    stroke-width: 6;
+    opacity: .65;
+  }
+  .home .art-specorganon .trace {
+    stroke: #9fcba1;
+    stroke-width: 1.1;
+    opacity: .75;
+  }
+  .home .art-specorganon .signal {
+    stroke: #fce4a7;
+    stroke-width: 2.5;
+    stroke-dasharray: 3 37;
+    opacity: .7;
+  }
+  .home .art-specorganon .out {
+    stroke: #b9f1c3;
+    stroke-dasharray: 2 44;
+  }
+  .home .art-specorganon .return {
+    stroke: #aaac7a;
+    stroke-width: .8;
+    stroke-dasharray: 1 3;
+    opacity: .4;
+  }
+  .home .art-specorganon .well-shadow { fill: #092419; opacity: .85; }
+  .home .art-specorganon .base-side {
+    fill: #334634;
+    stroke: #a89f6d;
+    stroke-width: .7;
+  }
+  .home .art-specorganon .base-top {
+    fill: #284434;
+    stroke: #c5b581;
+    stroke-width: .75;
+  }
+  .home .art-specorganon .rim {
+    stroke: #d8c691;
+    stroke-width: 2;
+    opacity: .7;
+  }
+  .home .art-specorganon .inner {
+    stroke: #c0dcad;
+    stroke-width: .65;
+    stroke-dasharray: 1 3;
+    opacity: .65;
+  }
+  .home .art-specorganon .core-shadow { fill: #a3bf86; opacity: .26; }
+  .home .art-specorganon .core-left {
+    fill: url(#art-specorganon-glass);
+    stroke: #c7ddb0;
+    stroke-width: .7;
+  }
+  .home .art-specorganon .core-right {
+    fill: #bfeccc1a;
+    stroke: #afd1a6;
+    stroke-width: .7;
+  }
+  .home .art-specorganon .core-top {
+    fill: url(#art-specorganon-brass);
+    stroke: #eee1b4;
+    stroke-width: .7;
+  }
+  .home .art-specorganon .core-lines {
+    stroke: #d3f5c4;
+    stroke-width: .7;
+    opacity: .75;
+  }
+  .home .art-specorganon .seal { fill: #35573e; }
+  .home .art-specorganon .scan {
+    stroke: #dff8c7;
+    stroke-width: 1.2;
+    opacity: .65;
+    filter: drop-shadow(0 0 3px #cff8a577);
+  }
+  .home .art-specorganon .crown {
+    stroke: #e0d09e;
+    stroke-width: 1;
+    opacity: .75;
+  }
+  .home .art-specorganon .bracket {
+    stroke: #9dd1a0;
+    stroke-width: .65;
+    opacity: .5;
+  }
+  .home .art-specorganon .notation {
+    fill: #c7cb9e;
+    font: 500 6px/1 var(--f-code);
+    letter-spacing: 1.4px;
+    opacity: .65;
+  }
+  .home .art-host:is(:hover, :focus-within) .art-specorganon {
+    --speed: 4.5s;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .home .art-specorganon .sheet {
+      animation: art-specorganon-sheet 6s ease-in-out infinite alternate;
+    }
+    .home .art-specorganon .upper { animation-delay: -2.5s; }
+    .home .art-specorganon .signal {
+      animation: art-specorganon-signal var(--speed) linear infinite;
+    }
+    .home .art-specorganon .out { animation-delay: -3s; }
+    .home .art-specorganon .scan {
+      animation: art-specorganon-scan var(--speed) ease-in-out infinite;
+    }
+    .home .art-specorganon .ambient {
+      animation: art-specorganon-light 6s ease-in-out infinite alternate;
+    }
+    .home .art-specorganon .phase {
+      animation: art-specorganon-phase var(--speed) ease-in-out infinite;
+    }
+    .home .art-specorganon .phase-1 { animation-delay: calc(var(--speed) * -.8889); }
+    .home .art-specorganon .phase-2 { animation-delay: calc(var(--speed) * -.7778); }
+    .home .art-specorganon .phase-3 { animation-delay: calc(var(--speed) * -.6667); }
+    .home .art-specorganon .phase-4 { animation-delay: calc(var(--speed) * -.5556); }
+    .home .art-specorganon .phase-5 { animation-delay: calc(var(--speed) * -.4444); }
+    .home .art-specorganon .phase-6 { animation-delay: calc(var(--speed) * -.3333); }
+    .home .art-specorganon .phase-7 { animation-delay: calc(var(--speed) * -.2222); }
+    .home .art-specorganon .phase-8 { animation-delay: calc(var(--speed) * -.1111); }
+    .home .art-host:is(:hover, :focus-within) .art-specorganon .record use {
+      animation: art-specorganon-record 4.5s ease-in-out infinite;
+    }
+    .home .art-host:is(:hover, :focus-within) .art-specorganon .r2 use { animation-delay: -.8s; }
+    .home .art-host:is(:hover, :focus-within) .art-specorganon .r3 use { animation-delay: -1.6s; }
+    .home .art-host:is(:hover, :focus-within) .art-specorganon .r4 use { animation-delay: -2.4s; }
+  }
+  @keyframes art-specorganon-sheet {
+    to { transform: translate(0, -3px); }
+  }
+  @keyframes art-specorganon-signal {
+    to { stroke-dashoffset: -160; }
+  }
+  @keyframes art-specorganon-scan {
+    0%, 100% { transform: translateY(-17px); opacity: .25; }
+    48% { transform: translateY(18px); opacity: .8; }
+  }
+  @keyframes art-specorganon-light {
+    to { opacity: .55; }
+  }
+  @keyframes art-specorganon-phase {
+    0%, 65%, 100% { opacity: .68; }
+    35% { opacity: 1; }
+  }
+  @keyframes art-specorganon-record {
+    0%, 100% { transform: translateY(0); }
+    45% { transform: translateY(-4px); }
+  }
+}

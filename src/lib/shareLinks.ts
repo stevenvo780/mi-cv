@@ -98,6 +98,15 @@ export function getShareDestinations(locale: Locale): ShareDestination[] {
       url: PROFILES.instagram,
       tone: 'violet',
     },
+    ...([
+      ['facebook', 'Facebook', es ? 'Mi perfil público en Facebook.' : 'My public Facebook profile.', 'teal'],
+      ['tiktok', 'TikTok', es ? 'Mi perfil público en TikTok.' : 'My public TikTok profile.', 'gold'],
+      ['x', 'X', es ? 'Mi perfil público en X.' : 'My public X profile.', 'violet'],
+    ] as const).map(([id, label, description, tone]): ShareDestination => ({
+      id, group: 'contact', label, description, tone,
+      category: es ? 'Red social' : 'Social',
+      url: PROFILES[id],
+    })),
     {
       id: 'github',
       group: 'contact',
