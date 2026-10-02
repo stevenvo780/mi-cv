@@ -2,7 +2,15 @@ import { PORTRAIT } from '@/app/components/Portrait/portraitData';
 import StoryScene from '@/components/history/StoryScene';
 import type { HomeCopy } from '@/content/home';
 import type { Locale } from '@/lib/site';
-import styles from './History.module.css';
+import './History.css';
+
+// La hoja usa nombres propios de esta sección; el mapa vive solo en el servidor.
+const styles = {
+  history: 'history-section', canvas: 'history-canvas', content: 'history-content',
+  eyebrow: 'history-eyebrow', title: 'history-title', lead: 'history-lead', read: 'history-read',
+  axis: 'history-axis', motion: 'history-motion', bottom: 'history-bottom', quote: 'history-quote',
+  chapters: 'history-chapters', number: 'history-number', arrow: 'history-arrow',
+};
 
 /** Una puerta visible al relato completo, conservado en PORTRAIT. SVG y texto salen del servidor. */
 export default function History({ locale, t }: { locale: Locale; t: HomeCopy }) {
