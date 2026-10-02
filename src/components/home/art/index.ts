@@ -22,6 +22,7 @@ import scrapekit from './scrapekit';
 import warehouse from './warehouse';
 import aporia from './aporia';
 import cauceV3 from './cauce-v3';
+import specorganon from './specorganon';
 import eikon from './eikon';
 import humanizar from './humanizar';
 import prizma from './prizma';
@@ -54,6 +55,7 @@ export const ART: Record<string, ComponentType<ArtProps>> = {
   'warehouse': warehouse,
   'aporia': aporia,
   'cauce-v3': cauceV3,
+  'specorganon': specorganon,
   'eikon': eikon,
   'humanizar': humanizar,
   'prizma': prizma,

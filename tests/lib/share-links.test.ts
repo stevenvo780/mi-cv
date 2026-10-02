@@ -6,7 +6,7 @@ const expectedIds = [
   'cv', 'cv-engineer', 'cv-philosopher', 'services', 'blog', 'lore',
   'front-informatica', 'front-filosofia', 'front-ciencias', 'front-enterprise',
   'catalog-humanizar', 'catalog-stevenai', 'catalog-clavis', 'catalog-complexlab',
-  'jarvis', 'instagram', 'github', 'linkedin',
+  'jarvis', 'instagram', 'facebook', 'tiktok', 'x', 'github', 'linkedin',
 ];
 
 const externalUrls: Record<string, string> = {
@@ -20,6 +20,9 @@ const externalUrls: Record<string, string> = {
   'catalog-complexlab': 'https://kosmos.stevenvallejo.com',
   jarvis: 'https://wa.me/573023954534',
   instagram: 'https://www.instagram.com/stev_vallejo/',
+  facebook: 'https://www.facebook.com/profile.php?id=61595014769467',
+  tiktok: 'https://www.tiktok.com/@stevenvo780',
+  x: 'https://x.com/stev_vallejo',
   github: 'https://github.com/stevenvo780',
   linkedin: 'https://www.linkedin.com/in/steven-vallejo/',
 };
@@ -30,7 +33,7 @@ describe('destinos de la tarjeta QR', () => {
     expect(destinations.map(({ id }) => id)).toEqual(expectedIds);
     expect(destinations.map(({ group }) => group)).toEqual([
       ...Array(6).fill('main'), ...Array(4).fill('fronts'),
-      ...Array(4).fill('catalogs'), ...Array(4).fill('contact'),
+      ...Array(4).fill('catalogs'), ...Array(7).fill('contact'),
     ]);
     expect(Object.keys(SHARE_COPY[locale].groups)).toEqual(['main', 'fronts', 'catalogs', 'contact']);
   });

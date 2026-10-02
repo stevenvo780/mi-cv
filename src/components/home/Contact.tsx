@@ -1,5 +1,5 @@
 import type { HomeCopy } from '@/content/home';
-import { PROFILES, type Locale } from '@/lib/site';
+import { SOCIAL_LINKS, type Locale } from '@/lib/site';
 import SectionHead from './SectionHead';
 
 export default function Contact({ locale, t }: { locale: Locale; t: HomeCopy }) {
@@ -22,15 +22,9 @@ export default function Contact({ locale, t }: { locale: Locale; t: HomeCopy }) 
           ))}
         </ul>
         <ul className="social" aria-label={c.social}>
-          <li>
-            <a href={PROFILES.github} rel="me noopener">GitHub</a>
-          </li>
-          <li>
-            <a href={PROFILES.linkedin} rel="me noopener">LinkedIn</a>
-          </li>
-          <li>
-            <a href={PROFILES.instagram} rel="me noopener">Instagram</a>
-          </li>
+          {SOCIAL_LINKS.map((profile) => (
+            <li key={profile.id}><a href={profile.url} rel="me noopener">{profile.label}</a></li>
+          ))}
         </ul>
         {/* <a> y no next/link: /lore es del grupo (portal); ver la nota de page.tsx. */}
         <p className="contact-story">

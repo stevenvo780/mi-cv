@@ -527,13 +527,13 @@
   .home .hero-meta {
     align-self: end;
     display: grid;
-    gap: 1rem;
+    gap: .45rem;
     max-width: 34rem;
-    padding: 1.25rem 1.4rem;
-    background: var(--scrim);
-    border: 1px solid var(--line);
-    border-radius: var(--radius);
-    backdrop-filter: var(--blur);
+  }
+  .home .hero-meta > p {
+    width: fit-content;
+    padding: .4rem .65rem;
+    background-color: var(--scrim);
   }
   .home .hero-role {
     font-family: var(--f-mono);
@@ -545,11 +545,6 @@
   .home .hero-lead {
     font-size: clamp(1.05rem, 1.5vw, 1.25rem);
     text-wrap: pretty;
-  }
-  .home .hero-actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.75rem;
   }
   .home .hero-caption {
     font-family: var(--f-mono);

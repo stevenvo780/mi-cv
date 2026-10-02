@@ -1,6 +1,6 @@
 # Perfil de Steven Vallejo Ortiz
 
-Datos al 2026-10-01. Compilado por scripts/build-assistant-profile.mts (repo mi-cv) a partir de lo publicado en sus sitios: cv-informatico@da0e800:public/pdf/CV_ai_es.html, cv-filosofo@803dea6:public/index.html, services@3185388:app/content.ts y el catálogo de stevenvallejo.com.
+Datos al 2026-10-02. Compilado por scripts/build-assistant-profile.mts (repo mi-cv) a partir de lo publicado en sus sitios: cv-informatico@da0e800:public/pdf/CV_ai_es.html, cv-filosofo@803dea6:public/index.html, services@3185388:app/content.ts y el catálogo de stevenvallejo.com.
 
 ## Identidad y contacto
 
@@ -9,7 +9,7 @@ Datos al 2026-10-01. Compilado por scripts/build-assistant-profile.mts (repo mi-
 - Ubicación: Medellín, Antioquia, Colombia (GMT-5). Trabaja en remoto desde Colombia y presencial o híbrido en Medellín y el Valle de Aburrá.
 - WhatsApp: https://wa.me/573023954534 (+57 302 395 4534, mi asistente personal).
 - Correo: steven@stevenvallejo.com.
-- GitHub: https://github.com/stevenvo780 · LinkedIn: https://www.linkedin.com/in/steven-vallejo/ · Instagram: https://www.instagram.com/stev_vallejo/ · Medium: https://medium.com/@stevenvallejo780
+- GitHub: https://github.com/stevenvo780 · LinkedIn: https://www.linkedin.com/in/steven-vallejo/ · Instagram: https://www.instagram.com/stev_vallejo/ · Facebook: https://www.facebook.com/profile.php?id=61595014769467 · TikTok: https://www.tiktok.com/@stevenvo780 · X: https://x.com/stev_vallejo · Medium: https://medium.com/@stevenvallejo780
 - Temas que domina: Node.js, NestJS, TypeScript, PostgreSQL, Docker, Linux, Google Cloud Platform, Cloud Run, APIs REST, Microservicios, Integración de LLMs, RAG, OCR, Automatización de procesos, React, Next.js, Arquitectura de software, Orquestación de agentes de IA, Lógica formal, Filosofía analítica, Epistemología, Filosofía de la mente, Filosofía de la inteligencia artificial, Ética, Argumentación, Lógica simbólica, Teoría de tipos, SAT solving, Sistemas complejos.
 
 ## Sitios del ecosistema Mouseîon
@@ -878,7 +878,7 @@ Un usuario edita documentos, corre terminales Linux reales en el navegador y con
 
 ¿Tienes una idea o un dolor de cabeza? Cuéntamelo en una llamada corta y sales con un plan claro y un precio fijo. Sin compromiso —escríbeme ahora.
 
-## Catálogo de trabajos (https://www.stevenvallejo.com): cuatro frentes · 27 trabajos
+## Catálogo de trabajos (https://www.stevenvallejo.com): cuatro frentes · 28 trabajos
 
 Cada trabajo es un sitio o un proyecto propio. «En línea» enlaza su versión actual; «próximamente» aún no tiene dominio propio.
 
@@ -902,6 +902,7 @@ El frente del ingeniero: más de 12 años de backend, IA agéntica, lógica comp
 - Apothḗke (Inventario) [Venta cerrada PYME]: Sistema de gestión de almacén e inventario: stock, órdenes, movimientos, roles (admin/manager/worker), notificaciones y analítica. React 19 + Vite + Neon Postgres en funciones serverless de Vercel, con seed de datos demo para arrancar de inmediato. (sitio: https://apotheke.stevenvallejo.com · en línea)
 - Áporía (CMS editorial científico) [Próximamente]: Plataforma editorial full-stack (Next.js 16 + Neon/Postgres + Firebase Auth): publica papers, archiva investigación y corre experimentos colectivos con visualización en tiempo real, con un panel /studio para el CRUD editorial bajo auth real. El nombre evoca la paradoja, pero el producto es infraestructura de publicación científica. (próximamente)
 - Cauce V3 (Director orquestador de la flota agéntica) [Proyecto estrella en ingeniería]: Mi proyecto estrella en ingeniería: dirige la flota de agentes de IA que opera este mismo portafolio y todo el ecosistema Humanizar. Despliegues, monitoreo, contratos de entrega entre agentes y un CRM multi-tenant, en producción. Es la mano derecha que mantiene viva la flota. (sitio: https://cauce.humanizar.tech · en línea)
+- SpecOrganon (Método operativo y toolkit para problemas complejos) [Metodología · SDD · MCP]: Conecta filosofía, ciencia e ingeniería en nueve fases: del problema y la evidencia a los requisitos, la construcción y la validación. Su MVP local reúne CLI, servidor MCP, expediente versionado, compuertas de revisión y reanudación. El sitio presenta el método y una guía para aplicarlo a proyectos propios. (sitio: https://specorganon.stevenvallejo.com/ · código: https://github.com/stevenvo780/SpecOrganon · en línea)
 - Eikón (Generador de imagen de marca) [Generador de marca]: Generador determinista de identidad de marca: isotipos procedurales, paletas, iconsets y kits sociales, con validación de contraste WCAG. Webapp multi-tenant + API + servidor MCP, en producción. Es el motor que fabrica las marcas de este mismo portafolio. (sitio: https://eikon.humanizar.cloud · en línea)
 - Enlaces del frente: CV Informático https://informatico.stevenvallejo.com · Servicios https://praxis.stevenvallejo.com
 

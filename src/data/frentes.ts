@@ -145,7 +145,7 @@ export const frentesMeta: Record<FrenteId, FrenteMeta> = {
   informatica: {
     id: 'informatica',
     nombre: { es: 'Ingeniería', en: 'Engineering' },
-    secNo: '01',  // 11 products (grid-portrait)
+    secNo: '01',  // 12 products (grid-portrait)
     tagline: {
       es: '12+ años de backend, IA agéntica, devtools y software de negocio.',
       en: '12+ years of backend, agentic AI, devtools and business software.',
@@ -646,6 +646,25 @@ export const productos: Producto[] = [
     banner: true,
   },
   {
+    id: 'specorganon',
+    frente: 'informatica',
+    nombre: 'SpecOrganon',
+    subtitulo: {
+      es: 'Método operativo y toolkit para problemas complejos',
+      en: 'An operational method and toolkit for complex problems',
+    },
+    descripcion: {
+      es: 'Conecta filosofía, ciencia e ingeniería en nueve fases: del problema y la evidencia a los requisitos, la construcción y la validación. Su MVP local reúne CLI, servidor MCP, expediente versionado, compuertas de revisión y reanudación. El sitio presenta el método y una guía para aplicarlo a proyectos propios.',
+      en: 'Connects philosophy, science and engineering across nine phases: from the problem and evidence to requirements, construction and validation. Its local MVP brings together a CLI, an MCP server, a versioned case record, review gates and resumption. The site introduces the method and a guide to applying it to your own projects.',
+    },
+    url: 'https://specorganon.stevenvallejo.com/',
+    repo: 'https://github.com/stevenvo780/SpecOrganon',
+    status: 'live',
+    badge: { es: 'Metodología · SDD · MCP', en: 'Methodology · SDD · MCP' },
+    cardIdentity: { label: { es: 'Método y toolkit', en: 'Method and toolkit' }, symbol: 'S' },
+    featured: true,
+  },
+  {
     id: 'eikon',
     frente: 'informatica',
     nombre: 'Eikón',
@@ -797,6 +816,7 @@ export const productTags: Record<string, string[]> = {
   warehouse: ['apothḗke', 'inventario', 'almacén', 'stock', 'órdenes', 'logística', 'gestión', 'roles', 'analítica'],
   eikon: ['eikón', 'imagen de marca', 'logos', 'identidad visual', 'iconsets', 'favicons', 'paletas', 'WCAG', 'generador', 'MCP', 'branding', 'diseño', 'marca'],
   'cauce-v3': ['cauce', 'cauce v3', 'flota agéntica', 'agentes', 'orquestador', 'director de flota', 'multi-tenant', 'CRM', 'CRM agéntico', 'humandroid', 'humanizar', 'flagship engineering'],
+  specorganon: ['SpecOrganon', 'metodología', 'methodology', 'toolkit', 'SDD', 'specification driven development', 'MCP', 'CLI', 'filosofía', 'ciencia', 'ingeniería', 'validación', 'trazabilidad', 'traceability', 'revisión', 'review', 'reanudación', 'resumption', 'nueve fases', 'nine phases'],
   humanizar: ['humanizar', 'humanizar systems', 'catálogo', 'catalog', 'empresa', 'productos', 'servicios', 'software empresarial', 'agentes de IA', 'POS', 'ventas', 'distribución', 'operación', 'ingeniería'],
   prizma: ['suite empresarial', 'POS', 'facturación DIAN', 'crédito', 'WhatsApp', 'marketing', 'e-commerce', 'logística', 'CRM', 'microservicios', 'Cloud Run', 'talanton', 'pistis', 'iris', 'hermes', 'talaria'],
   graf: ['pedidos', 'domicilios', 'logística', 'última milla', 'delivery', 'clientes', 'comercio', 'plataforma', 'producción'],
@@ -810,14 +830,14 @@ export const productTags: Record<string, string[]> = {
 /**
  * Orden de las tarjetas de cada frente en la home, detrás de su catálogo. Primero lo que está en producción o es la
  * pieza central del frente; después las familias de producto, juntas; lo que aún no está en línea, al final.
- * - Ingeniería: Cauce V3 (dirige la flota), Órganon y Eikón; la familia PYME, con Érgon delante de sus kits (Chrónos,
+ * - Ingeniería: Cauce V3 (dirige la flota), SpecOrganon (método y toolkit), Órganon y Eikón; la familia PYME, con Érgon delante de sus kits (Chrónos,
  *   Xenía), Apothḗke y Nómos; comunidad y código abierto (Koinonía, Téchne); Áporía, que aún no está en línea.
  * - Filosofía: las plataformas en uso (Ágora, Agón) y el par de gobierno universitario de la UdeA.
  * - Ciencias: Umbral, junto a Kósmos porque recorre sus mismos repositorios; la tesis; las plataformas para aprender.
  * - Empresarial: Graf, Deméter, Prizma y la red de comercios Gravitatoria.
  */
 export const ordenHome: Record<FrenteId, string[]> = {
-  informatica: ['cauce-v3', 'nlp-to-logic', 'eikon', 'devkits', 'devkits-hours', 'devkits-crm', 'warehouse', 'scrapekit', 'communityos', 'stevendevbox', 'aporia'],
+  informatica: ['cauce-v3', 'specorganon', 'nlp-to-logic', 'eikon', 'devkits', 'devkits-hours', 'devkits-crm', 'warehouse', 'scrapekit', 'communityos', 'stevendevbox', 'aporia'],
   filosofia: ['agora', 'debatesuite', 'koinonia-udea', 'gobierno-universitario-udea'],
   ciencias: ['umbral-atlas', 'estructuras-preontologicas', 'noesis-lab', 'phusis'],
   enterprise: ['graf', 'demeter', 'prizma', 'gravitatoria'],

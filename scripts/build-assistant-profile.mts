@@ -157,7 +157,7 @@ push(
   '- Ubicación: Medellín, Antioquia, Colombia (GMT-5). Trabaja en remoto desde Colombia y presencial o híbrido en Medellín y el Valle de Aburrá.',
   `- WhatsApp: ${WHATSAPP_URL.split('?')[0]} (+57 302 395 4534, mi asistente personal).`,
   `- Correo: ${EMAIL}.`,
-  `- GitHub: ${PROFILES.github} · LinkedIn: ${PROFILES.linkedin} · Instagram: ${PROFILES.instagram} · Medium: https://medium.com/@stevenvallejo780`,
+  `- GitHub: ${PROFILES.github} · LinkedIn: ${PROFILES.linkedin} · Instagram: ${PROFILES.instagram} · Facebook: ${PROFILES.facebook} · TikTok: ${PROFILES.tiktok} · X: ${PROFILES.x} · Medium: https://medium.com/@stevenvallejo780`,
   `- Temas que domina: ${es.meta.knowsAbout.join(', ')}.`,
   '',
   '## Sitios del ecosistema Mouseîon',

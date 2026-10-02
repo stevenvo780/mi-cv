@@ -5,14 +5,25 @@ import HomePage from '@/app/[locale]/(home)/page';
 import LorePageClient from '@/app/[locale]/(portal)/lore/LorePageClient';
 import { PORTRAIT } from '@/app/components/Portrait/portraitData';
 import StoryScene from '@/components/history/StoryScene';
+import { HOME } from '@/content/home';
+import { SITES } from '@/lib/ecosystem';
+import { SOCIAL_LINKS } from '@/lib/site';
+import { frenteOrder } from '@/data/frentes';
 
 describe('historia visible y relato preservado', () => {
-  it.each(['es', 'en'] as const)('/%s vuelve a presentar la historia y enlaza al relato completo', async (locale) => {
+  it.each(['es', 'en'] as const)('/%s presenta el método e indexa todos los destinos públicos', async (locale) => {
     const html = renderToStaticMarkup(await HomePage({ params: Promise.resolve({ locale }) }));
     const section = html.match(/<section id="historia"[\s\S]*?<\/section>/)?.[0] ?? '';
     expect(section).toContain(PORTRAIT[locale].heroTitle);
-    expect(section).toContain(PORTRAIT[locale].heroLead);
+    expect(section).toContain(HOME[locale].history.lead);
+    expect(section).not.toContain(PORTRAIT[locale].heroLead);
     expect(section).toContain(`href="/${locale}/lore"`);
+    for (const href of [...Object.values(SITES), ...frenteOrder.map((front) => `/${locale}/${front}`), `/${locale}/compartir`]) {
+      expect(section).toContain(`href="${href}"`);
+    }
+    for (const social of SOCIAL_LINKS) expect(section).toContain(social.url.replace(/&/g, '&amp;'));
+    const hero = html.match(/<section class="hero"[\s\S]*?<\/section>/)?.[0] ?? '';
+    for (const href of Object.values(SITES)) expect(hero).not.toContain(href);
     expect(html).toContain('href="#historia"');
     expect(html.indexOf('id="historia"')).toBeLessThan(html.indexOf('id="frentes"'));
     expect([...html.matchAll(/<h1\b/g)]).toHaveLength(1);

@@ -1,8 +1,10 @@
 import { expect, test } from './fixtures';
 import { PORTRAIT } from '../src/app/components/Portrait/portraitData';
+import { SITES } from '../src/lib/ecosystem';
+import { SOCIAL_LINKS } from '../src/lib/site';
 
 for (const locale of ['es', 'en'] as const) {
-  test(`/${locale}: historia visible, navegación por capítulos y regreso al catálogo`, async ({ page }) => {
+  test(`/${locale}: índice completo, acceso al relato y regreso al catálogo`, async ({ page }) => {
     const errors: string[] = [];
     page.on('pageerror', (error) => errors.push(error.message));
     await page.goto(`/${locale}`);
@@ -10,6 +12,12 @@ for (const locale of ['es', 'en'] as const) {
     await history.scrollIntoViewIfNeeded();
     await expect(history.getByRole('heading', { level: 2 })).toHaveText(PORTRAIT[locale].heroTitle);
     await expect(history.locator('[data-story-scene] svg')).toBeVisible();
+    for (const url of Object.values(SITES)) {
+      await expect(history.locator(`a[href="${url}"]`)).toBeVisible();
+      await expect(page.locator(`.hero a[href="${url}"]`)).toHaveCount(0);
+    }
+    for (const profile of SOCIAL_LINKS) await expect(history.locator(`a[href="${profile.url}"]`)).toBeVisible();
+    expect(await history.evaluate((element) => getComputedStyle(element).backgroundColor)).toBe('rgba(0, 0, 0, 0)');
     expect(await page.evaluate(() => document.documentElement.scrollWidth - innerWidth)).toBe(0);
     await history.locator(`a[href="/${locale}/lore"]`).click();
     await expect(page).toHaveURL(new RegExp(`/${locale}/lore$`));
@@ -24,6 +32,17 @@ for (const locale of ['es', 'en'] as const) {
     expect(errors).toEqual([]);
   });
 }
+
+test('SpecOrganon tiene tarjeta propia en Ingeniería y se encuentra por metodología', async ({ page }) => {
+  await page.goto('/es');
+  await page.getByRole('searchbox').fill('SpecOrganon');
+  const card = page.locator('[data-node="producto:specorganon"]');
+  await expect(card).toBeVisible();
+  await expect(card.locator('.art-specorganon svg')).toBeVisible();
+  await expect(card.locator('a[href="https://specorganon.stevenvallejo.com/"]')).toBeAttached();
+  await page.goto('/es/informatica');
+  await expect(page.locator('a[href="https://specorganon.stevenvallejo.com/"]').first()).toBeVisible();
+});
 
 test('la historia completa permite detener su escena sin ocultar el relato', async ({ page }) => {
   await page.goto('/es/lore');

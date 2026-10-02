@@ -53,7 +53,7 @@ export function buildHomeJsonLd(locale: Locale, facts: PersonFacts, dateModified
         worksFor: currentEmployers(),
         knowsAbout: facts.knowsAbout,
         knowsLanguage: ['es', 'en'],
-        sameAs: [PROFILES.github, PROFILES.linkedin, PROFILES.instagram],
+        sameAs: Object.values(PROFILES),
       },
       {
         '@type': 'ItemList',

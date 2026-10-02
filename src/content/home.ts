@@ -63,7 +63,10 @@ export interface HomeCopy {
     more: string;
     close: string;
   };
-  history: { eyebrow: string; engineering: string; philosophy: string; read: string; chapters: string; pause: string };
+  history: {
+    eyebrow: string; lead: string; thinking: string[]; engineering: string; philosophy: string;
+    directory: string; sites: string; fields: string; read: string; share: string; pause: string;
+  };
   /** Tarjeta de cada catálogo, al frente de su rejilla. Las cifras llegan de los datos (`incluye` de cada catálogo). */
   catalogs: {
     /** Nombre del tipo, en plural: el buscador encuentra todos los catálogos con él. */
@@ -107,7 +110,7 @@ export const HOME: Record<Locale, HomeCopy> = {
       skip: 'Saltar al contenido',
       menu: 'Menú',
       catalog: 'Catálogo',
-      story: 'Mi historia',
+      story: 'Explorar',
       contact: 'Contacto',
       language: 'English',
       services: 'Servicios',
@@ -130,11 +133,16 @@ export const HOME: Record<Locale, HomeCopy> = {
       listLink: 'Verlo como catálogo',
     },
     history: {
-      eyebrow: 'El origen del criterio',
+      eyebrow: 'Criterio y práctica',
+      lead: 'Primero aclaro el problema y sus supuestos. Conecto filosofía, lógica e ingeniería para construir sistemas que se puedan poner a prueba. Aquí puedes recorrer las distintas formas de ese trabajo.',
+      thinking: ['Preguntar con precisión', 'Conectar las ideas', 'Ponerlas a prueba'],
       engineering: 'Ingeniería',
       philosophy: 'Filosofía',
-      read: 'Leer mi historia completa',
-      chapters: 'Entrar a un capítulo de mi historia',
+      directory: 'Índice de mis sitios',
+      sites: 'Perfil y colaboración',
+      fields: 'Áreas y catálogos',
+      read: 'Mi historia completa',
+      share: 'Compartir con QR',
       pause: 'Pausar animación',
     },
     fronts: {
@@ -191,7 +199,7 @@ export const HOME: Record<Locale, HomeCopy> = {
       skip: 'Skip to content',
       menu: 'Menu',
       catalog: 'Catalog',
-      story: 'My story',
+      story: 'Explore',
       contact: 'Contact',
       language: 'Español',
       services: 'Services',
@@ -214,11 +222,16 @@ export const HOME: Record<Locale, HomeCopy> = {
       listLink: 'See it as a catalog',
     },
     history: {
-      eyebrow: 'Where judgment begins',
+      eyebrow: 'Judgment and practice',
+      lead: 'I start by clarifying the problem and its assumptions. I connect philosophy, logic and engineering to build systems that can be put to the test. Explore the different forms that work takes here.',
+      thinking: ['Ask precise questions', 'Connect ideas', 'Put them to the test'],
       engineering: 'Engineering',
       philosophy: 'Philosophy',
-      read: 'Read my full story',
-      chapters: 'Open a chapter of my story',
+      directory: 'Index of my sites',
+      sites: 'Profile and collaboration',
+      fields: 'Fields and catalogs',
+      read: 'My full story',
+      share: 'Share with QR',
       pause: 'Pause animation',
     },
     fronts: {
