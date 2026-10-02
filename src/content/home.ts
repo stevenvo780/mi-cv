@@ -1,6 +1,6 @@
 import { frenteOrder, productos } from '@/data/frentes';
 import type { NodeKind } from '@/graph/model';
-import type { Locale } from '@/lib/site';
+import type { Locale, SOCIAL_LINKS } from '@/lib/site';
 
 const COUNT_WORDS: Record<Locale, readonly string[]> = {
   es: ['Dos', 'Tres', 'Cuatro', 'Cinco', 'Seis', 'Siete', 'Ocho', 'Nueve', 'Diez'],
@@ -51,7 +51,6 @@ export interface HomeCopy {
     searchLabel: string;
     searchPlaceholder: string;
     noResults: string;
-    openFront: string;
     visit: string;
     code: string;
     soon: string;
@@ -65,7 +64,9 @@ export interface HomeCopy {
   };
   history: {
     eyebrow: string; lead: string; thinking: string[]; engineering: string; philosophy: string;
-    directory: string; sites: string; fields: string; read: string; share: string; pause: string;
+    directory: string; sites: string; read: string; share: string; pause: string;
+    socialTitle: string; socialLead: string;
+    socialDetails: Record<(typeof SOCIAL_LINKS)[number]['id'], string>;
   };
   /** Tarjeta de cada catálogo, al frente de su rejilla. Las cifras llegan de los datos (`incluye` de cada catálogo). */
   catalogs: {
@@ -140,7 +141,16 @@ export const HOME: Record<Locale, HomeCopy> = {
       philosophy: 'Filosofía',
       directory: 'Índice de mis sitios',
       sites: 'Perfil y colaboración',
-      fields: 'Áreas y catálogos',
+      socialTitle: 'Sigamos la conversación.',
+      socialLead: 'Ideas, procesos y proyectos, en el canal que prefieras.',
+      socialDetails: {
+        instagram: 'Ideas en imágenes.',
+        facebook: 'Conversaciones y novedades.',
+        tiktok: 'Ideas en movimiento.',
+        x: 'Notas y conversación.',
+        github: 'Código y proyectos.',
+        linkedin: 'Trayectoria y colaboración.',
+      },
       read: 'Mi historia completa',
       share: 'Compartir con QR',
       pause: 'Pausar animación',
@@ -152,7 +162,6 @@ export const HOME: Record<Locale, HomeCopy> = {
       searchLabel: 'Buscar en el catálogo',
       searchPlaceholder: 'Producto, tecnología o tema…',
       noResults: 'Sin resultados. Prueba con otro término.',
-      openFront: 'Explorar el frente',
       visit: 'Visitar',
       code: 'Código',
       soon: 'Próximamente',
@@ -229,7 +238,16 @@ export const HOME: Record<Locale, HomeCopy> = {
       philosophy: 'Philosophy',
       directory: 'Index of my sites',
       sites: 'Profile and collaboration',
-      fields: 'Fields and catalogs',
+      socialTitle: 'Keep the conversation going.',
+      socialLead: 'Ideas, work in progress and projects, on the channel you prefer.',
+      socialDetails: {
+        instagram: 'Ideas in pictures.',
+        facebook: 'Conversations and updates.',
+        tiktok: 'Ideas in motion.',
+        x: 'Notes and conversation.',
+        github: 'Code and projects.',
+        linkedin: 'Experience and collaboration.',
+      },
       read: 'My full story',
       share: 'Share with QR',
       pause: 'Pause animation',
@@ -241,7 +259,6 @@ export const HOME: Record<Locale, HomeCopy> = {
       searchLabel: 'Search the catalog',
       searchPlaceholder: 'Product, technology or topic…',
       noResults: 'No results. Try another term.',
-      openFront: 'Explore the front',
       visit: 'Visit',
       code: 'Code',
       soon: 'Coming soon',

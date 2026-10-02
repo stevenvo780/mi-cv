@@ -11,16 +11,18 @@ import { SOCIAL_LINKS } from '@/lib/site';
 import { frenteOrder } from '@/data/frentes';
 
 describe('historia visible y relato preservado', () => {
-  it.each(['es', 'en'] as const)('/%s presenta el método e indexa todos los destinos públicos', async (locale) => {
+  it.each(['es', 'en'] as const)('/%s presenta el método, los sitios y las redes sin duplicar las áreas', async (locale) => {
     const html = renderToStaticMarkup(await HomePage({ params: Promise.resolve({ locale }) }));
     const section = html.match(/<section id="historia"[\s\S]*?<\/section>/)?.[0] ?? '';
     expect(section).toContain(PORTRAIT[locale].heroTitle);
     expect(section).toContain(HOME[locale].history.lead);
     expect(section).not.toContain(PORTRAIT[locale].heroLead);
     expect(section).toContain(`href="/${locale}/lore"`);
-    for (const href of [...Object.values(SITES), ...frenteOrder.map((front) => `/${locale}/${front}`), `/${locale}/compartir`]) {
+    for (const href of [...Object.values(SITES), `/${locale}/compartir`]) {
       expect(section).toContain(`href="${href}"`);
     }
+    for (const front of frenteOrder) expect(html).not.toContain(`href="/${locale}/${front}"`);
+    expect(section).not.toContain('history-fields');
     for (const social of SOCIAL_LINKS) expect(section).toContain(social.url.replace(/&/g, '&amp;'));
     const hero = html.match(/<section class="hero"[\s\S]*?<\/section>/)?.[0] ?? '';
     for (const href of Object.values(SITES)) expect(hero).not.toContain(href);
