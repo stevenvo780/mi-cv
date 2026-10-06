@@ -1,5 +1,7 @@
 import { PROJECT_CATALOG } from './catalog';
 import type { ProjectActivity, ProjectSnapshot } from './model';
+import { unstable_cache } from 'next/cache';
+import { collectPublicProjects } from './collector';
 
 export const PROJECT_FEED_URL = 'https://github.com/stevenvo780/mi-cv/releases/download/activity-feed/projects.json';
 
@@ -30,7 +32,7 @@ export function validateProjectFeed(input: unknown, now = new Date()): ProjectSn
 }
 
 /** The website reads only a public, sanitized release asset. No API token is available here. */
-export async function loadProjectActivity(now = new Date()): Promise<ProjectSnapshot> {
+async function readPublishedFeed(now: Date): Promise<ProjectSnapshot> {
   const response = await fetch(PROJECT_FEED_URL, {
     headers: { Accept: 'application/json', 'User-Agent': 'Mouseion-Published-Projects/1.0' },
     next: { revalidate: 3600, tags: ['activity-projects'] },
@@ -51,4 +53,24 @@ export async function loadProjectActivity(now = new Date()): Promise<ProjectSnap
     body += decoder.decode();
   } finally { await reader.cancel(); }
   return validateProjectFeed(JSON.parse(body), now);
+}
+
+// Public data can still refresh if the owner temporarily cannot run GitHub Actions.
+// One stable aggregate cache avoids per-visitor API batches and the UTC midnight double batch.
+const cachedPublicCollection = unstable_cache(() => collectPublicProjects(), ['mouseion-public-project-fallback-v1'], {
+  revalidate: 21_600, tags: ['activity-projects'],
+});
+
+export async function loadProjectActivity(now = new Date()): Promise<ProjectSnapshot> {
+  let published: ProjectSnapshot | null = null;
+  try { published = await readPublishedFeed(now); } catch { /* A missing publisher must not disable public data. */ }
+  if (published && now.getTime() - Date.parse(published.updatedAt) < 21_600_000) return published;
+  try {
+    const live = validateProjectFeed(await cachedPublicCollection(), now);
+    return published && Date.parse(published.updatedAt) > Date.parse(live.updatedAt) ? published : live;
+  } catch {
+    // Preserve the actual measurement time. A stale record is explicitly marked in the UI.
+    if (published) return published;
+    throw new Error('Public project activity unavailable');
+  }
 }

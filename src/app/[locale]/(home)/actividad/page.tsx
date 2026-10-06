@@ -1,9 +1,11 @@
 import type { Metadata } from 'next';
 import BrandLogo from '@/app/components/BrandLogo';
 import ActivityObservatory from '@/components/activity/ActivityObservatory';
+import ProjectBestiary from '@/components/activity/ProjectBestiary';
 import { ACTIVITY } from '@/content/activity';
 import { OG_LOCALE, ogImage, pageAlternates, shareTitle, toLocale } from '@/lib/site';
 import '@/styles/activity.css';
+import '@/styles/project-bestiary.css';
 
 export const dynamic = 'error';
 
@@ -40,6 +42,7 @@ export default async function ActivityPage({ params }: { params: Promise<{ local
       </header>
       <main id="actividad">
         <ActivityObservatory locale={locale} />
+        <ProjectBestiary locale={locale} />
         <section className="activity-privacy" aria-labelledby="activity-privacy-title">
           <p className="activity-eyebrow">{t.privacyEyebrow}</p>
           <h2 id="activity-privacy-title">{t.privacyTitle.split('\n').map((line) => <span key={line}>{line}</span>)}</h2>

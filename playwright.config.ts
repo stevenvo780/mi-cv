@@ -20,13 +20,13 @@ export default defineConfig({
   },
   webServer: { command: 'npx next start -p 3210', url: 'http://localhost:3210/es', reuseExistingServer: true, timeout: 120_000 },
   projects: [
-    { name: 'desktop', testIgnore: /(?:graph3d|activity-motion)\.spec\.ts/, use: { viewport: { width: 1440, height: 900 } } },
-    { name: 'tablet', testIgnore: /(?:graph3d|activity-motion)\.spec\.ts/, use: { viewport: { width: 834, height: 1112 } } },
-    { name: 'mobile', testIgnore: /(?:graph3d|activity-motion)\.spec\.ts/, use: { viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true } },
+    { name: 'desktop', testIgnore: /(?:graph3d|activity-motion|project-bestiary-motion)\.spec\.ts/, use: { viewport: { width: 1440, height: 900 } } },
+    { name: 'tablet', testIgnore: /(?:graph3d|activity-motion|project-bestiary-motion)\.spec\.ts/, use: { viewport: { width: 834, height: 1112 } } },
+    { name: 'mobile', testIgnore: /(?:graph3d|activity-motion|project-bestiary-motion)\.spec\.ts/, use: { viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true } },
     // El grafo 3D con WebGL por SwiftShader (software): solo este proyecto ejecuta graph3d.spec.ts.
     {
       name: '3d',
-      testMatch: /(?:graph3d|activity-motion)\.spec\.ts/,
+      testMatch: /(?:graph3d|activity-motion|project-bestiary-motion)\.spec\.ts/,
       timeout: 180_000,
       // Cada test pinta en CPU (SwiftShader, varios hilos por navegador). Con los 16 workers por defecto a la vez, un
       // test del proyecto tardaba hasta 1.9 min (el 63 % del timeout) y la carga del host pasaba de 140 en 32 núcleos;

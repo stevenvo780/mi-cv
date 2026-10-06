@@ -1,0 +1,66 @@
+import type { BeastKind } from '@/activity/projects/model';
+import type { Locale } from '@/lib/site';
+
+type CreatureCopy = { species: string; character: string; lore: string };
+export const PROJECT_BESTIARY = {
+  es: {
+    eyebrow: 'Un bestiario de proyectos', titleFirst: 'Las criaturas', titleBridge: 'que estoy', titleLast: 'construyendo.',
+    intro: 'Mis proyectos tienen nombre propio. Aquí también tienen cuerpo, carácter y un pulso que cambia con el trabajo registrado.',
+    periodLabel: 'Periodo de actividad de los proyectos',
+    periods: { year: 'Año', month: 'Mes', week: 'Semana' },
+    periodNames: { year: 'Proyectos: último año', month: 'Proyectos: último mes', week: 'Proyectos: última semana' },
+    ranking: 'El ecosistema, en movimiento', rankingNote: 'Ordenado por commits en el periodo elegido',
+    specimen: 'Espécimen', selected: 'Criatura seleccionada', commits: 'commits', explore: 'Visitar el proyecto',
+    previous: 'Proyecto anterior', next: 'Proyecto siguiente', pause: 'Pausar criaturas', resume: 'Reanudar criaturas',
+    paused: 'En pausa', motion: 'Criaturas en movimiento', globalPaused: 'La pausa general está activa', reduced: 'Vista sin movimiento',
+    loading: 'Abriendo el bestiario…', unavailable: 'Todavía no hay un registro de proyectos disponible.',
+    failed: 'No se pudo abrir el registro de proyectos.', retry: 'Reintentar proyectos',
+    refreshFailed: 'No se pudo actualizar. Se conserva el último registro disponible.', stale: 'Este registro tiene más de 48 horas. La actividad puede estar incompleta.',
+    noProjects: 'Cuando haya proyectos publicados en el registro, sus criaturas aparecerán aquí.',
+    energy: 'Pulso relativo', less: 'Menos', more: 'Más', energyNote: 'La luz y la escala responden al volumen de commits. La forma es imaginada; no mide calidad ni complejidad.',
+    lastActive: 'Último commit registrado', none: 'Sin commits registrados', updated: 'Última sincronización',
+    source: 'Solo esta selección de proyectos publicados. Commits de autor en la rama predeterminada de cada repositorio; no representa todo mi trabajo ni incluye actividad privada.',
+    sourceLabel: 'Registro de proyectos publicados', timezone: 'Fechas en UTC',
+    guide: 'Guía de criaturas', guideNote: 'Seis formas de imaginar lo que construyo.',
+    guideSelect: 'Explorar especie', emptySpecies: 'Sin proyectos de esta especie en el registro',
+    species: {
+      hydra: { species: 'Hidra', character: 'La tejedora', lore: 'Siete cabezas. Una misma intención. Sus caminos se encuentran en un cuerpo de luz.' },
+      sentinel: { species: 'Centinela', character: 'El vigía', lore: 'Una silueta en el umbral. La luz se recoge entre las piezas de su armadura.' },
+      moth: { species: 'Polilla', character: 'La que busca la luz', lore: 'Cuatro alas abiertas. Un pequeño cielo que se pliega y vuelve a desplegarse.' },
+      nautilus: { species: 'Nautilo', character: 'El cartógrafo', lore: 'Lleva una espiral donde el tiempo se repliega. Avanza dibujando corrientes.' },
+      golem: { species: 'Gólem', character: 'El constructor', lore: 'Piedra, peso y paciencia. Una figura que parece hecha de posibilidades ensambladas.' },
+      sprout: { species: 'Brote', character: 'El pequeño futuro', lore: 'Algo empieza a abrirse. Raíces abajo. Posibilidades arriba.' },
+    } satisfies Record<BeastKind, CreatureCopy>,
+  },
+  en: {
+    eyebrow: 'A bestiary of projects', titleFirst: 'The creatures', titleBridge: 'I’m', titleLast: 'building.',
+    intro: 'My projects have names of their own. Here they also have bodies, character and a pulse that changes with recorded work.',
+    periodLabel: 'Project activity period',
+    periods: { year: 'Year', month: 'Month', week: 'Week' },
+    periodNames: { year: 'Projects: last year', month: 'Projects: last month', week: 'Projects: last week' },
+    ranking: 'An ecosystem in motion', rankingNote: 'Ranked by commits in the selected period',
+    specimen: 'Specimen', selected: 'Selected creature', commits: 'commits', explore: 'Visit the project',
+    previous: 'Previous project', next: 'Next project', pause: 'Pause creatures', resume: 'Resume creatures',
+    paused: 'Paused', motion: 'Creatures in motion', globalPaused: 'The global pause is active', reduced: 'View without motion',
+    loading: 'Opening the bestiary…', unavailable: 'A project record is not available yet.',
+    failed: 'The project record could not be opened.', retry: 'Retry projects',
+    refreshFailed: 'Could not refresh. The last available record is preserved.', stale: 'This record is over 48 hours old. Activity may be incomplete.',
+    noProjects: 'When published projects become available in the record, their creatures will appear here.',
+    energy: 'Relative pulse', less: 'Less', more: 'More', energyNote: 'Light and scale respond to commit volume. The form is imagined; it is not a measure of quality or complexity.',
+    lastActive: 'Last recorded commit', none: 'No recorded commits', updated: 'Last synced',
+    source: 'This selection of published projects only. Authored commits on each repository’s default branch; it does not represent all my work or include private activity.',
+    sourceLabel: 'Published project record', timezone: 'Dates in UTC',
+    guide: 'A field guide to the creatures', guideNote: 'Six ways to imagine what I build.',
+    guideSelect: 'Explore species', emptySpecies: 'No projects of this species in the record',
+    species: {
+      hydra: { species: 'Hydra', character: 'The weaver', lore: 'Seven heads. One intention. Their paths meet in a body of light.' },
+      sentinel: { species: 'Sentinel', character: 'The watcher', lore: 'A silhouette at the threshold. Light gathers between the pieces of its armour.' },
+      moth: { species: 'Moth', character: 'The light seeker', lore: 'Four open wings. A little sky that folds and unfolds again.' },
+      nautilus: { species: 'Nautilus', character: 'The cartographer', lore: 'It carries a spiral where time folds in on itself. It moves by drawing currents.' },
+      golem: { species: 'Golem', character: 'The builder', lore: 'Stone, weight and patience. A figure that seems assembled from possibilities.' },
+      sprout: { species: 'Sprout', character: 'The little future', lore: 'Something begins to open. Roots below. Possibilities above.' },
+    } satisfies Record<BeastKind, CreatureCopy>,
+  },
+} satisfies Record<Locale, object>;
+
+export const BEAST_KINDS: BeastKind[] = ['hydra', 'sentinel', 'moth', 'nautilus', 'golem', 'sprout'];

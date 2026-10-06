@@ -1,10 +1,13 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
+vi.mock('next/cache', () => ({ unstable_cache: (collect: () => Promise<unknown>) => collect }));
+vi.mock('@/activity/projects/collector', () => ({ collectPublicProjects: vi.fn() }));
+import { collectPublicProjects } from '@/activity/projects/collector';
 import { PROJECT_CATALOG } from '@/activity/projects/catalog';
 import { loadProjectActivity, PROJECT_FEED_URL, validateProjectFeed } from '@/activity/projects/source';
 
 const now = new Date('2026-10-06T23:35:00Z');
 const record = () => ({ version: 1, source: 'github-public', metric: 'commits', coverage: 'published-projects', updatedAt: '2026-10-06T23:30:00Z', projects: PROJECT_CATALOG.map((project) => ({ id: project.id, counts: { week: 1, month: 4, year: 12 }, lastActive: '2026-10-06' })) });
-afterEach(() => vi.unstubAllGlobals());
+afterEach(() => { vi.unstubAllGlobals(); vi.clearAllMocks(); });
 
 describe('public project feed boundary', () => {
   it('reconstructs approved identities, drops raw fields, and preserves the actual measurement time', () => {
@@ -41,10 +44,23 @@ describe('public project feed boundary', () => {
     expect(url).toBe(PROJECT_FEED_URL);
     expect(new Headers(init.headers).has('Authorization')).toBe(false);
   });
-  it('refuses failed or oversized feeds without falling back to fabricated activity', async () => {
+  it('refuses failed or oversized feeds when no verified live record exists', async () => {
+    vi.mocked(collectPublicProjects).mockRejectedValue(new Error('Source unavailable'));
     vi.stubGlobal('fetch', vi.fn(async () => new Response('not available', { status: 404 })));
-    await expect(loadProjectActivity(now)).rejects.toThrow('Project feed unavailable');
+    await expect(loadProjectActivity(now)).rejects.toThrow('Public project activity unavailable');
     vi.stubGlobal('fetch', vi.fn(async () => new Response('x'.repeat(131_073))));
-    await expect(loadProjectActivity(now)).rejects.toThrow('Project feed too large');
+    await expect(loadProjectActivity(now)).rejects.toThrow('Public project activity unavailable');
+  });
+  it('updates the same public metric even if the daily publisher is unavailable', async () => {
+    const live = validateProjectFeed(record(), now);
+    vi.mocked(collectPublicProjects).mockResolvedValue(live);
+    vi.stubGlobal('fetch', vi.fn(async () => new Response('not available', { status: 404 })));
+    expect(await loadProjectActivity(now)).toEqual(live);
+  });
+  it('keeps the dated published record when a live refresh hits a limit', async () => {
+    const old = record(); old.updatedAt = '2026-10-02T23:30:00Z'; old.projects.forEach((row) => { row.lastActive = '2026-10-02'; });
+    vi.stubGlobal('fetch', vi.fn(async () => Response.json(old)));
+    vi.mocked(collectPublicProjects).mockRejectedValue(new Error('Source unavailable'));
+    expect((await loadProjectActivity(now)).updatedAt).toBe('2026-10-02T23:30:00.000Z');
   });
 });
