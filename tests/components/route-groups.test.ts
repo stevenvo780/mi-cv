@@ -44,9 +44,9 @@ function anchors(html: string): Anchor[] {
   }));
 }
 
-/** Las rutas raíz y de compartir usan el grupo (home); lore y los frentes usan (portal). */
+/** Las rutas raíz, compartir y actividad usan el grupo (home); lore y los frentes usan (portal). */
 function group(href: string): 'home' | 'portal' {
-  return /^\/(es|en)(?:\/compartir)?\/?(#.*)?$/.test(href) ? 'home' : 'portal';
+  return /^\/(es|en)(?:\/(?:compartir|actividad))?\/?(#.*)?$/.test(href) ? 'home' : 'portal';
 }
 
 const internal = (list: Anchor[]) => list.filter((a) => a.href.startsWith('/'));
@@ -68,6 +68,7 @@ describe('enlaces entre los grupos de rutas (home) y (portal)', () => {
     expect(links.length).toBeGreaterThan(0);
     expect(links.filter((a) => a.client)).toEqual([]);
     expect(links.some((a) => a.href === `/${locale}/compartir`)).toBe(true);
+    expect(links.some((a) => a.href === `/${locale}/actividad`)).toBe(true);
 
     const toPortal = links.filter((a) => group(a.href) === 'portal');
     const targets = new Set(toPortal.map((a) => a.href.split('#')[0]));

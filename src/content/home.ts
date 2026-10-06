@@ -22,6 +22,8 @@ export interface HomeCopy {
     catalog: string;
     story: string;
     contact: string;
+    activity: string;
+    activityShort: string;
     language: string;
     services: string;
     /** Botón del asistente (Claude) en la barra y en el menú móvil. */
@@ -113,6 +115,8 @@ export const HOME: Record<Locale, HomeCopy> = {
       catalog: 'Catálogo',
       story: 'Explorar',
       contact: 'Contacto',
+      activity: 'Qué estoy haciendo',
+      activityShort: 'Ahora',
       language: 'English',
       services: 'Servicios',
       ask: 'Pregúntame',
@@ -210,6 +214,8 @@ export const HOME: Record<Locale, HomeCopy> = {
       catalog: 'Catalog',
       story: 'Explore',
       contact: 'Contact',
+      activity: 'What I’m doing',
+      activityShort: 'Now',
       language: 'Español',
       services: 'Services',
       ask: 'Ask me',

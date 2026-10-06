@@ -72,6 +72,9 @@ export default function HomeHeader({ locale, t }: { locale: Locale; t: HomeCopy 
         {list([...sites, ...sections])}
       </nav>
       <div className="topbar-actions">
+        <a href={`/${locale}/actividad`} className="lang" aria-label={nav.activity} title={nav.activity}>
+          {nav.activityShort}
+        </a>
         <a href={`/${other}`} hrefLang={other} lang={other} className="lang">
           {nav.language}
         </a>
@@ -94,7 +97,7 @@ export default function HomeHeader({ locale, t }: { locale: Locale; t: HomeCopy 
                 <span className="menu-ask-hint">{nav.askHint}</span>
               </button>
               {list([...sites, [SITES.services, nav.services]], nav.sites)}
-              {list(sections)}
+              {list([...sections, [`/${locale}/actividad`, nav.activity]])}
             </div>
           </details>
         </nav>
