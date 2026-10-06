@@ -1,0 +1,65 @@
+name: Daily public project activity
+
+on:
+  schedule:
+    - cron: '17 5 * * *'
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/collect-project-activity.mts'
+      - '.github/workflows/project-activity.yml'
+      - 'src/activity/projects/catalog.ts'
+
+permissions: {}
+
+concurrency:
+  group: mouseion-public-activity
+  cancel-in-progress: false
+
+jobs:
+  refresh-public-feed:
+    if: github.repository == 'stevenvo780/mi-cv' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - name: Check out the published catalogue
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 1
+
+      - name: Set up the collector runtime
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: '24'
+          package-manager-cache: false
+
+      - name: Install the locked toolchain
+        run: npm ci --ignore-scripts --no-audit --no-fund
+
+      - name: Collect approved public project counts
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: npx --no-install tsx scripts/collect-project-activity.mts "$RUNNER_TEMP/projects.json"
+
+      - name: Publish the public data asset
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          task_feed_file="$RUNNER_TEMP/projects.json"
+          if gh release view activity-feed --repo stevenvo780/mi-cv --json tagName >/dev/null 2>&1; then
+            gh release upload activity-feed "$task_feed_file" --clobber --repo stevenvo780/mi-cv
+          else
+            gh release create activity-feed "$task_feed_file" \
+              --repo stevenvo780/mi-cv \
+              --target main \
+              --prerelease \
+              --latest=false \
+              --title 'Mouseîon · public activity data' \
+              --notes 'Counts-only activity for the published project selection. Updated daily without code commits or website deployments. No private repositories or commit contents are included.'
+          fi
