@@ -39,18 +39,6 @@ export default async function ActivityPage({ params }: { params: Promise<{ local
         <a className="activity-language" href={`/${other}/actividad`} hrefLang={other} lang={other}>{t.nav.language}</a>
       </header>
       <main id="actividad">
-        <section className="activity-hero" aria-labelledby="activity-title">
-          <p className="activity-eyebrow"><span aria-hidden="true">✳</span> {t.eyebrow}</p>
-          <h1 id="activity-title">{t.titleFirst}<br /><em>{t.titleLast}</em></h1>
-          <div className="activity-hero-bottom">
-            <p className="activity-hero-intro">{t.intro}</p>
-            <p className="activity-hero-note"><span aria-hidden="true">↘</span>{t.heroNote}</p>
-          </div>
-          <svg className="activity-hero-orbit" viewBox="0 0 300 300" aria-hidden="true">
-            <circle cx="150" cy="150" r="112" /><ellipse cx="150" cy="150" rx="143" ry="54" transform="rotate(-35 150 150)" />
-            <path d="M150 13v38m0 198v38M13 150h38m198 0h38" /><circle className="activity-hero-star" cx="238" cy="80" r="8" />
-          </svg>
-        </section>
         <ActivityObservatory locale={locale} />
         <section className="activity-privacy" aria-labelledby="activity-privacy-title">
           <p className="activity-eyebrow">{t.privacyEyebrow}</p>

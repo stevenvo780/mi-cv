@@ -10,6 +10,7 @@ function fixture(metric: 'contributions' | 'commits' = 'contributions'): Activit
 }
 
 test('la nueva pestaña abre desde la portada, filtra periodos y se recorre con teclado', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
   const snapshot = fixture();
   await page.route('**/api/activity', (route) => route.fulfill({ json: { status: 'ready', snapshot } }));
   await page.goto('/es');
@@ -17,7 +18,7 @@ test('la nueva pestaña abre desde la portada, filtra periodos y se recorre con 
   if (await menu.isVisible()) await menu.click();
   await page.getByRole('link', { name: 'Qué estoy haciendo', exact: true }).filter({ visible: true }).first().click();
   await expect(page).toHaveURL(/\/es\/actividad$/);
-  await expect(page.locator('#activity-title')).toContainText('haciendo.');
+  await expect(page.locator('#activity-title')).toBeVisible();
   const metric = page.locator('.activity-metrics > div').first().locator('dd');
   const sum = (length: number) => new Intl.NumberFormat('es').format(snapshot.days.slice(-length).reduce((n, d) => n + d.count, 0));
   await expect(metric).toHaveText(sum(365));
@@ -40,6 +41,7 @@ test('la nueva pestaña abre desde la portada, filtra periodos y se recorre con 
 });
 
 test('el idioma mantiene la pestaña y la métrica de commits', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
   const snapshot = fixture('commits');
   await page.route('**/api/activity', (route) => route.fulfill({ json: { status: 'ready', snapshot } }));
   await page.goto('/es/actividad');
@@ -47,11 +49,12 @@ test('el idioma mantiene la pestaña y la métrica de commits', async ({ page })
   await expect(page.locator('.activity-day[tabindex="0"]')).toHaveAttribute('aria-label', /commits/);
   await page.getByRole('link', { name: 'EN', exact: true }).click();
   await expect(page).toHaveURL(/\/en\/actividad$/);
-  await expect(page.locator('#activity-title')).toContainText('working on.');
+  await expect(page.locator('#activity-title')).toBeVisible();
   await expect(page.locator('.activity-day-value > span')).toHaveText('commits');
 });
 
 test('una fuente caída no inventa cifras y puede reintentarse', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
   let failed = true;
   await page.route('**/api/activity', (route) => route.fulfill(failed ? { status: 503, json: { status: 'unavailable', snapshot: null } } : { json: { status: 'ready', snapshot: fixture() } }));
   await page.goto('/es/actividad');
@@ -70,5 +73,6 @@ test('avisa cuando la fuente lleva más de 48 horas sin generarse', async ({ pag
   await page.route('**/api/activity', (route) => route.fulfill({ json: { status: 'ready', snapshot } }));
   await page.goto('/es/actividad');
   await expect(page.getByText('Esta sincronización tiene más de 48 horas.', { exact: false })).toBeVisible();
-  expect(await page.locator('.activity-hero-star').evaluate((el) => getComputedStyle(el).animationName)).toBe('none');
+  await expect(page.locator('.activity-scene canvas')).toHaveCount(0);
+  await expect(page.locator('.activity-day')).toHaveCount(365);
 });
