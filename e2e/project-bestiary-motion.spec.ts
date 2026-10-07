@@ -43,6 +43,8 @@ test('las criaturas tienen movimiento real, pausa sin renders y anatomías difer
   await expect(bestiary.locator('.pb-exhibit.has-webgl')).toBeAttached({ timeout: 45_000 });
   const canvas = bestiary.locator('.beast-scene canvas');
   await expect(canvas).toBeVisible();
+  await expect(canvas).toHaveAttribute('data-commit-stars', '1253');
+  await expect(canvas).toHaveAttribute('data-star-unit', '1');
   await page.mouse.move(5, 5);
   await page.waitForTimeout(2200);
   const a = await canvas.screenshot({ path: '/workspace/MySites/.previews/bestiary-motion-a.png' });
@@ -50,9 +52,7 @@ test('las criaturas tienen movimiento real, pausa sin renders y anatomías difer
   const b = await canvas.screenshot({ path: '/workspace/MySites/.previews/bestiary-motion-b.png' });
   expect(changedFraction(a, b), 'el cuerpo y los apéndices se mueven, además de la interfaz').toBeGreaterThan(.003);
   await bestiary.getByRole('button', { name: 'Pausar criaturas', exact: true }).click();
-  await expect(bestiary.locator('.beast-dominion')).toHaveAttribute('data-paused', 'true');
-  expect(await bestiary.locator('.bd-orbit-first').evaluate((ring) => getComputedStyle(ring).animationPlayState)).toBe('paused');
-  expect(await bestiary.locator('.pd-project[data-apex="true"] .pd-core').first().evaluate((core) => getComputedStyle(core, '::before').animationPlayState)).toBe('paused');
+  await expect(bestiary).toHaveAttribute('data-motion', 'paused');
   await canvas.scrollIntoViewIfNeeded();
   await page.mouse.move(5, 5);
   await page.waitForTimeout(1200);
@@ -66,7 +66,6 @@ test('las criaturas tienen movimiento real, pausa sin renders y anatomías difer
   await expect.poll(async () => {
     await page.waitForTimeout(800);
     const next = await canvas.screenshot();
-    // Transparent blurred SVG layers can round a few composite channels by one unit.
     // Compare decoded pixels, then separately prove zero GL draws and frozen CSS clocks.
     const equal = maximumPixelDifference(still, next) <= 1 && changedFraction(still, next, 0) < .001;
     still = next;
@@ -75,6 +74,10 @@ test('las criaturas tienen movimiento real, pausa sin renders y anatomías difer
   expect(await drawCount(), 'la pausa no produce ningún nuevo dibujo WebGL').toBe(frozenDraws);
   expect(await clock(), 'la pausa congela también el halo y los adornos').toEqual(frozenClock);
   const hydra = still;
+  await bestiary.getByRole('button', { name: 'Proyectos: último mes', exact: true }).click();
+  await expect(canvas).toHaveAttribute('data-commit-stars', '626');
+  await bestiary.getByRole('button', { name: 'Proyectos: último año', exact: true }).click();
+  await expect(canvas).toHaveAttribute('data-commit-stars', '1253');
   await bestiary.locator('.pb-project-row[data-project-id="clavis"]').click();
   await canvas.scrollIntoViewIfNeeded();
   await page.mouse.move(5, 5);
@@ -105,10 +108,12 @@ test('sin WebGL o con movimiento reducido se conservan el proyecto y todos sus r
     extension.loseContext();
   });
   await expect(bestiary.locator('.pb-scene-fallback svg')).toBeVisible();
+  await expect(bestiary.locator('.commit-constellation')).toHaveAttribute('data-commit-stars', '1253');
   await expect(bestiary.locator('.pb-count')).toHaveText(new Intl.NumberFormat('es').format(1253));
   await bestiary.locator('.pb-project-row[data-project-id="specorganon"]').click();
   await expect(bestiary.locator('.pb-count')).toHaveText('595');
   await expect(bestiary.locator('.pb-scene-fallback svg')).toHaveAttribute('data-kind', 'sentinel');
+  await expect(bestiary.locator('.commit-constellation')).toHaveAttribute('data-commit-stars', '595');
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await expect(bestiary.locator('.beast-scene canvas')).toHaveCount(0);
   await expect(bestiary.getByRole('button', { name: 'Pausar criaturas' })).toBeDisabled();

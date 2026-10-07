@@ -1,0 +1,50 @@
+import { expect, test } from './fixtures';
+import { authorizedProjectSnapshot, calendarSnapshot } from './project-data';
+
+test('los commits se representan dentro de la escena y se recalculan al cambiar periodo y proyecto', async ({ page }) => {
+  const data = authorizedProjectSnapshot();
+  const argos = data.projects.find((project) => project.id === 'argos')!;
+  const cauce = data.projects.find((project) => project.id === 'cauce-v3')!;
+  argos.counts = { year: 1717, month: 317, week: 17 };
+  cauce.counts = { year: 1, month: 1, week: 0 };
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.route('**/api/activity', (route) => route.fulfill({ json: { status: 'ready', snapshot: calendarSnapshot() } }));
+  await page.route('**/api/activity/projects', (route) => route.fulfill({ json: { status: 'ready', snapshot: data } }));
+  await page.goto('/es/actividad');
+  const bestiary = page.locator('.project-bestiary');
+  await bestiary.scrollIntoViewIfNeeded();
+  await bestiary.locator('.pb-project-row[data-project-id="argos"]').click();
+  const field = bestiary.locator('.commit-constellation');
+  await expect(field).toHaveAttribute('data-commit-stars', '1717');
+  await expect(field).toHaveAttribute('data-star-unit', '1');
+  await expect(bestiary.locator('.pb-star-legend')).toContainText('Cada estrella es un commit');
+  await expect(bestiary.locator('.pd-instrument')).toHaveCount(0);
+  await expect(bestiary.locator('.beast-dominion')).toHaveCount(0);
+  const controlsBottom = await bestiary.locator('.pb-controls').evaluate((controls) => controls.getBoundingClientRect().bottom);
+  const theatreTop = await bestiary.locator('.pb-theatre').evaluate((theatre) => theatre.getBoundingClientRect().top);
+  expect(theatreTop - controlsBottom, 'la comparación no añade una franja entre los controles y la criatura').toBeLessThan(55);
+  await bestiary.getByRole('button', { name: 'Proyectos: último mes', exact: true }).click();
+  await expect(field).toHaveAttribute('data-commit-stars', '317');
+  await bestiary.locator('.pb-project-row[data-project-id="cauce-v3"]').click();
+  await expect(field).toHaveAttribute('data-commit-stars', '1');
+  await bestiary.getByRole('button', { name: 'Proyectos: última semana', exact: true }).click();
+  await expect(field).toHaveAttribute('data-commit-stars', '0');
+  await expect(field.locator('path')).toHaveCount(0);
+  await expect(bestiary.locator('.pb-star-legend')).toContainText('sin estrellas');
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+});
+
+test('la agrupación de recuentos grandes se explica y no se presenta como estrellas uno a uno', async ({ page }) => {
+  const data = authorizedProjectSnapshot();
+  const argos = data.projects.find((project) => project.id === 'argos')!;
+  argos.counts = { year: 40001, month: 40001, week: 40001 };
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.route('**/api/activity', (route) => route.fulfill({ json: { status: 'ready', snapshot: calendarSnapshot() } }));
+  await page.route('**/api/activity/projects', (route) => route.fulfill({ json: { status: 'ready', snapshot: data } }));
+  await page.goto('/es/actividad');
+  const bestiary = page.locator('.project-bestiary');
+  await bestiary.scrollIntoViewIfNeeded();
+  await expect(bestiary.locator('.commit-constellation')).toHaveAttribute('data-commits', '40001');
+  await expect(bestiary.locator('.pb-star-legend')).toContainText('agrupa hasta');
+  await expect(bestiary.locator('.pb-star-legend')).not.toContainText('Cada estrella es un commit');
+});

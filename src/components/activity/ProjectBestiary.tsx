@@ -2,12 +2,10 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore, type CSSProperties, type KeyboardEvent } from 'react';
 import type { ProjectPeriod, ProjectResponse, ProjectSnapshot } from '@/activity/projects/model';
-import { projectDominance } from '@/activity/projects/dominance';
+import { commitStarUnit } from '@/activity/projects/constellation';
 import { BEAST_KINDS, PROJECT_BESTIARY } from '@/content/project-bestiary';
-import { PROJECT_DOMINANCE } from '@/content/project-dominance';
 import type { Locale } from '@/lib/site';
-import ProjectDominance from './ProjectDominance';
-import BeastDominion from './beasts/BeastDominion';
+import CommitConstellation from './beasts/CommitConstellation';
 import BeastFallback from './beasts/BeastFallback';
 import BeastScene from './beasts/BeastScene';
 import '@/styles/project-bestiary.css';
@@ -44,7 +42,6 @@ function validSnapshot(value: ProjectSnapshot): boolean {
 
 export default function ProjectBestiary({ locale }: { locale: Locale }) {
   const t = PROJECT_BESTIARY[locale];
-  const powerCopy = PROJECT_DOMINANCE[locale];
   const section = useRef<HTMLElement>(null);
   const ranking = useRef<HTMLOListElement>(null);
   const rows = useRef(new Map<string, HTMLButtonElement>());
@@ -126,15 +123,13 @@ export default function ProjectBestiary({ locale }: { locale: Locale }) {
   const max = Math.max(1, ...ranked.map((project) => project.counts[period]));
   const count = selected?.counts[period] ?? null;
   const energy = count === null ? 0 : Math.log1p(count) / Math.log1p(max);
-  const dominion = projectDominance(count ?? 0, max);
-  const comparison = ranked.slice(0, 3);
-  if (selected && selectedIndex >= 3) comparison.push(selected);
-  const comparisonEntries = comparison.map((project) => ({ id: project.id, name: project.name[locale], count: project.counts[period], ...projectDominance(project.counts[period], max) }));
+  const starUnit = commitStarUnit(count ?? 0);
+  const starLegend = count === 0 ? t.galaxyResting : starUnit === 1 ? t.starLegend : t.groupedStarLegend.replace('{unit}', new Intl.NumberFormat(locale).format(starUnit));
   const creature = selected ? t.species[selected.kind] : null;
   const format = new Intl.NumberFormat(locale);
   const number = (value: number | null) => value === null ? '—' : format.format(value);
   const date = (value: string) => new Intl.DateTimeFormat(locale, { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' }).format(new Date(value));
-  const accessibleSpecimen = selected && creature ? `${selected.name[locale]} · ${creature.species} · ${number(count)} ${t.commits} · ${powerCopy.tiers[dominion.tier]} · ${format.format(Math.round(dominion.ratio * 1000) / 10)}% ${powerCopy.relative}` : t.selected;
+  const accessibleSpecimen = selected && creature ? `${selected.name[locale]} · ${creature.species} · ${number(count)} ${t.commits} · ${starLegend}` : t.selected;
   const authorized = snapshot?.source === 'github-authorized';
 
   useEffect(() => {
@@ -183,18 +178,16 @@ export default function ProjectBestiary({ locale }: { locale: Locale }) {
         {status === 'ready' && stale && <p>{t.stale}</p>}
         {status === 'ready' && refreshFailed && <p>{t.refreshFailed}</p>}
       </div>
-      {ranked.length > 0 && <ProjectDominance locale={locale} entries={comparisonEntries} selectedId={selected?.id ?? null} period={period} onSelect={setSelectedId} />}
       <div className="pb-theatre">
         <figure className={`pb-exhibit${sceneReady && !reducedMotion ? ' has-webgl' : ' has-fallback'}`}>
           <div className="pb-specimen-label"><span>{t.specimen} / {selectedIndex >= 0 ? String(selectedIndex + 1).padStart(3, '0') : '—'}</span><span>{creature?.species ?? '—'}</span></div>
           <div className="pb-specimen-visual" role="img" aria-label={accessibleSpecimen}>
             <div className="pb-specimen-grid" aria-hidden="true" /><div className="pb-specimen-reticle" aria-hidden="true">＋</div>
-            {selected && <BeastDominion ratio={dominion.ratio} tier={dominion.tier} paused={paused} visible={visible} label={powerCopy.tiers[dominion.tier]} />}
-            {selected && near && !reducedMotion && <div className="pb-scene-mount" aria-hidden="true"><BeastScene kind={selected.kind} identity={selected.id} energy={energy} paused={paused} reducedMotion={reducedMotion} label={accessibleSpecimen} onReady={onReady} /></div>}
+            {selected && near && !reducedMotion && <div className="pb-scene-mount" aria-hidden="true"><BeastScene kind={selected.kind} identity={selected.id} energy={energy} commits={count ?? 0} maximumCommits={max} paused={paused} reducedMotion={reducedMotion} label={accessibleSpecimen} onReady={onReady} /></div>}
+            {selected && (!sceneReady || reducedMotion) && <CommitConstellation commits={count ?? 0} maximumCommits={max} identity={selected.id} kind={selected.kind} />}
             {selected && (!sceneReady || reducedMotion) && <div className="pb-scene-fallback"><BeastFallback kind={selected.kind} identity={selected.id} energy={energy} /></div>}
             {!selected && <div className="pb-empty-exhibit"><span aria-hidden="true">✳</span><p>{near ? status === 'loading' ? t.loading : t.noProjects : t.loading}</p></div>}
-            <div className="pb-particles" aria-hidden="true">{Array.from({ length: 13 }, (_, index) => <i key={index} style={{ '--i': index } as CSSProperties} />)}</div>
-            {selected && <div className="pb-dominance-seal" data-tier={dominion.tier}><span>{powerCopy.tiers[dominion.tier]}</span><small>{format.format(Math.round(dominion.ratio * 1000) / 10)}% · {powerCopy.relative}</small></div>}
+            {selected && <p className="pb-star-legend"><span aria-hidden="true">✦</span>{starLegend}</p>}
           </div>
           <figcaption className="pb-specimen-caption" key={selected?.id ?? 'empty'}>
             <div className="pb-specimen-identity"><span className="pb-character">{creature?.character ?? t.selected}</span><h3>{selected?.name[locale] ?? '—'}</h3><p>{selected?.description[locale] ?? ''}</p></div>
@@ -206,17 +199,16 @@ export default function ProjectBestiary({ locale }: { locale: Locale }) {
           <div className="pb-ledger-heading"><h3 id="pb-ledger-title">{t.ranking}</h3><span>{snapshot ? String(ranked.length).padStart(2, '0') : '—'}</span></div><p id="pb-ledger-note" className="pb-ledger-note">{t.rankingNote}{ranked.length > 12 ? ` · ${t.rankingScroll}` : ''}</p>
           <ol ref={ranking} className="pb-ranking" aria-labelledby="pb-ledger-title" aria-describedby="pb-ledger-note" tabIndex={ranked.length ? 0 : -1}>{ranked.map((project, index) => {
             const relative = Math.log1p(project.counts[period]) / Math.log1p(max);
-            const dominance = projectDominance(project.counts[period], max);
-            return <li key={project.id} style={{ '--rank': index, '--energy': relative, '--power': dominance.ratio } as CSSProperties}>
-              <button type="button" className={`pb-project-row${selected?.id === project.id ? ' is-selected' : ''}`} data-project-id={project.id} data-kind={project.kind} data-tier={dominance.tier} aria-label={`${project.name[locale]} · ${number(project.counts[period])} ${t.commits}`} aria-pressed={selected?.id === project.id}
+            return <li key={project.id} style={{ '--rank': index, '--energy': relative, '--power': project.counts[period] / max } as CSSProperties}>
+              <button type="button" className={`pb-project-row${selected?.id === project.id ? ' is-selected' : ''}`} data-project-id={project.id} data-kind={project.kind} aria-label={`${project.name[locale]} · ${number(project.counts[period])} ${t.commits}`} aria-pressed={selected?.id === project.id}
                 ref={(node) => { if (node) rows.current.set(project.id, node); else rows.current.delete(project.id); }} onClick={() => setSelectedId(project.id)} onKeyDown={(event) => onRowKey(event, index)}>
                 <span className="pb-rank" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span><span className="pb-row-creature" aria-hidden="true"><BeastFallback kind={project.kind} identity={project.id} energy={relative} /></span>
-                <span className="pb-row-identity"><span>{project.name[locale]}</span><small>{t.species[project.kind].species} · <strong className="pb-row-tier">{powerCopy.tiers[dominance.tier]}</strong></small></span><span className="pb-row-count">{number(project.counts[period])}<small>{t.commits}</small></span><span className="pb-row-meter" aria-hidden="true" />
+                <span className="pb-row-identity"><span>{project.name[locale]}</span><small>{t.species[project.kind].species}</small></span><span className="pb-row-count">{number(project.counts[period])}<small>{t.commits}</small></span><span className="pb-row-meter" aria-hidden="true" />
               </button>
             </li>;
           })}</ol>
           {!ranked.length && <div className="pb-ledger-empty"><span>—</span><p>{near && status !== 'loading' ? t.noProjects : t.loading}</p></div>}
-          <div className="pb-energy-caption"><span>{powerCopy.relative}</span><i aria-hidden="true" /><span>0 → 100%</span></div><p className="pb-energy-note">{powerCopy.note}</p>
+          <p className="pb-energy-note">{t.galaxyNote}</p>
           {selected && <p className="pb-last-active">{t.lastActive}<span>{selected.lastActive ? date(selected.lastActive) : t.none}</span></p>}
         </aside>
       </div>

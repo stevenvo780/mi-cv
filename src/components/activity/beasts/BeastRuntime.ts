@@ -6,6 +6,7 @@ import {
 } from 'three';
 import type { BeastSceneProps } from '@/activity/projects/model';
 import { createBeast, disposeBeast, type BeastRig } from './anatomies';
+import { CommitGalaxy } from './CommitGalaxy';
 import { DUST_FRAGMENT, DUST_VERTEX, HALO_FRAGMENT, HALO_VERTEX } from './shaders';
 
 type Composer = { render: (delta?: number) => void; setSize: (width: number, height: number) => void; dispose: () => void };
@@ -23,6 +24,7 @@ export class BeastRuntime {
   private readonly camera = new PerspectiveCamera(35, 1, 0.1, 50);
   private readonly theatre = new Group();
   private readonly instrument = new Group();
+  private readonly galaxy = new CommitGalaxy();
   private active: BeastRig | null = null;
   private outgoing: BeastRig | null = null;
   private activeSignature = '';
@@ -70,6 +72,8 @@ export class BeastRuntime {
     this.scene.add(this.theatre);
     this.theatre.add(this.instrument);
     this.buildStage();
+    this.theatre.add(this.galaxy);
+    this.syncGalaxy();
     this.switchCreature(true);
     this.resize();
     this.resizeObserver = new ResizeObserver(this.resize);
@@ -101,6 +105,7 @@ export class BeastRuntime {
     this.props = props;
     if (!this.initialized) return;
     if (signature(props) !== this.activeSignature) this.switchCreature(props.paused || props.reducedMotion);
+    this.syncGalaxy();
     if (props.paused || props.reducedMotion) {
       this.finishTransition();
       this.energy = normalized(props.energy);
@@ -112,6 +117,17 @@ export class BeastRuntime {
   private reconcileInitialProps(): void {
     if (signature(this.props) !== this.activeSignature) this.switchCreature(true);
     this.energy = normalized(this.props.energy);
+    this.syncGalaxy();
+  }
+
+  private syncGalaxy(): void {
+    const plan = this.galaxy.syncCounts(this.props.commits ?? 0, this.props.maximumCommits ?? this.props.commits ?? 0,
+      this.props.identity, this.props.kind);
+    if (this.canvas) {
+      this.canvas.dataset.commitStars = String(plan.renderedCount);
+      this.canvas.dataset.commits = String(plan.commits);
+      this.canvas.dataset.starUnit = String(plan.unit);
+    }
   }
 
   private switchCreature(immediate: boolean): void {
@@ -154,6 +170,8 @@ export class BeastRuntime {
     geometry.setAttribute('aSize', new BufferAttribute(sizes, 1));
     this.dust = new Points(geometry, material);
     this.dust.frustumCulled = false;
+    // Legacy decorative dust no longer looks like uncounted commits.
+    this.dust.visible = false;
     this.theatre.add(this.dust);
 
     const haloMaterial = new ShaderMaterial({ vertexShader: HALO_VERTEX, fragmentShader: HALO_FRAGMENT,
@@ -163,6 +181,7 @@ export class BeastRuntime {
     this.halo = new Mesh(new PlaneGeometry(8, 8), haloMaterial);
     this.halo.position.z = -3;
     this.halo.renderOrder = -20;
+    this.halo.visible = false;
     this.scene.add(this.halo);
 
     for (let i = 0; i < 3; i++) {
@@ -224,6 +243,7 @@ export class BeastRuntime {
     this.camera.position.set(0.15, 0.24, Math.max(10.4, 10.15 / this.camera.aspect));
     this.camera.lookAt(0, -0.04, 0);
     this.camera.updateProjectionMatrix();
+    this.galaxy.setViewport(this.height, dpr);
     if (this.dust) {
       this.dust.material.uniforms.uDpr.value = dpr;
       this.dust.material.uniforms.uHeight.value = this.height;
@@ -260,6 +280,7 @@ export class BeastRuntime {
     this.dust.material.uniforms.uBurst.value = Math.sin(this.transition * Math.PI) ** 2;
     this.halo.material.uniforms.uTime.value = this.time;
     this.halo.material.uniforms.uEnergy.value = this.energy;
+    this.galaxy.update(this.time);
   }
 
   private readonly tick = (now: number): void => {
@@ -341,6 +362,7 @@ export class BeastRuntime {
     if (this.outgoing) disposeBeast(this.outgoing);
     this.active = this.outgoing = null;
     this.composer?.dispose();
+    this.galaxy.dispose();
     const geometries = new Set<BufferGeometry>();
     this.scene.traverse((object) => {
       if (object instanceof Mesh || object instanceof Points) geometries.add(object.geometry);

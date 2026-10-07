@@ -51,14 +51,12 @@
   .project-bestiary .pb-specimen-label { position: absolute; z-index: 3; top: .5rem; left: 0; right: 0; display: flex; justify-content: space-between; gap: 1rem; color: #90b09d; font: .53rem var(--f-mono, monospace); letter-spacing: .16em; text-transform: uppercase; pointer-events: none; }
   .project-bestiary .pb-specimen-label > span:last-child { color: var(--pb-accent); }
   .project-bestiary .pb-specimen-visual { position: relative; height: 650px; isolation: isolate; }
-  .project-bestiary .pb-dominance-seal { position: absolute; left: 0; bottom: 1.2rem; z-index: 3; display: flex; flex-direction: column; gap: .5rem; pointer-events: none; }
-  .project-bestiary .pb-dominance-seal > span { color: var(--pb-accent); font: 400 clamp(1.5rem, 3vw, 2.65rem)/1 var(--f-display, Georgia); letter-spacing: .035em; text-transform: uppercase; }
-  .project-bestiary .pb-dominance-seal > small { color: #9bb6a8; font: .51rem/1.6 var(--f-mono, monospace); max-width: 18rem; }
-  .project-bestiary .pb-dominance-seal[data-tier='apex'] > span { color: #f4d897; text-shadow: 0 0 28px rgb(229 189 120 / 35%); }
-  .project-bestiary .pb-dominance-seal[data-tier='dormant'] > span { color: #7a9386; }
+  .project-bestiary .pb-star-legend { position: absolute; left: 0; bottom: 1.2rem; z-index: 3; display: flex; align-items: center; gap: .55rem; color: #afc8ba; font: .62rem/1.6 var(--f-mono, monospace); margin: 0; pointer-events: none; }
+  .project-bestiary .pb-star-legend > span { color: #ecd099; font-size: 1.1rem; }
   .project-bestiary .pb-scene-mount { position: absolute; inset: -1% -4% 0; z-index: 2; mask-image: linear-gradient(transparent, #000 8%, #000 88%, transparent), linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); mask-composite: intersect; }
   .project-bestiary .pb-scene-mount > div, .project-bestiary .pb-scene-mount canvas { width: 100%; height: 100%; display: block; }
   .project-bestiary .pb-scene-fallback { position: absolute; inset: 0; z-index: 2; display: flex; justify-content: center; align-items: center; }
+  .project-bestiary .pb-scene-fallback .pb-creature-sparks { display: none; }
   .project-bestiary .pb-beast-svg { display: block; width: 100%; max-height: 100%; overflow: visible; }
   .project-bestiary .pb-scene-fallback .pb-beast-svg { height: min(100%, 650px); }
   .project-bestiary .pb-specimen-grid { position: absolute; inset: 6%; z-index: 0; pointer-events: none; border-radius: 50%; border: 1px solid rgb(145 179 149 / 12%); background: linear-gradient(rgb(145 179 149 / 5%) 1px, transparent 1px) 50% 50%/75px 75px, linear-gradient(90deg, rgb(145 179 149 / 5%) 1px, transparent 1px) 50% 50%/75px 75px; mask-image: radial-gradient(ellipse, #000 40%, transparent 71%); }
@@ -100,10 +98,7 @@
   .project-bestiary .pb-row-identity > small { display: block; margin-top: .3rem; font: .48rem var(--f-mono, monospace); color: #698a74; }
   .project-bestiary .pb-row-count { font: 1.5rem/1 var(--f-display, Georgia); text-align: right; color: #d8d0ad; }
   .project-bestiary .pb-row-count > small { display: block; margin-top: .3rem; font: .44rem var(--f-mono, monospace); color: var(--pb-muted); }
-  .project-bestiary .pb-row-tier { font-weight: 400; color: #a9bdad; }
-  .project-bestiary .pb-project-row[data-tier='apex'] .pb-row-tier { color: #f4d897; }
   .project-bestiary .pb-row-meter { position: absolute; left: 1.65rem; right: .5rem; bottom: 0; height: 3px; background: var(--pb-accent); transform: scaleX(var(--power, 0)); transform-origin: left; opacity: .65; transition: transform .85s cubic-bezier(.16, 1, .3, 1); }
-  .project-bestiary .pb-project-row[data-tier='apex'] .pb-row-meter { background: #f4d897; box-shadow: 0 0 10px rgb(229 189 120 / 35%); }
   .project-bestiary .pb-ledger-empty { min-height: 400px; border-block: 1px solid var(--pb-line); margin-top: 1.5rem; display: flex; flex-direction: column; justify-content: center; gap: 1rem; }
   .project-bestiary .pb-ledger-empty > span { font: 3rem var(--f-display, Georgia); color: #6b8575; }
   .project-bestiary .pb-ledger-empty > p { max-width: 18rem; font: .75rem/1.8 var(--f-sans, system-ui); color: #91a99f; }

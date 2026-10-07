@@ -35,6 +35,9 @@ export interface BeastSceneProps {
   kind: BeastKind;
   identity: string;
   energy: number;
+  /** Actual commits in the selected period, represented by the surrounding constellation. */
+  commits?: number;
+  maximumCommits?: number;
   paused: boolean;
   reducedMotion: boolean;
   label: string;
