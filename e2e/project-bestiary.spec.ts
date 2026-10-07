@@ -1,5 +1,5 @@
 import { expect, test } from './fixtures';
-import { calendarSnapshot, projectSnapshot } from './project-data';
+import { authorizedProjectSnapshot, calendarSnapshot, projectSnapshot } from './project-data';
 
 test('el bestiario conserva cifras, jerarquía y navegación accesible en los tres periodos', async ({ page }) => {
   const data = projectSnapshot();
@@ -59,4 +59,52 @@ test('la versión inglesa conserva los nombres propios y explica el alcance de l
   await expect(bestiary.locator('.pb-project-row')).toHaveCount(12);
   await expect(bestiary.locator('.pb-provenance')).toContainText('default branch');
   await expect(bestiary.getByRole('button', { name: 'Projects: last week', exact: true })).toBeEnabled();
+});
+
+test('el registro autorizado incluye privados sin inventar enlaces y permite recorrer toda la lista', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.route('**/api/activity', (route) => route.fulfill({json:{status:'ready',snapshot:calendarSnapshot()}}));
+  await page.route('**/api/activity/projects', (route) => route.fulfill({json:{status:'ready',snapshot:authorizedProjectSnapshot()}}));
+  await page.goto('/es/actividad');
+  const bestiary = page.locator('.project-bestiary');
+  await bestiary.scrollIntoViewIfNeeded();
+  const rows = bestiary.locator('.pb-project-row');
+  await expect(rows).toHaveCount(29);
+  await expect(bestiary.locator('.pb-specimen-identity h3')).toHaveText('Argos');
+  await expect(bestiary.locator('.pb-specimen-footer a')).toHaveCount(0);
+  await expect(bestiary.locator('.pb-provenance')).toContainText('privados');
+  await rows.first().focus();
+  await page.keyboard.press('End');
+  await expect(rows.last()).toBeFocused();
+  await expect(rows.last()).toHaveAttribute('aria-pressed','true');
+  await expect(rows.last()).toBeInViewport();
+  expect(await bestiary.locator('.pb-ranking').evaluate((list) => list.scrollHeight > list.clientHeight)).toBe(true);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+});
+
+test('un fallo de sincronización conserva el registro autorizado anterior y avisa', async ({ page }) => {
+  await page.clock.install({time:new Date()});
+  await page.emulateMedia({reducedMotion:'reduce'});
+  await page.route('**/api/activity', (route) => route.fulfill({json:{status:'ready',snapshot:calendarSnapshot()}}));
+  let requests = 0;
+  await page.route('**/api/activity/projects', (route) => ++requests === 1
+    ? route.fulfill({json:{status:'ready',snapshot:authorizedProjectSnapshot()}})
+    : requests === 2 ? route.fulfill({status:503,json:{status:'unavailable',snapshot:null}})
+    : route.fulfill({json:{status:'ready',snapshot:projectSnapshot()}}));
+  await page.goto('/es/actividad');
+  const bestiary = page.locator('.project-bestiary');
+  await bestiary.scrollIntoViewIfNeeded();
+  await expect(bestiary.locator('.pb-project-row')).toHaveCount(29);
+  const count = await bestiary.locator('.pb-count').innerText();
+  await page.clock.fastForward(3_600_100);
+  await page.evaluate(() => window.dispatchEvent(new Event('focus')));
+  await expect(bestiary.getByRole('status')).toContainText('Se conserva el último registro');
+  await expect(bestiary.locator('.pb-project-row')).toHaveCount(29);
+  await expect(bestiary.locator('.pb-count')).toHaveText(count);
+  await expect(bestiary.locator('.pb-provenance')).toContainText('privados');
+  await page.clock.fastForward(3_600_100);
+  await page.evaluate(() => window.dispatchEvent(new Event('focus')));
+  await expect(bestiary.getByRole('status')).toContainText('Se conserva el último registro');
+  await expect(bestiary.locator('.pb-project-row')).toHaveCount(29);
+  await expect(bestiary.locator('.pb-count')).toHaveText(count);
 });

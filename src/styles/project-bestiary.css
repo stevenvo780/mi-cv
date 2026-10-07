@@ -82,7 +82,8 @@
   .project-bestiary .pb-ledger-heading > h3 { font: 400 1.65rem/1.2 var(--f-display, Georgia); color: #d4ddca; }
   .project-bestiary .pb-ledger-heading > span { font: .65rem var(--f-mono, monospace); color: var(--pb-accent); }
   .project-bestiary .pb-ledger-note { margin-top: .5rem; font: .52rem/1.8 var(--f-mono, monospace); color: var(--pb-muted); }
-  .project-bestiary .pb-ranking { max-height: 680px; overflow-y: auto; scrollbar-width: thin; scrollbar-color: #355845 transparent; list-style: none; margin: 1.5rem 0 0; padding: 0; }
+  .project-bestiary .pb-ranking { max-height: min(680px, 72svh); overflow-y: auto; scrollbar-gutter: stable; scrollbar-width: thin; scrollbar-color: #355845 transparent; list-style: none; margin: 1.5rem 0 0; padding: 0; }
+  .project-bestiary .pb-ranking:focus-visible { outline: 1px solid var(--pb-accent); outline-offset: 3px; }
   .project-bestiary .pb-ranking > li { margin: 0; padding: 0; }
   .project-bestiary .pb-project-row { display: grid; grid-template-columns: 1rem 2.8rem minmax(0, 1fr) auto; align-items: center; gap: .65rem; position: relative; width: 100%; min-height: 67px; padding: .75rem .5rem .75rem 0; border: 0; border-top: 1px solid var(--pb-line); background: transparent; color: #a8baab; text-align: left; transition: background .4s, color .4s; }
   .project-bestiary .pb-project-row:hover, .project-bestiary .pb-project-row.is-selected { background: linear-gradient(90deg, color-mix(in srgb, var(--pb-accent) 8%, transparent), transparent 90%); color: #f0eadb; }
@@ -150,7 +151,7 @@
     .project-bestiary .pb-specimen-visual { height: 550px; }
     .project-bestiary .pb-specimen-footer { flex-direction: column; gap: 1rem; }
     .project-bestiary .pb-specimen-footer > p { max-width: 100%; }
-    .project-bestiary .pb-ranking { max-height: 640px; }
+    .project-bestiary .pb-ranking { max-height: min(640px, 68svh); }
     .project-bestiary .pb-project-row { grid-template-columns: .85rem 2.2rem minmax(0, 1fr) auto; gap: .4rem; }
     .project-bestiary .pb-row-identity > span { font-size: 1rem; }
     .project-bestiary .pb-row-count { font-size: 1.3rem; }
@@ -183,7 +184,7 @@
     .project-bestiary .pb-specimen-footer > div { width: 100%; }
     .project-bestiary .pb-specimen-footer a { margin-left: auto; }
     .project-bestiary .pb-ledger-heading > h3 { font-size: 1.7rem; }
-    .project-bestiary .pb-ranking { max-height: 575px; margin-top: 1rem; }
+    .project-bestiary .pb-ranking { max-height: min(575px, 65svh); margin-top: 1rem; }
     .project-bestiary .pb-project-row { grid-template-columns: 1rem 2.8rem minmax(0, 1fr) auto; min-height: 64px; gap: .65rem; }
     .project-bestiary .pb-row-identity > span { font-size: 1.1rem; }
     .project-bestiary .pb-row-count { font-size: 1.6rem; }

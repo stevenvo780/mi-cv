@@ -1,7 +1,7 @@
 import { mkdir, rename, writeFile } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
-import { PROJECT_CATALOG } from '../src/activity/projects/catalog';
+import { PUBLIC_PROJECT_CATALOG as PROJECT_CATALOG } from '../src/activity/projects/catalog';
 import { collectPublicProjects } from '../src/activity/projects/collector';
 import type { ProjectSnapshot } from '../src/activity/projects/model';
 

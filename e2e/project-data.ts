@@ -1,6 +1,6 @@
 import type { ProjectSnapshot } from '../src/activity/projects/model';
 import type { ActivitySnapshot } from '../src/activity/model';
-import { PROJECT_CATALOG } from '../src/activity/projects/catalog';
+import { PUBLIC_PROJECT_CATALOG as PROJECT_CATALOG, PROJECT_CATALOG as ALL_PROJECTS } from '../src/activity/projects/catalog';
 
 /** Deliberately synthetic, fixed ranking used only in browser tests. */
 export function projectSnapshot(): ProjectSnapshot {
@@ -11,6 +11,14 @@ export function projectSnapshot(): ProjectSnapshot {
       id, kind, name, url, description, counts: { year: values[index], month: index === 9 ? 0 : Math.floor(values[index] / 2), week: index === 9 ? 0 : Math.floor(values[index] / 4) }, lastActive: index === 9 ? null : new Date().toISOString().slice(0, 10),
     })),
   };
+}
+
+/** Synthetic expanded record exercises private-inclusive provenance and a scrollable ledger. */
+export function authorizedProjectSnapshot(): ProjectSnapshot {
+  const day = new Date().toISOString().slice(0, 10);
+  return { version: 1, source: 'github-authorized', metric: 'commits', coverage: 'published-projects', updatedAt: new Date().toISOString(),
+    projects: ALL_PROJECTS.map(({ id, kind, name, description, url }, index) => ({ id, kind, name, description, ...(url ? {url} : {}),
+      counts: {year: id === 'argos' ? 5000 : 2900-index*20, month: 20, week: 2}, lastActive: day })) };
 }
 
 export function calendarSnapshot(): ActivitySnapshot {

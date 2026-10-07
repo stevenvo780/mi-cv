@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { PROJECT_CATALOG } from '@/activity/projects/catalog';
+import { PUBLIC_PROJECT_CATALOG as PROJECT_CATALOG } from '@/activity/projects/catalog';
 import { collectPublicProjects as loadProjectActivity, parseCommitCount, projectWindow } from '@/activity/projects/collector';
 
 const now = new Date('2026-10-06T20:00:00Z');

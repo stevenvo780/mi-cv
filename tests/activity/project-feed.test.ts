@@ -2,11 +2,14 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 vi.mock('next/cache', () => ({ unstable_cache: (collect: () => Promise<unknown>) => collect }));
 vi.mock('@/activity/projects/collector', () => ({ collectPublicProjects: vi.fn() }));
 import { collectPublicProjects } from '@/activity/projects/collector';
-import { PROJECT_CATALOG } from '@/activity/projects/catalog';
-import { loadProjectActivity, PROJECT_FEED_URL, validateProjectFeed } from '@/activity/projects/source';
+import { PUBLIC_PROJECT_CATALOG as PROJECT_CATALOG, PROJECT_CATALOG as ALL_PROJECTS } from '@/activity/projects/catalog';
+import { loadProjectActivity, PROJECT_FEED_URL, AUTHORIZED_PROJECT_FEED_URL, AUTHORIZED_PROJECT_BACKUP_URL, validateProjectFeed } from '@/activity/projects/source';
 
 const now = new Date('2026-10-06T23:35:00Z');
 const record = () => ({ version: 1, source: 'github-public', metric: 'commits', coverage: 'published-projects', updatedAt: '2026-10-06T23:30:00Z', projects: PROJECT_CATALOG.map((project) => ({ id: project.id, counts: { week: 1, month: 4, year: 12 }, lastActive: '2026-10-06' })) });
+const authorizedRecord = () => ({ ...record(), source: 'github-authorized', projects: ALL_PROJECTS.map(({ id }) => ({ id, counts: { week: 1, month: 4, year: 12 }, lastActive: '2026-10-06' })) });
+const authorizedUrl = (url: string) => [AUTHORIZED_PROJECT_FEED_URL, AUTHORIZED_PROJECT_BACKUP_URL].includes(url);
+const publicFetch = () => vi.fn(async (url: string) => authorizedUrl(url) ? new Response('', { status: 404 }) : Response.json(record()));
 afterEach(() => { vi.unstubAllGlobals(); vi.clearAllMocks(); });
 
 describe('public project feed boundary', () => {
@@ -37,19 +40,19 @@ describe('public project feed boundary', () => {
     expect(validateProjectFeed(input, now).updatedAt).toBe('2026-10-02T23:30:00.000Z');
   });
   it('fetches only the public asset, without any credential or API request', async () => {
-    const fetch = vi.fn(async () => Response.json(record())); vi.stubGlobal('fetch', fetch);
+    const fetch = publicFetch(); vi.stubGlobal('fetch', fetch);
     expect((await loadProjectActivity(now)).projects).toHaveLength(12);
-    expect(fetch).toHaveBeenCalledTimes(1);
-    const [url, init] = fetch.mock.calls[0] as unknown as [string, RequestInit];
+    expect(fetch).toHaveBeenCalledTimes(3);
+    const [url, init] = fetch.mock.calls[2] as unknown as [string, RequestInit];
     expect(url).toBe(PROJECT_FEED_URL);
     expect(new Headers(init.headers).has('Authorization')).toBe(false);
   });
   it('refuses failed or oversized feeds when no verified live record exists', async () => {
     vi.mocked(collectPublicProjects).mockRejectedValue(new Error('Source unavailable'));
     vi.stubGlobal('fetch', vi.fn(async () => new Response('not available', { status: 404 })));
-    await expect(loadProjectActivity(now)).rejects.toThrow('Public project activity unavailable');
+    await expect(loadProjectActivity(now)).rejects.toThrow('Project activity unavailable');
     vi.stubGlobal('fetch', vi.fn(async () => new Response('x'.repeat(131_073))));
-    await expect(loadProjectActivity(now)).rejects.toThrow('Public project activity unavailable');
+    await expect(loadProjectActivity(now)).rejects.toThrow('Project activity unavailable');
   });
   it('updates the same public metric even if the daily publisher is unavailable', async () => {
     const live = validateProjectFeed(record(), now);
@@ -59,8 +62,52 @@ describe('public project feed boundary', () => {
   });
   it('keeps the dated published record when a live refresh hits a limit', async () => {
     const old = record(); old.updatedAt = '2026-10-02T23:30:00Z'; old.projects.forEach((row) => { row.lastActive = '2026-10-02'; });
-    vi.stubGlobal('fetch', vi.fn(async () => Response.json(old)));
+    vi.stubGlobal('fetch', vi.fn(async (url: string) => authorizedUrl(url) ? new Response('', {status:404}) : Response.json(old)));
     vi.mocked(collectPublicProjects).mockRejectedValue(new Error('Source unavailable'));
     expect((await loadProjectActivity(now)).updatedAt).toBe('2026-10-02T23:30:00.000Z');
+  });
+  it('publishes approved private-inclusive identities without exposing repository paths or raw fields', () => {
+    const input = authorizedRecord();
+    Object.assign(input.projects.find(({ id }) => id === 'argos')!, { repo: 'private-internal-path', name: 'unexpected', email: 'private@example.invalid', message: 'private text' });
+    const result = validateProjectFeed(input, now);
+    expect(result.projects).toHaveLength(29);
+    expect(result.projects.find(({ id }) => id === 'argos')?.name.es).toBe('Argos');
+    expect(result.projects.find(({ id }) => id === 'argos')?.url).toBeUndefined();
+    expect(JSON.stringify(result)).not.toMatch(/private-internal-path|unexpected|private@example|private text|"repo"|"email"|"message"/);
+  });
+  it('preserves private-inclusive measurements and their date without anonymous replacements', async () => {
+    const input = authorizedRecord(); input.updatedAt = '2026-10-02T23:30:00Z'; input.projects.forEach((project) => { project.lastActive = '2026-10-02'; });
+    const fetch = vi.fn(async () => Response.json(input)); vi.stubGlobal('fetch', fetch);
+    const result = await loadProjectActivity(now);
+    expect(result.source).toBe('github-authorized');
+    expect(result.updatedAt).toBe('2026-10-02T23:30:00.000Z');
+    expect(fetch).toHaveBeenCalledTimes(1);
+    expect(collectPublicProjects).not.toHaveBeenCalled();
+    const [, init] = fetch.mock.calls[0] as unknown as [string, RequestInit];
+    expect(new Headers(init.headers).has('Authorization')).toBe(false);
+  });
+  it('rejects mixed scopes and private identities in the anonymous record', () => {
+    const input = authorizedRecord(); input.source = 'github-public';
+    expect(() => validateProjectFeed(input, now)).toThrow();
+    const partial = authorizedRecord(); partial.projects.pop();
+    expect(() => validateProjectFeed(partial, now)).toThrow();
+  });
+  it('does not downgrade private-inclusive data to public data when the publisher has an error', async () => {
+    const fetch = vi.fn(async (url: string) => authorizedUrl(url) ? new Response('', {status:503}) : Response.json(record()));
+    vi.stubGlobal('fetch', fetch);
+    await expect(loadProjectActivity(now)).rejects.toThrow('Project activity unavailable');
+    expect(fetch).toHaveBeenCalledTimes(2);
+    expect(collectPublicProjects).not.toHaveBeenCalled();
+  });
+  it.each([404,503])('uses the validated backup when the primary private-inclusive asset returns %i', async (status) => {
+    const fetch = vi.fn(async (url: string) => url === AUTHORIZED_PROJECT_FEED_URL ? new Response('',{status}) : Response.json(authorizedRecord()));
+    vi.stubGlobal('fetch', fetch);
+    const result = await loadProjectActivity(now);
+    expect(result.source).toBe('github-authorized');
+    expect(result.projects).toHaveLength(29);
+    expect(result.updatedAt).toBe('2026-10-06T23:30:00.000Z');
+    expect(fetch).toHaveBeenCalledTimes(2);
+    expect(fetch.mock.calls[1][0]).toBe(AUTHORIZED_PROJECT_BACKUP_URL);
+    expect(collectPublicProjects).not.toHaveBeenCalled();
   });
 });

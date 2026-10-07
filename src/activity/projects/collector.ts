@@ -1,4 +1,4 @@
-import { PROJECT_CATALOG } from './catalog';
+import { PUBLIC_PROJECT_CATALOG as PROJECT_CATALOG } from './catalog';
 import type { ProjectActivity, ProjectPeriod, ProjectSnapshot } from './model';
 
 const OWNER = 'stevenvo780';

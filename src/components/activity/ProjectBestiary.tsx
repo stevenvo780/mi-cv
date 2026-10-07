@@ -21,15 +21,18 @@ function subscribeGlobalPause(notify: () => void) {
   return () => observer.disconnect();
 }
 function validSnapshot(value: ProjectSnapshot): boolean {
-  if (value.version !== 1 || value.source !== 'github-public' || value.metric !== 'commits' || value.coverage !== 'published-projects' || !Number.isFinite(Date.parse(value.updatedAt)) || !Array.isArray(value.projects)) return false;
+  if (value.version !== 1 || !(['github-public', 'github-authorized'] as const).includes(value.source) || value.metric !== 'commits' || value.coverage !== 'published-projects' || !Number.isFinite(Date.parse(value.updatedAt)) || !Array.isArray(value.projects)) return false;
   const identities = new Set<string>();
   return value.projects.every((project) => {
-    if (!project || typeof project.id !== 'string' || !project.id || identities.has(project.id) || !project.name || !project.description || typeof project.url !== 'string' || !BEAST_KINDS.includes(project.kind)) return false;
+    if (!project || typeof project.id !== 'string' || !project.id || identities.has(project.id) || !project.name || !project.description || !BEAST_KINDS.includes(project.kind)) return false;
     if (!(['es', 'en'] as const).every((language) => typeof project.name[language] === 'string' && typeof project.description[language] === 'string')) return false;
     if (!project.counts || !(['week', 'month', 'year'] as const).every((period) => Number.isSafeInteger(project.counts[period]) && project.counts[period] >= 0)) return false;
     if (project.lastActive !== null && !Number.isFinite(Date.parse(project.lastActive))) return false;
-    const url = new URL(project.url);
-    if (url.protocol !== 'https:' || url.username || url.password) return false;
+    if (project.url !== undefined) {
+      if (typeof project.url !== 'string') return false;
+      const url = new URL(project.url);
+      if (url.protocol !== 'https:' || url.username || url.password) return false;
+    }
     identities.add(project.id);
     return true;
   });
@@ -38,6 +41,7 @@ function validSnapshot(value: ProjectSnapshot): boolean {
 export default function ProjectBestiary({ locale }: { locale: Locale }) {
   const t = PROJECT_BESTIARY[locale];
   const section = useRef<HTMLElement>(null);
+  const ranking = useRef<HTMLOListElement>(null);
   const rows = useRef(new Map<string, HTMLButtonElement>());
   const [near, setNear] = useState(false);
   const [visible, setVisible] = useState(false);
@@ -83,6 +87,7 @@ export default function ProjectBestiary({ locale }: { locale: Locale }) {
         return;
       }
       if (body.status !== 'ready' || !body.snapshot || !validSnapshot(body.snapshot)) throw new Error('Invalid project record');
+      if (snapshotRef.current?.source === 'github-authorized' && body.snapshot.source !== 'github-authorized') throw new Error('Project scope unavailable');
       snapshotRef.current = body.snapshot;
       setSnapshot(body.snapshot); setStatus('ready'); setRefreshFailed(false);
       setStale(Date.now() - Date.parse(body.snapshot.updatedAt) > 172_800_000);
@@ -121,6 +126,18 @@ export default function ProjectBestiary({ locale }: { locale: Locale }) {
   const number = (value: number | null) => value === null ? '—' : format.format(value);
   const date = (value: string) => new Intl.DateTimeFormat(locale, { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' }).format(new Date(value));
   const accessibleSpecimen = selected && creature ? `${selected.name[locale]} · ${creature.species} · ${number(count)} ${t.commits}` : t.selected;
+  const authorized = snapshot?.source === 'github-authorized';
+
+  useEffect(() => {
+    const list = ranking.current;
+    const row = selected ? rows.current.get(selected.id) : null;
+    if (!list || !row) return;
+    const bounds = list.getBoundingClientRect();
+    const item = row.getBoundingClientRect();
+    // Follow selection inside the ledger without moving the page or keyboard focus.
+    if (item.top < bounds.top) list.scrollTop += item.top - bounds.top;
+    else if (item.bottom > bounds.bottom) list.scrollTop += item.bottom - bounds.bottom;
+  }, [selected, period]);
 
   function cycle(direction: number) {
     if (!ranked.length) return;
@@ -170,12 +187,12 @@ export default function ProjectBestiary({ locale }: { locale: Locale }) {
           <figcaption className="pb-specimen-caption" key={selected?.id ?? 'empty'}>
             <div className="pb-specimen-identity"><span className="pb-character">{creature?.character ?? t.selected}</span><h3>{selected?.name[locale] ?? '—'}</h3><p>{selected?.description[locale] ?? ''}</p></div>
             <div className="pb-specimen-count"><span className="pb-count">{number(count)}</span><span>{t.commits} / {t.periods[period].toLowerCase()}</span></div>
-            <div className="pb-specimen-footer"><p>{creature?.lore ?? ''}</p><div><button type="button" aria-label={t.previous} disabled={ranked.length < 2} onClick={() => cycle(-1)}>←</button><button type="button" aria-label={t.next} disabled={ranked.length < 2} onClick={() => cycle(1)}>→</button>{selected && <a href={selected.url} target="_blank" rel="noopener noreferrer">{t.explore}<span aria-hidden="true">↗</span></a>}</div></div>
+            <div className="pb-specimen-footer"><p>{creature?.lore ?? ''}</p><div><button type="button" aria-label={t.previous} disabled={ranked.length < 2} onClick={() => cycle(-1)}>←</button><button type="button" aria-label={t.next} disabled={ranked.length < 2} onClick={() => cycle(1)}>→</button>{selected?.url && <a href={selected.url} target="_blank" rel="noopener noreferrer">{t.explore}<span aria-hidden="true">↗</span></a>}</div></div>
           </figcaption>
         </figure>
         <aside className="pb-ledger" aria-labelledby="pb-ledger-title">
-          <div className="pb-ledger-heading"><h3 id="pb-ledger-title">{t.ranking}</h3><span>{snapshot ? String(ranked.length).padStart(2, '0') : '—'}</span></div><p className="pb-ledger-note">{t.rankingNote}</p>
-          <ol className="pb-ranking">{ranked.map((project, index) => {
+          <div className="pb-ledger-heading"><h3 id="pb-ledger-title">{t.ranking}</h3><span>{snapshot ? String(ranked.length).padStart(2, '0') : '—'}</span></div><p id="pb-ledger-note" className="pb-ledger-note">{t.rankingNote}{ranked.length > 12 ? ` · ${t.rankingScroll}` : ''}</p>
+          <ol ref={ranking} className="pb-ranking" aria-labelledby="pb-ledger-title" aria-describedby="pb-ledger-note" tabIndex={ranked.length ? 0 : -1}>{ranked.map((project, index) => {
             const relative = Math.log1p(project.counts[period]) / Math.log1p(max);
             return <li key={project.id} style={{ '--rank': index, '--energy': relative } as CSSProperties}>
               <button type="button" className={`pb-project-row${selected?.id === project.id ? ' is-selected' : ''}`} data-project-id={project.id} data-kind={project.kind} aria-label={`${project.name[locale]} · ${number(project.counts[period])} ${t.commits}`} aria-pressed={selected?.id === project.id}
@@ -198,7 +215,7 @@ export default function ProjectBestiary({ locale }: { locale: Locale }) {
           </button>;
         })}</div>
       </div>
-      <footer className="pb-provenance"><div><p className="pb-eyebrow">{t.sourceLabel}</p><p>{t.source}</p></div><div><span>{t.updated}</span><time dateTime={snapshot?.updatedAt}>{snapshot ? date(snapshot.updatedAt) : '—'}</time><span>{t.timezone}</span></div></footer>
+      <footer className="pb-provenance"><div><p className="pb-eyebrow">{authorized ? t.authorizedSourceLabel : t.sourceLabel}</p><p>{authorized ? t.authorizedSource : t.source}</p></div><div><span>{t.updated}</span><time dateTime={snapshot?.updatedAt}>{snapshot ? date(snapshot.updatedAt) : '—'}</time><span>{t.timezone}</span></div></footer>
     </section>
   );
 }

@@ -8,7 +8,7 @@ export interface ProjectIdentity {
   id: string;
   name: LocalizedText;
   description: LocalizedText;
-  url: string;
+  url?: string;
   kind: BeastKind;
 }
 
@@ -19,7 +19,7 @@ export interface ProjectActivity extends ProjectIdentity {
 
 export interface ProjectSnapshot {
   version: 1;
-  source: 'github-public';
+  source: 'github-public' | 'github-authorized';
   metric: 'commits';
   updatedAt: string;
   projects: ProjectActivity[];
