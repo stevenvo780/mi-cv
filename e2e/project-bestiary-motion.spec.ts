@@ -2,20 +2,39 @@ import { expect, test } from './fixtures';
 import { decodePng } from './pixels';
 import { calendarSnapshot, projectSnapshot } from './project-data';
 
-function changedFraction(a: Buffer, b: Buffer) {
+function changedFraction(a: Buffer, b: Buffer, threshold = 8) {
   const first = decodePng(a), next = decodePng(b);
   expect([next.width, next.height]).toEqual([first.width, first.height]);
   let changed = 0;
   for (let i = 0; i < first.data.length; i += 4) {
-    if (Math.max(...[0, 1, 2].map((channel) => Math.abs(first.data[i + channel] - next.data[i + channel]))) > 8) changed++;
+    if (Math.max(...[0, 1, 2].map((channel) => Math.abs(first.data[i + channel] - next.data[i + channel]))) > threshold) changed++;
   }
   return changed / (first.width * first.height);
 }
 
-test('las criaturas tienen movimiento real, pausa exacta y anatomías diferentes', async ({ page }) => {
+function maximumPixelDifference(a: Buffer, b: Buffer) {
+  const first = decodePng(a), next = decodePng(b);
+  expect([next.width, next.height]).toEqual([first.width, first.height]);
+  let maximum = 0;
+  for (let index = 0; index < first.data.length; index++) maximum = Math.max(maximum, Math.abs(first.data[index] - next.data[index]));
+  return maximum;
+}
+
+test('las criaturas tienen movimiento real, pausa sin renders y anatomías diferentes', async ({ page }) => {
   const errors: string[] = [];
   page.on('pageerror', (error) => errors.push(error.message));
   await page.emulateMedia({ reducedMotion: 'no-preference' });
+  await page.addInitScript(() => {
+    const proof = globalThis as typeof globalThis & { __beastDraws: number };
+    proof.__beastDraws = 0;
+    for (const key of ['drawArrays', 'drawElements'] as const) {
+      const original = WebGL2RenderingContext.prototype[key];
+      WebGL2RenderingContext.prototype[key] = function (...args: Parameters<typeof original>) {
+        if (this.canvas instanceof HTMLCanvasElement && this.canvas.closest('.beast-scene')) proof.__beastDraws++;
+        return Reflect.apply(original, this, args);
+      };
+    }
+  });
   await page.route('**/api/activity', (route) => route.fulfill({ json: { status: 'ready', snapshot: calendarSnapshot() } }));
   await page.route('**/api/activity/projects', (route) => route.fulfill({ json: { status: 'ready', snapshot: projectSnapshot() } }));
   await page.goto('/es/actividad');
@@ -31,16 +50,30 @@ test('las criaturas tienen movimiento real, pausa exacta y anatomías diferentes
   const b = await canvas.screenshot({ path: '/workspace/MySites/.previews/bestiary-motion-b.png' });
   expect(changedFraction(a, b), 'el cuerpo y los apéndices se mueven, además de la interfaz').toBeGreaterThan(.003);
   await bestiary.getByRole('button', { name: 'Pausar criaturas', exact: true }).click();
+  await expect(bestiary.locator('.beast-dominion')).toHaveAttribute('data-paused', 'true');
+  expect(await bestiary.locator('.bd-orbit-first').evaluate((ring) => getComputedStyle(ring).animationPlayState)).toBe('paused');
+  expect(await bestiary.locator('.pd-project[data-apex="true"] .pd-core').first().evaluate((core) => getComputedStyle(core, '::before').animationPlayState)).toBe('paused');
   await canvas.scrollIntoViewIfNeeded();
   await page.mouse.move(5, 5);
+  await page.waitForTimeout(1200);
+  const drawCount = () => page.evaluate(() => (globalThis as typeof globalThis & { __beastDraws: number }).__beastDraws);
+  const frozenDraws = await drawCount();
+  expect(frozenDraws, 'la instrumentación observó dibujos reales antes de la pausa').toBeGreaterThan(0);
+  const clock = () => bestiary.evaluate((element) => element.getAnimations({ subtree: true }).map((animation) => ({ state: animation.playState, time: animation.currentTime })));
+  const frozenClock = await clock();
+  expect(frozenClock.every((animation) => animation.state === 'paused')).toBe(true);
   let still = await canvas.screenshot();
   await expect.poll(async () => {
     await page.waitForTimeout(800);
     const next = await canvas.screenshot();
-    const equal = next.equals(still);
+    // Transparent blurred SVG layers can round a few composite channels by one unit.
+    // Compare decoded pixels, then separately prove zero GL draws and frozen CSS clocks.
+    const equal = maximumPixelDifference(still, next) <= 1 && changedFraction(still, next, 0) < .001;
     still = next;
     return equal;
   }, { timeout: 30_000 }).toBe(true);
+  expect(await drawCount(), 'la pausa no produce ningún nuevo dibujo WebGL').toBe(frozenDraws);
+  expect(await clock(), 'la pausa congela también el halo y los adornos').toEqual(frozenClock);
   const hydra = still;
   await bestiary.locator('.pb-project-row[data-project-id="clavis"]').click();
   await canvas.scrollIntoViewIfNeeded();

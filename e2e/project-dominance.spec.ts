@@ -1,0 +1,54 @@
+import { expect, test } from './fixtures';
+import { authorizedProjectSnapshot, calendarSnapshot } from './project-data';
+
+test('la escala compara cifras reales, sigue la selección y cambia de líder con el periodo', async ({ page }) => {
+  const data = authorizedProjectSnapshot();
+  const argos = data.projects.find((project) => project.id === 'argos')!;
+  const cauce = data.projects.find((project) => project.id === 'cauce-v3')!;
+  argos.counts = { year: 5000, month: 100, week: 10 };
+  cauce.counts = { year: 2500, month: 100, week: 100 };
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.route('**/api/activity', (route) => route.fulfill({ json: { status: 'ready', snapshot: calendarSnapshot() } }));
+  await page.route('**/api/activity/projects', (route) => route.fulfill({ json: { status: 'ready', snapshot: data } }));
+  await page.goto('/es/actividad');
+  const bestiary = page.locator('.project-bestiary');
+  await bestiary.scrollIntoViewIfNeeded();
+  const scale = bestiary.locator('.pd-instrument');
+  await expect(scale.locator('.pd-project')).toHaveCount(3);
+  await expect(scale.locator('[data-project-id="argos"]')).toHaveAttribute('data-apex', 'true');
+  await expect(scale.locator('[data-project-id="argos"] .pd-crown')).toHaveCount(1);
+  await bestiary.locator('.pb-project-row[data-project-id="cauce-v3"]').click();
+  const comparison = scale.locator('[data-project-id="cauce-v3"]');
+  await expect(scale.locator('.pd-project')).toHaveCount(4);
+  await expect(comparison).toHaveAttribute('aria-pressed', 'true');
+  await expect(comparison.locator('.pd-relation')).toContainText('50');
+  const fraction = await comparison.locator('.pd-beam').evaluate((beam) => beam.getBoundingClientRect().height / beam.parentElement!.getBoundingClientRect().height);
+  expect(fraction).toBeCloseTo(.5, 2);
+  await expect(bestiary.locator('.pb-dominance-seal')).toContainText('Coloso');
+  await bestiary.getByRole('button', { name: 'Proyectos: última semana', exact: true }).click();
+  await expect(scale.locator('[data-project-id="cauce-v3"]')).toHaveAttribute('data-apex', 'true');
+  await expect(scale.locator('[data-project-id="cauce-v3"] .pd-relation')).toContainText('100');
+  await expect(bestiary.locator('.beast-dominion')).toHaveAttribute('data-tier', 'apex');
+  await bestiary.getByRole('button', { name: 'Proyectos: último mes', exact: true }).click();
+  await expect(scale.locator('[data-apex="true"]')).toHaveCount(2);
+  await expect(scale).toContainText('Liderazgo compartido');
+  await scale.locator('[data-project-id="argos"]').click();
+  await expect(bestiary.locator('.pb-specimen-identity h3')).toHaveText('Argos');
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+});
+
+test('un periodo sin actividad no concede coronas ni inventa un líder', async ({ page }) => {
+  const data = authorizedProjectSnapshot();
+  for (const project of data.projects) project.counts = { year: 0, month: 0, week: 0 };
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.route('**/api/activity', (route) => route.fulfill({ json: { status: 'ready', snapshot: calendarSnapshot() } }));
+  await page.route('**/api/activity/projects', (route) => route.fulfill({ json: { status: 'ready', snapshot: data } }));
+  await page.goto('/es/actividad');
+  const bestiary = page.locator('.project-bestiary');
+  await bestiary.scrollIntoViewIfNeeded();
+  await expect(bestiary.locator('.pd-instrument')).toHaveAttribute('data-resting', 'true');
+  await expect(bestiary.locator('.pd-crown')).toHaveCount(0);
+  await expect(bestiary.locator('.pd-project[data-apex="true"]')).toHaveCount(0);
+  await expect(bestiary.locator('.beast-dominion')).toHaveAttribute('data-active', 'false');
+  await expect(bestiary.locator('.pb-dominance-seal')).toContainText('En reposo');
+});

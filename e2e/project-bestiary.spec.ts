@@ -46,6 +46,8 @@ test('una fuente indisponible no se convierte en una clasificación vacía con c
   await expect(bestiary.getByRole('status')).toContainText('Todavía no hay un registro');
   await expect(bestiary.locator('.pb-project-row')).toHaveCount(0);
   await expect(bestiary.locator('.pb-count')).toHaveText('—');
+  await expect(bestiary.locator('.pd-instrument')).toHaveCount(0);
+  await expect(bestiary.locator('.beast-dominion')).toHaveCount(0);
   await expect(bestiary.getByRole('button', { name: 'Reintentar proyectos' })).toBeEnabled();
 });
 
